@@ -15,13 +15,9 @@ class OtherMemberPrayerMenu extends StatefulWidget {
 }
 
 class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
-  BuildContext bcontext;
-
   void _onHide() async {
     try {
-      BeStilDialog.showLoading(
-        bcontext,
-      );
+      BeStilDialog.showLoading(context);
       // await Provider.of<PrayerProvider>(context, listen: false)
       //     .hidePrayer(widget.prayer.id, _user);
       await Future.delayed(Duration(milliseconds: 300));
@@ -36,7 +32,6 @@ class _OtherMemberPrayerMenuState extends State<OtherMemberPrayerMenu> {
   }
 
   Widget build(BuildContext context) {
-    setState(() => this.bcontext = context);
     return Container(
       width: double.infinity,
       height: double.infinity,

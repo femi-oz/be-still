@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +38,7 @@ class _UpdateView extends State<UpdateView> {
     Navigator.pop(context);
   }
 
-  _textLink([String phoneNumber]) async {
+  _textLink(String phoneNumber) async {
     await sendSMS(message: '', recipients: [phoneNumber]).catchError((onError) {
       print(onError);
     });
@@ -43,8 +47,20 @@ class _UpdateView extends State<UpdateView> {
 
   _openShareModal(BuildContext context, String phoneNumber, String email,
       String identifier) async {
-    await Provider.of<GroupPrayerProvider>(context, listen: false)
-        .getContacts();
+    try {
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .getContacts();
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
+
     var updatedPhone = '';
     var updatedEmail = '';
     localContacts =
@@ -53,12 +69,14 @@ class _UpdateView extends State<UpdateView> {
         localContacts.where((element) => element.identifier == identifier);
 
     for (var contact in latestContact) {
-      final phoneNumber =
-          contact.phones.length > 0 ? contact.phones.toList()[0].value : null;
-      final email =
-          contact.emails.length > 0 ? contact.emails.toList()[0].value : null;
-      updatedPhone = phoneNumber;
-      updatedEmail = email;
+      final phoneNumber = (contact.phones ?? []).length > 0
+          ? (contact.phones ?? []).toList()[0].value
+          : null;
+      final email = (contact.emails ?? []).length > 0
+          ? (contact.emails ?? []).toList()[0].value
+          : null;
+      updatedPhone = phoneNumber ?? '';
+      updatedEmail = email ?? '';
     }
     AlertDialog dialog = AlertDialog(
         actionsPadding: EdgeInsets.all(0),
@@ -222,8 +240,9 @@ class _UpdateView extends State<UpdateView> {
 
   Widget build(BuildContext context) {
     final prayerData = Provider.of<GroupPrayerProvider>(context).currentPrayer;
-    var updates = prayerData.updates;
-    updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
+    var updates = prayerData.updates ?? [];
+    updates.sort((a, b) => (b.modifiedOn ?? DateTime.now())
+        .compareTo(a.modifiedOn ?? DateTime.now()));
     updates = updates.where((element) => element.deleteStatus != -1).toList();
     return Container(
       child: SingleChildScrollView(
@@ -232,11 +251,11 @@ class _UpdateView extends State<UpdateView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              prayerData.prayer.groupId != '0'
+              prayerData.prayer?.groupId != '0'
                   ? Container(
                       margin: EdgeInsets.only(bottom: 15),
                       child: Text(
-                        prayerData.prayer.creatorName,
+                        prayerData.prayer?.creatorName ?? '',
                         style: AppTextStyles.regularText18b.copyWith(
                             color: AppColors.prayerPrimaryColor,
                             fontWeight: FontWeight.w500),
@@ -247,8 +266,12 @@ class _UpdateView extends State<UpdateView> {
               for (int i = 0; i < updates.length; i++)
                 _buildDetail('', updates[i].modifiedOn, updates[i].description,
                     prayerData.tags, context),
-              _buildDetail('Initial Prayer | ', prayerData.prayer.createdOn,
-                  prayerData.prayer.description, prayerData.tags, context),
+              _buildDetail(
+                  'Initial Prayer | ',
+                  prayerData.prayer?.createdOn ?? DateTime.now(),
+                  prayerData.prayer?.description,
+                  prayerData.tags,
+                  context),
             ],
           ),
         ),

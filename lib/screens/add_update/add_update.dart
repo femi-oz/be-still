@@ -10,6 +10,7 @@ import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,6 @@ class AddUpdate extends StatefulWidget {
 class _AddUpdateState extends State<AddUpdate> {
   final _descriptionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  BuildContext bcontext;
   Iterable<Contact> localContacts = [];
   FocusNode _focusNode = FocusNode();
   bool _autoValidate = false;
@@ -38,8 +38,8 @@ class _AddUpdateState extends State<AddUpdate> {
   String tagText = '';
   List<Contact> contacts = [];
   List<PrayerTagModel> oldTags = [];
-  String backupText;
-  TextPainter painter;
+  String backupText = '';
+  TextPainter painter = TextPainter();
   bool showNoContact = false;
   String displayName = '';
   List<String> tagList = [];
@@ -53,15 +53,27 @@ class _AddUpdateState extends State<AddUpdate> {
 
   @override
   void didChangeDependencies() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      var userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      await Provider.of<MiscProvider>(context, listen: false)
-          .setSearchMode(false);
-      await Provider.of<MiscProvider>(context, listen: false)
-          .setSearchQuery('');
-      Provider.of<PrayerProvider>(context, listen: false)
-          .searchPrayers('', userId);
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      try {
+        var userId =
+            Provider.of<UserProvider>(context, listen: false).currentUser.id;
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setSearchMode(false);
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setSearchQuery('');
+        Provider.of<PrayerProvider>(context, listen: false)
+            .searchPrayers('', userId ?? '');
+      } on HttpException catch (e, s) {
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.getErrorMessage(e), user, s);
+      } catch (e, s) {
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.errorOccured, user, s);
+      }
     });
     super.didChangeDependencies();
   }
@@ -87,10 +99,10 @@ class _AddUpdateState extends State<AddUpdate> {
       localContacts.forEach((s) {
         var displayName = s.displayName == null ? '' : s.displayName;
         var displayNameList =
-            displayName.toLowerCase().split(new RegExp(r"\s"));
+            (displayName ?? '').toLowerCase().split(new RegExp(r"\s"));
         displayNameList.forEach((e) {
           if (('@' + e).toLowerCase().contains(tagText.toLowerCase())) {
-            tagList.add(displayName);
+            tagList.add(displayName ?? '');
           }
         });
       });
@@ -107,10 +119,12 @@ class _AddUpdateState extends State<AddUpdate> {
       setState(() {
         numberOfLines = lines.length.toDouble();
       });
-    } catch (e) {
-      print(e);
-      Provider.of<LogProvider>(context, listen: false).setErrorLog(
-          e.toString(), userId, 'ADD_PRAYER_UPDATE/screen/onTextChange_tag');
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+      Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
+          userId ?? '', 'ADD_PRAYER_UPDATE/screen/onTextChange_tag');
     }
   }
 
@@ -130,23 +144,27 @@ class _AddUpdateState extends State<AddUpdate> {
 
   Future<void> _save(String prayerId) async {
     setState(() => _autoValidate = true);
-    if (!_formKey.currentState.validate()) return;
-    _formKey.currentState.save();
-    final user = Provider.of<UserProvider>(context, listen: false).currentUser;
+
     try {
+      if (!_formKey.currentState!.validate()) return;
+      _formKey.currentState!.save();
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showLoading(context);
-      if (_descriptionController.text == null ||
-          _descriptionController.text.trim() == '') {
+      if (_descriptionController.text.trim().isEmpty) {
         BeStilDialog.hideLoading(context);
         PlatformException e = PlatformException(
             code: 'custom', message: 'You can not save empty prayers');
-        BeStilDialog.showErrorDialog(context, e, user, null);
+        final s = StackTrace.fromString(e.stacktrace ?? '');
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.getErrorMessage(e), user, s);
       } else {
         await Provider.of<PrayerProvider>(context, listen: false)
-            .addPrayerUpdate(user.id, _descriptionController.text, prayerId);
+            .addPrayerUpdate(
+                user.id ?? '', _descriptionController.text, prayerId);
 
         contacts.forEach((s) {
-          if (!_descriptionController.text.contains(s.displayName)) {
+          if (!_descriptionController.text.contains(s.displayName ?? '')) {
             s.displayName = '';
           }
         });
@@ -164,19 +182,18 @@ class _AddUpdateState extends State<AddUpdate> {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
   Future<bool> _onWillPop() async {
-    return (Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
-        false;
+    return false;
   }
 
   Future<void> onCancel() async {
@@ -428,7 +445,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                   ? AppColors.lightBlue5.withOpacity(0.5)
                                   : Colors.blue)),
                       onTap: () => _descriptionController.text.isNotEmpty
-                          ? _save(prayerData.prayer.id)
+                          ? _save(prayerData.prayer?.id ?? '')
                           : null,
                     ),
                   ],
@@ -480,11 +497,11 @@ class _AddUpdateState extends State<AddUpdate> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            prayerData.prayer.userId != currentUser.id
+                            prayerData.prayer?.userId != currentUser.id
                                 ? Container(
                                     margin: EdgeInsets.only(bottom: 20),
                                     child: Text(
-                                      prayerData.prayer.createdBy,
+                                      prayerData.prayer?.createdBy ?? '',
                                       style: AppTextStyles.regularText16b
                                           .copyWith(
                                               color: AppColors.lightBlue4),
@@ -508,7 +525,8 @@ class _AddUpdateState extends State<AddUpdate> {
                                               Text(
                                                 intl.DateFormat(
                                                         'hh:mma | MM.dd.yyyy')
-                                                    .format(u.modifiedOn),
+                                                    .format(u.modifiedOn ??
+                                                        DateTime.now()),
                                                 style: AppTextStyles
                                                     .regularText18b
                                                     .copyWith(
@@ -531,7 +549,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                         padding: EdgeInsets.all(20),
                                         child: Center(
                                           child: Text(
-                                            u.description,
+                                            u.description ?? '',
                                             style: AppTextStyles.regularText16b
                                                 .copyWith(
                                                     color:
@@ -567,7 +585,8 @@ class _AddUpdateState extends State<AddUpdate> {
                                             Text(
                                               intl.DateFormat(' MM.dd.yyyy')
                                                   .format(prayerData
-                                                      .prayer.modifiedOn),
+                                                          .prayer?.modifiedOn ??
+                                                      DateTime.now()),
                                               style: AppTextStyles
                                                   .regularText18b
                                                   .copyWith(
@@ -594,7 +613,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                           vertical: 20.0, horizontal: 20),
                                       child: Center(
                                         child: Text(
-                                          prayerData.prayer.description,
+                                          prayerData.prayer?.description ?? '',
                                           style: AppTextStyles.regularText16b
                                               .copyWith(
                                                   color: AppColors

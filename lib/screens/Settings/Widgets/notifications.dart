@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/duration.model.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/custom_toggle.dart';
 import 'package:flutter/material.dart';
@@ -25,11 +29,27 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
     LookUp(text: Frequency.per_instance, value: 0),
   ];
   setEmailUpdateFrequency(value) {
-    Provider.of<SettingsProvider>(context, listen: false).updateSettings(
-        Provider.of<UserProvider>(context, listen: false).currentUser.id,
-        key: SettingsKey.emailUpdateFrequency,
-        value: value,
-        settingsId: widget.settings.id);
+    try {
+      Provider.of<SettingsProvider>(context, listen: false).updateSettings(
+          Provider.of<UserProvider>(context, listen: false).currentUser.id ??
+              '',
+          key: SettingsKey.emailUpdateFrequency,
+          value: value,
+          settingsId: widget.settings.id ?? '');
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
   }
 
   @override
@@ -44,11 +64,11 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
           SizedBox(height: 20.0),
           CustomToggle(
             title: 'Allow push notifications?',
-            onChange: (value) => setingProvider.updateSettings(userId,
+            onChange: (value) => setingProvider.updateSettings(userId ?? '',
                 key: SettingsKey.allowPushNotification,
                 value: value,
-                settingsId: widget.settings.id),
-            value: widget.settings.allowPushNotification,
+                settingsId: widget.settings.id ?? ''),
+            value: widget.settings.allowPushNotification ?? false,
           ),
         ],
       ),

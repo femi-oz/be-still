@@ -18,13 +18,9 @@ class GroupAdminPrayerMenu extends StatefulWidget {
 }
 
 class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
-  BuildContext bcontext;
-
   void _onHide() async {
     try {
-      BeStilDialog.showLoading(
-        bcontext,
-      );
+      BeStilDialog.showLoading(context);
       // await Provider.of<PrayerProvider>(context, listen: false)
       //     .hidePrayer(widget.prayer.id, _user);
       await Future.delayed(Duration(milliseconds: 300));
@@ -40,9 +36,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
 
   void _onHideFromGroup() async {
     try {
-      BeStilDialog.showLoading(
-        bcontext,
-      );
+      BeStilDialog.showLoading(context);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
     } on HttpException catch (_) {
@@ -55,7 +49,6 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
   }
 
   Widget build(BuildContext context) {
-    setState(() => this.bcontext = context);
     return Container(
       width: double.infinity,
       height: double.infinity,

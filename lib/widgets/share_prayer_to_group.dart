@@ -70,7 +70,7 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
                     .map((group) => GestureDetector(
                           onTap: () {
                             setState(() {
-                              selectedGroups.add(group.group.id);
+                              selectedGroups.add(group.group?.id);
                             });
                           },
                           child: Container(
@@ -80,7 +80,7 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
                             margin: EdgeInsets.symmetric(
                                 horizontal: 50, vertical: 10),
                             decoration: BoxDecoration(
-                              color: selectedGroups.contains(group.group.id)
+                              color: selectedGroups.contains(group.group?.id)
                                   ? AppColors.activeButton.withOpacity(0.2)
                                   : Colors.transparent,
                               border: Border.all(
@@ -94,7 +94,7 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
                                 Padding(
                                   padding: const EdgeInsets.only(left: 10.0),
                                   child: Text(
-                                    group.group.name,
+                                    group.group?.name ?? '',
                                     style: TextStyle(
                                       color: AppColors.lightBlue4,
                                       fontSize: 14,

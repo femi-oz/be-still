@@ -16,10 +16,7 @@ class GroupAdminPrayerMenu extends StatefulWidget {
 }
 
 class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
-  BuildContext bcontext;
-
   Widget build(BuildContext context) {
-    setState(() => this.bcontext = context);
     return Container(
       width: double.infinity,
       height: double.infinity,

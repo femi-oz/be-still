@@ -1,8 +1,3 @@
-import 'dart:ui';
-
-import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/models/group.model.dart';
-import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
@@ -20,14 +15,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final Function switchSearchMode;
+  final Function? switchSearchMode;
   final bool isSearchMode;
   final bool showPrayerActions;
   final bool isGroup;
   final bool showOnlyTitle;
-  final GlobalKey globalKey;
+  final GlobalKey? globalKey;
   CustomAppBar({
-    Key key,
+    Key? key,
     this.switchSearchMode,
     this.isSearchMode = false,
     this.isGroup = false,
@@ -60,7 +55,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
     await Provider.of<MiscProvider>(context, listen: false)
         .setSearchQuery(value);
     await Provider.of<PrayerProvider>(context, listen: false)
-        .searchPrayers(value, userId);
+        .searchPrayers(value, userId ?? '');
   }
 
   void _clearSearchField() async {
@@ -75,7 +70,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
     await Provider.of<MiscProvider>(context, listen: false)
         .setSearchQuery(value);
     await Provider.of<GroupPrayerProvider>(context, listen: false)
-        .searchPrayers(value, userId);
+        .searchPrayers(value, userId ?? '');
   }
 
   void _clearGroupSearchField() async {
@@ -139,20 +134,31 @@ class _CustomAppBarState extends State<CustomAppBar> {
   Future<int> getCount() async {
     final notifications =
         Provider.of<NotificationProvider>(context).notifications;
-    final userId = Provider.of<UserProvider>(context).currentUser.id;
-    final z = notifications.map((e) async {
-      if (e.groupId.isNotEmpty) {
-        final j = await Provider.of<GroupProvider>(context)
-            .getGroupFuture(e.groupId, userId);
-        if (j != null) {
-          return j;
-        } else {
-          return null;
-        }
-      }
-    }).toList();
+    // final userId = Provider.of<UserProvider>(context).currentUser.id;
+    // final z = [];
+    // for (final e in notifications) {
+    //   if (e.groupId.isNotEmpty) {
+    //     final j = await Provider.of<GroupProvider>(context)
+    //         .getGroupFuture(e.groupId, userId);
+    //     if (j.group.id.isNotEmpty) {
+    //       z.add(j);
+    //     }
+    //   }
+    // }
+    // notifications.forEach((e) async {
+    //   if (e.groupId.isNotEmpty) {
+    //     final j = await Provider.of<GroupProvider>(context)
+    //         .getGroupFuture(e.groupId, userId);
+    //     if (j.group.id.isNotEmpty) {
+    //       return j;
+    //     } else {
+    //       return null;
+    //     }
+    //   }
+    // }).toList();
 
-    return z.where((element) => element != null).length;
+    // return z.where((element) => element != null).length;
+    return notifications.length;
   }
 
   @override
@@ -179,8 +185,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
           widget.showPrayerActions
               ? InkWell(
                   onTap: () {
-                    if (_searchController.text.isEmpty) {
-                      widget.switchSearchMode(true);
+                    if (_searchController.text.isEmpty &&
+                        widget.switchSearchMode != null) {
+                      widget.switchSearchMode!(true);
                       Provider.of<MiscProvider>(context, listen: false)
                           .setSearchMode(true);
                       setState(() {});
@@ -259,17 +266,18 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     ),
                     onTap: () => setState(
                       () {
-                        widget.isGroup
-                            ? _clearGroupSearchField()
-                            : _clearSearchField();
+                        if (widget.switchSearchMode != null) {
+                          widget.isGroup
+                              ? _clearGroupSearchField()
+                              : _clearSearchField();
 
-                        widget.switchSearchMode(false);
-                        Provider.of<MiscProvider>(context, listen: false)
-                            .setSearchMode(false);
-                        Provider.of<MiscProvider>(context, listen: false)
-                            .setSearchQuery('');
-
-                        setState(() {});
+                          widget.switchSearchMode!(false);
+                          Provider.of<MiscProvider>(context, listen: false)
+                              .setSearchMode(false);
+                          Provider.of<MiscProvider>(context, listen: false)
+                              .setSearchQuery('');
+                          setState(() {});
+                        }
                       },
                     ),
                   )
@@ -335,11 +343,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                       padding: EdgeInsets.only(
                                           right: snapshot.data == 1
                                               ? 2
-                                              : snapshot.data > 9
+                                              : (snapshot.data ?? 0) > 9
                                                   ? 1
                                                   : 0),
                                       child: Text(
-                                          snapshot.data < 1
+                                          (snapshot.data ?? 0) < 1
                                               ? ''
                                               : snapshot.data.toString(),
                                           style: TextStyle(

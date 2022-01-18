@@ -6,15 +6,15 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class JoinGroup {
   void showAlert(BuildContext context, CombineGroupUserStream group) {
-    final admin =
-        group.groupUsers.firstWhere((e) => e.role == GroupUserRole.admin);
-    Provider.of<UserProvider>(context, listen: false).getUserById(admin.userId);
+    final admin = (group.groupUsers ?? [])
+        .firstWhere((e) => e.role == GroupUserRole.admin);
+    Provider.of<UserProvider>(context, listen: false)
+        .getUserById(admin.userId ?? '');
     Future.delayed(Duration(milliseconds: 500)).then((value) {
       final adminData =
           Provider.of<UserProvider>(context, listen: false).selectedUser;
@@ -58,7 +58,7 @@ class JoinGroup {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        group.group.name.toUpperCase(),
+                        group.group?.name ?? ''.toUpperCase(),
                         style: AppTextStyles.boldText20,
                         textAlign: TextAlign.center,
                       ),
@@ -93,7 +93,7 @@ class JoinGroup {
                                 style: AppTextStyles.regularText15,
                               ),
                               Text(
-                                '${group.group.location}',
+                                '${group.group?.location}',
                                 style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.textFieldText,
                                 ),
@@ -110,7 +110,7 @@ class JoinGroup {
                                 style: AppTextStyles.regularText15,
                               ),
                               Text(
-                                '${group.group.organization}',
+                                '${group.group?.organization}',
                                 style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.textFieldText,
                                 ),
@@ -127,7 +127,7 @@ class JoinGroup {
                                 style: AppTextStyles.regularText15,
                               ),
                               Text(
-                                '${group.group.status} Group',
+                                '${group.group?.status} Group',
                                 style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.textFieldText,
                                 ),
@@ -141,10 +141,10 @@ class JoinGroup {
                       Column(
                         children: [
                           Text(
-                            group.groupUsers.length > 1 ||
-                                    group.groupUsers.length == 0
-                                ? '${group.groupUsers.length} current members'
-                                : '${group.groupUsers.length} current member',
+                            (group.groupUsers ?? []).length > 1 ||
+                                    (group.groupUsers ?? []).length == 0
+                                ? '${(group.groupUsers ?? []).length} current members'
+                                : '${(group.groupUsers ?? []).length} current member',
                             style: AppTextStyles.regularText15.copyWith(
                               color: AppColors.textFieldText,
                             ),
@@ -162,7 +162,7 @@ class JoinGroup {
                       ),
                       SizedBox(height: 30.0),
                       Text(
-                        group.group.description,
+                        group.group?.description ?? '',
                         style: AppTextStyles.regularText15.copyWith(
                           color: AppColors.textFieldText,
                         ),
@@ -207,12 +207,13 @@ class JoinGroup {
                               _requestToJoinGroup(
                                   group,
                                   Provider.of<UserProvider>(context,
-                                          listen: false)
-                                      .currentUser
-                                      .id,
+                                              listen: false)
+                                          .currentUser
+                                          .id ??
+                                      '',
                                   // StringUtils.joinRequestStatusPending,
-                                  '${Provider.of<UserProvider>(context, listen: false).currentUser.firstName + ' ' + Provider.of<UserProvider>(context, listen: false).currentUser.lastName}',
-                                  adminData.id,
+                                  '${Provider.of<UserProvider>(context, listen: false).currentUser.firstName ?? '' + ' ' + (Provider.of<UserProvider>(context, listen: false).currentUser.lastName ?? '')}',
+                                  adminData.id ?? '',
                                   context);
                             }),
                       ),
@@ -244,7 +245,7 @@ class JoinGroup {
     try {
       BeStilDialog.showLoading(context);
       await Provider.of<GroupProvider>(context, listen: false)
-          .joinRequest(groupData.group.id, userId, userName);
+          .joinRequest(groupData.group?.id ?? '', userId, userName);
       await Provider.of<UserProvider>(context, listen: false)
           .getUserById(adminId);
       final receiverData =
@@ -258,8 +259,8 @@ class JoinGroup {
               adminId,
               title,
               '',
-              groupData.group.id,
-              [receiverData.pushToken]);
+              groupData.group?.id ?? '',
+              [receiverData.pushToken ?? '']);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
     } catch (e) {

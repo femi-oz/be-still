@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/menu-button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,17 +19,31 @@ class PrayerFilters extends StatefulWidget {
 class _PrayerFiltersState extends State<PrayerFilters> {
   String errorMessage = '';
   void setOption(status) async {
-    errorMessage = '';
+    try {
+      errorMessage = '';
 
-    Provider.of<PrayerProvider>(context, listen: false)
-        .setPrayerFilterOptions(status);
-    Provider.of<PrayerProvider>(context, listen: false).filterPrayers();
-    String heading =
-        '${status == Status.active ? 'MY PRAYERS' : status.toUpperCase()}';
-    await Provider.of<MiscProvider>(context, listen: false)
-        .setPageTitle(heading);
-    setState(() {});
-    Navigator.of(context).pop();
+      Provider.of<PrayerProvider>(context, listen: false)
+          .setPrayerFilterOptions(status);
+      Provider.of<PrayerProvider>(context, listen: false).filterPrayers();
+      String heading =
+          '${status == Status.active ? 'MY PRAYERS' : status.toUpperCase()}';
+      await Provider.of<MiscProvider>(context, listen: false)
+          .setPageTitle(heading);
+      setState(() {});
+      Navigator.of(context).pop();
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
   }
 
   Widget build(BuildContext context) {

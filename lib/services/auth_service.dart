@@ -1,6 +1,7 @@
 import 'package:be_still/flavor_config.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/services/log_service.dart';
 import 'package:be_still/services/user_service.dart';
 import 'package:be_still/utils/settings.dart';
@@ -32,7 +33,7 @@ class AuthenticationService {
       } on PlatformException catch (e) {
         _localAuth.stopAuthentication();
         signOut();
-        final message = StringUtils.generateExceptionMessage(e.code ?? null);
+        final message = StringUtils.generateExceptionMessage(e.code);
         await locator<LogService>().createLog(
             message, email, 'AUTHENTICATION/service/biometricAuthentication');
         throw HttpException(message);
@@ -44,38 +45,55 @@ class AuthenticationService {
   Future forgotPassword(String email) async {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email.trim());
+    } on FirebaseException catch (e) {
+      final message = StringUtils.generateExceptionMessage(e.code);
+      await locator<LogService>()
+          .createLog(message, email, 'AUTHENTICATION/service/forgotPassword');
+      throw HttpException(message);
     } catch (e) {
-      final message = StringUtils.generateExceptionMessage(e.code ?? null);
+      final message = StringUtils.getErrorMessage(e);
       await locator<LogService>()
           .createLog(message, email, 'AUTHENTICATION/service/forgotPassword');
       throw HttpException(message);
     }
   }
 
-  Future<Map<String, Object>> signIn({
-    String email,
-    String password,
+  Future<UserVerify> signIn({
+    required String email,
+    required String password,
   }) async {
     var needsVerification = false;
     try {
       final user = await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-      if (!user.user.emailVerified) {
+      if (!(user.user?.emailVerified ?? false)) {
         needsVerification = true;
         var e = FirebaseAuthException(
             code: 'not-verified', message: 'not-verified');
         signOut();
         throw HttpException(e.code);
       }
-      return {'error': null, 'needsVerification': needsVerification};
+      return UserVerify(
+          error: null,
+          needsVerification:
+              needsVerification); //{'error': '', 'needsVerification': needsVerification};
+    } on FirebaseException catch (e) {
+      return UserVerify(
+          error: PlatformException(code: e.code, message: e.message),
+          needsVerification:
+              needsVerification); // {'error': e, 'needsVerification': needsVerification};
+
     } catch (e) {
-      return {'error': e, 'needsVerification': needsVerification};
+      return UserVerify(
+          error: e as PlatformException,
+          needsVerification:
+              needsVerification); // {'error': e, 'needsVerification': needsVerification};
     }
   }
 
   Future sendEmailVerification() async {
     try {
-      User user = FirebaseAuth.instance.currentUser;
+      User? user = FirebaseAuth.instance.currentUser;
       if (user != null && !user.emailVerified) {
         var actionCodeSettings = ActionCodeSettings(
           url: FlavorConfig.instance.values.appUrl,
@@ -90,11 +108,18 @@ class AuthenticationService {
         await user.sendEmailVerification(actionCodeSettings);
         signOut();
       }
-    } catch (e) {
-      final message = StringUtils.generateExceptionMessage(e.code ?? null);
+    } on FirebaseException catch (e) {
+      final message = StringUtils.generateExceptionMessage(e.code);
       await locator<LogService>().createLog(
           message,
-          _firebaseAuth.currentUser.email,
+          _firebaseAuth.currentUser?.email ?? '',
+          'AUTHENTICATION/service/sendEmailVerification');
+      throw HttpException(message);
+    } catch (e) {
+      final message = StringUtils.getErrorMessage(e);
+      await locator<LogService>().createLog(
+          message,
+          _firebaseAuth.currentUser?.email ?? '',
           'AUTHENTICATION/service/sendEmailVerification');
       throw HttpException(message);
     }
@@ -112,9 +137,9 @@ class AuthenticationService {
         email: email,
         password: password,
       );
-      User user = _firebaseAuth.currentUser;
+      User? user = _firebaseAuth.currentUser;
       await locator<UserService>().addUserData(
-        user.uid,
+        user?.uid ?? '',
         email,
         password,
         firstName,
@@ -122,14 +147,13 @@ class AuthenticationService {
         dob,
       );
       await sendEmailVerification();
-    } on FirebaseAuthException catch (e) {
-      final message = StringUtils.generateExceptionMessage(e?.code ?? null);
+    } on FirebaseException catch (e) {
+      final message = StringUtils.generateExceptionMessage(e.code);
       await locator<LogService>()
           .createLog(message, email, 'AUTHENTICATION/service/registerUser');
       throw HttpException(message);
     } catch (e) {
-      final message =
-          StringUtils.generateExceptionMessage(e?.toString() ?? null);
+      final message = StringUtils.getErrorMessage(e);
       await locator<LogService>()
           .createLog(message, email, 'AUTHENTICATION/service/registerUser');
       throw HttpException(message);
@@ -139,8 +163,13 @@ class AuthenticationService {
   Future<void> sendPasswordResetEmail(String email) async {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
+    } on FirebaseException catch (e) {
+      final message = StringUtils.generateExceptionMessage(e.code);
+      await locator<LogService>().createLog(
+          message, email, 'AUTHENTICATION/service/sendPasswordResetEmail');
+      throw HttpException(message);
     } catch (e) {
-      final message = StringUtils.generateExceptionMessage(e.code ?? null);
+      final message = StringUtils.getErrorMessage(e);
       await locator<LogService>().createLog(
           message, email, 'AUTHENTICATION/service/sendPasswordResetEmail');
       throw HttpException(message);
@@ -150,23 +179,39 @@ class AuthenticationService {
   Future signOut() async {
     try {
       await _firebaseAuth.signOut();
+    } on FirebaseException catch (e) {
+      final message = StringUtils.generateExceptionMessage(e.code);
+      await locator<LogService>().createLog(
+          message,
+          _firebaseAuth.currentUser?.email ?? '',
+          'AUTHENTICATION/service/signOut');
+      throw HttpException(message);
     } catch (e) {
-      final message = StringUtils.generateExceptionMessage(e.code ?? null);
-      await locator<LogService>().createLog(message,
-          _firebaseAuth.currentUser.email, 'AUTHENTICATION/service/signOut');
+      final message = StringUtils.getErrorMessage(e);
+      await locator<LogService>().createLog(
+          message,
+          _firebaseAuth.currentUser?.email ?? '',
+          'AUTHENTICATION/service/signOut');
       throw HttpException(message);
     }
   }
 
   Future<bool> isUserLoggedIn() async {
     try {
-      User user = _firebaseAuth.currentUser;
+      User? user = _firebaseAuth.currentUser;
       return user != null;
-    } catch (e) {
-      final message = StringUtils.generateExceptionMessage(e.code ?? null);
+    } on FirebaseException catch (e) {
+      final message = StringUtils.generateExceptionMessage(e.code);
       await locator<LogService>().createLog(
           message,
-          _firebaseAuth.currentUser.email,
+          _firebaseAuth.currentUser?.email ?? '',
+          'AUTHENTICATION/service/isUserLoggedIn');
+      throw HttpException(message);
+    } catch (e) {
+      final message = StringUtils.getErrorMessage(e);
+      await locator<LogService>().createLog(
+          message,
+          _firebaseAuth.currentUser?.email ?? '',
           'AUTHENTICATION/service/isUserLoggedIn');
       throw HttpException(message);
     }

@@ -19,17 +19,17 @@ class CreateGroupForm extends StatelessWidget {
   final bool requireAdminApproval;
 
   CreateGroupForm(
-      {this.groupNameController,
-      this.locationController,
-      this.organizationController,
-      this.descriptionController,
-      this.setOption,
-      this.option,
-      this.formKey,
-      this.onChangeAdminApproval,
-      this.autoValidate,
-      this.requireAdminApproval,
-      this.isEdit});
+      {required this.groupNameController,
+      required this.locationController,
+      required this.organizationController,
+      required this.descriptionController,
+      required this.setOption,
+      required this.option,
+      required this.formKey,
+      required this.onChangeAdminApproval,
+      required this.autoValidate,
+      required this.requireAdminApproval,
+      required this.isEdit});
 
   @override
   Widget build(BuildContext context) {

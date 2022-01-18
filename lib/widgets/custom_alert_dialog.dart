@@ -14,13 +14,13 @@ class CustomAlertDialog extends StatelessWidget {
   final String confirmText;
   final String cancelText;
   final AlertType type;
-  final Function onConfirm;
-  final Function onCancel;
+  final Function? onConfirm;
+  final Function? onCancel;
   final bool showCancelButton;
 
   CustomAlertDialog({
     this.title = '',
-    this.message,
+    this.message = 'An error occured!',
     this.confirmText = 'Ok',
     this.cancelText = 'Cancel',
     this.type = AlertType.info,
@@ -62,7 +62,7 @@ class CustomAlertDialog extends StatelessWidget {
           Divider(),
           Flexible(
             child: Text(
-              message ?? 'An error occured!',
+              message,
               style: AppTextStyles.regularText16b
                   .copyWith(color: AppColors.lightBlue4),
               textAlign: TextAlign.center,
@@ -91,7 +91,7 @@ class CustomAlertDialog extends StatelessWidget {
                     onPressed: () {
                       Navigator.pop(context);
                       if (onConfirm != null) {
-                        onConfirm();
+                        onConfirm!();
                       }
                     },
                   ),
@@ -107,7 +107,7 @@ class CustomAlertDialog extends StatelessWidget {
                       onPressed: () {
                         Navigator.pop(context);
                         if (onCancel != null) {
-                          onCancel();
+                          onCancel!();
                         }
                       },
                     ),

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class TutorialTarget {
-  static TutorialCoachMark tutorialCoachMark;
+  static TutorialCoachMark? tutorialCoachMark;
   static void showTutorial(
       context, _keyButton, _keyButton2, _keyButton3, _keyButton4, _keyButton5) {
     List<TargetFocus> targets = [];
@@ -22,7 +22,7 @@ class TutorialTarget {
                 context,
                 'Welcome to Be Still!',
                 1,
-                null,
+                '',
                 "Next Tip",
                 StringUtils.quickTipWelcome,
                 StringUtils.quickTipWelcome2,
@@ -38,7 +38,7 @@ class TutorialTarget {
             context,
             'MY PRAYERS',
             2,
-            null,
+            '',
             " List",
             "Tap",
             StringUtils.quickTipList,
@@ -73,7 +73,7 @@ class TutorialTarget {
             context,
             'FILTERS',
             4,
-            null,
+            '',
             " Filters",
             "Use",
             StringUtils.quickTipFilters,
@@ -90,7 +90,7 @@ class TutorialTarget {
             context,
             'ADD A PRAYER',
             5,
-            null,
+            '',
             " Add",
             "Tap",
             StringUtils.quickTipAdd,
@@ -103,8 +103,8 @@ class TutorialTarget {
           customPosition: CustomTargetContentPosition(
             bottom: 100,
           ),
-          child: _buildBody(context, 'PRAYER MODE', 6, null, '',
-              StringUtils.quickTipPray, ''))
+          child: _buildBody(
+              context, 'PRAYER MODE', 6, '', '', StringUtils.quickTipPray, ''))
     ]));
     targets
         .add(TargetFocus(identify: "more", keyTarget: _keyButton4, contents: [
@@ -113,7 +113,7 @@ class TutorialTarget {
           customPosition: CustomTargetContentPosition(
             bottom: 100,
           ),
-          child: _buildBody(context, 'MORE', 7, null, ' More', 'Tap the',
+          child: _buildBody(context, 'MORE', 7, '', ' More', 'Tap the',
               StringUtils.quickTipMore))
     ]));
 
@@ -146,9 +146,9 @@ class TutorialTarget {
       onHorizontalDragUpdate: (details) {
         int sensitivity = 8;
         if (details.delta.dx > sensitivity) {
-          if (id > 1) tutorialCoachMark.previous();
+          if (id > 1) tutorialCoachMark?.previous();
         } else if (details.delta.dx < -sensitivity) {
-          if (id < 7) tutorialCoachMark.next();
+          if (id < 7) tutorialCoachMark?.next();
         }
       },
       child: Container(
@@ -166,7 +166,7 @@ class TutorialTarget {
                 children: <Widget>[
                   IconButton(
                     padding: EdgeInsets.zero,
-                    onPressed: () => tutorialCoachMark.skip(),
+                    onPressed: () => tutorialCoachMark?.skip(),
                     icon: Icon(
                       AppIcons.bestill_close,
                       color: AppColors.grey4,
@@ -215,14 +215,14 @@ class TutorialTarget {
                   ),
                 ),
               ),
-              image != null ? Image.asset(image) : Container(),
+              image.isNotEmpty ? Image.asset(image) : Container(),
               SizedBox(height: 10),
               Container(
                 width: double.infinity,
                 child: InkWell(
                   onTap: () => id == 7
-                      ? tutorialCoachMark.skip()
-                      : tutorialCoachMark.next(),
+                      ? tutorialCoachMark?.skip()
+                      : tutorialCoachMark?.next(),
                   child: Container(
                     padding: EdgeInsets.all(16.0),
                     decoration: BoxDecoration(

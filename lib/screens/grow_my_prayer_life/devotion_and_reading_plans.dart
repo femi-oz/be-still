@@ -5,6 +5,7 @@ import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -12,8 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../entry_screen.dart';
 
 class DevotionPlans extends StatefulWidget {
   static const routeName = 'devotion-plan';
@@ -25,15 +24,22 @@ class DevotionPlans extends StatefulWidget {
 class _DevotionPlansState extends State<DevotionPlans> {
   @override
   void didChangeDependencies() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      var userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      await Provider.of<MiscProvider>(context, listen: false)
-          .setSearchMode(false);
-      await Provider.of<MiscProvider>(context, listen: false)
-          .setSearchQuery('');
-      Provider.of<PrayerProvider>(context, listen: false)
-          .searchPrayers('', userId);
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      try {
+        var userId =
+            Provider.of<UserProvider>(context, listen: false).currentUser.id;
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setSearchMode(false);
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setSearchQuery('');
+        Provider.of<PrayerProvider>(context, listen: false)
+            .searchPrayers('', userId ?? '');
+      } catch (e, s) {
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.errorOccured, user, s);
+      }
     });
     super.didChangeDependencies();
   }
@@ -87,7 +93,7 @@ class _DevotionPlansState extends State<DevotionPlans> {
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       width: double.infinity,
                       child: Text(
-                        dev.title.toUpperCase(),
+                        (dev.title ?? '').toUpperCase(),
                         style: AppTextStyles.boldText20
                             .copyWith(color: AppColors.lightBlue4),
                         textAlign: TextAlign.center,
@@ -108,7 +114,7 @@ class _DevotionPlansState extends State<DevotionPlans> {
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       width: double.infinity,
                       child: Text(
-                        dev.description,
+                        dev.description ?? '',
                         style: AppTextStyles.regularText16b
                             .copyWith(color: AppColors.blueTitle),
                         textAlign: TextAlign.left,
@@ -168,11 +174,8 @@ class _DevotionPlansState extends State<DevotionPlans> {
 
   Future<bool> _onWillPop() async {
     AppCOntroller appCOntroller = Get.find();
-
     appCOntroller.setCurrentPage(0, true);
-    return (Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
-        false;
+    return false;
   }
 
   @override
@@ -286,7 +289,7 @@ class _DevotionPlansState extends State<DevotionPlans> {
                                             MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
                                           Text(
-                                            dev.type.toUpperCase(),
+                                            (dev.type ?? '').toUpperCase(),
                                             style: AppTextStyles.regularText14
                                                 .copyWith(
                                                     color: AppColors.grey4,
@@ -313,7 +316,7 @@ class _DevotionPlansState extends State<DevotionPlans> {
                                       Column(
                                         children: <Widget>[
                                           Text(
-                                            dev.title,
+                                            dev.title ?? '',
                                             style: AppTextStyles.regularText16b
                                                 .copyWith(
                                                     color:

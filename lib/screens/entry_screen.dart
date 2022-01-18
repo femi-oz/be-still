@@ -27,6 +27,7 @@ import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/info_modal.dart';
 import 'package:be_still/utils/settings.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:be_still/widgets/join_group.dart';
 import 'package:cron/cron.dart';
@@ -43,12 +44,12 @@ class EntryScreen extends StatefulWidget {
   _EntryScreenState createState() => _EntryScreenState();
 }
 
-TutorialCoachMark tutorialCoachMark;
+late TutorialCoachMark tutorialCoachMark;
 
 class _EntryScreenState extends State<EntryScreen> {
-  BuildContext bcontext;
+  // BuildContext bcontext;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  FirebaseMessaging messaging;
+  late FirebaseMessaging messaging;
 
   bool _isSearchMode = false;
   void _switchSearchMode(bool value) => _isSearchMode = value;
@@ -56,66 +57,76 @@ class _EntryScreenState extends State<EntryScreen> {
   final cron = Cron();
 
   initState() {
-    final miscProvider = Provider.of<MiscProvider>(context, listen: false);
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    try {
+      final miscProvider = Provider.of<MiscProvider>(context, listen: false);
+      WidgetsBinding.instance?.addPostFrameCallback((_) async {
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        if (miscProvider.initialLoad) {
+          await _preLoadData();
+          miscProvider.setLoadStatus(false);
+
+          initDynamicLinks();
+        }
+        if ((Provider.of<SettingsProvider>(context, listen: false)
+                .groupPreferenceSettings
+                .enableNotificationForAllGroups ??
+            false)) {
+          messaging = FirebaseMessaging.instance;
+          messaging.getToken().then((value) => {
+                Provider.of<NotificationProvider>(context, listen: false)
+                    .init(value ?? "", user.id ?? '', user)
+              });
+        }
+      });
+    } catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      if (miscProvider.initialLoad) {
-        await _preLoadData();
-        miscProvider.setLoadStatus(false);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
 
-        initDynamicLinks();
-      }
-      if (Provider.of<SettingsProvider>(context, listen: false)
-          .groupPreferenceSettings
-          .enableNotificationForAllGroups) {
-        messaging = FirebaseMessaging.instance;
-        messaging.getToken().then((value) => {
-              Provider.of<NotificationProvider>(context, listen: false)
-                  .init(value, user.id, user)
-            });
-      }
-    });
     super.initState();
   }
 
   Future<void> initDynamicLinks() async {
-    String _groupId = '';
-    FirebaseDynamicLinks.instance.onLink(
-        onSuccess: (PendingDynamicLinkData dynamicLink) async {
-      final Uri deepLink = dynamicLink.link;
-      if (deepLink != null) {
-        _groupId = deepLink.queryParameters['groups'];
+    try {
+      String _groupId = '';
+      FirebaseDynamicLinks.instance.onLink(
+          onSuccess: (PendingDynamicLinkData? dynamicLink) async {
+        final Uri deepLink = dynamicLink?.link ?? Uri();
+        // if (deepLink != null) {
+        _groupId = deepLink.queryParameters['groups'] ?? "";
 
         Provider.of<GroupProvider>(context, listen: false)
             .setJoinGroupId(_groupId);
-      }
-    }, onError: (OnLinkErrorException e) async {
-      print('onLinkError');
-      print(e.message);
-    });
+        // }
+      }, onError: (OnLinkErrorException e) async {
+        print('onLinkError');
+        print(e.message);
+      });
 
-    final PendingDynamicLinkData data =
-        await FirebaseDynamicLinks.instance.getInitialLink();
-    final Uri deepLink = data?.link;
+      final PendingDynamicLinkData? data =
+          await FirebaseDynamicLinks.instance.getInitialLink();
+      final Uri deepLink = data?.link ?? Uri();
 
-    if (deepLink != null) {
-      _groupId = deepLink.queryParameters['groups'];
+      _groupId = deepLink.queryParameters['groups'] ?? "";
       Provider.of<GroupProvider>(context, listen: false)
           .setJoinGroupId(_groupId);
+
+      final userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+      if (_groupId.isNotEmpty)
+        Provider.of<GroupProvider>(context, listen: false)
+            .getGroupFuture(_groupId, userId ?? '')
+            .then((groupPrayer) {
+          if (!(groupPrayer.groupUsers ?? []).any((u) => u.userId == userId))
+            JoinGroup().showAlert(context, groupPrayer);
+        });
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
-    // final groupId =
-    //     Provider.of<GroupProvider>(context, listen: false).groupJoinId;
-    final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser?.id;
-    if (_groupId.isNotEmpty)
-      Provider.of<GroupProvider>(context, listen: false)
-          .getGroupFuture(_groupId, userId)
-          // .asBroadcastStream()
-          .then((groupPrayer) {
-        if (!groupPrayer.groupUsers.any((u) => u.userId == userId))
-          JoinGroup().showAlert(context, groupPrayer);
-      });
   }
 
   notificationInit() {}
@@ -128,7 +139,7 @@ class _EntryScreenState extends State<EntryScreen> {
         Settings.enableLocalAuth = false;
 
       final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser?.id;
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
 
       await _getPrayers();
       await _getActivePrayers();
@@ -136,41 +147,42 @@ class _EntryScreenState extends State<EntryScreen> {
       await _getBibles();
       //load settings
       await Provider.of<SettingsProvider>(context, listen: false)
-          .setPrayerSettings(userId);
+          .setPrayerSettings(userId ?? '');
       await Provider.of<SettingsProvider>(context, listen: false)
-          .setSettings(userId);
+          .setSettings(userId ?? '');
       await Provider.of<SettingsProvider>(context, listen: false)
-          .setSharingSettings(userId);
+          .setSharingSettings(userId ?? '');
       await Provider.of<NotificationProvider>(context, listen: false)
-          .setPrayerTimeNotifications(userId);
+          .setPrayerTimeNotifications(userId ?? '');
       // await Provider.of<SettingsProvider>(context, listen: false)
-      //     .setGroupSettings(userId);
+      //     .setGroupSettings(userId??'');
       await Provider.of<SettingsProvider>(context, listen: false)
-          .setGroupPreferenceSettings(userId);
+          .setGroupPreferenceSettings(userId ?? '');
       await Provider.of<GroupProvider>(context, listen: false)
-          .setUserGroups(userId);
+          .setUserGroups(userId ?? '');
 
       //set all users
       await Provider.of<UserProvider>(context, listen: false)
-          .setAllUsers(userId);
+          .setAllUsers(userId ?? '');
 
       // get all push notifications
       await Provider.of<NotificationProvider>(context, listen: false)
-          .setUserNotifications(userId);
+          .setUserNotifications(userId ?? '');
 
       // get all local notifications
       await Provider.of<NotificationProvider>(context, listen: false)
-          .setLocalNotifications(userId);
+          .setLocalNotifications(userId ?? '');
       await Provider.of<GroupProvider>(context, listen: false)
-          .setAllGroups(userId);
+          .setAllGroups(userId ?? '');
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -179,15 +191,16 @@ class _EntryScreenState extends State<EntryScreen> {
       final _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayerTimePrayers(_user.id);
+          .setPrayerTimePrayers(_user.id ?? '');
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -198,22 +211,23 @@ class _EntryScreenState extends State<EntryScreen> {
       final searchQuery =
           Provider.of<MiscProvider>(context, listen: false).searchQuery;
       await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayerTimePrayers(_user.id);
+          .setPrayerTimePrayers(_user.id ?? '');
       if (searchQuery.isNotEmpty) {
         Provider.of<PrayerProvider>(context, listen: false)
-            .searchPrayers(searchQuery, _user.id);
+            .searchPrayers(searchQuery, _user.id ?? '');
       } else {
         await Provider.of<PrayerProvider>(context, listen: false)
-            .setPrayers(_user?.id);
+            .setPrayers(_user.id ?? '');
       }
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -224,11 +238,12 @@ class _EntryScreenState extends State<EntryScreen> {
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -238,26 +253,29 @@ class _EntryScreenState extends State<EntryScreen> {
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
   void _setDefaultSnooze(selectedDuration, selectedInterval, settingsId) async {
     try {
+      final userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
       await Provider.of<SettingsProvider>(context, listen: false)
           .updateSettings(
-        Provider.of<UserProvider>(context, listen: false).currentUser.id,
+        userId ?? '',
         key: SettingsKey.defaultSnoozeDuration,
         value: selectedDuration,
         settingsId: settingsId,
       );
       await Provider.of<SettingsProvider>(context, listen: false)
           .updateSettings(
-        Provider.of<UserProvider>(context, listen: false).currentUser.id,
+        userId ?? '',
         key: SettingsKey.defaultSnoozeFrequency,
         value: selectedInterval,
         settingsId: settingsId,
@@ -265,11 +283,12 @@ class _EntryScreenState extends State<EntryScreen> {
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -342,38 +361,44 @@ class _EntryScreenState extends State<EntryScreen> {
         child: BottomNavigationBar(
           currentIndex: _currentIndex > 4 ? 4 : _currentIndex,
           onTap: (index) async {
-            switch (index) {
-              case 2:
-                final prayers =
-                    Provider.of<PrayerProvider>(context, listen: false)
-                        .filteredPrayerTimeList;
-                if (prayers.length == 0) {
-                  message =
-                      'You must have at least one active prayer to start prayer time.';
-                  showInfoModal(message, 'PrayerTime', context);
-                } else {
+            try {
+              switch (index) {
+                case 2:
+                  final prayers =
+                      Provider.of<PrayerProvider>(context, listen: false)
+                          .filteredPrayerTimeList;
+                  if (prayers.length == 0) {
+                    message =
+                        'You must have at least one active prayer to start prayer time.';
+                    showInfoModal(message, 'PrayerTime', context);
+                  } else {
+                    AppCOntroller appCOntroller = Get.find();
+
+                    appCOntroller.setCurrentPage(index, true);
+                  }
+                  break;
+                case 1:
+                  Provider.of<PrayerProvider>(context, listen: false)
+                      .setEditMode(false, true);
+                  Provider.of<PrayerProvider>(context, listen: false)
+                      .setEditPrayer();
                   AppCOntroller appCOntroller = Get.find();
 
+                  appCOntroller.setCurrentPage(1, true);
+                  break;
+                case 4:
+                  Scaffold.of(context).openEndDrawer();
+                  break;
+                default:
+                  AppCOntroller appCOntroller = Get.find();
                   appCOntroller.setCurrentPage(index, true);
-                }
-                break;
-              case 1:
-                Provider.of<PrayerProvider>(context, listen: false)
-                    .setEditMode(false, true);
-                Provider.of<PrayerProvider>(context, listen: false)
-                    .setEditPrayer(null);
-                AppCOntroller appCOntroller = Get.find();
-
-                appCOntroller.setCurrentPage(1, true);
-                break;
-              case 4:
-                Scaffold.of(context).openEndDrawer();
-                break;
-              default:
-                AppCOntroller appCOntroller = Get.find();
-
-                appCOntroller.setCurrentPage(index, true);
-                break;
+                  break;
+              }
+            } catch (e, s) {
+              final user =
+                  Provider.of<UserProvider>(context, listen: false).currentUser;
+              BeStilDialog.showErrorDialog(
+                  context, StringUtils.errorOccured, user, s);
             }
           },
           showSelectedLabels: false,
@@ -433,7 +458,7 @@ class _EntryScreenState extends State<EntryScreen> {
             size: 16,
             color: AppColors.bottomNavIconColor,
           ),
-          title: "List",
+          title: "Prayers",
           padding: 7,
           key: _keyButton,
         ),
@@ -568,13 +593,13 @@ class TabNavigationItem {
   final String title;
   final Icon icon;
   final double padding;
-  final GlobalKey key;
+  final GlobalKey? key;
 
   TabNavigationItem({
-    @required this.page,
-    @required this.title,
-    @required this.icon,
-    @required this.padding,
+    required this.page,
+    required this.title,
+    required this.icon,
+    required this.padding,
     this.key,
   });
 }
