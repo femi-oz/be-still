@@ -861,7 +861,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
             ),
             SizedBox(height: 30),
             CustomToggle(
-              title: 'Enable notifications from Groups?',
+              title: 'Enable Alerts from Groups?',
               onChange: (bool value) async {
                 _settingsProvider.updateGroupPrefenceSettings(_currentUser.id,
                     key: 'EnableNotificationForAllGroups',
@@ -1510,7 +1510,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             ? GestureDetector(
                                 onTap: () async {
                                   const message =
-                                      'Are you sure you want to delete this group? \n\nAll the prayers in this group will be deleted.';
+                                      'Are you sure? \n\nAll members of this group will be removed, and this group and all the prayers in it will be permanently erased.';
                                   const method = 'Delete';
                                   const title = 'Delete Group';
                                   _openDeleteConfirmation(
