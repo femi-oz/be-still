@@ -44,7 +44,7 @@ class _PrayerCardState extends State<PrayerCard> {
       var _userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayerByUserId(_userId);
+          .setFollowedPrayerByUserId(_userId ?? '');
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 

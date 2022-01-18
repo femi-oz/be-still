@@ -33,7 +33,7 @@ class _DevotionPlansState extends State<DevotionPlans> {
         await Provider.of<MiscProvider>(context, listen: false)
             .setSearchQuery('');
         Provider.of<PrayerProvider>(context, listen: false)
-            .searchPrayers('', userId);
+            .searchPrayers('', userId ?? '');
       } catch (e, s) {
         final user =
             Provider.of<UserProvider>(context, listen: false).currentUser;

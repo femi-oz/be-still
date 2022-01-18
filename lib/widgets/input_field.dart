@@ -141,9 +141,9 @@ class _CustomInputState extends State<CustomInput> {
     await Provider.of<MiscProvider>(context, listen: false)
         .setSearchQuery(value);
     await Provider.of<PrayerProvider>(context, listen: false)
-        .searchPrayers(value, userId);
+        .searchPrayers(value, userId ?? '');
     await Provider.of<GroupPrayerProvider>(context, listen: false)
-        .searchPrayers(value, userId);
+        .searchPrayers(value, userId ?? '');
   }
 
   String? _validatorFn(String value) {

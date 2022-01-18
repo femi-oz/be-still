@@ -49,10 +49,10 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
       final isFollowedByAdmin = (currentGroup.groupUsers ?? []).any((element) =>
           element.role == GroupUserRole.admin && element.userId == user.id);
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .addToMyList(widget.prayerData.prayer?.id ?? '', user.id,
+          .addToMyList(widget.prayerData.prayer?.id ?? '', user.id ?? '',
               currentGroup.group?.id ?? '', isFollowedByAdmin);
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayerByUserId(user.id);
+          .setFollowedPrayerByUserId(user.id ?? '');
       BeStilDialog.hideLoading(context);
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(8, true);
@@ -87,9 +87,9 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
                   orElse: () => FollowedPrayerModel.defaultValue());
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .removeFromMyList(
-              followedPrayer.id, widget.prayerData.groupPrayer?.id ?? '');
+              followedPrayer.id ?? '', widget.prayerData.groupPrayer?.id ?? '');
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayerByUserId(_userId);
+          .setFollowedPrayerByUserId(_userId ?? '');
       BeStilDialog.hideLoading(context);
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(8, true);
@@ -225,7 +225,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
         .any((element) {
       if (element.prayerId == widget.prayerData.prayer?.id &&
           element.createdBy == _user.id &&
-          (element.isFollowedByAdmin)) {
+          (element.isFollowedByAdmin ?? false)) {
         return true;
       } else {
         return false;
@@ -241,7 +241,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
       if (followedPrayers.length > 0) {
         followedPrayers.forEach((element) async {
           await Provider.of<GroupPrayerProvider>(context, listen: false)
-              .removeFromMyList(element.id, element.userPrayerId);
+              .removeFromMyList(element.id ?? '', element.userPrayerId ?? '');
         });
       }
     } on HttpException catch (e, s) {
@@ -325,7 +325,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     (widget.prayerData.tags ?? []).retainWhere(
         (x) => eTags.remove(x.displayName) && x.userId == _user.id);
     (widget.prayerData.tags ?? []).forEach((element) {
-      tags += ' ' + element.displayName;
+      tags += ' ' + (element.displayName ?? '');
     });
 
     bool isOwner = widget.prayerData.prayer?.createdBy == _user.id;

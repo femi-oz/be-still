@@ -82,10 +82,10 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
         element.role == GroupUserRole.admin && element.userId == user.id);
     try {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .addToMyList(widget.prayerData.prayer?.id ?? '', user.id,
+          .addToMyList(widget.prayerData.prayer?.id ?? '', user.id ?? '',
               currentGroup.group?.id ?? '', isFollowedByAdmin);
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayerByUserId(user.id);
+          .setFollowedPrayerByUserId(user.id ?? '');
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();
@@ -120,9 +120,9 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                   orElse: () => FollowedPrayerModel.defaultValue());
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .removeFromMyList(
-              followedPrayer.id, widget.prayerData.groupPrayer?.id ?? '');
+              followedPrayer.id ?? '', widget.prayerData.groupPrayer?.id ?? '');
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayerByUserId(user.id);
+          .setFollowedPrayerByUserId(user.id ?? '');
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();
@@ -154,7 +154,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
               '${_user.firstName} ${_user.lastName} flagged a prayer as inappropriate',
               NotificationType.inappropriate_content,
               senderName.capitalizeFirst ?? '',
-              _user.id,
+              _user.id ?? '',
               receiverId,
               'Prayer flagged as innapropriate',
               widget.prayerData.groupPrayer?.id ?? '',
@@ -185,8 +185,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
           .getUserById(admin.userId ?? '');
       final adminData =
           Provider.of<UserProvider>(context, listen: false).selectedUser;
-      _sendNotification(group.group?.id ?? '', [adminData.pushToken],
-          adminData.id, group.group?.name ?? '');
+      _sendNotification(group.group?.id ?? '', [adminData.pushToken ?? ''],
+          adminData.id ?? '', group.group?.name ?? '');
       BeStilDialog.hideLoading(context);
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(8, true);
@@ -260,7 +260,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       if (followedPrayers.length > 0) {
         followedPrayers.forEach((element) async {
           await Provider.of<GroupPrayerProvider>(context, listen: false)
-              .removeFromMyList(element.id, element.userPrayerId);
+              .removeFromMyList(element.id ?? '', element.userPrayerId ?? '');
         });
       }
     } on HttpException catch (e, s) {

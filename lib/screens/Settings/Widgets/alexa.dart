@@ -26,10 +26,11 @@ class _AlexaSettingsState extends State<AlexaSettings> {
   _onChangeTime(value) {
     try {
       Provider.of<SettingsProvider>(context, listen: false).updateSettings(
-          Provider.of<UserProvider>(context, listen: false).currentUser.id,
+          Provider.of<UserProvider>(context, listen: false).currentUser.id ??
+              '',
           key: SettingsKey.pauseInterval,
           value: value,
-          settingsId: widget.settings.id);
+          settingsId: widget.settings.id ?? '');
     } catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -74,19 +75,19 @@ class _AlexaSettingsState extends State<AlexaSettings> {
               SizedBox(height: 20),
               CustomToggle(
                 title: 'Allow Alexa to notify me of my Prayer Time?',
-                onChange: (value) => setingProvider.updateSettings(userId,
+                onChange: (value) => setingProvider.updateSettings(userId ?? '',
                     key: SettingsKey.allowPrayerTimeNotification,
                     value: value,
-                    settingsId: widget.settings.id),
-                value: widget.settings.allowPrayerTimeNotification,
+                    settingsId: widget.settings.id ?? ''),
+                value: widget.settings.allowPrayerTimeNotification ?? false,
               ),
               CustomToggle(
                 title: 'Sync Notifications / Reminders with Alexa?',
-                onChange: (value) => setingProvider.updateSettings(userId,
+                onChange: (value) => setingProvider.updateSettings(userId ?? '',
                     key: SettingsKey.syncAlexa,
                     value: value,
-                    settingsId: widget.settings.id),
-                value: widget.settings.syncAlexa,
+                    settingsId: widget.settings.id ?? ''),
+                value: widget.settings.syncAlexa ?? false,
               ),
             ],
           ),
@@ -96,11 +97,11 @@ class _AlexaSettingsState extends State<AlexaSettings> {
               CustomSectionHeder('Prayer Time'),
               CustomToggle(
                 title: 'Enable Alexa to read prayers from My Prayers?',
-                onChange: (value) => setingProvider.updateSettings(userId,
+                onChange: (value) => setingProvider.updateSettings(userId ?? '',
                     key: SettingsKey.allowAlexaReadPrayer,
                     value: value,
-                    settingsId: widget.settings.id),
-                value: widget.settings.allowAlexaReadPrayer,
+                    settingsId: widget.settings.id ?? ''),
+                value: widget.settings.allowAlexaReadPrayer ?? false,
               ),
               Column(
                 children: [

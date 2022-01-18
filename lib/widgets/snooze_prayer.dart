@@ -38,10 +38,10 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
     selectedInterval =
         (widget.prayerData.userPrayer?.snoozeFrequency ?? '').isNotEmpty
             ? widget.prayerData.userPrayer?.snoozeFrequency ?? ''
-            : settings.defaultSnoozeFrequency;
+            : settings.defaultSnoozeFrequency ?? '';
     selectedDuration = (widget.prayerData.userPrayer?.snoozeDuration ?? 0) > 0
         ? widget.prayerData.userPrayer?.snoozeDuration ?? 0
-        : settings.defaultSnoozeDuration;
+        : settings.defaultSnoozeDuration ?? 0;
     snoozeDuration = settings.defaultSnoozeFrequency == "Weeks"
         ? snoozeWeeks
         : settings.defaultSnoozeFrequency == "Months"

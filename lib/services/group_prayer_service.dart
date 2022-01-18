@@ -245,8 +245,8 @@ class GroupPrayerService {
         // if (contactData[i] != null) {
         _prayerTagCollectionReference.doc(_prayerTagID).set(populatePrayerTag(
                 contactData[i],
-                user.id,
-                user.firstName,
+                user.id ?? '',
+                user.firstName ?? '',
                 message,
                 prayerId,
                 _prayerTagID)
@@ -265,8 +265,8 @@ class GroupPrayerService {
           title: '',
           email: email ?? '',
           message: message,
-          sender: user.firstName,
-          senderId: user.id,
+          sender: user.firstName ?? '',
+          senderId: user.id ?? '',
           template: MessageTemplate.fromData(template.data()!, template.id),
           receiver: contactData[i].displayName ?? '',
         );
@@ -274,15 +274,15 @@ class GroupPrayerService {
             title: '',
             phoneNumber: phoneNumber ?? '',
             message: message,
-            sender: user.firstName,
-            senderId: user.id,
+            sender: user.firstName ?? '',
+            senderId: user.id ?? '',
             template: MessageTemplate.fromData(template.data()!, template.id),
             receiver: contactData[i].displayName ?? '');
         // }
       }
     } catch (e) {
-      locator<LogService>().createLog(StringUtils.getErrorMessage(e), user.id,
-          'PRAYER/service/addPrayerTag');
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e),
+          user.id ?? '', 'PRAYER/service/addPrayerTag');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
@@ -590,8 +590,8 @@ class GroupPrayerService {
           .doc(hiddenPrayerId)
           .set(hiddenPrayer.toJson());
     } catch (e) {
-      locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e), user.id, 'PRAYER/service/hidePrayer');
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e),
+          user.id ?? '', 'PRAYER/service/hidePrayer');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }

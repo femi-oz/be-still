@@ -284,14 +284,14 @@ class _ReminderPickerState extends State<ReminderPicker> {
           _selectedHourString,
           _selectedMinuteString,
           scheduleDate,
-          userId,
+          userId ?? '',
           notificationText,
           selectedYear.toString(),
         );
       else
         await storeNotification(
           notificationText,
-          userId,
+          userId ?? '',
           title,
           description,
           selectedFrequency,

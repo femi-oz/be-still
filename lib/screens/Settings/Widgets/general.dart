@@ -226,7 +226,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   void _updateEmail(UserModel user) async {
     try {
       await Provider.of<UserProvider>(context, listen: false)
-          .updateEmail(_newEmail.text, user.id);
+          .updateEmail(_newEmail.text, user.id ?? '');
       BeStilDialog.showSuccessDialog(
         context,
         'Your email has been updated successfully. Verify your new email and re-login!',
@@ -375,7 +375,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
             ),
             SizedBox(height: 30),
             CustomEditField(
-              value: _currentUser.email,
+              value: _currentUser.email ?? '',
               onPressed: () {
                 setState(() => isVerified = false);
                 _update(_ModalType.email, context);
@@ -444,7 +444,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     var _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final _formKey = GlobalKey<FormState>();
     bool _autoValidate = false;
-    _newEmail.text = _user.email;
+    _newEmail.text = _user.email ?? '';
     final alert = AlertDialog(
       insetPadding: EdgeInsets.all(10),
       backgroundColor: AppColors.backgroundColor[1],

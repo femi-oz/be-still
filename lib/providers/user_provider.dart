@@ -44,7 +44,7 @@ class UserProvider with ChangeNotifier {
   Future returnUserToken(String id) async {
     try {
       return await _userService.getUserByIdFuture(id).then((value) {
-        _userToken = value.pushToken;
+        _userToken = value.pushToken ?? '';
         notifyListeners();
       });
     } catch (e) {

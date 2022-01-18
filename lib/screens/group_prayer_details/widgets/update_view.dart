@@ -241,7 +241,8 @@ class _UpdateView extends State<UpdateView> {
   Widget build(BuildContext context) {
     final prayerData = Provider.of<GroupPrayerProvider>(context).currentPrayer;
     var updates = prayerData.updates ?? [];
-    updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
+    updates.sort((a, b) => (b.modifiedOn ?? DateTime.now())
+        .compareTo(a.modifiedOn ?? DateTime.now()));
     updates = updates.where((element) => element.deleteStatus != -1).toList();
     return Container(
       child: SingleChildScrollView(

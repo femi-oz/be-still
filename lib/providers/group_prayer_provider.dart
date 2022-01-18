@@ -50,8 +50,9 @@ class GroupPrayerProvider with ChangeNotifier {
       _filteredPrayers = [];
       _prayerService.getPrayers(groupId).asBroadcastStream().listen(
         (data) {
-          _prayers =
-              data.where((e) => (e.groupPrayer?.deleteStatus ?? 0) > -1).toList();
+          _prayers = data
+              .where((e) => (e.groupPrayer?.deleteStatus ?? 0) > -1)
+              .toList();
           _filteredPrayers = _prayers;
           filterPrayers();
           notifyListeners();
@@ -117,9 +118,9 @@ class GroupPrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> setFollowedPrayerByUserId(String id) async {
+  Future<void> setFollowedPrayerByUserId(String? id) async {
     try {
-      _prayerService.getFollowedPrayersByUserId(id).then((prayer) {
+      _prayerService.getFollowedPrayersByUserId(id ?? '').then((prayer) {
         _followedPrayers = prayer;
         notifyListeners();
       });
@@ -316,18 +317,21 @@ class GroupPrayerProvider with ChangeNotifier {
       } else {
         filterPrayers();
         List<CombineGroupPrayerStream> filteredPrayers = _filteredPrayers
-            .where((CombineGroupPrayerStream data) => (data.prayer?.description ?? '')
-                .toLowerCase()
-                .contains(searchQuery.toLowerCase()))
+            .where((CombineGroupPrayerStream data) =>
+                (data.prayer?.description ?? '')
+                    .toLowerCase()
+                    .contains(searchQuery.toLowerCase()))
             .toList();
         for (int i = 0; i < _filteredPrayers.length; i++) {
           var hasMatch = (_filteredPrayers[i].updates ?? []).any((u) =>
-              u.description.toLowerCase().contains(searchQuery.toLowerCase()));
+              (u.description ?? '')
+                  .toLowerCase()
+                  .contains(searchQuery.toLowerCase()));
           if (hasMatch) filteredPrayers.add(_filteredPrayers[i]);
         }
         _filteredPrayers = filteredPrayers;
-        _filteredPrayers
-            .sort((a, b) => (b.prayer?.modifiedOn ?? DateTime.now()).compareTo((a.prayer?.modifiedOn ?? DateTime.now())));
+        _filteredPrayers.sort((a, b) => (b.prayer?.modifiedOn ?? DateTime.now())
+            .compareTo((a.prayer?.modifiedOn ?? DateTime.now())));
       }
     } catch (e) {
       rethrow;
@@ -383,15 +387,15 @@ class GroupPrayerProvider with ChangeNotifier {
       List<CombineGroupPrayerStream> allPrayers = [];
       if (_filterOption == Status.all) {
         favoritePrayers = prayers
-            .where(
-                (CombineGroupPrayerStream data) => (data.groupPrayer?.isFavorite ?? false))
+            .where((CombineGroupPrayerStream data) =>
+                (data.groupPrayer?.isFavorite ?? false))
             .toList();
         allPrayers = prayers;
       }
       if (_filterOption == Status.active) {
         favoritePrayers = prayers
-            .where(
-                (CombineGroupPrayerStream data) => (data.groupPrayer?.isFavorite ?? false))
+            .where((CombineGroupPrayerStream data) =>
+                (data.groupPrayer?.isFavorite ?? false))
             .toList();
         activePrayers = prayers
             .where((CombineGroupPrayerStream data) =>
@@ -401,8 +405,8 @@ class GroupPrayerProvider with ChangeNotifier {
       }
       if (_filterOption == Status.answered) {
         answeredPrayers = prayers
-            .where(
-                (CombineGroupPrayerStream data) => (data.prayer?.isAnswer ?? false) == true)
+            .where((CombineGroupPrayerStream data) =>
+                (data.prayer?.isAnswer ?? false) == true)
             .toList();
       }
       if (_filterOption == Status.archived) {
@@ -413,15 +417,16 @@ class GroupPrayerProvider with ChangeNotifier {
       }
       if (_filterOption == Status.following) {
         archivedPrayers = prayers
-            .where(
-                (CombineGroupPrayerStream data) => (data.prayer?.isGroup ?? false) == true)
+            .where((CombineGroupPrayerStream data) =>
+                (data.prayer?.isGroup ?? false) == true)
             .toList();
       }
       if (_filterOption == Status.snoozed) {
         snoozedPrayers = prayers
             .where((CombineGroupPrayerStream data) =>
                 (data.groupPrayer?.isSnoozed ?? false) == true &&
-                (data.groupPrayer?.snoozeEndDate ?? DateTime.now()).isAfter(DateTime.now()))
+                (data.groupPrayer?.snoozeEndDate ?? DateTime.now())
+                    .isAfter(DateTime.now()))
             .toList();
       }
       _filteredPrayers = [
@@ -431,8 +436,8 @@ class GroupPrayerProvider with ChangeNotifier {
         ...snoozedPrayers,
         ...answeredPrayers
       ];
-      _filteredPrayers
-          .sort((a, b) => (b.prayer?.modifiedOn ?? DateTime.now()).compareTo((a.prayer?.modifiedOn?? DateTime.now())));
+      _filteredPrayers.sort((a, b) => (b.prayer?.modifiedOn ?? DateTime.now())
+          .compareTo((a.prayer?.modifiedOn ?? DateTime.now())));
       _filteredPrayers = [...favoritePrayers, ..._filteredPrayers];
       List<CombineGroupPrayerStream> _distinct = [];
       var idSet = <String>{};

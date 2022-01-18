@@ -36,9 +36,9 @@ class _SharingSettingsState extends State<SharingSettings> {
       final userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
       await Provider.of<SettingsProvider>(context, listen: false)
-          .updateSharingSettings(userId,
+          .updateSharingSettings(userId ?? '',
               key: SettingsKey.churchName,
-              settingsId: settingProvider.sharingSettings.id,
+              settingsId: settingProvider.sharingSettings.id ?? '',
               value: _churchName.text);
 
       Navigator.pop(context);
@@ -65,9 +65,9 @@ class _SharingSettingsState extends State<SharingSettings> {
       final userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
       await Provider.of<SettingsProvider>(context, listen: false)
-          .updateSharingSettings(userId,
+          .updateSharingSettings(userId ?? '',
               key: SettingsKey.churchEmail,
-              settingsId: settingProvider.sharingSettings.id,
+              settingsId: settingProvider.sharingSettings.id ?? '',
               value: _churchEmail.text);
       Navigator.pop(context);
     } on HttpException catch (e, s) {
@@ -93,9 +93,9 @@ class _SharingSettingsState extends State<SharingSettings> {
       final userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
       await Provider.of<SettingsProvider>(context, listen: false)
-          .updateSharingSettings(userId,
+          .updateSharingSettings(userId ?? "",
               key: SettingsKey.webFormLink,
-              settingsId: settingProvider.sharingSettings.id,
+              settingsId: settingProvider.sharingSettings.id ?? '',
               value: _churchLink.text);
       Navigator.pop(context);
     } on HttpException catch (e, s) {
@@ -121,9 +121,9 @@ class _SharingSettingsState extends State<SharingSettings> {
       final userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
       await Provider.of<SettingsProvider>(context, listen: false)
-          .updateSharingSettings(userId,
+          .updateSharingSettings(userId ?? '',
               key: SettingsKey.churchPhone,
-              settingsId: settingProvider.sharingSettings.id,
+              settingsId: settingProvider.sharingSettings.id ?? '',
               value: _churchPhone.text);
       Navigator.pop(context);
     } on HttpException catch (e, s) {
@@ -147,7 +147,7 @@ class _SharingSettingsState extends State<SharingSettings> {
     final settingProvider = Provider.of<SettingsProvider>(context);
 
     final phone = settingProvider.sharingSettings.churchPhone != ''
-        ? settingProvider.sharingSettings.churchPhone.replaceAllMapped(
+        ? (settingProvider.sharingSettings.churchPhone ?? '').replaceAllMapped(
             RegExp(r'(\d{3})(\d{3})(\d+)'),
             (Match m) => "(${m[1]}) ${m[2]}-${m[3]}")
         : '---------';
@@ -181,9 +181,10 @@ class _SharingSettingsState extends State<SharingSettings> {
                   ),
                   SizedBox(height: 35),
                   CustomEditField(
-                    value: settingProvider.sharingSettings.churchName == ''
-                        ? '---------'
-                        : settingProvider.sharingSettings.churchName,
+                    value:
+                        (settingProvider.sharingSettings.churchName ?? '') == ''
+                            ? '---------'
+                            : settingProvider.sharingSettings.churchName ?? '',
                     onPressed: () {
                       _update(_ModalType.church, context);
                     },
@@ -192,9 +193,11 @@ class _SharingSettingsState extends State<SharingSettings> {
                   ),
                   SizedBox(height: 15),
                   CustomEditField(
-                    value: settingProvider.sharingSettings.churchEmail == ''
-                        ? '---------'
-                        : settingProvider.sharingSettings.churchEmail,
+                    value:
+                        (settingProvider.sharingSettings.churchEmail ?? '') ==
+                                ''
+                            ? '---------'
+                            : settingProvider.sharingSettings.churchEmail ?? '',
                     onPressed: () {
                       _update(_ModalType.email, context);
                     },
@@ -212,9 +215,11 @@ class _SharingSettingsState extends State<SharingSettings> {
                   ),
                   SizedBox(height: 15),
                   CustomEditField(
-                    value: settingProvider.sharingSettings.webFormlink == ''
-                        ? '---------'
-                        : settingProvider.sharingSettings.webFormlink,
+                    value:
+                        (settingProvider.sharingSettings.webFormlink ?? '') ==
+                                ''
+                            ? '---------'
+                            : settingProvider.sharingSettings.webFormlink ?? '',
                     onPressed: () {
                       _update(_ModalType.link, context);
                     },
@@ -236,10 +241,10 @@ class _SharingSettingsState extends State<SharingSettings> {
     bool _autoValidate = false;
     final sharingSettings =
         Provider.of<SettingsProvider>(context, listen: false).sharingSettings;
-    _churchEmail.text = sharingSettings.churchEmail;
-    _churchName.text = sharingSettings.churchName;
-    _churchPhone.text = sharingSettings.churchPhone;
-    _churchLink.text = sharingSettings.webFormlink;
+    _churchEmail.text = sharingSettings.churchEmail ?? '';
+    _churchName.text = sharingSettings.churchName ?? '';
+    _churchPhone.text = sharingSettings.churchPhone ?? '';
+    _churchLink.text = sharingSettings.webFormlink ?? '';
     final alert = AlertDialog(
       insetPadding: EdgeInsets.all(10),
       backgroundColor: AppColors.backgroundColor[1],

@@ -56,13 +56,13 @@ class _GroupCreatedState extends State<GroupCreated> {
           subject: 'Invitaion to join ${widget.groupName} group',
           recipients: [],
           body:
-              '''${GetUtils.capitalizeFirst(user.firstName)} has invited you to join ${widget.groupName} Group on the Be Still App
+              '''${GetUtils.capitalizeFirst(user.firstName ?? '')} has invited you to join ${widget.groupName} Group on the Be Still App
 Click here ${'https://' + FlavorConfig.instance.values.dynamicLink + url.path} to join ''');
       await FlutterEmailSender.send(email);
     } else {
       await sendSMS(
           message:
-              '''${GetUtils.capitalizeFirst(user.firstName)} has invited you to join ${widget.groupName} Group on the Be Still App
+              '''${GetUtils.capitalizeFirst(user.firstName ?? '')} has invited you to join ${widget.groupName} Group on the Be Still App
 Click here ${'https://' + FlavorConfig.instance.values.dynamicLink + url.path} to join
    ''',
           recipients: []).catchError((onError) {

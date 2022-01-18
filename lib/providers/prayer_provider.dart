@@ -52,7 +52,9 @@ class PrayerProvider with ChangeNotifier {
       if (_firebaseAuth.currentUser == null) return null;
       _prayerService.getPrayers(userId).asBroadcastStream().listen(
         (data) {
-          _prayers = data.where((e) => e.userPrayer.deleteStatus > -1).toList();
+          _prayers = data
+              .where((e) => (e.userPrayer?.deleteStatus ?? 0) > -1)
+              .toList();
           filterPrayers();
           notifyListeners();
         },
@@ -94,17 +96,20 @@ class PrayerProvider with ChangeNotifier {
     try {
       _prayerService.getPrayers(userId).asBroadcastStream().listen(
         (data) {
-          _prayers = data.where((e) => e.userPrayer.deleteStatus > -1).toList();
-          _prayers.sort(
-              (a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
+          _prayers = data
+              .where((e) => (e.userPrayer?.deleteStatus ?? 0) > -1)
+              .toList();
+          _prayers.sort((a, b) => (b.prayer?.modifiedOn ?? DateTime.now())
+              .compareTo(a.prayer?.modifiedOn ?? DateTime.now()));
 
           _filteredPrayerTimeList = _prayers
               .where((e) =>
-                  e.userPrayer.status.toLowerCase() ==
+                  (e.userPrayer?.status ?? '').toLowerCase() ==
                   Status.active.toLowerCase())
               .toList();
           var favoritePrayers = _prayers
-              .where((CombinePrayerStream e) => e.userPrayer.isFavorite)
+              .where(
+                  (CombinePrayerStream e) => e.userPrayer?.isFavorite ?? false)
               .toList();
 
           _filteredPrayerTimeList = [
@@ -114,7 +119,7 @@ class PrayerProvider with ChangeNotifier {
           List<CombinePrayerStream> _distinct = [];
           var idSet = <String>{};
           for (var e in _filteredPrayerTimeList) {
-            if (idSet.add(e.prayer.id)) {
+            if (idSet.add(e.prayer?.id ?? '')) {
               _distinct.add(e);
             }
           }
@@ -135,22 +140,25 @@ class PrayerProvider with ChangeNotifier {
         filterPrayers();
 
         List<CombinePrayerStream> filteredPrayers = _filteredPrayers
-            .where((CombinePrayerStream data) => data.prayer.description
-                .toLowerCase()
-                .contains(searchQuery.toLowerCase()))
+            .where((CombinePrayerStream data) =>
+                (data.prayer?.description ?? '')
+                    .toLowerCase()
+                    .contains(searchQuery.toLowerCase()))
             .toList();
         for (int i = 0; i < _filteredPrayers.length; i++) {
           var hasMatch = _filteredPrayers[i].updates.any((u) =>
-              u.description.toLowerCase().contains(searchQuery.toLowerCase()));
+              (u.description ?? '')
+                  .toLowerCase()
+                  .contains(searchQuery.toLowerCase()));
           if (hasMatch) filteredPrayers.add(_filteredPrayers[i]);
         }
         _filteredPrayers = filteredPrayers;
-        _filteredPrayers
-            .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
+        _filteredPrayers.sort((a, b) => (b.prayer?.modifiedOn ?? DateTime.now())
+            .compareTo(a.prayer?.modifiedOn ?? DateTime.now()));
         List<CombinePrayerStream> _distinct = [];
         var idSet = <String>{};
         for (var e in _filteredPrayers) {
-          if (idSet.add(e.prayer.id)) {
+          if (idSet.add(e.prayer?.id ?? "")) {
             _distinct.add(e);
           }
         }
@@ -195,42 +203,45 @@ class PrayerProvider with ChangeNotifier {
       List<CombinePrayerStream> allPrayers = [];
       if (_filterOption == Status.all) {
         favoritePrayers = prayers
-            .where((CombinePrayerStream data) => data.userPrayer.isFavorite)
+            .where((CombinePrayerStream data) =>
+                data.userPrayer?.isFavorite ?? false)
             .toList();
         allPrayers = prayers;
       }
       if (_filterOption == Status.active) {
         favoritePrayers = prayers
             .where((CombinePrayerStream data) =>
-                data.userPrayer.isFavorite && !data.userPrayer.isSnoozed)
+                (data.userPrayer?.isFavorite ?? false) &&
+                !(data.userPrayer?.isSnoozed ?? false))
             .toList();
         activePrayers = prayers
             .where((CombinePrayerStream data) =>
-                data.userPrayer.status.toLowerCase() ==
+                (data.userPrayer?.status ?? '').toLowerCase() ==
                 Status.active.toLowerCase())
             .toList();
       }
       if (_filterOption == Status.answered) {
         answeredPrayers = prayers
-            .where((CombinePrayerStream data) => data.prayer.isAnswer == true)
+            .where((CombinePrayerStream data) => data.prayer?.isAnswer == true)
             .toList();
       }
       if (_filterOption == Status.archived) {
         archivedPrayers = prayers
             .where((CombinePrayerStream data) =>
-                data.userPrayer.isArchived == true)
+                data.userPrayer?.isArchived == true)
             .toList();
       }
       if (_filterOption == Status.snoozed) {
         snoozedPrayers = prayers
             .where((CombinePrayerStream data) =>
-                data.userPrayer.isSnoozed == true &&
-                data.userPrayer.snoozeEndDate.isAfter(DateTime.now()))
+                data.userPrayer?.isSnoozed == true &&
+                (data.userPrayer?.snoozeEndDate ?? DateTime.now())
+                    .isAfter(DateTime.now()))
             .toList();
       }
       if (_filterOption == Status.following) {
         followingPrayers = prayers
-            .where((CombinePrayerStream data) => data.prayer.isGroup)
+            .where((CombinePrayerStream data) => data.prayer?.isGroup ?? false)
             .toList();
       }
       _filteredPrayers = [
@@ -241,13 +252,13 @@ class PrayerProvider with ChangeNotifier {
         ...answeredPrayers,
         ...followingPrayers
       ];
-      _filteredPrayers
-          .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
+      _filteredPrayers.sort((a, b) => (b.prayer?.modifiedOn ?? DateTime.now())
+          .compareTo(a.prayer?.modifiedOn ?? DateTime.now()));
       _filteredPrayers = [...favoritePrayers, ..._filteredPrayers];
       List<CombinePrayerStream> _distinct = [];
       var idSet = <String>{};
       for (var e in _filteredPrayers) {
-        if (idSet.add(e.prayer.id)) {
+        if (idSet.add(e.prayer?.id ?? '')) {
           _distinct.add(e);
         }
       }
@@ -264,13 +275,14 @@ class PrayerProvider with ChangeNotifier {
       if (_firebaseAuth.currentUser == null) return null;
       var prayersToUnsnooze = data
           .where((e) =>
-              e.userPrayer.snoozeEndDate.isBefore(DateTime.now()) &&
-              e.userPrayer.isSnoozed == true)
+              (e.userPrayer?.snoozeEndDate ?? DateTime.now())
+                  .isBefore(DateTime.now()) &&
+              e.userPrayer?.isSnoozed == true)
           .toList();
 
       for (int i = 0; i < prayersToUnsnooze.length; i++) {
-        await locator<PrayerService>()
-            .unSnoozePrayer(DateTime.now(), prayersToUnsnooze[i].userPrayer.id);
+        await locator<PrayerService>().unSnoozePrayer(
+            DateTime.now(), prayersToUnsnooze[i].userPrayer?.id ?? '');
       }
     } catch (e) {
       rethrow;
@@ -378,25 +390,25 @@ class PrayerProvider with ChangeNotifier {
       final settings = await locator<SettingsService>().getSettings(userId);
       final autoDeleteAnswered = settings.includeAnsweredPrayerAutoDelete;
       final autoDeleteDuration = settings.archiveAutoDeleteMins;
-      if (autoDeleteDuration > 0) {
+      if ((autoDeleteDuration ?? 0) > 0) {
         final archivedPrayers = data
             .where((CombinePrayerStream data) =>
-                data.userPrayer.isArchived == true)
+                data.userPrayer?.isArchived == true)
             .toList();
         List<CombinePrayerStream> toDelete = archivedPrayers;
-        if (!autoDeleteAnswered) {
+        if (!(autoDeleteAnswered ?? false)) {
           toDelete = toDelete
-              .where((CombinePrayerStream e) => e.prayer.isAnswer == false)
+              .where((CombinePrayerStream e) => e.prayer?.isAnswer == false)
               .toList();
         }
 
         for (int i = 0; i < toDelete.length; i++) {
-          if ((toDelete[i].userPrayer.archivedDate ?? DateTime.now())
-                  .add(Duration(minutes: autoDeleteDuration))
+          if ((toDelete[i].userPrayer?.archivedDate ?? DateTime.now())
+                  .add(Duration(minutes: autoDeleteDuration ?? 0))
                   .isBefore(DateTime.now()) &&
               autoDeleteDuration != 0) {
             final _notifications = notifications
-                .where((e) => e.entityId == toDelete[i].userPrayer.id)
+                .where((e) => e.entityId == toDelete[i].userPrayer?.id)
                 .toList();
 
             _notifications.forEach((e) async {
@@ -407,7 +419,7 @@ class PrayerProvider with ChangeNotifier {
               await locator<NotificationService>()
                   .removeLocalNotification(e.id ?? '');
             });
-            deletePrayer(toDelete[i].userPrayer.id);
+            deletePrayer(toDelete[i].userPrayer?.id ?? '');
           }
         }
       }

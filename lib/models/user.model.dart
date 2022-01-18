@@ -1,32 +1,32 @@
 import 'package:flutter/services.dart';
 
 class UserModel {
-  String id;
-  String firstName;
-  String lastName;
-  String email;
-  String keyReference;
-  int churchId;
-  String dateOfBirth;
-  String createdBy;
-  String pushToken;
-  DateTime createdOn;
-  String modifiedBy;
-  DateTime modifiedOn;
+  String? id;
+  String? firstName;
+  String? lastName;
+  String? email;
+  String? keyReference;
+  int? churchId;
+  String? dateOfBirth;
+  String? createdBy;
+  String? pushToken;
+  DateTime? createdOn;
+  String? modifiedBy;
+  DateTime? modifiedOn;
 
   UserModel({
-    required this.id,
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-    required this.keyReference,
-    required this.churchId,
-    required this.dateOfBirth,
-    required this.pushToken,
-    required this.createdBy,
-    required this.createdOn,
-    required this.modifiedBy,
-    required this.modifiedOn,
+    this.id,
+    this.firstName,
+    this.lastName,
+    this.email,
+    this.keyReference,
+    this.churchId,
+    this.dateOfBirth,
+    this.pushToken,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
   });
 
   factory UserModel.defaultValue() => UserModel(

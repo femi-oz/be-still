@@ -192,7 +192,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                                     context,
                                                     listen: false)
                                                 .setFollowedPrayerByUserId(
-                                                    _currentUser.id);
+                                                    _currentUser.id ?? '');
                                             _getPrayers(e);
                                             appCOntroller.setCurrentPage(
                                                 8, true);

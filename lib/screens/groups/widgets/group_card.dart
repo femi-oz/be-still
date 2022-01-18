@@ -45,11 +45,11 @@ class _GroupCardState extends State<GroupCard> {
               NotificationType.request,
               userName,
               userId,
-              admin.id,
+              admin.id ?? '',
               title,
               '',
               groupData.group?.id ?? '',
-              [admin.pushToken]);
+              [admin.pushToken ?? '']);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();
@@ -74,7 +74,9 @@ class _GroupCardState extends State<GroupCard> {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<GroupProvider>(context, listen: false).autoJoinGroup(
-          groupId, user.id, (user.firstName) + ' ' + (user.lastName));
+          groupId,
+          user.id ?? '',
+          (user.firstName ?? '') + ' ' + (user.lastName ?? ''));
       Navigator.of(context).pop();
       AppCOntroller appCOntroller = Get.find();
       appCOntroller.setCurrentPage(3, true);
@@ -113,8 +115,11 @@ class _GroupCardState extends State<GroupCard> {
     });
     final admin = (widget.groupData.groupUsers ?? [])
         .firstWhere((e) => e.role == GroupUserRole.admin);
-    final adminData = await Provider.of<UserProvider>(context, listen: false)
+
+    await Provider.of<UserProvider>(context, listen: false)
         .getUserById(admin.userId ?? '');
+    UserModel adminData =
+        Provider.of<UserProvider>(context, listen: false).selectedUser;
 
     FocusScope.of(context).unfocus();
     AlertDialog dialog = AlertDialog(
@@ -354,10 +359,11 @@ class _GroupCardState extends State<GroupCard> {
                                     _requestToJoinGroup(
                                       this.widget.groupData,
                                       Provider.of<UserProvider>(context,
-                                              listen: false)
-                                          .currentUser
-                                          .id,
-                                      '${(Provider.of<UserProvider>(context, listen: false).currentUser.firstName) + ' ' + (Provider.of<UserProvider>(context, listen: false).currentUser.lastName)}',
+                                                  listen: false)
+                                              .currentUser
+                                              .id ??
+                                          '',
+                                      '${(Provider.of<UserProvider>(context, listen: false).currentUser.firstName ?? '') + ' ' + (Provider.of<UserProvider>(context, listen: false).currentUser.lastName ?? '')}',
                                       adminData,
                                     );
                                   }

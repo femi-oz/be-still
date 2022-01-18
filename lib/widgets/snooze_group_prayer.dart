@@ -40,14 +40,14 @@ class _SnoozeGroupPrayerState extends State<SnoozeGroupPrayer> {
                     '')
                 .isNotEmpty
             ? widget.prayerData.groupPrayer?.snoozeFrequency ?? ''
-            : settings.defaultSnoozeFrequency;
+            : settings.defaultSnoozeFrequency ?? '';
     selectedDuration =
         ((widget.prayerData.groupPrayer ?? GroupPrayerModel.defaultValue())
                         .snoozeDuration ??
                     0) >
                 0
             ? widget.prayerData.groupPrayer?.snoozeDuration ?? 0
-            : settings.defaultSnoozeDuration;
+            : settings.defaultSnoozeDuration ?? 0;
     snoozeDuration = settings.defaultSnoozeFrequency == "Weeks"
         ? snoozeWeeks
         : settings.defaultSnoozeFrequency == "Months"

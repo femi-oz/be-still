@@ -349,7 +349,7 @@ class GroupProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future updateGroupSettings(String userId,
+  Future updateGroupSettings(String? userId,
       {String key = '', dynamic value, String settingsId = ''}) async {
     try {
       if (_firebaseAuth.currentUser == null)

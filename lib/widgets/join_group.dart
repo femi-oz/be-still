@@ -207,12 +207,13 @@ class JoinGroup {
                               _requestToJoinGroup(
                                   group,
                                   Provider.of<UserProvider>(context,
-                                          listen: false)
-                                      .currentUser
-                                      .id,
+                                              listen: false)
+                                          .currentUser
+                                          .id ??
+                                      '',
                                   // StringUtils.joinRequestStatusPending,
-                                  '${Provider.of<UserProvider>(context, listen: false).currentUser.firstName + ' ' + Provider.of<UserProvider>(context, listen: false).currentUser.lastName}',
-                                  adminData.id,
+                                  '${Provider.of<UserProvider>(context, listen: false).currentUser.firstName ?? '' + ' ' + (Provider.of<UserProvider>(context, listen: false).currentUser.lastName ?? '')}',
+                                  adminData.id ?? '',
                                   context);
                             }),
                       ),
@@ -259,7 +260,7 @@ class JoinGroup {
               title,
               '',
               groupData.group?.id ?? '',
-              [receiverData.pushToken]);
+              [receiverData.pushToken ?? '']);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
     } catch (e) {

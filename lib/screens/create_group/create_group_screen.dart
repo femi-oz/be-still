@@ -87,11 +87,12 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         createdBy: _user.id,
         createdOn: DateTime.now(),
       );
-      final fullName = '${(_user.firstName) + ' ' + (_user.lastName)}';
+      final fullName =
+          '${(_user.firstName ?? '') + ' ' + (_user.lastName ?? '')}';
 
       if (!isEdit) {
-        await Provider.of<GroupProvider>(context, listen: false)
-            .addGroup(groupData, _user.id, fullName, _requireAdminApproval);
+        await Provider.of<GroupProvider>(context, listen: false).addGroup(
+            groupData, _user.id ?? '', fullName, _requireAdminApproval);
         await Provider.of<GroupPrayerProvider>(context, listen: false)
             .setGroupPrayers(groupData.id ?? '');
         BeStilDialog.hideLoading(context);
@@ -105,7 +106,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
           group.group?.id ?? '',
           _requireAdminApproval,
           settingsId,
-          _user.id,
+          _user.id ?? '',
         );
         await Provider.of<GroupPrayerProvider>(context, listen: false)
             .setGroupPrayers(group.group?.id ?? '');

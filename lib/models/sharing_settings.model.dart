@@ -1,32 +1,32 @@
 class SharingSettingsModel {
-  final String id;
-  final String userId;
-  final bool enableSharingViaText;
-  final bool enableSharingViaEmail;
-  final String churchId;
-  final String churchName;
-  final String churchPhone;
-  final String churchEmail;
-  final String webFormlink;
-  final String createdBy;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
+  final String? id;
+  final String? userId;
+  final bool? enableSharingViaText;
+  final bool? enableSharingViaEmail;
+  final String? churchId;
+  final String? churchName;
+  final String? churchPhone;
+  final String? churchEmail;
+  final String? webFormlink;
+  final String? createdBy;
+  final DateTime? createdOn;
+  final String? modifiedBy;
+  final DateTime? modifiedOn;
 
   const SharingSettingsModel({
-    required this.id,
-    required this.userId,
-    required this.enableSharingViaEmail,
-    required this.enableSharingViaText,
-    required this.churchId,
-    required this.churchName,
-    required this.churchPhone,
-    required this.churchEmail,
-    required this.webFormlink,
-    required this.createdBy,
-    required this.createdOn,
-    required this.modifiedBy,
-    required this.modifiedOn,
+    this.id,
+    this.userId,
+    this.enableSharingViaEmail,
+    this.enableSharingViaText,
+    this.churchId,
+    this.churchName,
+    this.churchPhone,
+    this.churchEmail,
+    this.webFormlink,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
   });
 
   factory SharingSettingsModel.defaultValue() => SharingSettingsModel(

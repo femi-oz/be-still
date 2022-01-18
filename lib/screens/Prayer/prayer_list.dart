@@ -76,7 +76,7 @@ class _PrayerListState extends State<PrayerList> {
                   .localNotifications;
 
           Provider.of<PrayerProvider>(context, listen: false)
-              .checkPrayerValidity(user.id, notifications);
+              .checkPrayerValidity(user.id ?? '', notifications);
         } catch (e, s) {
           BeStilDialog.hideLoading(context);
           final user =
@@ -123,13 +123,13 @@ class _PrayerListState extends State<PrayerList> {
       final searchQuery =
           Provider.of<MiscProvider>(context, listen: false).searchQuery;
       await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayerTimePrayers(_user.id);
+          .setPrayerTimePrayers(_user.id ?? '');
       if (searchQuery.isNotEmpty) {
         Provider.of<PrayerProvider>(context, listen: false)
-            .searchPrayers(searchQuery, _user.id);
+            .searchPrayers(searchQuery, _user.id ?? '');
       } else {
         await Provider.of<PrayerProvider>(context, listen: false)
-            .setPrayers(_user.id);
+            .setPrayers(_user.id ?? '');
       }
     } on HttpException catch (e, s) {
       final user =
@@ -331,9 +331,10 @@ class _PrayerListState extends State<PrayerList> {
                                           onTap: () => onTapCard(prayers[i]),
                                           child: PrayerCard(
                                             prayerData: prayers[i],
-                                            timeago: DateFormatter(prayers[i]
-                                                        .prayer ??
-                                                    PrayerModel.defaultValue()
+                                            timeago: DateFormatter((prayers[i]
+                                                                .prayer ??
+                                                            PrayerModel
+                                                                .defaultValue())
                                                         .modifiedOn ??
                                                     DateTime.now())
                                                 .format(),

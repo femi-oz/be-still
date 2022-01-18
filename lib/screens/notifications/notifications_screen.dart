@@ -39,7 +39,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       UserModel _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<NotificationProvider>(context, listen: false)
-          .setUserNotifications(_user.id);
+          .setUserNotifications(_user.id ?? '');
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -256,7 +256,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
       if ((notification.groupId ?? '').isNotEmpty)
         await Provider.of<GroupProvider>(context, listen: false)
-            .setCurrentGroupById(notification.groupId ?? '', userId);
+            .setCurrentGroupById(notification.groupId ?? '', userId ?? '');
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .setPrayerFuture(notification.prayerId ?? '');
 
@@ -289,7 +289,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       final admin =
           Provider.of<UserProvider>(context, listen: false).currentUser; //admin
       final groupData = await Provider.of<GroupProvider>(context, listen: false)
-          .getGroupFuture(groupId, admin.id); //group
+          .getGroupFuture(groupId, admin.id ?? ''); //group
       final groupRequest = (groupData.groupRequests ?? [])
           .firstWhere((e) => e.userId == requestor.id);
       await Provider.of<GroupProvider>(context, listen: false)
@@ -321,7 +321,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       final admin =
           Provider.of<UserProvider>(context, listen: false).currentUser; //admin
       final groupData = await Provider.of<GroupProvider>(context, listen: false)
-          .getGroupFuture(groupId, admin.id); //group
+          .getGroupFuture(groupId, admin.id ?? ''); //group
       final groupRequest = (groupData.groupRequests ?? [])
           .firstWhere((e) => e.userId == requestor.id);
       await Provider.of<GroupProvider>(context, listen: false).acceptRequest(
@@ -334,8 +334,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           .sendPushNotification(
               'Your request to join this group has been accepted.',
               NotificationType.accept_request,
-              admin.firstName,
-              admin.id,
+              admin.firstName ?? '',
+              admin.id ?? '',
               receiverId,
               'Request Accepted',
               '',
@@ -409,7 +409,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             final userId = Provider.of<UserProvider>(context).currentUser.id;
             return FutureBuilder<CombineGroupUserStream>(
                 future: Provider.of<GroupProvider>(context)
-                    .getGroupFuture(notification.groupId, userId),
+                    .getGroupFuture(notification.groupId, userId ?? ""),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData || snapshot.hasError)
                     return SizedBox.shrink();
@@ -503,7 +503,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           .getGroupFuture(
                                                               notification
                                                                   .groupId,
-                                                              userId),
+                                                              userId ?? ''),
                                                       builder:
                                                           (context, snapshot) {
                                                         if (!snapshot.hasData)
@@ -626,7 +626,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     Provider.of<UserProvider>(context).currentUser.id;
                 return FutureBuilder<CombineGroupUserStream>(
                     future: Provider.of<GroupProvider>(context)
-                        .getGroupFuture(notification.groupId, userId),
+                        .getGroupFuture(notification.groupId, userId ?? ''),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData || snapshot.hasError)
                         return SizedBox.shrink();
@@ -1138,7 +1138,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     Provider.of<UserProvider>(context).currentUser.id;
                 return FutureBuilder<CombineGroupUserStream>(
                     future: Provider.of<GroupProvider>(context)
-                        .getGroupFuture(notification.groupId, userId),
+                        .getGroupFuture(notification.groupId, userId ?? ''),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData || snapshot.hasError)
                         return SizedBox.shrink();
@@ -1660,7 +1660,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     Provider.of<UserProvider>(context).currentUser.id;
                 return FutureBuilder<CombineGroupUserStream>(
                     future: Provider.of<GroupProvider>(context)
-                        .getGroupFuture(notification.groupId, userId),
+                        .getGroupFuture(notification.groupId, userId ?? ''),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData || snapshot.hasError)
                         return SizedBox.shrink();

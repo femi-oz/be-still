@@ -74,24 +74,24 @@ class _GroupToolsState extends State<GroupTools> {
                     element.userId == _currentUser.id);
         followedPrayers.forEach((element) async {
           await Provider.of<GroupPrayerProvider>(context, listen: false)
-              .removeFromMyList(element.id, element.userPrayerId);
+              .removeFromMyList(element.id ?? '', element.userPrayerId ?? '');
         });
         final adminData =
             Provider.of<UserProvider>(context, listen: false).selectedUser;
         await sendPushNotification(
             '${_currentUser.firstName} has left your group ${data.group?.name}',
             NotificationType.leave_group,
-            _currentUser.firstName,
-            _currentUser.id,
-            adminData.id,
+            _currentUser.firstName ?? '',
+            _currentUser.id ?? '',
+            adminData.id ?? '',
             'Groups',
             data.group?.id ?? '',
-            [adminData.pushToken]);
+            [adminData.pushToken ?? '']);
         BeStilDialog.hideLoading(context);
         AppCOntroller appCOntroller = Get.find();
         appCOntroller.setCurrentPage(3, true);
         await Provider.of<GroupProvider>(context, listen: false)
-            .setUserGroups(_currentUser.id);
+            .setUserGroups(_currentUser.id ?? '');
         Navigator.pop(context);
         Navigator.pop(context);
       }

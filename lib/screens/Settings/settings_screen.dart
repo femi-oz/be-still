@@ -47,7 +47,7 @@ class _SettingsScreenPage extends State<SettingsScreen>
         await Provider.of<MiscProvider>(context, listen: false)
             .setSearchQuery('');
         await Provider.of<PrayerProvider>(context, listen: false)
-            .searchPrayers('', userId);
+            .searchPrayers('', userId ?? '');
       } catch (e, s) {
         final user =
             Provider.of<UserProvider>(context, listen: false).currentUser;

@@ -33,9 +33,10 @@ class _SharePrayerState extends State<SharePrayer> {
     final _churchEmail = Provider.of<SettingsProvider>(context, listen: false)
         .sharingSettings
         .churchEmail;
-    final _prayer = widget.prayerData.prayer?.description ?? ''.capitalizeFirst;
-    final firstName = _user.firstName.capitalizeFirst;
-    final lastName = _user.lastName.capitalizeFirst;
+    final _prayer =
+        widget.prayerData.prayer?.description ?? ''.capitalizeFirst ?? '';
+    final firstName = _user.firstName ?? ''.capitalizeFirst ?? '';
+    final lastName = _user.lastName ?? ''.capitalizeFirst ?? '';
     final _footerText =
         '''$firstName $lastName shared this prayer request with you from the Be Still app, which allows you to create a prayer list for yourself or a group of friends. Learn more about Be Still at 
 https://www.bestillapp.com.''';
@@ -55,7 +56,7 @@ $_prayer
 
 $_footerText''',
       subject: 'Prayer Request',
-      recipients: isChurch ? [_churchEmail] : [],
+      recipients: isChurch ? [_churchEmail ?? ''] : [],
       isHTML: false,
     );
 
@@ -73,7 +74,7 @@ $_footerText''',
     await sendSMS(
             message:
                 "Please pray for $_prayer (${DateFormat('dd MMM yyyy').format(widget.prayerData.prayer?.createdOn ?? DateTime.now())}) ${_textUpdatesToString != '' ? ' $_textUpdatesToString \n\n' : '\n\n'}$_footerText",
-            recipients: isChurch ? [_churchPhone] : [])
+            recipients: isChurch ? [_churchPhone ?? ''] : [])
         .catchError((onError) {
       print(onError);
     });

@@ -62,7 +62,7 @@ class _AddUpdateState extends State<AddUpdate> {
         await Provider.of<MiscProvider>(context, listen: false)
             .setSearchQuery('');
         Provider.of<PrayerProvider>(context, listen: false)
-            .searchPrayers('', userId);
+            .searchPrayers('', userId ?? '');
       } on HttpException catch (e, s) {
         final user =
             Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -123,8 +123,8 @@ class _AddUpdateState extends State<AddUpdate> {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
-      Provider.of<LogProvider>(context, listen: false).setErrorLog(
-          e.toString(), userId, 'ADD_PRAYER_UPDATE/screen/onTextChange_tag');
+      Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
+          userId ?? '', 'ADD_PRAYER_UPDATE/screen/onTextChange_tag');
     }
   }
 
@@ -160,7 +160,8 @@ class _AddUpdateState extends State<AddUpdate> {
             context, StringUtils.getErrorMessage(e), user, s);
       } else {
         await Provider.of<PrayerProvider>(context, listen: false)
-            .addPrayerUpdate(user.id, _descriptionController.text, prayerId);
+            .addPrayerUpdate(
+                user.id ?? '', _descriptionController.text, prayerId);
 
         contacts.forEach((s) {
           if (!_descriptionController.text.contains(s.displayName ?? '')) {
@@ -444,7 +445,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                   ? AppColors.lightBlue5.withOpacity(0.5)
                                   : Colors.blue)),
                       onTap: () => _descriptionController.text.isNotEmpty
-                          ? _save(prayerData.prayer.id)
+                          ? _save(prayerData.prayer?.id ?? '')
                           : null,
                     ),
                   ],
@@ -496,11 +497,11 @@ class _AddUpdateState extends State<AddUpdate> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            prayerData.prayer.userId != currentUser.id
+                            prayerData.prayer?.userId != currentUser.id
                                 ? Container(
                                     margin: EdgeInsets.only(bottom: 20),
                                     child: Text(
-                                      prayerData.prayer.createdBy,
+                                      prayerData.prayer?.createdBy ?? '',
                                       style: AppTextStyles.regularText16b
                                           .copyWith(
                                               color: AppColors.lightBlue4),
@@ -524,7 +525,8 @@ class _AddUpdateState extends State<AddUpdate> {
                                               Text(
                                                 intl.DateFormat(
                                                         'hh:mma | MM.dd.yyyy')
-                                                    .format(u.modifiedOn),
+                                                    .format(u.modifiedOn ??
+                                                        DateTime.now()),
                                                 style: AppTextStyles
                                                     .regularText18b
                                                     .copyWith(
@@ -547,7 +549,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                         padding: EdgeInsets.all(20),
                                         child: Center(
                                           child: Text(
-                                            u.description,
+                                            u.description ?? '',
                                             style: AppTextStyles.regularText16b
                                                 .copyWith(
                                                     color:
@@ -583,7 +585,8 @@ class _AddUpdateState extends State<AddUpdate> {
                                             Text(
                                               intl.DateFormat(' MM.dd.yyyy')
                                                   .format(prayerData
-                                                      .prayer.modifiedOn),
+                                                          .prayer?.modifiedOn ??
+                                                      DateTime.now()),
                                               style: AppTextStyles
                                                   .regularText18b
                                                   .copyWith(
@@ -610,7 +613,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                           vertical: 20.0, horizontal: 20),
                                       child: Center(
                                         child: Text(
-                                          prayerData.prayer.description,
+                                          prayerData.prayer?.description ?? '',
                                           style: AppTextStyles.regularText16b
                                               .copyWith(
                                                   color: AppColors

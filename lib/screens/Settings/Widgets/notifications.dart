@@ -31,10 +31,11 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
   setEmailUpdateFrequency(value) {
     try {
       Provider.of<SettingsProvider>(context, listen: false).updateSettings(
-          Provider.of<UserProvider>(context, listen: false).currentUser.id,
+          Provider.of<UserProvider>(context, listen: false).currentUser.id ??
+              '',
           key: SettingsKey.emailUpdateFrequency,
           value: value,
-          settingsId: widget.settings.id);
+          settingsId: widget.settings.id ?? '');
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
@@ -63,11 +64,11 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
           SizedBox(height: 20.0),
           CustomToggle(
             title: 'Allow push notifications?',
-            onChange: (value) => setingProvider.updateSettings(userId,
+            onChange: (value) => setingProvider.updateSettings(userId ?? '',
                 key: SettingsKey.allowPushNotification,
                 value: value,
-                settingsId: widget.settings.id),
-            value: widget.settings.allowPushNotification,
+                settingsId: widget.settings.id ?? ''),
+            value: widget.settings.allowPushNotification ?? false,
           ),
         ],
       ),

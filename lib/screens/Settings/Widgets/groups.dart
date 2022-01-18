@@ -50,11 +50,11 @@ class _GroupsSettingsState extends State<GroupsSettings> {
           '$userName has removed you from ${group.group?.name}',
           NotificationType.remove_from_group,
           userName ?? '',
-          _currentUser.id,
+          _currentUser.id ?? '',
           user.userId ?? "",
           'Remove from group',
           group.group?.id ?? "",
-          [receiverData.pushToken]);
+          [receiverData.pushToken ?? '']);
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
@@ -107,14 +107,14 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       sendPushNotification(
           '${_currentUser.firstName} has left your group ${data.group?.name}',
           NotificationType.leave_group,
-          _currentUser.firstName,
-          _currentUser.id,
+          _currentUser.firstName ?? '',
+          _currentUser.id ?? '',
           receiver.userId ?? '',
           'Groups',
           data.group?.id ?? '',
-          [receiverData.pushToken]);
+          [receiverData.pushToken ?? '']);
       Provider.of<GroupProvider>(context, listen: false)
-          .setUserGroups(_currentUser.id);
+          .setUserGroups(_currentUser.id ?? '');
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       final user =
@@ -179,7 +179,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
 
       Future.delayed(Duration(seconds: 5), () async {
         final receiverFullName =
-            '${Provider.of<UserProvider>(context, listen: false).selectedUser.firstName + ' ' + Provider.of<UserProvider>(context, listen: false).selectedUser.lastName}';
+            '${Provider.of<UserProvider>(context, listen: false).selectedUser.firstName ?? '' + ' ' + (Provider.of<UserProvider>(context, listen: false).selectedUser.lastName ?? '')}';
 
         final sender =
             Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -196,13 +196,13 @@ class _GroupsSettingsState extends State<GroupsSettings> {
             .sendPushNotification(
                 'Your request to join this group has been accepted',
                 NotificationType.accept_request,
-                sender.firstName,
-                sender.id,
+                sender.firstName ?? '',
+                sender.id ?? '',
                 request.userId ?? '',
                 'Request Accepted',
                 '',
                 group.id ?? '',
-                [receiverData.pushToken]);
+                [receiverData.pushToken ?? '']);
         final notifications =
             Provider.of<NotificationProvider>(context, listen: false)
                 .notifications
@@ -881,8 +881,9 @@ class _GroupsSettingsState extends State<GroupsSettings> {
             .getUserById(element.userId ?? '');
       });
       return Provider.of<UserProvider>(context, listen: false)
-          .selectedUser
-          .lastName;
+              .selectedUser
+              .lastName ??
+          '';
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
@@ -950,7 +951,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
               title: 'Enable Alerts from Groups?',
               onChange: (bool value) async {
                 try {
-                  _settingsProvider.updateGroupPrefenceSettings(_currentUser.id,
+                  _settingsProvider.updateGroupPrefenceSettings(
+                      _currentUser.id ?? '',
                       key: 'EnableNotificationForAllGroups',
                       value: value,
                       settingsId: _groupPreferenceSettings.id ?? '');
@@ -960,14 +962,14 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                     messaging.getToken().then((value) => {
                           Provider.of<NotificationProvider>(context,
                                   listen: false)
-                              .enablePushNotifications(
-                                  value ?? '', _currentUser.id, _currentUser)
+                              .enablePushNotifications(value ?? '',
+                                  _currentUser.id ?? '', _currentUser)
                         });
                   } else {
                     await Provider.of<NotificationProvider>(context,
                             listen: false)
                         .disablePushNotifications(
-                            _currentUser.id, _currentUser);
+                            _currentUser.id ?? '', _currentUser);
                   }
                 } on HttpException catch (e, s) {
                   BeStilDialog.hideLoading(context);
@@ -1276,7 +1278,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                     // send notification that they joined
                                   }
                                   _groupProvider.updateGroupSettings(
-                                      _currentUser.id,
+                                      _currentUser.id ?? '',
                                       key: SettingsKey.requireAdminApproval,
                                       value: value,
                                       settingsId: data.groupSettings?.id ?? '');
@@ -1291,7 +1293,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                               title:
                                   'Enable notifications for New Prayers for this group?',
                               onChange: (value) => _groupProvider
-                                  .updateGroupSettings(_currentUser.id,
+                                  .updateGroupSettings(_currentUser.id ?? '',
                                       key: 'EnableNotificationFormNewPrayers',
                                       value: value,
                                       settingsId: data.groupSettings?.id ?? ''),
@@ -1305,7 +1307,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                               title:
                                   'Enable notifications for Prayer Updates for this group?',
                               onChange: (value) => _groupProvider
-                                  .updateGroupSettings(_currentUser.id,
+                                  .updateGroupSettings(_currentUser.id ?? '',
                                       key: 'EnableNotificationForUpdates',
                                       value: value,
                                       settingsId: data.groupSettings?.id ?? ''),
@@ -1320,7 +1322,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                 title:
                                     'Notify me when new members joins this group',
                                 onChange: (value) => _groupProvider
-                                    .updateGroupSettings(_currentUser.id,
+                                    .updateGroupSettings(_currentUser.id ?? '',
                                         key: 'NotifyWhenNewMemberJoins',
                                         value: value,
                                         settingsId:
@@ -1335,7 +1337,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                 disabled: true,
                                 title: 'Notify me of membership requests',
                                 onChange: (value) => _groupProvider
-                                    .updateGroupSettings(_currentUser.id,
+                                    .updateGroupSettings(_currentUser.id ?? '',
                                         key: 'NotifyOfMembershipRequest',
                                         value: value,
                                         settingsId:
@@ -1350,7 +1352,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                 disabled: true,
                                 title: 'Notify me of flagged prayers',
                                 onChange: (value) => _groupProvider
-                                    .updateGroupSettings(_currentUser.id,
+                                    .updateGroupSettings(_currentUser.id ?? '',
                                         key: 'NotifyMeofFlaggedPrayers',
                                         value: value,
                                         settingsId:

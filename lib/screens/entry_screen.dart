@@ -75,7 +75,7 @@ class _EntryScreenState extends State<EntryScreen> {
           messaging = FirebaseMessaging.instance;
           messaging.getToken().then((value) => {
                 Provider.of<NotificationProvider>(context, listen: false)
-                    .init(value ?? "", user.id, user)
+                    .init(value ?? "", user.id ?? '', user)
               });
         }
       });
@@ -117,7 +117,7 @@ class _EntryScreenState extends State<EntryScreen> {
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
       if (_groupId.isNotEmpty)
         Provider.of<GroupProvider>(context, listen: false)
-            .getGroupFuture(_groupId, userId)
+            .getGroupFuture(_groupId, userId ?? '')
             .then((groupPrayer) {
           if (!(groupPrayer.groupUsers ?? []).any((u) => u.userId == userId))
             JoinGroup().showAlert(context, groupPrayer);
@@ -147,33 +147,33 @@ class _EntryScreenState extends State<EntryScreen> {
       await _getBibles();
       //load settings
       await Provider.of<SettingsProvider>(context, listen: false)
-          .setPrayerSettings(userId);
+          .setPrayerSettings(userId ?? '');
       await Provider.of<SettingsProvider>(context, listen: false)
-          .setSettings(userId);
+          .setSettings(userId ?? '');
       await Provider.of<SettingsProvider>(context, listen: false)
-          .setSharingSettings(userId);
+          .setSharingSettings(userId ?? '');
       await Provider.of<NotificationProvider>(context, listen: false)
-          .setPrayerTimeNotifications(userId);
+          .setPrayerTimeNotifications(userId ?? '');
       // await Provider.of<SettingsProvider>(context, listen: false)
-      //     .setGroupSettings(userId);
+      //     .setGroupSettings(userId??'');
       await Provider.of<SettingsProvider>(context, listen: false)
-          .setGroupPreferenceSettings(userId);
+          .setGroupPreferenceSettings(userId ?? '');
       await Provider.of<GroupProvider>(context, listen: false)
-          .setUserGroups(userId);
+          .setUserGroups(userId ?? '');
 
       //set all users
       await Provider.of<UserProvider>(context, listen: false)
-          .setAllUsers(userId);
+          .setAllUsers(userId ?? '');
 
       // get all push notifications
       await Provider.of<NotificationProvider>(context, listen: false)
-          .setUserNotifications(userId);
+          .setUserNotifications(userId ?? '');
 
       // get all local notifications
       await Provider.of<NotificationProvider>(context, listen: false)
-          .setLocalNotifications(userId);
+          .setLocalNotifications(userId ?? '');
       await Provider.of<GroupProvider>(context, listen: false)
-          .setAllGroups(userId);
+          .setAllGroups(userId ?? '');
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -191,7 +191,7 @@ class _EntryScreenState extends State<EntryScreen> {
       final _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayerTimePrayers(_user.id);
+          .setPrayerTimePrayers(_user.id ?? '');
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -211,13 +211,13 @@ class _EntryScreenState extends State<EntryScreen> {
       final searchQuery =
           Provider.of<MiscProvider>(context, listen: false).searchQuery;
       await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayerTimePrayers(_user.id);
+          .setPrayerTimePrayers(_user.id ?? '');
       if (searchQuery.isNotEmpty) {
         Provider.of<PrayerProvider>(context, listen: false)
-            .searchPrayers(searchQuery, _user.id);
+            .searchPrayers(searchQuery, _user.id ?? '');
       } else {
         await Provider.of<PrayerProvider>(context, listen: false)
-            .setPrayers(_user.id);
+            .setPrayers(_user.id ?? '');
       }
     } on HttpException catch (e, s) {
       final user =
@@ -268,14 +268,14 @@ class _EntryScreenState extends State<EntryScreen> {
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
       await Provider.of<SettingsProvider>(context, listen: false)
           .updateSettings(
-        userId,
+        userId ?? '',
         key: SettingsKey.defaultSnoozeDuration,
         value: selectedDuration,
         settingsId: settingsId,
       );
       await Provider.of<SettingsProvider>(context, listen: false)
           .updateSettings(
-        userId,
+        userId ?? '',
         key: SettingsKey.defaultSnoozeFrequency,
         value: selectedInterval,
         settingsId: settingsId,

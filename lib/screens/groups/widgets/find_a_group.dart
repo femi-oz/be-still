@@ -50,7 +50,7 @@ class _FindAGroupState extends State<FindAGroup> {
       final userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
       await Provider.of<GroupProvider>(context, listen: false)
-          .searchAllGroups(val, userId);
+          .searchAllGroups(val, userId ?? '');
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;

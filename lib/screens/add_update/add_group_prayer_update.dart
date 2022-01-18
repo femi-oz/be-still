@@ -66,7 +66,7 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
         await Provider.of<MiscProvider>(context, listen: false)
             .setSearchQuery('');
         Provider.of<PrayerProvider>(context, listen: false)
-            .searchPrayers('', userId);
+            .searchPrayers('', userId ?? '');
       } on HttpException catch (e, s) {
         final user =
             Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -127,8 +127,8 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
-      Provider.of<LogProvider>(context, listen: false).setErrorLog(
-          e.toString(), userId, 'ADD_PRAYER_UPDATE/screen/onTextChange_tag');
+      Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
+          userId ?? '', 'ADD_PRAYER_UPDATE/screen/onTextChange_tag');
     }
   }
 
@@ -162,7 +162,8 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
             context, StringUtils.getErrorMessage(e), user, s);
       } else {
         await Provider.of<GroupPrayerProvider>(context, listen: false)
-            .addPrayerUpdate(user.id, _descriptionController.text, prayerId);
+            .addPrayerUpdate(
+                user.id ?? '', _descriptionController.text, prayerId);
         contacts.forEach((s) {
           if (!_descriptionController.text.contains(s.displayName ?? '')) {
             s.displayName = '';

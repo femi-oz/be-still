@@ -38,10 +38,11 @@ class _MyListSettingsState extends State<MyListSettings> {
   _setAutoDelete(e) {
     try {
       Provider.of<SettingsProvider>(context, listen: false).updateSettings(
-          Provider.of<UserProvider>(context, listen: false).currentUser.id,
+          Provider.of<UserProvider>(context, listen: false).currentUser.id ??
+              '',
           key: SettingsKey.archiveAutoDeleteMins,
           value: e,
-          settingsId: widget.settings.id);
+          settingsId: widget.settings.id ?? '');
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
@@ -65,8 +66,8 @@ class _MyListSettingsState extends State<MyListSettings> {
   }
 
   initState() {
-    selectedInterval = widget.settings.defaultSnoozeFrequency;
-    selectedDuration = widget.settings.defaultSnoozeDuration;
+    selectedInterval = widget.settings.defaultSnoozeFrequency ?? '';
+    selectedDuration = widget.settings.defaultSnoozeDuration ?? 0;
     snoozeDuration = widget.settings.defaultSnoozeFrequency == "Weeks"
         ? snoozeWeeks
         : widget.settings.defaultSnoozeFrequency == "Months"
@@ -227,17 +228,17 @@ class _MyListSettingsState extends State<MyListSettings> {
                 autoDeleteInterval,
                 _setAutoDelete,
                 true,
-                widget.settings.archiveAutoDeleteMins,
+                widget.settings.archiveAutoDeleteMins ?? 0,
               ),
             ),
             SizedBox(height: 15),
             CustomToggle(
               title: 'Include Answered Prayers in Auto Delete?',
-              onChange: (value) => settingsProvider.updateSettings(userId,
+              onChange: (value) => settingsProvider.updateSettings(userId ?? '',
                   key: SettingsKey.includeAnsweredPrayerAutoDelete,
                   value: value,
-                  settingsId: widget.settings.id),
-              value: widget.settings.includeAnsweredPrayerAutoDelete,
+                  settingsId: widget.settings.id ?? ''),
+              value: widget.settings.includeAnsweredPrayerAutoDelete ?? false,
             ),
             SizedBox(height: 80),
           ],

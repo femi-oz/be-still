@@ -112,19 +112,19 @@ class NotificationService {
   }
 
   addSMS({
-    required String senderId,
-    required String message,
-    required String sender,
-    required String phoneNumber,
-    required String title,
-    required MessageTemplate template,
-    required String receiver,
+    String? senderId,
+    String? message,
+    String? sender,
+    String? phoneNumber,
+    String? title,
+    MessageTemplate? template,
+    String? receiver,
   }) async {
     final _smsId = Uuid().v1();
-    var _templateBody = template.templateBody;
-    _templateBody = (_templateBody ?? '').replaceAll('{Sender}', sender);
-    _templateBody = _templateBody.replaceAll("{Receiver}", receiver);
-    _templateBody = _templateBody.replaceAll('{message}', message);
+    var _templateBody = template?.templateBody ?? '';
+    _templateBody = (_templateBody).replaceAll('{Sender}', sender ?? '');
+    _templateBody = _templateBody.replaceAll("{Receiver}", receiver ?? '');
+    _templateBody = _templateBody.replaceAll('{message}', message ?? '');
     _templateBody = _templateBody.replaceAll('<br/>', "\n");
     _templateBody =
         _templateBody.replaceAll("{Link}", 'https://www.bestillapp.com/');
@@ -149,28 +149,28 @@ class NotificationService {
         return Future.error(StringUtils.unathorized);
       _smsCollectionReference.doc(_smsId).set(data.toJson());
     } catch (e) {
-      locator<LogService>().createLog(StringUtils.getErrorMessage(e), senderId,
-          'NOTIFICATION/service/addSMS');
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e),
+          senderId ?? '', 'NOTIFICATION/service/addSMS');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
   addEmail({
-    required String senderId,
-    required String message,
-    required String sender,
-    required String email,
-    required String title,
-    required String receiver,
-    required MessageTemplate template,
+    String? senderId,
+    String? message,
+    String? sender,
+    String? email,
+    String? title,
+    String? receiver,
+    MessageTemplate? template,
   }) async {
     final _emailId = Uuid().v1();
-    var templateSubject = template.templateSubject;
-    var templateBody = template.templateBody;
-    templateSubject = (templateSubject ?? '').replaceAll("{Sender}", sender);
-    templateBody = templateBody ?? ''.replaceAll("{Receiver}", receiver);
-    templateBody = templateBody.replaceAll("{Sender}", sender);
-    templateBody = templateBody.replaceAll("{message}", message);
+    var templateSubject = template?.templateSubject ?? '';
+    var templateBody = template?.templateBody;
+    templateSubject = (templateSubject).replaceAll("{Sender}", sender ?? '');
+    templateBody = templateBody ?? ''.replaceAll("{Receiver}", receiver ?? '');
+    templateBody = templateBody.replaceAll("{Sender}", sender ?? '');
+    templateBody = templateBody.replaceAll("{message}", message ?? '');
     templateBody = templateBody.replaceAll(
         "{Link}", "<a href='https://www.bestillapp.com/'>Learn more.</a>");
 
@@ -195,8 +195,8 @@ class NotificationService {
         return Future.error(StringUtils.unathorized);
       _emailCollectionReference.doc(_emailId).set(data.toJson());
     } catch (e) {
-      locator<LogService>().createLog(StringUtils.getErrorMessage(e), senderId,
-          'NOTIFICATION/service/addEmail');
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e),
+          senderId ?? '', 'NOTIFICATION/service/addEmail');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }

@@ -99,7 +99,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       var _userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayerByUserId(_userId);
+          .setFollowedPrayerByUserId(_userId ?? '');
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -156,7 +156,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
           .removeFromMyList(
               followedPrayer.id ?? '', widget.prayerData.prayer?.id ?? '');
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayerByUserId(_userId);
+          .setFollowedPrayerByUserId(_userId ?? '');
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();

@@ -73,7 +73,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
       final _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<SettingsProvider>(context, listen: false)
-          .setSettings(_user.id);
+          .setSettings(_user.id ?? '');
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;

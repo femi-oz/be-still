@@ -339,7 +339,7 @@ class NotificationProvider with ChangeNotifier {
       List<String> followers =
           Provider.of<GroupPrayerProvider>(context, listen: false)
               .followedPrayers
-              .map((e) => e.userId)
+              .map((e) => e.userId ?? '')
               .toList();
 
       final admins = Provider.of<GroupProvider>(context, listen: false)
@@ -360,8 +360,8 @@ class NotificationProvider with ChangeNotifier {
         sendPushNotification(
             prayerDetail,
             type,
-            _user.firstName + ' ' + _user.lastName,
-            _user.id,
+            _user.firstName ?? '' + ' ' + (_user.lastName ?? ''),
+            _user.id ?? '',
             (e ?? ''),
             type == NotificationType.prayer ? 'New Prayer' : 'Prayer Update',
             prayerId,

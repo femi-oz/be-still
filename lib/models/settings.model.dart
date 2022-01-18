@@ -1,58 +1,58 @@
 class SettingsModel {
-  final String id;
-  final String userId;
-  final String deviceId;
-  final String appearance;
-  final String defaultSortBy;
-  final String defaultSnoozeFrequency;
-  final int defaultSnoozeDuration;
-  final String archiveSortBy;
-  final String archiveAutoDelete;
-  final int archiveAutoDeleteMins;
-  final String pauseInterval;
-  final bool includeAnsweredPrayerAutoDelete;
-  final bool allowPushNotification;
-  final bool allowTextNotification;
-  final bool allowAlexaReadPrayer;
-  final bool emailUpdateNotification;
-  final int emailUpdateFrequencyMins;
-  final bool notifyMeSomeoneSharePrayerWithMe;
-  final bool notifyMeSomeonePostOnGroup;
-  final bool allowPrayerTimeNotification;
-  final bool syncAlexa;
-  final String status;
-  final String createdBy;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
+  final String? id;
+  final String? userId;
+  final String? deviceId;
+  final String? appearance;
+  final String? defaultSortBy;
+  final String? defaultSnoozeFrequency;
+  final int? defaultSnoozeDuration;
+  final String? archiveSortBy;
+  final String? archiveAutoDelete;
+  final int? archiveAutoDeleteMins;
+  final String? pauseInterval;
+  final bool? includeAnsweredPrayerAutoDelete;
+  final bool? allowPushNotification;
+  final bool? allowTextNotification;
+  final bool? allowAlexaReadPrayer;
+  final bool? emailUpdateNotification;
+  final int? emailUpdateFrequencyMins;
+  final bool? notifyMeSomeoneSharePrayerWithMe;
+  final bool? notifyMeSomeonePostOnGroup;
+  final bool? allowPrayerTimeNotification;
+  final bool? syncAlexa;
+  final String? status;
+  final String? createdBy;
+  final DateTime? createdOn;
+  final String? modifiedBy;
+  final DateTime? modifiedOn;
 
   const SettingsModel({
-    required this.id,
-    required this.userId,
-    required this.deviceId,
-    required this.appearance,
-    required this.defaultSortBy,
-    required this.defaultSnoozeFrequency,
-    required this.defaultSnoozeDuration,
-    required this.pauseInterval,
-    required this.archiveSortBy,
-    required this.archiveAutoDelete,
-    required this.archiveAutoDeleteMins,
-    required this.includeAnsweredPrayerAutoDelete,
-    required this.allowPushNotification,
-    required this.allowTextNotification,
-    required this.allowAlexaReadPrayer,
-    required this.emailUpdateFrequencyMins,
-    required this.emailUpdateNotification,
-    required this.notifyMeSomeonePostOnGroup,
-    required this.notifyMeSomeoneSharePrayerWithMe,
-    required this.allowPrayerTimeNotification,
-    required this.syncAlexa,
-    required this.status,
-    required this.createdBy,
-    required this.createdOn,
-    required this.modifiedBy,
-    required this.modifiedOn,
+    this.id,
+    this.userId,
+    this.deviceId,
+    this.appearance,
+    this.defaultSortBy,
+    this.defaultSnoozeFrequency,
+    this.defaultSnoozeDuration,
+    this.pauseInterval,
+    this.archiveSortBy,
+    this.archiveAutoDelete,
+    this.archiveAutoDeleteMins,
+    this.includeAnsweredPrayerAutoDelete,
+    this.allowPushNotification,
+    this.allowTextNotification,
+    this.allowAlexaReadPrayer,
+    this.emailUpdateFrequencyMins,
+    this.emailUpdateNotification,
+    this.notifyMeSomeonePostOnGroup,
+    this.notifyMeSomeoneSharePrayerWithMe,
+    this.allowPrayerTimeNotification,
+    this.syncAlexa,
+    this.status,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
   });
 
   factory SettingsModel.defaultValue() => SettingsModel(

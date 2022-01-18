@@ -55,7 +55,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
     await Provider.of<MiscProvider>(context, listen: false)
         .setSearchQuery(value);
     await Provider.of<PrayerProvider>(context, listen: false)
-        .searchPrayers(value, userId);
+        .searchPrayers(value, userId ?? '');
   }
 
   void _clearSearchField() async {
@@ -70,7 +70,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
     await Provider.of<MiscProvider>(context, listen: false)
         .setSearchQuery(value);
     await Provider.of<GroupPrayerProvider>(context, listen: false)
-        .searchPrayers(value, userId);
+        .searchPrayers(value, userId ?? '');
   }
 
   void _clearGroupSearchField() async {

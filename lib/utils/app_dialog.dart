@@ -72,9 +72,9 @@ class BeStilDialog {
       ),
     );
     if (user != null) {
-      FirebaseCrashlytics.instance.setUserIdentifier(user.id);
-      FirebaseCrashlytics.instance.setCustomKey('id', user.id);
-      FirebaseCrashlytics.instance.setCustomKey('email', user.email);
+      FirebaseCrashlytics.instance.setUserIdentifier(user.id ?? '');
+      FirebaseCrashlytics.instance.setCustomKey('id', user.id ?? '');
+      FirebaseCrashlytics.instance.setCustomKey('email', user.email ?? '');
     }
 
     FirebaseCrashlytics.instance.recordError(
