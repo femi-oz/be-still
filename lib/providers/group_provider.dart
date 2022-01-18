@@ -78,12 +78,11 @@ class GroupProvider with ChangeNotifier {
             .compareTo((b.group?.name ?? '').toLowerCase()));
 
         _userGroups = [...isAdminGroups, ...isNotAdminGroups];
+        notifyListeners();
       });
     } catch (e) {
       rethrow;
     }
-
-    notifyListeners();
   }
 
   Future<CombineGroupUserStream> getGroupFuture(groupdId, String userId) {
