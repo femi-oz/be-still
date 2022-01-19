@@ -273,7 +273,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.prayer?.id &&
+                  e.entityId == widget.prayerData.groupPrayer?.prayerId &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
@@ -281,7 +281,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .markPrayerAsAnswered(widget.prayerData.prayer?.id ?? '',
-              widget.prayerData.prayer?.id ?? '');
+              widget.prayerData.groupPrayer?.id ?? '');
       _deleteFollowedPrayers();
 
       BeStilDialog.hideLoading(context);
@@ -305,7 +305,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     try {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .unMarkPrayerAsAnswered(widget.prayerData.prayer?.id ?? '',
-              widget.prayerData.prayer?.id ?? '');
+              widget.prayerData.groupPrayer?.id ?? '');
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       final user =

@@ -227,10 +227,10 @@ class GroupPrayerProvider with ChangeNotifier {
 
   Future<void> markPrayerAsAnswered(
     String prayerId,
-    String userPrayerId,
+    String groupPrayerId,
   ) async {
     try {
-      await _prayerService.markPrayerAsAnswered(prayerId, userPrayerId);
+      await _prayerService.markPrayerAsAnswered(prayerId, groupPrayerId);
     } catch (e) {
       rethrow;
     }

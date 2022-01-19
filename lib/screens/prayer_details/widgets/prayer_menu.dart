@@ -372,15 +372,15 @@ class _PrayerMenuState extends State<PrayerMenu> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.userPrayer?.id &&
+                  e.entityId == widget.prayerData.userPrayer?.prayerId &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       await Provider.of<PrayerProvider>(context, listen: false)
-          .markPrayerAsAnswered(prayerData.prayer?.id ?? '',
-              prayerData.userPrayer?.prayerId ?? '');
+          .markPrayerAsAnswered(
+              prayerData.prayer?.id ?? '', prayerData.userPrayer?.id ?? '');
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);

@@ -288,7 +288,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.prayer?.id &&
+                  e.entityId == widget.prayerData.groupPrayer?.prayerId &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
