@@ -170,7 +170,8 @@ class NotificationProvider with ChangeNotifier {
               e.frequency == Frequency.one_time)
           .toList();
       for (int i = 0; i < reminderToDelete.length; i++) {
-        await deleteLocalNotification(reminderToDelete[i].id ?? '');
+        await deleteLocalNotification(reminderToDelete[i].id ?? '',
+            reminderToDelete[i].localNotificationId ?? 0);
       }
       notifyListeners();
     } catch (e) {
@@ -315,12 +316,12 @@ class NotificationProvider with ChangeNotifier {
     }
   }
 
-  Future<void> deleteLocalNotification(String notificationId) async {
+  Future<void> deleteLocalNotification(
+      String notificationId, int localNotificationId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      var notification =
-          _localNotifications.firstWhere((e) => e.id == notificationId);
-      await LocalNotification.unschedule(notification.localNotificationId);
+      ;
+      await LocalNotification.unschedule(localNotificationId);
       await _notificationService.removeLocalNotification(notificationId);
     } catch (e) {
       rethrow;

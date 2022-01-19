@@ -216,7 +216,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
           code: '', message: 'Please select a date in the future.');
       final s = StackTrace.fromString(e.message ?? '');
       BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e.message), user, s);
+          context, 'Please select a date in the future.', user, s);
       return;
     }
     try {
@@ -321,7 +321,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
   _deleteReminder() async {
     try {
       await Provider.of<NotificationProvider>(context, listen: false)
-          .deleteLocalNotification(widget.reminder?.id ?? '');
+          .deleteLocalNotification(widget.reminder?.id ?? '',
+              widget.reminder?.localNotificationId ?? 0);
       setState(() {});
       if (widget.type == NotificationType.reminder) {
         if (widget.popTwice) Navigator.pop(context);

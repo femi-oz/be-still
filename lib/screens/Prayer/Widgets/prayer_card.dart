@@ -65,15 +65,9 @@ class _PrayerCardState extends State<PrayerCard> {
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
-    reminder = reminders.firstWhere(
-        (reminder) =>
-            reminder.entityId == widget.prayerData.userPrayer?.prayerId,
-        orElse: () => LocalNotificationModel.defaultValue());
-    if ((reminder.id ?? '').isEmpty)
-      return false;
-    else {
-      return true;
-    }
+    return reminders.any(
+      (reminder) => reminder.entityId == widget.prayerData.userPrayer?.prayerId,
+    );
   }
 
   void _onMarkAsAnswered() async {
@@ -84,12 +78,12 @@ class _PrayerCardState extends State<PrayerCard> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.userPrayer?.id &&
+                  e.entityId == widget.prayerData.userPrayer?.prayerId &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id ?? ''));
+              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       await Provider.of<PrayerProvider>(context, listen: false)
           .markPrayerAsAnswered(widget.prayerData.prayer?.id ?? '',
               widget.prayerData.userPrayer?.id ?? '');
@@ -158,12 +152,12 @@ class _PrayerCardState extends State<PrayerCard> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.userPrayer?.id &&
+                  e.entityId == widget.prayerData.userPrayer?.prayerId &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id ?? ''));
+              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
 
       await Provider.of<PrayerProvider>(context, listen: false)
           .archivePrayer(widget.prayerData.userPrayer?.id ?? '');

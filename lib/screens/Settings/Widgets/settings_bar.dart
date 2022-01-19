@@ -59,21 +59,18 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
                 alignment: Alignment.center,
                 children: [
                   IconButton(
-                    icon: Icon(
-                        notifications.length != 0
-                            ? Icons.notifications
-                            : Icons.notifications_none,
-                        size: 30,
-                        color: notifications.length != 0
-                            ? AppColors.red
-                            : AppColors.white),
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => NotificationsScreen(),
-                      ),
-                    ),
-                  ),
+                      icon: Icon(
+                          notifications.length != 0
+                              ? Icons.notifications
+                              : Icons.notifications_none,
+                          size: 30,
+                          color: notifications.length != 0
+                              ? AppColors.red
+                              : AppColors.white),
+                      onPressed: () {
+                        AppCOntroller appCOntroller = Get.find();
+                        appCOntroller.setCurrentPage(14, false);
+                      }),
                   notifications.length != 0
                       ? Padding(
                           padding: EdgeInsets.only(

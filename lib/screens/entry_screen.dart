@@ -433,6 +433,7 @@ class _EntryScreenState extends State<EntryScreen> {
                         tabItem.title,
                         style: AppTextStyles.boldText14.copyWith(
                           color: AppColors.bottomNavIconColor.withOpacity(0.5),
+                          fontSize: 11,
                           height: 1,
                         ),
                       )
@@ -463,7 +464,7 @@ class _EntryScreenState extends State<EntryScreen> {
             size: 16,
             color: AppColors.bottomNavIconColor,
           ),
-          title: "Prayers",
+          title: "My Prayers",
           padding: 7,
           key: _keyButton,
         ),
@@ -486,7 +487,7 @@ class _EntryScreenState extends State<EntryScreen> {
             color: AppColors.bottomNavIconColor,
           ),
           title: "Pray",
-          padding: 7,
+          padding: 8,
           key: _keyButton3,
         ),
         TabNavigationItem(
@@ -497,7 +498,7 @@ class _EntryScreenState extends State<EntryScreen> {
               color: AppColors.bottomNavIconColor,
             ),
             title: "Groups",
-            padding: 4),
+            padding: 6),
         TabNavigationItem(
           page: SettingsScreen(_setDefaultSnooze), //4
           icon: Icon(
@@ -506,7 +507,7 @@ class _EntryScreenState extends State<EntryScreen> {
             color: AppColors.bottomNavIconColor,
           ),
           title: "More",
-          padding: 2,
+          padding: 4,
           key: _keyButton4,
         ),
         TabNavigationItem(

@@ -172,7 +172,7 @@ class PrayerProvider with ChangeNotifier {
 
   Future<void> setPrayer(String id) async {
     try {
-      _prayerService.getPrayer(id).asBroadcastStream().listen((prayer) {
+      _prayerService.getPrayer(id).then((prayer) {
         _currentPrayer = prayer;
         notifyListeners();
       });

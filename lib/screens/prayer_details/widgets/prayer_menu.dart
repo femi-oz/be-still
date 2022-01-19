@@ -155,8 +155,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .removeFromMyList(
               followedPrayer.id ?? '', widget.prayerData.userPrayer?.id ?? '');
-      // await Provider.of<GroupPrayerProvider>(context, listen: false)
-      //     .setFollowedPrayerByUserId(_userId ?? '');
+
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();
@@ -212,7 +211,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
               .toList();
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id ?? ''));
+              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       await Provider.of<PrayerProvider>(context, listen: false)
           .deletePrayer(widget.prayerData.userPrayer?.id ?? '');
       BeStilDialog.hideLoading(context);
@@ -378,10 +377,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
               .toList();
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id ?? ''));
+              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       await Provider.of<PrayerProvider>(context, listen: false)
-          .markPrayerAsAnswered(
-              prayerData.prayer?.id ?? '', prayerData.userPrayer?.id ?? '');
+          .markPrayerAsAnswered(prayerData.prayer?.id ?? '',
+              prayerData.userPrayer?.prayerId ?? '');
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
@@ -452,12 +451,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.userPrayer?.id &&
+                  e.entityId == widget.prayerData.userPrayer?.prayerId &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id ?? ''));
+              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
 
       await Provider.of<PrayerProvider>(context, listen: false)
           .archivePrayer(widget.prayerData.userPrayer?.id ?? '');
@@ -682,7 +681,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       icon: AppIcons.bestill_reminder,
                       isDisabled: (!isOwner && isGroupPrayer) &&
                           (!isGroupPrayer && !isOwner) &&
-                          !isAdmin,
+                          !isAdmin, // disable when 1, 2a and 2b
                       suffix: widget.hasReminder &&
                               widget.reminder.frequency == Frequency.one_time
                           ? DateFormat('dd MMM yyyy hh:mma').format(
@@ -745,16 +744,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                       icon: AppIcons.bestill_snooze,
-                      isDisabled: widget.prayerData.prayer?.isAnswer ??
-                          false ||
-                              (widget.prayerData.userPrayer?.isArchived ??
-                                  false) ||
-                              !isOwner,
-                      onPress: () => widget.prayerData.prayer?.isAnswer ??
-                              false ||
-                                  (widget.prayerData.userPrayer?.isArchived ??
-                                      false) ||
-                                  !isOwner
+                      isDisabled: isSnoozeAndUpdateDisable || isGroupPrayer,
+                      onPress: () => isSnoozeAndUpdateDisable || isGroupPrayer
                           ? () {}
                           : widget.prayerData.userPrayer?.isSnoozed ?? false
                               ? _unSnoozePrayer(widget.prayerData)

@@ -49,8 +49,12 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
       final isFollowedByAdmin = (currentGroup.groupUsers ?? []).any((element) =>
           element.role == GroupUserRole.admin && element.userId == user.id);
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .addToMyList(widget.prayerData.prayer?.id ?? '', user.id ?? '',
-              currentGroup.group?.id ?? '', isFollowedByAdmin);
+          .addToMyList(
+        widget.prayerData.prayer?.id ?? '',
+        user.id ?? '',
+        currentGroup.group?.id ?? '',
+        isFollowedByAdmin,
+      );
       // await Provider.of<GroupPrayerProvider>(context, listen: false)
       //     .setFollowedPrayerByUserId(user.id ?? '');
       BeStilDialog.hideLoading(context);
@@ -87,7 +91,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
                   orElse: () => FollowedPrayerModel.defaultValue());
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .removeFromMyList(
-              followedPrayer.id ?? '', widget.prayerData.groupPrayer?.id ?? '');
+              followedPrayer.id ?? '', followedPrayer.userPrayerId ?? '');
       // await Provider.of<GroupPrayerProvider>(context, listen: false)
       //     .setFollowedPrayerByUserId(_userId ?? '');
       BeStilDialog.hideLoading(context);
@@ -146,7 +150,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
               .toList();
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id ?? ''));
+              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
 
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .archivePrayer(widget.prayerData.groupPrayer?.id ?? '');
@@ -274,7 +278,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
               .toList();
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id ?? ''));
+              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .markPrayerAsAnswered(widget.prayerData.prayer?.id ?? '',
               widget.prayerData.prayer?.id ?? '');

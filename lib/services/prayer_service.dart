@@ -105,56 +105,63 @@ class PrayerService {
     }
   }
 
-  Stream<CombinePrayerStream> getPrayer(String prayerID) {
+  Future<CombinePrayerStream> getPrayer(String prayerID) async {
     try {
       if (_firebaseAuth.currentUser == null)
-        return Stream.error(StringUtils.unathorized);
-      var data = _userPrayerCollectionReference.doc(prayerID).snapshots();
+        return Future.error(StringUtils.unathorized);
+      var data = _userPrayerCollectionReference.doc(prayerID).get();
+      return data.then((_doc) async {
+        UserPrayerModel userPrayer =
+            UserPrayerModel.fromData(_doc.data()!, _doc.id);
 
-      var _combineStream = data.map((doc) {
-        Stream<UserPrayerModel> userPrayer = Stream.value(doc)
-            .map<UserPrayerModel>(
-                (doc) => UserPrayerModel.fromData(doc.data()!, doc.id));
-
-        Stream<PrayerModel> prayer = _prayerCollectionReference
-            .doc(doc['PrayerId'])
-            .snapshots()
-            .map<PrayerModel>(
+        PrayerModel prayer = await _prayerCollectionReference
+            .doc(_doc['PrayerId'])
+            .get()
+            .then<PrayerModel>(
                 (doc) => PrayerModel.fromData(doc.data()!, doc.id));
 
-        Stream<List<PrayerUpdateModel>> updates =
-            _prayerUpdateCollectionReference
-                .where('PrayerId', isEqualTo: doc['PrayerId'])
-                .snapshots()
-                .map<List<PrayerUpdateModel>>((list) => list.docs
-                    .map((e) => PrayerUpdateModel.fromData(e.data(), e.id))
-                    .toList());
+        List<PrayerUpdateModel> updates = await _prayerUpdateCollectionReference
+            .where('PrayerId', isEqualTo: _doc['PrayerId'])
+            .get()
+            .then<List<PrayerUpdateModel>>((list) => list.docs
+                .map((e) => PrayerUpdateModel.fromData(e.data(), e.id))
+                .toList());
 
-        Stream<List<PrayerTagModel>> tags = _prayerTagCollectionReference
-            .where('PrayerId', isEqualTo: doc['PrayerId'])
-            .snapshots()
-            .map<List<PrayerTagModel>>((list) => list.docs
+        List<PrayerTagModel> tags = await _prayerTagCollectionReference
+            .where('PrayerId', isEqualTo: _doc['PrayerId'])
+            .get()
+            .then<List<PrayerTagModel>>((list) => list.docs
                 .map((e) => PrayerTagModel.fromData(e.data(), e.id))
                 .toList());
-        return Rx.combineLatest4(
-            userPrayer,
-            prayer,
-            updates,
-            tags,
-            (UserPrayerModel userPrayer,
-                    PrayerModel prayer,
-                    List<PrayerUpdateModel> updates,
-                    List<PrayerTagModel> tags) =>
-                CombinePrayerStream(
-                  prayer: prayer,
-                  updates: updates,
-                  userPrayer: userPrayer,
-                  tags: tags,
-                ));
-      }).switchMap((observables) {
-        return observables;
+
+        return CombinePrayerStream(
+          prayer: prayer,
+          userPrayer: userPrayer,
+          updates: updates,
+          tags: tags,
+        );
       });
-      return _combineStream;
+      //   return Rx.combineLatest4(
+      //       userPrayer,
+      //       prayer,
+      //       updates,
+      //       tags,
+      //       (UserPrayerModel userPrayer,
+      //               PrayerModel prayer,
+      //               List<PrayerUpdateModel> updates,
+      //               List<PrayerTagModel> tags) =>
+      //           CombinePrayerStream(
+      //             prayer: prayer,
+      //             updates: updates,
+      //             userPrayer: userPrayer,
+      //             tags: tags,
+      //           ));
+      // }).switchMap((observables) {
+      //   return observables;
+      // });
+      // return _combineStream;
+      // });
+
     } catch (e) {
       locator<LogService>().createLog(
           StringUtils.getErrorMessage(e), prayerID, 'PRAYER/service/getPrayer');
