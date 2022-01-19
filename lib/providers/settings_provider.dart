@@ -30,10 +30,10 @@ class SettingsProvider with ChangeNotifier {
       if (_firebaseAuth.currentUser == null) return null;
       var settings = await _settingsService.getSettings(userId);
       _settings = settings;
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-    notifyListeners();
   }
 
   Future setPrayerSettings(String userId) async {
@@ -41,10 +41,10 @@ class SettingsProvider with ChangeNotifier {
       if (_firebaseAuth.currentUser == null) return null;
       var settings = await _settingsService.getPrayerSettings(userId);
       _prayerSettings = settings;
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-    notifyListeners();
   }
 
   Future setSharingSettings(String userId) async {
@@ -52,10 +52,10 @@ class SettingsProvider with ChangeNotifier {
       if (_firebaseAuth.currentUser == null) return null;
       var settings = await _settingsService.getSharingSettings(userId);
       _sharingSettings = settings;
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-    notifyListeners();
   }
 
   Future setGroupPreferenceSettings(String userId) async {
@@ -63,10 +63,10 @@ class SettingsProvider with ChangeNotifier {
       if (_firebaseAuth.currentUser == null) return null;
       var settings = await _settingsService.getGroupPreferenceSettings(userId);
       _groupPreferenceSettings = settings;
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
-    notifyListeners();
   }
 
   Future updateSettings(

@@ -247,6 +247,8 @@ class _NoUpdateViewState extends State<NoUpdateView> {
 
   Widget build(BuildContext context) {
     final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
+    final userId = Provider.of<UserProvider>(context).currentUser.id;
+    bool isOwner = prayerData.prayer?.createdBy == userId;
     return Container(
       padding: EdgeInsets.all(20),
       child: Column(
@@ -302,31 +304,44 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                     padding:
                         EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
                     child: SingleChildScrollView(
-                      child: EasyRichText(
-                        prayerData.prayer?.description ?? '',
-                        defaultStyle: AppTextStyles.regularText16b.copyWith(
-                          color: AppColors.prayerTextColor,
-                        ),
-                        textAlign: TextAlign.left,
-                        patternList: [
-                          for (var i = 0; i < prayerData.tags.length; i++)
-                            EasyRichTextPattern(
-                                targetString:
-                                    (prayerData.tags[i].displayName ?? '')
-                                        .trim(),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    _openShareModal(
-                                        context,
-                                        prayerData.tags[i].phoneNumber ?? '',
-                                        prayerData.tags[i].email ?? '',
-                                        prayerData.tags[i].identifier ?? '');
-                                  },
-                                style: AppTextStyles.regularText15.copyWith(
-                                    color: AppColors.lightBlue2,
-                                    decoration: TextDecoration.underline))
-                        ],
-                      ),
+                      child: isOwner
+                          ? EasyRichText(
+                              prayerData.prayer?.description ?? '',
+                              defaultStyle:
+                                  AppTextStyles.regularText16b.copyWith(
+                                color: AppColors.prayerTextColor,
+                              ),
+                              textAlign: TextAlign.left,
+                              patternList: [
+                                for (var i = 0; i < prayerData.tags.length; i++)
+                                  EasyRichTextPattern(
+                                      targetString:
+                                          (prayerData.tags[i].displayName ?? '')
+                                              .trim(),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () {
+                                          _openShareModal(
+                                              context,
+                                              prayerData.tags[i].phoneNumber ??
+                                                  '',
+                                              prayerData.tags[i].email ?? '',
+                                              prayerData.tags[i].identifier ??
+                                                  '');
+                                        },
+                                      style: AppTextStyles.regularText15
+                                          .copyWith(
+                                              color: AppColors.lightBlue2,
+                                              decoration:
+                                                  TextDecoration.underline))
+                              ],
+                            )
+                          : Text(
+                              prayerData.prayer?.description ?? '',
+                              style: AppTextStyles.regularText16b.copyWith(
+                                color: AppColors.prayerTextColor,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
                     ),
                   ),
                 ),

@@ -71,8 +71,8 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                     PrayerModel.defaultValue())
                 .id;
             if ((id ?? '').isEmpty) return;
-            await Provider.of<GroupPrayerProvider>(context, listen: false)
-                .setFollowedPrayer(id ?? '');
+            // await Provider.of<GroupPrayerProvider>(context, listen: false)
+            //     .setFollowedPrayer(id ?? '');
           }
         } on HttpException catch (e, s) {
           final user =
@@ -133,8 +133,8 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
             var prayerId =
                 Provider.of<GroupPrayerProvider>(context, listen: false)
                     .newPrayerId;
-            await Provider.of<GroupPrayerProvider>(context, listen: false)
-                .setFollowedPrayer(prayerId);
+            // await Provider.of<GroupPrayerProvider>(context, listen: false)
+            //     .setFollowedPrayer(prayerId);
             await Provider.of<NotificationProvider>(context, listen: false)
                 .sendPrayerNotification(
               prayerId,
@@ -146,9 +146,14 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
           }
 
           if (contactList.length > 0) {
-            await Provider.of<GroupPrayerProvider>(context, listen: false)
-                .addPrayerTag(
-                    contactList, _user, _descriptionController.text, '');
+            for (final contact in contactList) {
+              if (_descriptionController.text
+                  .contains(contact.displayName ?? '')) {
+                await Provider.of<GroupPrayerProvider>(context, listen: false)
+                    .addPrayerTag(
+                        contactList, _user, _descriptionController.text, '');
+              }
+            }
           }
 
           if ((selected?.name ?? '').isEmpty ||

@@ -212,7 +212,7 @@ class _PrayerListState extends State<PrayerList> {
                                               Get.find();
                                           Provider.of<PrayerProvider>(context,
                                                   listen: false)
-                                              .setEditMode(false, false);
+                                              .setEditMode(false, true);
                                           appCOntroller.setCurrentPage(1, true);
                                         } on HttpException catch (e, s) {
                                           BeStilDialog.hideLoading(context);
@@ -278,7 +278,7 @@ class _PrayerListState extends State<PrayerList> {
                                                               context,
                                                               listen: false)
                                                           .setEditMode(
-                                                              false, false);
+                                                              false, true);
                                                       appCOntroller
                                                           .setCurrentPage(
                                                               1, true);

@@ -1,7 +1,9 @@
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/screens/notifications/notifications_screen.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class SettingsAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -47,33 +49,28 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
       centerTitle: true,
       actions: <Widget>[
         GestureDetector(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => NotificationsScreen(),
-            ),
-          ),
+          onTap: () {
+            AppCOntroller appCOntroller = Get.find();
+            appCOntroller.setCurrentPage(14, false);
+          },
           child: Container(
             child: Center(
               child: Stack(
                 alignment: Alignment.center,
                 children: [
                   IconButton(
-                    icon: Icon(
-                        notifications.length != 0
-                            ? Icons.notifications
-                            : Icons.notifications_none,
-                        size: 30,
-                        color: notifications.length != 0
-                            ? AppColors.red
-                            : AppColors.white),
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => NotificationsScreen(),
-                      ),
-                    ),
-                  ),
+                      icon: Icon(
+                          notifications.length != 0
+                              ? Icons.notifications
+                              : Icons.notifications_none,
+                          size: 30,
+                          color: notifications.length != 0
+                              ? AppColors.red
+                              : AppColors.white),
+                      onPressed: () {
+                        AppCOntroller appCOntroller = Get.find();
+                        appCOntroller.setCurrentPage(14, false);
+                      }),
                   notifications.length != 0
                       ? Padding(
                           padding: EdgeInsets.only(

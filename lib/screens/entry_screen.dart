@@ -2,6 +2,7 @@ import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/devotional_provider.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -20,6 +21,7 @@ import 'package:be_still/screens/groups/widgets/find_a_group.dart';
 import 'package:be_still/screens/groups/widgets/group_prayers.dart';
 import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.dart';
 import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
+import 'package:be_still/screens/notifications/notifications_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -64,6 +66,7 @@ class _EntryScreenState extends State<EntryScreen> {
             Provider.of<UserProvider>(context, listen: false).currentUser;
         if (miscProvider.initialLoad) {
           await _preLoadData();
+          Future.delayed(Duration(milliseconds: 500));
           miscProvider.setLoadStatus(false);
 
           initDynamicLinks();
@@ -160,6 +163,8 @@ class _EntryScreenState extends State<EntryScreen> {
           .setGroupPreferenceSettings(userId ?? '');
       await Provider.of<GroupProvider>(context, listen: false)
           .setUserGroups(userId ?? '');
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .setFollowedPrayerByUserId(userId ?? '');
 
       //set all users
       await Provider.of<UserProvider>(context, listen: false)
@@ -428,6 +433,7 @@ class _EntryScreenState extends State<EntryScreen> {
                         tabItem.title,
                         style: AppTextStyles.boldText14.copyWith(
                           color: AppColors.bottomNavIconColor.withOpacity(0.5),
+                          fontSize: 11,
                           height: 1,
                         ),
                       )
@@ -458,7 +464,7 @@ class _EntryScreenState extends State<EntryScreen> {
             size: 16,
             color: AppColors.bottomNavIconColor,
           ),
-          title: "Prayers",
+          title: "My Prayers",
           padding: 7,
           key: _keyButton,
         ),
@@ -481,7 +487,7 @@ class _EntryScreenState extends State<EntryScreen> {
             color: AppColors.bottomNavIconColor,
           ),
           title: "Pray",
-          padding: 7,
+          padding: 8,
           key: _keyButton3,
         ),
         TabNavigationItem(
@@ -492,7 +498,7 @@ class _EntryScreenState extends State<EntryScreen> {
               color: AppColors.bottomNavIconColor,
             ),
             title: "Groups",
-            padding: 4),
+            padding: 6),
         TabNavigationItem(
           page: SettingsScreen(_setDefaultSnooze), //4
           icon: Icon(
@@ -501,7 +507,7 @@ class _EntryScreenState extends State<EntryScreen> {
             color: AppColors.bottomNavIconColor,
           ),
           title: "More",
-          padding: 2,
+          padding: 4,
           key: _keyButton4,
         ),
         TabNavigationItem(
@@ -578,6 +584,15 @@ class _EntryScreenState extends State<EntryScreen> {
             padding: 7),
         TabNavigationItem(
             page: AddGroupPrayerUpdate(), //13
+            icon: Icon(
+              Icons.more_horiz,
+              size: 20,
+              color: AppColors.bottomNavIconColor,
+            ),
+            title: "More",
+            padding: 7),
+        TabNavigationItem(
+            page: NotificationsScreen(), //14
             icon: Icon(
               Icons.more_horiz,
               size: 20,

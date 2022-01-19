@@ -13,4 +13,5 @@ class NotificationType {
   static const accept_request = ' Request Accepted';
   static const inappropriate_content = 'Inappropriate Content';
   static const leave_group = 'User Left Group';
+  static const member_join_group = 'Joined Group';
 }

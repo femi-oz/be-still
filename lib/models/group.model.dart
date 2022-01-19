@@ -54,9 +54,9 @@ class GroupModel {
         isPrivate = snapshot['IsPrivate'] ?? false,
         isFeed = snapshot['IsFeed'] ?? false,
         createdBy = snapshot['CreatedBy'] ?? '',
-        createdOn = snapshot['CreatedOn'].toDate() ?? DateTime.now(),
+        createdOn = snapshot['CreatedOn']?.toDate() ?? DateTime.now(),
         modifiedBy = snapshot['ModifiedBy'] ?? '',
-        modifiedOn = snapshot['ModifiedOn'].toDate() ?? DateTime.now();
+        modifiedOn = snapshot['ModifiedOn']?.toDate() ?? DateTime.now();
 
   Map<String, dynamic> toJson() {
     return {
@@ -97,7 +97,7 @@ class GroupRequestModel {
         groupId = snapshot['GroupId'] ?? '',
         status = snapshot['Status'] ?? '',
         createdBy = snapshot['CreatedBy'] ?? '',
-        createdOn = snapshot['CreatedOn'].toDate() ?? DateTime.now();
+        createdOn = snapshot['CreatedOn']?.toDate() ?? DateTime.now();
   Map<String, dynamic> toJson() {
     return {
       'Id': id,
@@ -143,9 +143,9 @@ class GroupInviteModel {
         sender = snapshot['Sender'] ?? '',
         senderId = snapshot['SenderId'] ?? '',
         createdBy = snapshot['CreatedBy'] ?? '',
-        createdOn = snapshot['CreatedOn'].toDate() ?? DateTime.now(),
+        createdOn = snapshot['CreatedOn']?.toDate() ?? DateTime.now(),
         modifiedBy = snapshot['ModifiedBy'] ?? '',
-        modifiedOn = snapshot['ModifiedOn'].toDate() ?? DateTime.now();
+        modifiedOn = snapshot['ModifiedOn']?.toDate() ?? DateTime.now();
 
   Map<String, dynamic> toJson() {
     return {
@@ -227,9 +227,9 @@ class GroupPrayerModel {
         isFavorite = snapshot['IsFavourite'] ?? false,
         status = snapshot['Status'] ?? '',
         createdBy = snapshot['CreatedBy'] ?? '',
-        createdOn = snapshot['CreatedOn'].toDate(),
+        createdOn = snapshot['CreatedOn']?.toDate(),
         modifiedBy = snapshot['ModifiedBy'] ?? '',
-        modifiedOn = snapshot['ModifiedOn'].toDate(),
+        modifiedOn = snapshot['ModifiedOn']?.toDate(),
         isSnoozed = snapshot['IsSnoozed'] ?? false,
         isArchived = snapshot['IsArchived'] ?? false,
         snoozeDuration = snapshot['SnoozeDuration'] ?? 0,
@@ -314,9 +314,9 @@ class GroupUserModel {
         status = snapshot['Status'] ?? '',
         role = snapshot['Role'] ?? '',
         createdBy = snapshot['CreatedBy'] ?? '',
-        createdOn = snapshot['CreatedOn'].toDate() ?? DateTime.now(),
+        createdOn = snapshot['CreatedOn']?.toDate() ?? DateTime.now(),
         modifiedBy = snapshot['ModifiedBy'] ?? '',
-        modifiedOn = snapshot['ModifiedOn'].toDate() ?? DateTime.now();
+        modifiedOn = snapshot['ModifiedOn']?.toDate() ?? DateTime.now();
 
   Map<String, dynamic> toJson() {
     return {
@@ -364,9 +364,9 @@ class UserGroupModel {
         status = snapshot['Status'] ?? '',
         role = snapshot['Role'] ?? '',
         createdBy = snapshot['CreatedBy'] ?? '',
-        createdOn = snapshot['CreatedOn'].toDate() ?? DateTime.now(),
+        createdOn = snapshot['CreatedOn']?.toDate() ?? DateTime.now(),
         modifiedBy = snapshot['ModifiedBy'] ?? '',
-        modifiedOn = snapshot['ModifiedOn'].toDate() ?? DateTime.now();
+        modifiedOn = snapshot['ModifiedOn']?.toDate() ?? DateTime.now();
 
   Map<String, dynamic> toJson() {
     return {

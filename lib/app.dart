@@ -176,6 +176,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           if ((userId ?? '').isNotEmpty)
             Provider.of<PrayerProvider>(context, listen: false)
                 .checkPrayerValidity(userId ?? '', notifications);
+          AppCOntroller appCOntroller = Get.find();
+          appCOntroller.setCurrentPage(14, false);
           print(
               'message -- didChangeAppLifecycleState before ===> ${Provider.of<NotificationProvider>(context, listen: false).message}');
 

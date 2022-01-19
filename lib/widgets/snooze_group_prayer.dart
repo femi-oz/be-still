@@ -89,7 +89,7 @@ class _SnoozeGroupPrayerState extends State<SnoozeGroupPrayer> {
               .toList();
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id ?? ''));
+              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       await Provider.of<PrayerProvider>(context, listen: false).snoozePrayer(
           widget.prayerData.prayer?.id ?? '',
           _snoozeEndDate,

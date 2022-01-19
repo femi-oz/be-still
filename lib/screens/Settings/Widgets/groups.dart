@@ -141,8 +141,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
             e.messageType == NotificationType.request &&
               e.groupId == data.group?.id)
         .toList();
-    await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayerByGroupId(data.group?.id ?? '');
+      // await Provider.of<GroupPrayerProvider>(context, listen: false)
+      //     .setFollowedPrayerByGroupId(data.group?.id ?? '');
 
     await Provider.of<GroupProvider>(context, listen: false)
           .deleteGroup(data.group?.id ?? '', requests);
@@ -1486,16 +1486,21 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 10.0),
                                   child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
-                                          'Members | ${data.groupUsers ?? [].length}',
+                                          'Members | ${(data.groupUsers ?? []).length}',
                                           style: AppTextStyles.regularText11),
                                       SizedBox(width: 10),
                                       Expanded(
+                                        child: Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
                                         child: Divider(
                                           color: AppColors.lightBlue1,
                                           thickness: 1,
                                         ),
+                                      ),
                                       ),
                                     ],
                                   ),
@@ -1677,7 +1682,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             ? GestureDetector(
                                 onTap: () async {
                                   const message =
-                                      'Are you sure? \n\nAll members of this group will be removed,'
+                                      'Are you sure? \n\nAll members of this group will be removed, '
                                       'and this group and all the prayers in it will be permanently erased.';
                                   const method = 'Delete';
                                   const title = 'Delete Group';

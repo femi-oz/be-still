@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -7,6 +8,7 @@ import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class NotificationBar extends StatefulWidget implements PreferredSizeWidget {
@@ -77,7 +79,10 @@ class NotificationBarState extends State<NotificationBar> {
           color: AppColors.white,
           size: 24,
         ),
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: () {
+          AppCOntroller appCOntroller = Get.find();
+          appCOntroller.setCurrentPage(0, false);
+        },
       ),
       // actions: <Widget>[
       //   ,

@@ -35,45 +35,39 @@ class _PrayerCardState extends State<PrayerCard> {
 
   @override
   void didChangeDependencies() {
-    getGroup();
+    // getGroup();
     super.didChangeDependencies();
   }
 
-  getGroup() async {
-    try {
-      var _userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayerByUserId(_userId ?? '');
-    } on HttpException catch (e, s) {
-      BeStilDialog.hideLoading(context);
+  // getGroup() async {
+  //   try {
+  //     // var _userId =
+  //     //     Provider.of<UserProvider>(context, listen: false).currentUser.id;
+  //     // await Provider.of<GroupPrayerProvider>(context, listen: false)
+  //     //     .setFollowedPrayerByUserId(_userId ?? '');
+  //   } on HttpException catch (e, s) {
+  //     BeStilDialog.hideLoading(context);
 
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    } catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
-    }
-  }
+  //     final user =
+  //         Provider.of<UserProvider>(context, listen: false).currentUser;
+  //     BeStilDialog.showErrorDialog(
+  //         context, StringUtils.getErrorMessage(e), user, s);
+  //   } catch (e, s) {
+  //     BeStilDialog.hideLoading(context);
+  //     final user =
+  //         Provider.of<UserProvider>(context, listen: false).currentUser;
+  //     BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+  //   }
+  // }
 
   bool get hasReminder {
     var reminders = Provider.of<NotificationProvider>(context)
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
-    reminder = reminders.firstWhere(
-        (reminder) =>
-            reminder.entityId == widget.prayerData.userPrayer?.prayerId,
-        orElse: () => LocalNotificationModel.defaultValue());
-    if ((reminder.id ?? '').isEmpty)
-      return false;
-    else {
-      return true;
-    }
+    return reminders.any(
+      (reminder) => reminder.entityId == widget.prayerData.userPrayer?.prayerId,
+    );
   }
 
   void _onMarkAsAnswered() async {
@@ -84,12 +78,12 @@ class _PrayerCardState extends State<PrayerCard> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.userPrayer?.id &&
+                  e.entityId == widget.prayerData.userPrayer?.prayerId &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id ?? ''));
+              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       await Provider.of<PrayerProvider>(context, listen: false)
           .markPrayerAsAnswered(widget.prayerData.prayer?.id ?? '',
               widget.prayerData.userPrayer?.id ?? '');
@@ -158,12 +152,12 @@ class _PrayerCardState extends State<PrayerCard> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.userPrayer?.id &&
+                  e.entityId == widget.prayerData.userPrayer?.prayerId &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id ?? ''));
+              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
 
       await Provider.of<PrayerProvider>(context, listen: false)
           .archivePrayer(widget.prayerData.userPrayer?.id ?? '');
@@ -220,8 +214,8 @@ class _PrayerCardState extends State<PrayerCard> {
     BeStilDialog.showLoading(context);
 
     try {
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayer(widget.prayerData.prayer?.id ?? '');
+      // await Provider.of<GroupPrayerProvider>(context, listen: false)
+      //     .setFollowedPrayer(widget.prayerData.prayer?.id ?? '');
       final _userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
       final followedPrayer =

@@ -71,23 +71,20 @@ class AuthenticationService {
         var e = FirebaseAuthException(
             code: 'not-verified', message: 'not-verified');
         signOut();
-        throw HttpException(e.code);
+        final message = StringUtils.generateExceptionMessage(e.code);
+        throw HttpException(message);
       }
-      return UserVerify(
-          error: null,
-          needsVerification:
-              needsVerification); //{'error': '', 'needsVerification': needsVerification};
+      return UserVerify(error: null, needsVerification: needsVerification);
     } on FirebaseException catch (e) {
-      return UserVerify(
-          error: PlatformException(code: e.code, message: e.message),
-          needsVerification:
-              needsVerification); // {'error': e, 'needsVerification': needsVerification};
-
+      final message = StringUtils.generateExceptionMessage(e.code);
+      await locator<LogService>().createLog(
+          message,
+          _firebaseAuth.currentUser?.email ?? '',
+          'AUTHENTICATION/service/signIn');
+      throw HttpException(message);
     } catch (e) {
-      return UserVerify(
-          error: e as PlatformException,
-          needsVerification:
-              needsVerification); // {'error': e, 'needsVerification': needsVerification};
+      final message = StringUtils.getErrorMessage(e);
+      throw HttpException(message);
     }
   }
 

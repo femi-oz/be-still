@@ -55,8 +55,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
   @override
   void didChangeDependencies() async {
     try {
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayer(widget.prayerData.prayer?.id ?? '');
+      // await Provider.of<GroupPrayerProvider>(context, listen: false)
+      //     .setFollowedPrayer(widget.prayerData.prayer?.id ?? '');
       await Provider.of<NotificationProvider>(context, listen: false)
           .setNotifications();
     } on HttpException catch (e, s) {
@@ -82,10 +82,14 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
         element.role == GroupUserRole.admin && element.userId == user.id);
     try {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .addToMyList(widget.prayerData.prayer?.id ?? '', user.id ?? '',
-              currentGroup.group?.id ?? '', isFollowedByAdmin);
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayerByUserId(user.id ?? '');
+          .addToMyList(
+        widget.prayerData.prayer?.id ?? '',
+        user.id ?? '',
+        currentGroup.group?.id ?? '',
+        isFollowedByAdmin,
+      );
+      // await Provider.of<GroupPrayerProvider>(context, listen: false)
+      //     .setFollowedPrayerByUserId(user.id ?? '');
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();
@@ -120,9 +124,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                   orElse: () => FollowedPrayerModel.defaultValue());
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .removeFromMyList(
-              followedPrayer.id ?? '', widget.prayerData.groupPrayer?.id ?? '');
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayerByUserId(user.id ?? '');
+              followedPrayer.id ?? '', followedPrayer.userPrayerId ?? '');
+
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppCOntroller appCOntroller = Get.find();
@@ -225,7 +228,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
 
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id ?? ''));
+              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       pushNotifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
               .updateNotification(e.id ?? ''));
@@ -290,7 +293,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
               .toList();
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id ?? ''));
+              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .markPrayerAsAnswered(widget.prayerData.prayer?.id ?? '',
               widget.prayerData.groupPrayer?.id ?? '');
@@ -496,7 +499,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
               .toList();
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id ?? ''));
+              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
 
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .archivePrayer(widget.prayerData.groupPrayer?.id ?? '');
@@ -521,7 +524,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
   }
 
   bool get isFollowing {
-    var isFollowing = Provider.of<GroupPrayerProvider>(context, listen: false)
+    final isFollowing = Provider.of<GroupPrayerProvider>(context, listen: false)
         .followedPrayers
         .any((element) => element.prayerId == widget.prayerData.prayer?.id);
     return isFollowing;
