@@ -278,31 +278,23 @@ class _CustomAppBarState extends State<CustomAppBar> {
       actions: <Widget>[
         !widget.isSearchMode
             ? GestureDetector(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => NotificationsScreen(),
-                  ),
-                ),
+                onTap: () {
+                  AppCOntroller appCOntroller = Get.find();
+                  appCOntroller.setCurrentPage(14, false);
+                },
                 child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
                   child: Center(
                       child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      IconButton(
-                        icon: Icon(
-                            getCount != 0
-                                ? Icons.notifications
-                                : Icons.notifications_none,
-                            size: 30,
-                            color: getCount != 0
-                                ? AppColors.red
-                                : AppColors.white),
-                        onPressed: () {
-                          AppCOntroller appCOntroller = Get.find();
-                          appCOntroller.setCurrentPage(14, false);
-                        },
-                      ),
+                      Icon(
+                          getCount != 0
+                              ? Icons.notifications
+                              : Icons.notifications_none,
+                          size: 30,
+                          color:
+                              getCount != 0 ? AppColors.red : AppColors.white),
                       Padding(
                         padding: EdgeInsets.only(
                             right: getCount == 1

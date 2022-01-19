@@ -108,9 +108,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   Future _onSelectNotification(String? payload) async {
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-      return EntryScreen();
-    }));
+    // Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+    //   return EntryScreen();
+    // }));
+    AppCOntroller appCOntroller = Get.find();
+    appCOntroller.setCurrentPage(14, false);
   }
 
   void _getPermissions() async {
@@ -176,8 +178,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           if ((userId ?? '').isNotEmpty)
             Provider.of<PrayerProvider>(context, listen: false)
                 .checkPrayerValidity(userId ?? '', notifications);
-          AppCOntroller appCOntroller = Get.find();
-          appCOntroller.setCurrentPage(14, false);
+
           print(
               'message -- didChangeAppLifecycleState before ===> ${Provider.of<NotificationProvider>(context, listen: false).message}');
 
