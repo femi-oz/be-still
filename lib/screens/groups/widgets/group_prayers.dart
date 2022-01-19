@@ -114,12 +114,14 @@ class _GroupPrayersState extends State<GroupPrayers> {
                   data.length == 0
                       ? Container(
                           padding: EdgeInsets.symmetric(
-                            vertical: 60,
-                          ),
-                          child: Text(
-                            'You do not have any prayer in your list.',
-                            style: AppTextStyles.regularText13,
-                            textAlign: TextAlign.center,
+                              horizontal: 100, vertical: 60),
+                          child: Opacity(
+                            opacity: 0.3,
+                            child: Text(
+                              'You do not have any prayer in your list.',
+                              style: AppTextStyles.demiboldText34,
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         )
                       : Container(

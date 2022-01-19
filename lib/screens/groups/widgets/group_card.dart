@@ -363,7 +363,7 @@ class _GroupCardState extends State<GroupCard> {
                                               .currentUser
                                               .id ??
                                           '',
-                                      '${(Provider.of<UserProvider>(context, listen: false).currentUser.firstName ?? '') + ' ' + (Provider.of<UserProvider>(context, listen: false).currentUser.lastName ?? '')}',
+                                      '${(Provider.of<UserProvider>(context, listen: false).currentUser.firstName?.capitalizeFirst ?? '') + ' ' + (Provider.of<UserProvider>(context, listen: false).currentUser.lastName?.capitalizeFirst ?? '')}',
                                       adminData,
                                     );
                                   }

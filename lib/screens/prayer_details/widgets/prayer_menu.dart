@@ -885,7 +885,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                             isDisabled: isGroupPrayer,
                             suffix: '',
                             onPress: () => () {},
-                            text: 'Flag as innapropriate',
+                            text: 'Flag as inappropriate',
                           ),
                   ],
                 ),

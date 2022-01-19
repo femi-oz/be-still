@@ -1974,11 +1974,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           SizedBox(height: 40),
           data.length == 0
               ? Container(
-                  padding: EdgeInsets.only(right: 20, left: 20),
-                  child: Text(
-                    'You do not have any notifications',
-                    style: AppTextStyles.demiboldText34,
-                    textAlign: TextAlign.center,
+                  padding: EdgeInsets.symmetric(horizontal: 100, vertical: 60),
+                  child: Opacity(
+                    opacity: 0.3,
+                    child: Text(
+                      'You do not have any notifications',
+                      style: AppTextStyles.demiboldText34,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 )
               : Container(),
