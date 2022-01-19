@@ -246,9 +246,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       String groupId, String notificationId, String receiverId) async {
     BeStilDialog.showLoading(context);
     try {
-      BeStilDialog.showLoading(context);
-      final requestor = await Provider.of<UserProvider>(context, listen: false)
+      await Provider.of<UserProvider>(context, listen: false)
           .getUserById(receiverId); //requestor
+      UserModel requestor =
+          Provider.of<UserProvider>(context, listen: false).selectedUser;
       final admin =
           Provider.of<UserProvider>(context, listen: false).currentUser; //admin
       final groupData = await Provider.of<GroupProvider>(context, listen: false)
@@ -259,7 +260,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           .denyRequest(groupId, groupRequest.id ?? '');
       deleteNotification(notificationId);
       BeStilDialog.hideLoading(context);
-      Navigator.of(context).pop();
+      Navigator.pop(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
