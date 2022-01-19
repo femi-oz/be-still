@@ -6,12 +6,13 @@ import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Settings/Widgets/groups.dart';
 import 'package:be_still/screens/Settings/Widgets/my_list.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/settings/Widgets/general.dart';
 import 'package:be_still/screens/settings/Widgets/prayer_time.dart';
 import 'package:be_still/screens/settings/Widgets/sharing.dart';
 import 'package:be_still/screens/settings/widgets/settings_bar.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -27,7 +28,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenPage extends State<SettingsScreen>
     with SingleTickerProviderStateMixin {
-  TabController tabController;
+  late TabController tabController;
 
   @override
   void initState() {
@@ -37,15 +38,22 @@ class _SettingsScreenPage extends State<SettingsScreen>
 
   @override
   void didChangeDependencies() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      var userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      await Provider.of<MiscProvider>(context, listen: false)
-          .setSearchMode(false);
-      await Provider.of<MiscProvider>(context, listen: false)
-          .setSearchQuery('');
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .searchPrayers('', userId);
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      try {
+        var userId =
+            Provider.of<UserProvider>(context, listen: false).currentUser.id;
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setSearchMode(false);
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setSearchQuery('');
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .searchPrayers('', userId ?? '');
+      } catch (e, s) {
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.errorOccured, user, s);
+      }
     });
     super.didChangeDependencies();
   }
@@ -77,7 +85,7 @@ class SettingsTab extends StatefulWidget {
 
 class SettingsTabState extends State<SettingsTab>
     with SingleTickerProviderStateMixin {
-  TabController tabController;
+  late TabController tabController;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -102,9 +110,10 @@ class SettingsTabState extends State<SettingsTab>
   }
 
   Future<bool> _onWillPop() async {
-    return (Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
-        false;
+    // return (Navigator.of(context).pushNamedAndRemoveUntil(
+    //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+    //     false;
+    return false;
   }
 
   AppCOntroller appCOntroller = Get.find();
@@ -149,7 +158,7 @@ class SettingsTabState extends State<SettingsTab>
                     text: "General",
                   ),
                   Tab(
-                    text: "My List",
+                    text: "My Prayers",
                   ),
                   Tab(
                     text: "Set Reminder",

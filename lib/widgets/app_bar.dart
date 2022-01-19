@@ -1,8 +1,4 @@
-import 'dart:ui';
-
-import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/models/group.model.dart';
-import 'package:be_still/models/notification.model.dart';
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
@@ -17,17 +13,18 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final Function switchSearchMode;
+  final Function? switchSearchMode;
   final bool isSearchMode;
   final bool showPrayerActions;
   final bool isGroup;
   final bool showOnlyTitle;
-  final GlobalKey globalKey;
+  final GlobalKey? globalKey;
   CustomAppBar({
-    Key key,
+    Key? key,
     this.switchSearchMode,
     this.isSearchMode = false,
     this.isGroup = false,
@@ -60,7 +57,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
     await Provider.of<MiscProvider>(context, listen: false)
         .setSearchQuery(value);
     await Provider.of<PrayerProvider>(context, listen: false)
-        .searchPrayers(value, userId);
+        .searchPrayers(value, userId ?? '');
   }
 
   void _clearSearchField() async {
@@ -75,7 +72,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
     await Provider.of<MiscProvider>(context, listen: false)
         .setSearchQuery(value);
     await Provider.of<GroupPrayerProvider>(context, listen: false)
-        .searchPrayers(value, userId);
+        .searchPrayers(value, userId ?? '');
   }
 
   void _clearGroupSearchField() async {
@@ -136,23 +133,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
         });
   }
 
-  Future<int> getCount() async {
+  int get getCount {
     final notifications =
         Provider.of<NotificationProvider>(context).notifications;
-    final userId = Provider.of<UserProvider>(context).currentUser.id;
-    final z = notifications.map((e) async {
-      if (e.groupId.isNotEmpty) {
-        final j = await Provider.of<GroupProvider>(context)
-            .getGroupFuture(e.groupId, userId);
-        if (j != null) {
-          return j;
-        } else {
-          return null;
-        }
-      }
-    }).toList();
-
-    return z.where((element) => element != null).length;
+    return notifications.length;
   }
 
   @override
@@ -179,8 +163,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
           widget.showPrayerActions
               ? InkWell(
                   onTap: () {
-                    if (_searchController.text.isEmpty) {
-                      widget.switchSearchMode(true);
+                    if (_searchController.text.isEmpty &&
+                        widget.switchSearchMode != null) {
+                      widget.switchSearchMode!(true);
                       Provider.of<MiscProvider>(context, listen: false)
                           .setSearchMode(true);
                       setState(() {});
@@ -259,17 +244,18 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     ),
                     onTap: () => setState(
                       () {
-                        widget.isGroup
-                            ? _clearGroupSearchField()
-                            : _clearSearchField();
+                        if (widget.switchSearchMode != null) {
+                          widget.isGroup
+                              ? _clearGroupSearchField()
+                              : _clearSearchField();
 
-                        widget.switchSearchMode(false);
-                        Provider.of<MiscProvider>(context, listen: false)
-                            .setSearchMode(false);
-                        Provider.of<MiscProvider>(context, listen: false)
-                            .setSearchQuery('');
-
-                        setState(() {});
+                          widget.switchSearchMode!(false);
+                          Provider.of<MiscProvider>(context, listen: false)
+                              .setSearchMode(false);
+                          Provider.of<MiscProvider>(context, listen: false)
+                              .setSearchQuery('');
+                          setState(() {});
+                        }
                       },
                     ),
                   )
@@ -292,66 +278,38 @@ class _CustomAppBarState extends State<CustomAppBar> {
       actions: <Widget>[
         !widget.isSearchMode
             ? GestureDetector(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => NotificationsScreen(),
-                  ),
-                ),
+                onTap: () {
+                  AppCOntroller appCOntroller = Get.find();
+                  appCOntroller.setCurrentPage(14, false);
+                },
                 child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
                   child: Center(
-                    child: FutureBuilder<int>(
-                        future: getCount(),
-                        builder: (context, snapshot) {
-                          return Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              (!snapshot.hasData || snapshot.hasError)
-                                  ? IconButton(
-                                      onPressed: () {},
-                                      icon: Icon(Icons.notifications_none,
-                                          size: 30, color: AppColors.white))
-                                  : IconButton(
-                                      icon: Icon(
-                                          snapshot.data != 0
-                                              ? Icons.notifications
-                                              : Icons.notifications_none,
-                                          size: 30,
-                                          color: snapshot.data != 0
-                                              ? AppColors.red
-                                              : AppColors.white),
-                                      onPressed: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              NotificationsScreen(),
-                                        ),
-                                      ),
-                                    ),
-                              (!snapshot.hasData || snapshot.hasError)
-                                  // snapshot.data != 0
-                                  ? SizedBox()
-                                  : Padding(
-                                      padding: EdgeInsets.only(
-                                          right: snapshot.data == 1
-                                              ? 2
-                                              : snapshot.data > 9
-                                                  ? 1
-                                                  : 0),
-                                      child: Text(
-                                          snapshot.data < 1
-                                              ? ''
-                                              : snapshot.data.toString(),
-                                          style: TextStyle(
-                                              fontSize: 10,
-                                              color: AppColors.white,
-                                              fontWeight: FontWeight.w600)),
-                                    )
-                              // : Container(),
-                            ],
-                          );
-                        }),
-                  ),
+                      child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Icon(
+                          getCount != 0
+                              ? Icons.notifications
+                              : Icons.notifications_none,
+                          size: 30,
+                          color:
+                              getCount != 0 ? AppColors.red : AppColors.white),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            right: getCount == 1
+                                ? 2
+                                : getCount > 9
+                                    ? 1
+                                    : 0),
+                        child: Text(getCount < 1 ? '' : getCount.toString(),
+                            style: TextStyle(
+                                fontSize: 10,
+                                color: AppColors.white,
+                                fontWeight: FontWeight.w600)),
+                      )
+                    ],
+                  )),
                 ),
               )
             : Container(),

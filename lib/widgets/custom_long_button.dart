@@ -4,22 +4,22 @@ import 'package:flutter/material.dart';
 class LongButton extends StatelessWidget {
   final String text;
   final Function onPress;
-  final Function onPressMore;
+  final Function? onPressMore;
   final Color backgroundColor;
   final Color textColor;
   final bool hasIcon;
   final bool hasMore;
   final bool isDisabled;
-  final IconData icon;
-  final String suffix;
-  final Widget child;
+  final IconData? icon;
+  final String? suffix;
+  final Widget? child;
 
   LongButton(
-      {this.onPress,
+      {required this.onPress,
       this.onPressMore,
-      this.text,
-      this.backgroundColor,
-      @required this.textColor,
+      required this.text,
+      required this.backgroundColor,
+      required this.textColor,
       this.hasIcon = true,
       this.hasMore = false,
       this.isDisabled = false,
@@ -65,7 +65,9 @@ class LongButton extends StatelessWidget {
                           : Container(),
                       SizedBox(width: 10),
                       Container(
-                        width: MediaQuery.of(context).size.width * 0.5,
+                        width: suffix != null
+                            ? MediaQuery.of(context).size.width * 0.3
+                            : MediaQuery.of(context).size.width * 0.5,
                         child: Text(
                           text,
                           overflow: TextOverflow.ellipsis,
@@ -83,7 +85,7 @@ class LongButton extends StatelessWidget {
               ),
               suffix != null
                   ? Text(
-                      suffix,
+                      suffix ?? '',
                       style: AppTextStyles.boldText14.copyWith(
                         color: AppColors.lightBlue4
                             .withOpacity(isDisabled ? 0.5 : 1),
@@ -93,9 +95,11 @@ class LongButton extends StatelessWidget {
                   : hasMore
                       ? Row(
                           children: [
-                            child != null ? child : SizedBox.shrink(),
+                            child ?? SizedBox.shrink(),
                             InkWell(
-                                onTap: () => onPressMore(),
+                                onTap: () {
+                                  if (onPressMore != null) onPressMore!();
+                                },
                                 child: Icon(Icons.more_vert, color: textColor)),
                           ],
                         )

@@ -19,9 +19,11 @@ class GroupPrayerProvider with ChangeNotifier {
   List<CombineGroupPrayerStream> _filteredPrayers = [];
   Iterable<Contact> _localContacts = [];
 
-  CombineGroupPrayerStream _currentPrayer;
+  CombineGroupPrayerStream _currentPrayer =
+      CombineGroupPrayerStream.defaultValue();
   List<HiddenPrayerModel> _hiddenPrayers = [];
   List<FollowedPrayerModel> _followedPrayers = [];
+  List<FollowedPrayerModel> _groupFollowedPrayers = [];
 
   List<CombineGroupPrayerStream> get prayers => _prayers;
   List<CombineGroupPrayerStream> get filteredPrayers => _filteredPrayers;
@@ -30,6 +32,7 @@ class GroupPrayerProvider with ChangeNotifier {
   CombineGroupPrayerStream get currentPrayer => _currentPrayer;
   List<HiddenPrayerModel> get hiddenPrayers => _hiddenPrayers;
   List<FollowedPrayerModel> get followedPrayers => _followedPrayers;
+  List<FollowedPrayerModel> get groupFollowedPrayers => _groupFollowedPrayers;
 
   bool _isEdit = false;
   bool get isEdit => _isEdit;
@@ -37,58 +40,99 @@ class GroupPrayerProvider with ChangeNotifier {
   String _newPrayerId = '';
   String get newPrayerId => _newPrayerId;
 
-  CombineGroupPrayerStream _prayerToEdit;
+  CombineGroupPrayerStream _prayerToEdit =
+      CombineGroupPrayerStream.defaultValue();
   CombineGroupPrayerStream get prayerToEdit => _prayerToEdit;
 
   String _filterOption = Status.active;
   String get filterOption => _filterOption;
 
   Future<void> setGroupPrayers(String groupId) async {
-    _filteredPrayers = [];
-    _prayerService.getPrayers(groupId).asBroadcastStream().listen(
-      (data) {
-        _prayers = data.where((e) => e.groupPrayer.deleteStatus > -1).toList();
-        _filteredPrayers = _prayers;
-        filterPrayers();
-        notifyListeners();
-      },
-    );
+    try {
+      _filteredPrayers = [];
+      _prayerService.getPrayers(groupId).asBroadcastStream().listen(
+        (data) {
+          _prayers = data
+              .where((e) => (e.groupPrayer?.deleteStatus ?? 0) > -1)
+              .toList();
+          _filteredPrayers = _prayers;
+          filterPrayers();
+          notifyListeners();
+        },
+      );
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  Future<void> setPrayer(String id) async =>
+  Future<void> setPrayer(String id) async {
+    try {
       _prayerService.getPrayer(id).asBroadcastStream().listen((prayer) {
         _currentPrayer = prayer;
         notifyListeners();
       });
+    } catch (e) {
+      rethrow;
+    }
+  }
 
-  Future<CombineGroupPrayerStream> setPrayerFuture(String id) async =>
+  Future setPrayerFuture(String id) async {
+    try {
       _prayerService.getPrayerFuture(id).then((prayer) {
         _currentPrayer = prayer;
         notifyListeners();
-        return _currentPrayer;
       });
+    } catch (e) {
+      rethrow;
+    }
+  }
 
-  Future<void> setHiddenPrayer(String id) async =>
+  Future<void> setHiddenPrayer(String id) async {
+    try {
       _prayerService.getHiddenPrayers(id).asBroadcastStream().listen((prayer) {
         _hiddenPrayers = prayer;
         notifyListeners();
       });
+    } catch (e) {
+      rethrow;
+    }
+  }
 
-  Future<void> setFollowedPrayer(String id) async =>
-      _prayerService.getFollowedPrayers(id).then((prayer) {
+  // Future<void> setFollowedPrayer(String id) async {
+  //   try {
+  //     _prayerService.getFollowedPrayers(id).then((prayer) {
+  //       _followedPrayers = prayer;
+  //       notifyListeners();
+  //     });
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
+
+  // Future<void> setFollowedPrayerByGroupId(String id) async {
+  //   try {
+  //     _prayerService.getFollowedPrayersByGroupId(id).then((prayer) {
+  //       _groupFollowedPrayers = prayer;
+  //       notifyListeners();
+  //     });
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
+
+  Future<void> setFollowedPrayerByUserId(String? id) async {
+    try {
+      _prayerService
+          .getFollowedPrayersByUserId(id ?? '')
+          .asBroadcastStream()
+          .listen((prayer) {
         _followedPrayers = prayer;
         notifyListeners();
       });
-  Future<void> setFollowedPrayerByGroupId(String id) async =>
-      _prayerService.getFollowedPrayersByGroupId(id).then((prayer) {
-        _followedPrayers = prayer;
-        notifyListeners();
-      });
-  Future<void> setFollowedPrayerByUserId(String id) async =>
-      _prayerService.getFollowedPrayersByUserId(id).then((prayer) {
-        _followedPrayers = prayer;
-        notifyListeners();
-      });
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   Future<void> addPrayer(
     String prayerDesc,
@@ -96,207 +140,349 @@ class GroupPrayerProvider with ChangeNotifier {
     String creatorName,
     String prayerDescBackup,
     String userId,
-  ) async =>
+  ) async {
+    try {
       await _prayerService
           .addPrayer(prayerDesc, groupId, creatorName, prayerDescBackup, userId)
           .then((value) => _newPrayerId = value);
-
-  Future<void> messageRequestor(
-          PrayerRequestMessageModel prayerRequestData) async =>
-      await _prayerService.messageRequestor(prayerRequestData);
-
-  Future<void> addPrayerWithGroups(BuildContext context, PrayerModel prayerData,
-          List groups, String _userID) async =>
-      await _prayerService.addPrayerWithGroup(
-          context, prayerData, groups, _userID);
-
-  Future<void> hidePrayer(String prayerId, UserModel user) async =>
-      await _prayerService.hidePrayer(prayerId, user);
-
-  Future<void> hidePrayerFromAllMembers(String prayerId, bool value) async =>
-      await _prayerService.hideFromAllMembers(prayerId, value);
-
-  Future<void> getContacts() async {
-    var status = await Permission.contacts.status;
-    Settings.enabledContactPermission = status == PermissionStatus.granted;
-
-    if (Settings.enabledContactPermission) {
-      final localContacts =
-          await ContactsService.getContacts(withThumbnails: false);
-      _localContacts = localContacts.where((e) => e.displayName != null);
+    } catch (e) {
+      rethrow;
     }
   }
 
-  Future<void> archivePrayer(String userPrayerId) async =>
-      await _prayerService.archivePrayer(userPrayerId);
+  Future<void> messageRequestor(
+      PrayerRequestMessageModel prayerRequestData) async {
+    try {
+      await _prayerService.messageRequestor(prayerRequestData);
+    } catch (e) {
+      rethrow;
+    }
+  }
 
-  Future<void> unArchivePrayer(String userPrayerId, String prayerID) async =>
+  Future<void> addPrayerWithGroups(BuildContext context, PrayerModel prayerData,
+      List groups, String _userID) async {
+    try {
+      await _prayerService.addPrayerWithGroup(
+          context, prayerData, groups, _userID);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> hidePrayer(String prayerId, UserModel user) async {
+    try {
+      await _prayerService.hidePrayer(prayerId, user);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> hidePrayerFromAllMembers(String prayerId, bool value) async {
+    try {
+      await _prayerService.hideFromAllMembers(prayerId, value);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> getContacts() async {
+    try {
+      var status = await Permission.contacts.status;
+      Settings.enabledContactPermission = status == PermissionStatus.granted;
+
+      if (Settings.enabledContactPermission) {
+        final localContacts =
+            await ContactsService.getContacts(withThumbnails: false);
+        _localContacts = localContacts.where((e) => e.displayName != null);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> archivePrayer(String userPrayerId) async {
+    try {
+      await _prayerService.archivePrayer(userPrayerId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> unArchivePrayer(String userPrayerId, String prayerID) async {
+    try {
       await _prayerService.unArchivePrayer(userPrayerId, prayerID);
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   Future<void> unSnoozePrayer(
-          String prayerID, DateTime snoozeEndDate, String userPrayerID) async =>
+      String prayerID, DateTime snoozeEndDate, String userPrayerID) async {
+    try {
       await _prayerService.unSnoozePrayer(snoozeEndDate, userPrayerID);
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   Future<void> markPrayerAsAnswered(
     String prayerId,
-    String userPrayerId,
-  ) async =>
-      await _prayerService.markPrayerAsAnswered(prayerId, userPrayerId);
+    String groupPrayerId,
+  ) async {
+    try {
+      await _prayerService.markPrayerAsAnswered(prayerId, groupPrayerId);
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   Future<void> unMarkPrayerAsAnswered(
     String prayerId,
     String userPrayerId,
-  ) async =>
+  ) async {
+    try {
       await _prayerService.unMarkPrayerAsAnswered(prayerId, userPrayerId);
+    } catch (e) {
+      rethrow;
+    }
+  }
 
-  Future<void> favoritePrayer(String prayerID) async =>
+  Future<void> favoritePrayer(String prayerID) async {
+    try {
       await _prayerService.favoritePrayer(prayerID);
+    } catch (e) {
+      rethrow;
+    }
+  }
 
-  Future<void> unfavoritePrayer(String prayerID) async =>
+  Future<void> unfavoritePrayer(String prayerID) async {
+    try {
       await _prayerService.unFavoritePrayer(prayerID);
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   Future<void> deletePrayer(String userPrayeId, String prayerId) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    await _prayerService.deletePrayer(userPrayeId, prayerId);
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      await _prayerService.deletePrayer(userPrayeId, prayerId);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> deleteUpdate(String prayerId) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    await _prayerService.deleteUpdate(prayerId);
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      await _prayerService.deleteUpdate(prayerId);
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  Future<void> editUpdate(String description, String prayerID) async =>
+  Future<void> editUpdate(String description, String prayerID) async {
+    try {
       await _prayerService.editUpdate(description, prayerID);
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   Future<void> addPrayerTag(List<Contact> contactData, UserModel user,
-          String message, String prayerId) async =>
+      String message, String prayerId) async {
+    try {
       await _prayerService.addPrayerTag(contactData, user, message, prayerId);
+    } catch (e) {
+      rethrow;
+    }
+  }
 
-  Future<void> editprayer(String description, String prayerID) async =>
+  Future<void> editprayer(String description, String prayerID) async {
+    try {
       await _prayerService.editPrayer(description, prayerID);
+    } catch (e) {
+      rethrow;
+    }
+  }
 
-  Future<void> removePrayerTag(String tagId) async =>
+  Future<void> removePrayerTag(String tagId) async {
+    try {
       await _prayerService.removePrayerTag(tagId);
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   Future<void> searchPrayers(String searchQuery, String userId) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    if (searchQuery == '') {
-      filterPrayers();
-    } else {
-      filterPrayers();
-      List<CombineGroupPrayerStream> filteredPrayers = _filteredPrayers
-          .where((CombineGroupPrayerStream data) => data.prayer.description
-              .toLowerCase()
-              .contains(searchQuery.toLowerCase()))
-          .toList();
-      for (int i = 0; i < _filteredPrayers.length; i++) {
-        var hasMatch = _filteredPrayers[i].updates.any((u) =>
-            u.description.toLowerCase().contains(searchQuery.toLowerCase()));
-        if (hasMatch) filteredPrayers.add(_filteredPrayers[i]);
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      if (searchQuery == '') {
+        filterPrayers();
+      } else {
+        filterPrayers();
+        List<CombineGroupPrayerStream> filteredPrayers = _filteredPrayers
+            .where((CombineGroupPrayerStream data) =>
+                (data.prayer?.description ?? '')
+                    .toLowerCase()
+                    .contains(searchQuery.toLowerCase()))
+            .toList();
+        for (int i = 0; i < _filteredPrayers.length; i++) {
+          var hasMatch = (_filteredPrayers[i].updates ?? []).any((u) =>
+              (u.description ?? '')
+                  .toLowerCase()
+                  .contains(searchQuery.toLowerCase()));
+          if (hasMatch) filteredPrayers.add(_filteredPrayers[i]);
+        }
+        _filteredPrayers = filteredPrayers;
+        _filteredPrayers.sort((a, b) => (b.prayer?.modifiedOn ?? DateTime.now())
+            .compareTo((a.prayer?.modifiedOn ?? DateTime.now())));
+        notifyListeners();
       }
-      _filteredPrayers = filteredPrayers;
-      _filteredPrayers
-          .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
+    } catch (e) {
+      rethrow;
     }
-    notifyListeners();
   }
 
   Future<void> addPrayerUpdate(
-          String userId, String prayer, String prayerId) async =>
+      String userId, String prayer, String prayerId) async {
+    try {
       await _prayerService.addPrayerUpdate(userId, prayer, prayerId);
-  void setEditMode(bool value) {
-    _isEdit = value;
-    notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  void setEditPrayer(CombineGroupPrayerStream data) {
-    _prayerToEdit = data;
-    notifyListeners();
+  void setEditMode(bool value) {
+    try {
+      _isEdit = value;
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  void setEditPrayer({CombineGroupPrayerStream? data}) {
+    try {
+      _prayerToEdit = data ?? CombineGroupPrayerStream.defaultValue();
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
   }
 
   void setPrayerFilterOptions(String option) {
-    _filterOption = option;
-    notifyListeners();
+    try {
+      _filterOption = option;
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> filterPrayers() async {
-    if (_firebaseAuth.currentUser == null) return null;
-    List<CombineGroupPrayerStream> prayers = _prayers.toList();
-    List<CombineGroupPrayerStream> activePrayers = [];
-    List<CombineGroupPrayerStream> answeredPrayers = [];
-    List<CombineGroupPrayerStream> snoozedPrayers = [];
-    List<CombineGroupPrayerStream> favoritePrayers = [];
-    List<CombineGroupPrayerStream> archivedPrayers = [];
-    List<CombineGroupPrayerStream> allPrayers = [];
-    if (_filterOption == Status.all) {
-      favoritePrayers = prayers
-          .where((CombineGroupPrayerStream data) => data.groupPrayer.isFavorite)
-          .toList();
-      allPrayers = prayers;
-    }
-    if (_filterOption == Status.active) {
-      favoritePrayers = prayers
-          .where((CombineGroupPrayerStream data) => data.groupPrayer.isFavorite)
-          .toList();
-      activePrayers = prayers
-          .where((CombineGroupPrayerStream data) =>
-              data.groupPrayer.status.toLowerCase() ==
-              Status.active.toLowerCase())
-          .toList();
-    }
-    if (_filterOption == Status.answered) {
-      answeredPrayers = prayers
-          .where(
-              (CombineGroupPrayerStream data) => data.prayer.isAnswer == true)
-          .toList();
-    }
-    if (_filterOption == Status.archived) {
-      archivedPrayers = prayers
-          .where((CombineGroupPrayerStream data) =>
-              data.groupPrayer.isArchived == true)
-          .toList();
-    }
-    if (_filterOption == Status.following) {
-      archivedPrayers = prayers
-          .where((CombineGroupPrayerStream data) => data.prayer.isGroup == true)
-          .toList();
-    }
-    if (_filterOption == Status.snoozed) {
-      snoozedPrayers = prayers
-          .where((CombineGroupPrayerStream data) =>
-              data.groupPrayer.isSnoozed == true &&
-              data.groupPrayer.snoozeEndDate.isAfter(DateTime.now()))
-          .toList();
-    }
-    _filteredPrayers = [
-      ...allPrayers,
-      ...activePrayers,
-      ...archivedPrayers,
-      ...snoozedPrayers,
-      ...answeredPrayers
-    ];
-    _filteredPrayers
-        .sort((a, b) => b.prayer.modifiedOn.compareTo(a.prayer.modifiedOn));
-    _filteredPrayers = [...favoritePrayers, ..._filteredPrayers];
-    List<CombineGroupPrayerStream> _distinct = [];
-    var idSet = <String>{};
-    for (var e in _filteredPrayers) {
-      if (idSet.add(e.prayer.id)) {
-        _distinct.add(e);
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      List<CombineGroupPrayerStream> prayers = _prayers.toList();
+      List<CombineGroupPrayerStream> activePrayers = [];
+      List<CombineGroupPrayerStream> answeredPrayers = [];
+      List<CombineGroupPrayerStream> snoozedPrayers = [];
+      List<CombineGroupPrayerStream> favoritePrayers = [];
+      List<CombineGroupPrayerStream> archivedPrayers = [];
+      List<CombineGroupPrayerStream> allPrayers = [];
+      if (_filterOption == Status.all) {
+        favoritePrayers = prayers
+            .where((CombineGroupPrayerStream data) =>
+                (data.groupPrayer?.isFavorite ?? false))
+            .toList();
+        allPrayers = prayers;
       }
+      if (_filterOption == Status.active) {
+        favoritePrayers = prayers
+            .where((CombineGroupPrayerStream data) =>
+                (data.groupPrayer?.isFavorite ?? false))
+            .toList();
+        activePrayers = prayers
+            .where((CombineGroupPrayerStream data) =>
+                (data.groupPrayer?.status ?? '').toLowerCase() ==
+                Status.active.toLowerCase())
+            .toList();
+      }
+      if (_filterOption == Status.answered) {
+        answeredPrayers = prayers
+            .where((CombineGroupPrayerStream data) =>
+                (data.prayer?.isAnswer ?? false) == true)
+            .toList();
+      }
+      if (_filterOption == Status.archived) {
+        archivedPrayers = prayers
+            .where((CombineGroupPrayerStream data) =>
+                (data.groupPrayer?.isArchived ?? false) == true)
+            .toList();
+      }
+      if (_filterOption == Status.following) {
+        archivedPrayers = prayers
+            .where((CombineGroupPrayerStream data) =>
+                (data.prayer?.isGroup ?? false) == true)
+            .toList();
+      }
+      if (_filterOption == Status.snoozed) {
+        snoozedPrayers = prayers
+            .where((CombineGroupPrayerStream data) =>
+                (data.groupPrayer?.isSnoozed ?? false) == true &&
+                (data.groupPrayer?.snoozeEndDate ?? DateTime.now())
+                    .isAfter(DateTime.now()))
+            .toList();
+      }
+      _filteredPrayers = [
+        ...allPrayers,
+        ...activePrayers,
+        ...archivedPrayers,
+        ...snoozedPrayers,
+        ...answeredPrayers
+      ];
+      _filteredPrayers.sort((a, b) => (b.prayer?.modifiedOn ?? DateTime.now())
+          .compareTo((a.prayer?.modifiedOn ?? DateTime.now())));
+      _filteredPrayers = [...favoritePrayers, ..._filteredPrayers];
+      List<CombineGroupPrayerStream> _distinct = [];
+      var idSet = <String>{};
+      for (var e in _filteredPrayers) {
+        if (idSet.add(e.prayer?.id ?? '')) {
+          _distinct.add(e);
+        }
+      }
+      _filteredPrayers = _distinct;
+      notifyListeners();
+    } catch (e) {
+      rethrow;
     }
-    _filteredPrayers = _distinct;
-    notifyListeners();
   }
 
-  Future<void> flagAsInappropriate(String prayerId) async =>
+  Future<void> flagAsInappropriate(String prayerId) async {
+    try {
       await _prayerService.flagAsInappropriate(prayerId);
-  Future<void> addToMyList(
-          String prayerId, String userId, String groupId) async =>
-      await _prayerService.addToMyList(prayerId, userId, groupId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> addToMyList(String prayerId, String userId, String groupId,
+      bool isFollowedByAdmin) async {
+    try {
+      await _prayerService.addToMyList(
+          prayerId, userId, groupId, isFollowedByAdmin);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> removeFromMyList(
       String followedPrayerId, String userPrayerId) async {
-    await _prayerService.removeFromMyList(followedPrayerId, userPrayerId);
-    notifyListeners();
+    try {
+      await _prayerService.removeFromMyList(followedPrayerId, userPrayerId);
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
   }
 }

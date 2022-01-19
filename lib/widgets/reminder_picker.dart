@@ -11,8 +11,10 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:provider/provider.dart';
@@ -21,19 +23,19 @@ class ReminderPicker extends StatefulWidget {
   final Function onCancel;
   final bool hideActionuttons;
   final bool isGroup;
-  final LocalNotificationModel reminder;
+  final LocalNotificationModel? reminder;
   final String type;
   final String entityId;
   final bool popTwice;
 
   @override
   ReminderPicker({
-    @required this.hideActionuttons,
-    @required this.onCancel,
-    @required this.reminder,
-    @required this.type,
-    @required this.entityId,
-    @required this.isGroup,
+    required this.hideActionuttons,
+    required this.onCancel,
+    this.reminder,
+    required this.type,
+    required this.entityId,
+    required this.isGroup,
     this.popTwice = true,
   });
   _ReminderPickerState createState() => _ReminderPickerState();
@@ -42,15 +44,15 @@ class ReminderPicker extends StatefulWidget {
 class _ReminderPickerState extends State<ReminderPicker> {
   double itemExtent = 30.0;
 
-  int selectedHour;
+  int selectedHour = 0;
 
-  String selectedFrequency;
-  int selectedDayOfWeek;
-  String selectedPeriod;
-  int selectedMinute;
-  int selectedYear;
-  String selectedMonth;
-  int selectedDayOfMonth;
+  String selectedFrequency = '';
+  int selectedDayOfWeek = 0;
+  String selectedPeriod = '';
+  int selectedMinute = 0;
+  int selectedYear = 0;
+  String selectedMonth = '';
+  int selectedDayOfMonth = 0;
 
   List<String> periodOfDay = [PeriodOfDay.am, PeriodOfDay.pm];
   List<int> hoursOfTheDay = new List<int>.generate(12, (i) => i + 1);
@@ -61,15 +63,17 @@ class _ReminderPickerState extends State<ReminderPicker> {
   @override
   void initState() {
     if (widget.reminder != null) {
-      selectedHour = int.parse(widget.reminder?.selectedHour);
-      selectedMinute = int.parse(widget.reminder?.selectedMinute);
+      selectedHour = int.parse(widget.reminder?.selectedHour ?? '0');
+
+      selectedMinute = int.parse(widget.reminder?.selectedMinute ?? '0');
       selectedDayOfWeek = LocalNotification.daysOfWeek
-          .indexOf(widget.reminder?.selectedDay?.capitalizeFirst);
-      selectedPeriod = widget.reminder?.period;
-      selectedFrequency = widget.reminder?.frequency;
-      selectedYear = int.parse(widget.reminder?.selectedYear);
-      selectedMonth = widget.reminder?.selectedMonth;
-      selectedDayOfMonth = int.parse(widget.reminder?.selectedDayOfMonth);
+          .indexOf((widget.reminder?.selectedDay ?? '').capitalizeFirst ?? '');
+      selectedPeriod = widget.reminder?.period ?? '';
+      selectedFrequency = widget.reminder?.frequency ?? '';
+      selectedYear = int.parse(widget.reminder?.selectedYear ?? '0');
+      selectedMonth = widget.reminder?.selectedMonth ?? '';
+      selectedDayOfMonth =
+          int.parse(widget.reminder?.selectedDayOfMonth ?? '0');
     } else {
       selectedHour = DateTime.now().hour == 0 ? 12 : DateTime.now().hour;
       selectedMinute = minInTheHour[0];
@@ -142,21 +146,35 @@ class _ReminderPickerState extends State<ReminderPicker> {
     String notificationText,
     String selectedYear,
   ) async {
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .updateLocalNotification(
-      selectedFrequency,
-      scheduledDate,
-      selectedDay,
-      selectedPeriod,
-      selectedHour,
-      selectedMinute,
-      widget.reminder?.id,
-      userId,
-      notificationText,
-      selectedYear,
-      selectedMonth,
-      selectedDayOfMonth.toString(),
-    );
+    try {
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .updateLocalNotification(
+        selectedFrequency,
+        scheduledDate,
+        selectedDay,
+        selectedPeriod,
+        selectedHour,
+        selectedMinute,
+        widget.reminder?.id ?? '',
+        userId,
+        notificationText,
+        selectedYear,
+        selectedMonth,
+        selectedDayOfMonth.toString(),
+      );
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    }
 
     setState(() {});
     if (widget.type == NotificationType.reminder) {
@@ -177,11 +195,12 @@ class _ReminderPickerState extends State<ReminderPicker> {
   setNotification() async {
     // AM 22= 22-12
     // pm 12 = 12+12
-    final hour = selectedPeriod == PeriodOfDay.am && selectedHour > 12
+    var hour = selectedPeriod == PeriodOfDay.am && selectedHour >= 12
         ? selectedHour - 12
         : selectedPeriod == PeriodOfDay.pm && selectedHour < 12
             ? selectedHour + 12
             : selectedHour;
+
     DateTime date = DateTime(
         selectedYear,
         LocalNotification.months.indexOf(selectedMonth) + 1,
@@ -193,11 +212,18 @@ class _ReminderPickerState extends State<ReminderPicker> {
         date.isBefore(DateTime.now())) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      var e = Exception('Please select a date in the future.');
-      BeStilDialog.showErrorDialog(context, e, user, null);
+      final e = PlatformException(
+          code: '', message: 'Please select a date in the future.');
+      final s = StackTrace.fromString(e.message ?? '');
+      BeStilDialog.showErrorDialog(
+          context, 'Please select a date in the future.', user, s);
       return;
     }
     try {
+      if (hour == 0) {
+        hour = 12;
+      }
+
       var _selectedMinuteString =
           selectedMinute < 10 ? '0$selectedMinute' : '$selectedMinute';
       var _selectedHourString = hour < 10
@@ -223,7 +249,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
       final prayerData =
           Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
       final title = '$selectedFrequency reminder to pray';
-      final description = prayerData?.prayer?.description ?? '';
+      final description = prayerData.prayer?.description ?? '';
 
       final scheduleDate = LocalNotification.scheduleDate(
         hour,
@@ -258,14 +284,14 @@ class _ReminderPickerState extends State<ReminderPicker> {
           _selectedHourString,
           _selectedMinuteString,
           scheduleDate,
-          userId,
+          userId ?? '',
           notificationText,
           selectedYear.toString(),
         );
       else
         await storeNotification(
           notificationText,
-          userId,
+          userId ?? '',
           title,
           description,
           selectedFrequency,
@@ -281,19 +307,22 @@ class _ReminderPickerState extends State<ReminderPicker> {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
   _deleteReminder() async {
     try {
       await Provider.of<NotificationProvider>(context, listen: false)
-          .deleteLocalNotification(widget.reminder.id);
+          .deleteLocalNotification(widget.reminder?.id ?? '',
+              widget.reminder?.localNotificationId ?? 0);
       setState(() {});
       if (widget.type == NotificationType.reminder) {
         if (widget.popTwice) Navigator.pop(context);
@@ -307,12 +336,14 @@ class _ReminderPickerState extends State<ReminderPicker> {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -328,6 +359,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                 .indexOf(LocalNotification.daysOfWeek[selectedDayOfWeek]));
     FixedExtentScrollController periodController = FixedExtentScrollController(
         initialItem: periodOfDay.indexOf(selectedPeriod));
+
     FixedExtentScrollController hourController = FixedExtentScrollController(
         initialItem: hoursOfTheDay
             .indexOf(selectedHour > 12 ? selectedHour - 12 : selectedHour));

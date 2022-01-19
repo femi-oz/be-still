@@ -6,7 +6,7 @@ class AppIcons {
   static const _kFontFam = 'AppIcons';
   static const _kFontFam2 = 'AppIcons2';
   static const _kFontFam3 = 'AppIcons3';
-  static const String _kFontPkg = null;
+  static const String? _kFontPkg = null;
 
   static const IconData bestill_icons_bestill_archived_icon_revised_drk =
       IconData(0xe805, fontFamily: _kFontFam3, fontPackage: _kFontPkg);

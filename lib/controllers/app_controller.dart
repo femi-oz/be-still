@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class AppCOntroller extends GetxController with SingleGetTickerProviderMixin {
-  TabController tabController;
+class AppCOntroller extends GetxController
+    with GetSingleTickerProviderStateMixin {
+  late TabController tabController;
   Rx<int> _currentPage = 0.obs;
   int get currentPage => _currentPage.value;
   Rx<int> _settingsTab = 0.obs;
@@ -11,7 +12,7 @@ class AppCOntroller extends GetxController with SingleGetTickerProviderMixin {
 
   @override
   void onInit() {
-    tabController = new TabController(length: 14, vsync: this);
+    tabController = new TabController(length: 15, vsync: this);
     super.onInit();
   }
 

@@ -1,14 +1,20 @@
+import 'dart:io';
+
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class NotificationBar extends StatefulWidget implements PreferredSizeWidget {
   final context;
 
-  NotificationBar({Key key, this.context})
+  NotificationBar({Key? key, this.context})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -38,9 +44,25 @@ class NotificationBarState extends State<NotificationBar> {
           ? TextButton(
               onPressed: () async {
                 BeStilDialog.showLoading(context);
-                await Provider.of<NotificationProvider>(context, listen: false)
-                    .clearNotification();
-                BeStilDialog.hideLoading(context);
+                try {
+                  await Provider.of<NotificationProvider>(context,
+                          listen: false)
+                      .clearNotification();
+                  BeStilDialog.hideLoading(context);
+                } on HttpException catch (e, s) {
+                  BeStilDialog.hideLoading(context);
+
+                  final user = Provider.of<UserProvider>(context, listen: false)
+                      .currentUser;
+                  BeStilDialog.showErrorDialog(
+                      context, StringUtils.getErrorMessage(e), user, s);
+                } catch (e, s) {
+                  BeStilDialog.hideLoading(context);
+                  final user = Provider.of<UserProvider>(context, listen: false)
+                      .currentUser;
+                  BeStilDialog.showErrorDialog(
+                      context, StringUtils.errorOccured, user, s);
+                }
               },
               child: Text(
                 "CLEAR ALL",
@@ -57,7 +79,10 @@ class NotificationBarState extends State<NotificationBar> {
           color: AppColors.white,
           size: 24,
         ),
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: () {
+          AppCOntroller appCOntroller = Get.find();
+          appCOntroller.setCurrentPage(0, false);
+        },
       ),
       // actions: <Widget>[
       //   ,

@@ -55,7 +55,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
         throw 'Could not launch https://www.bestillapp.com/help';
       }
     } catch (e, s) {
-      BeStilDialog.showErrorDialog(context, e, _userProvider.currentUser, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.getErrorMessage(e),
+          _userProvider.currentUser, s);
     }
   }
 
@@ -79,7 +80,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
           throw 'Could not launch https://my.bible.com/bible';
         }
       } catch (e, s) {
-        BeStilDialog.showErrorDialog(context, e, _userProvider.currentUser, s);
+        BeStilDialog.showErrorDialog(context, StringUtils.getErrorMessage(e),
+            _userProvider.currentUser, s);
       }
     }
   }

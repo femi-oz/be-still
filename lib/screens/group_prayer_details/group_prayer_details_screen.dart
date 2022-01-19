@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/notification.model.dart';
@@ -9,8 +11,10 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/group_prayer_details/widgets/no_update_view.dart';
 import 'package:be_still/screens/group_prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/screens/group_prayer_details/widgets/update_view.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:flutter/material.dart';
@@ -27,19 +31,14 @@ class GroupPrayerDetails extends StatefulWidget {
 }
 
 class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
-  void getSettings() async {
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    await Provider.of<SettingsProvider>(context, listen: false)
-        .setSettings(_user.id);
-  }
-
-  Duration snoozeDurationinDays;
-  DateTime snoozeEndDate;
-  Duration snoozeDurationinHour;
-  Duration snoozeDurationinMinutes;
-  String durationText;
-  int snoozeDuration;
-  LocalNotificationModel _reminder;
+  Duration snoozeDurationinDays = Duration.zero;
+  DateTime snoozeEndDate = DateTime.now();
+  Duration snoozeDurationinHour = Duration.zero;
+  Duration snoozeDurationinMinutes = Duration.zero;
+  String durationText = '';
+  int snoozeDuration = 0;
+  LocalNotificationModel _reminder = LocalNotificationModel.defaultValue();
+  String reminderString = '';
   Widget _buildMenu() {
     final prayerData =
         Provider.of<GroupPrayerProvider>(context, listen: false).currentPrayer;
@@ -47,18 +46,17 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
         context, hasReminder, _reminder, () => updateUI(), prayerData);
   }
 
-  String reminderString;
   bool get hasReminder {
     var reminders =
         Provider.of<NotificationProvider>(context).localNotifications;
     final prayerData =
         Provider.of<GroupPrayerProvider>(context, listen: false).currentPrayer;
     final reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == prayerData.groupPrayer.id,
-        orElse: () => null);
-    reminderString = reminder?.notificationText ?? '';
+        (reminder) => reminder.entityId == prayerData.groupPrayer?.id,
+        orElse: () => LocalNotificationModel.defaultValue());
+    reminderString = reminder.notificationText ?? '';
 
-    if (reminder == null)
+    if ((reminder.id ?? '').isEmpty)
       return false;
     else
       return true;
@@ -70,6 +68,24 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
     setState(() {});
   }
 
+  void getSettings() async {
+    try {
+      final _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      await Provider.of<SettingsProvider>(context, listen: false)
+          .setSettings(_user.id ?? '');
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
+  }
+
   String getDayText(day) {
     var suffix = "th";
     var digit = day % 10;
@@ -79,11 +95,10 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
     return day.toString() + suffix;
   }
 
-  BuildContext selectedContext;
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
+      WidgetsBinding.instance?.addPostFrameCallback((_) async {
         getSettings();
       });
       _isInit = false;
@@ -98,8 +113,8 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
     final prayerData = Provider.of<GroupPrayerProvider>(context).currentPrayer;
 
     _reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == prayerData.groupPrayer.id,
-        orElse: () => null);
+        (reminder) => reminder.entityId == prayerData.groupPrayer?.id,
+        orElse: () => LocalNotificationModel.defaultValue());
     return Scaffold(
         appBar: CustomAppBar(
           showPrayerActions: false,
@@ -173,7 +188,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                   ],
                 ),
               ),
-              if (prayerData?.groupPrayer?.isSnoozed)
+              if (prayerData.groupPrayer?.isSnoozed ?? false)
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   InkWell(
                     onTap: () => showDialog(
@@ -198,7 +213,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                                     const EdgeInsets.symmetric(vertical: 30),
                                 child: ReminderPicker(
                                   isGroup: true,
-                                  entityId: prayerData?.groupPrayer?.id ?? '',
+                                  entityId: prayerData.groupPrayer?.id ?? '',
                                   type: NotificationType.reminder,
                                   reminder: _reminder,
                                   hideActionuttons: false,
@@ -221,7 +236,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                         Container(
                           margin: EdgeInsets.only(left: 7),
                           child: Text(
-                              'Snoozed until ${DateFormat('MMM').format(prayerData.groupPrayer.snoozeEndDate)} ${getDayText(prayerData.groupPrayer.snoozeEndDate.day)}, ${DateFormat('yyyy h:mm a').format(prayerData.groupPrayer.snoozeEndDate)}',
+                              'Snoozed until ${DateFormat('MMM').format(prayerData.groupPrayer?.snoozeEndDate ?? DateTime.now())} ${getDayText(prayerData.groupPrayer?.snoozeEndDate ?? DateTime.now().day)}, ${DateFormat('yyyy h:mm a').format(prayerData.groupPrayer?.snoozeEndDate ?? DateTime.now())}',
                               style: AppTextStyles.regularText12),
                         ),
                       ],
@@ -257,7 +272,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                                           child: ReminderPicker(
                                             isGroup: true,
                                             entityId:
-                                                prayerData?.groupPrayer?.id ??
+                                                prayerData.groupPrayer?.id ??
                                                     '',
                                             type: NotificationType.reminder,
                                             reminder: _reminder,
@@ -302,9 +317,10 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                     ),
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  child: Provider.of<GroupPrayerProvider>(context)
-                              .currentPrayer
-                              .updates
+                  child: (Provider.of<GroupPrayerProvider>(context)
+                                      .currentPrayer
+                                      .updates ??
+                                  [])
                               .length >
                           0
                       ? UpdateView()
@@ -314,14 +330,4 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
               SizedBox(height: 30)
             ])));
   }
-}
-
-class PrayerDetailsRouteArguments {
-  final String id;
-  final bool isGroup;
-
-  PrayerDetailsRouteArguments({
-    this.id,
-    this.isGroup,
-  });
 }

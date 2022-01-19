@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 
 class BeStillSnackbar {
   static showInSnackBar(
-      {GlobalKey<ScaffoldState> key, String message, type = 'error'}) {
-    ScaffoldMessenger.of(key.currentContext).showSnackBar(
+      {required GlobalKey<ScaffoldState> key,
+      required String message,
+      type = 'error'}) {
+    ScaffoldMessenger.of(key.currentContext!).showSnackBar(
       new SnackBar(
         backgroundColor: AppColors.prayerMenu[1],
         content: Row(

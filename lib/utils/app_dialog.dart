@@ -5,6 +5,7 @@ import 'package:be_still/widgets/custom_alert_dialog.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
 
 import 'essentials.dart';
 
@@ -12,7 +13,7 @@ class BeStilDialog {
   static Widget getLoading(context, [String message = '']) {
     precacheImage(AssetImage(StringUtils.backgroundImage), context);
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(switchSearchMode: () {}, globalKey: GlobalKey()),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -54,31 +55,19 @@ class BeStilDialog {
     Navigator.pop(context);
   }
 
-  static Future showErrorDialog(BuildContext context, dynamic error,
-      UserModel user, StackTrace stackTrace) async {
-    var hasProperty = false;
-    try {
-      (error as dynamic)?.message;
-      hasProperty = true;
-    } on NoSuchMethodError {}
+  static Future showErrorDialog(BuildContext context, String error,
+      UserModel? user, StackTrace? stackTrace) async {
     showDialog(
       barrierDismissible: false,
       context: context,
       builder: (_) => CustomAlertDialog(
-        type: AlertType.error,
-        confirmText: 'OK',
-        message: error == null
-            ? StringUtils.generateExceptionMessage(null)
-            : !hasProperty
-                ? StringUtils.generateExceptionMessage(null)
-                : error?.message,
-      ),
+          type: AlertType.error, confirmText: 'OK', message: error),
     );
-    FirebaseCrashlytics.instance.setUserIdentifier(user?.id ?? 'N/A');
-    FirebaseCrashlytics.instance
-        .setCustomKey('id', user == null ? 'N/A' : user.id);
-    FirebaseCrashlytics.instance
-        .setCustomKey('email', user == null ? 'N/A' : user.email);
+    if (user != null) {
+      FirebaseCrashlytics.instance.setUserIdentifier(user.id ?? '');
+      FirebaseCrashlytics.instance.setCustomKey('id', user.id ?? '');
+      FirebaseCrashlytics.instance.setCustomKey('email', user.email ?? '');
+    }
 
     FirebaseCrashlytics.instance.recordError(
       error,
@@ -87,7 +76,7 @@ class BeStilDialog {
   }
 
   static Future showSuccessDialog(BuildContext context, String message,
-      [Function onConfirm]) async {
+      {Function? onConfirm}) async {
     await showDialog(
       barrierDismissible: false,
       context: context,
@@ -100,7 +89,7 @@ class BeStilDialog {
   }
 
   static Future showConfirmDialog(BuildContext context,
-      {String title, String message, Function onConfirm}) async {
+      {String? title, String? message, required Function onConfirm}) async {
     showDialog(
       context: context,
       builder: (BuildContext ctx) => CustomAlertDialog(
@@ -117,8 +106,8 @@ class BeStilDialog {
   static void showSnackBar(
       GlobalKey<ScaffoldState> _scaffoldKey, String message,
       [AlertType type = AlertType.success]) {
-    ScaffoldMessenger.of(_scaffoldKey.currentContext).hideCurrentSnackBar();
-    ScaffoldMessenger.of(_scaffoldKey.currentContext).showSnackBar(
+    ScaffoldMessenger.of(_scaffoldKey.currentContext!).hideCurrentSnackBar();
+    ScaffoldMessenger.of(_scaffoldKey.currentContext!).showSnackBar(
       SnackBar(
         content: Text(
           message,
@@ -136,7 +125,7 @@ class BeStilDialog {
           label: 'CLOSE',
           textColor: Colors.white,
           onPressed: () {
-            ScaffoldMessenger.of(_scaffoldKey.currentContext)
+            ScaffoldMessenger.of(_scaffoldKey.currentContext!)
                 .hideCurrentSnackBar();
           },
         ),
@@ -161,7 +150,7 @@ class Loader extends ModalRoute<void> {
   Color get barrierColor => Colors.black.withOpacity(0.5);
 
   @override
-  String get barrierLabel => null;
+  String get barrierLabel => '';
 
   @override
   bool get maintainState => true;

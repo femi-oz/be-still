@@ -1,7 +1,9 @@
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:easy_rich_text/easy_rich_text.dart';
 import 'package:flutter/gestures.dart';
@@ -25,7 +27,6 @@ class _NoUpdateViewState extends State<NoUpdateView> {
   Iterable<Contact> localContacts = [];
 
   _emailLink(String payload, context) async {
-    payload = payload == null ? '' : payload;
     final Email email = Email(
       body: '',
       recipients: [payload],
@@ -45,7 +46,12 @@ class _NoUpdateViewState extends State<NoUpdateView> {
 
   _openShareModal(BuildContext context, String phoneNumber, String email,
       String identifier) async {
-    await Provider.of<PrayerProvider>(context, listen: false).getContacts();
+    try {
+      await Provider.of<PrayerProvider>(context, listen: false).getContacts();
+    } catch (e, s) {
+      var user = Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
     var updatedPhone = '';
     var updatedEmail = '';
     localContacts =
@@ -54,12 +60,14 @@ class _NoUpdateViewState extends State<NoUpdateView> {
         localContacts.where((element) => element.identifier == identifier);
 
     for (var contact in latestContact) {
-      final phoneNumber =
-          contact.phones.length > 0 ? contact.phones.toList()[0].value : null;
-      final email =
-          contact.emails.length > 0 ? contact.emails.toList()[0].value : null;
-      updatedPhone = phoneNumber;
-      updatedEmail = email;
+      final phoneNumber = (contact.phones ?? []).length > 0
+          ? (contact.phones ?? []).toList()[0].value
+          : null;
+      final email = (contact.emails ?? []).length > 0
+          ? (contact.emails ?? []).toList()[0].value
+          : null;
+      updatedPhone = phoneNumber ?? '';
+      updatedEmail = email ?? '';
     }
     AlertDialog dialog = AlertDialog(
         actionsPadding: EdgeInsets.all(0),
@@ -229,12 +237,12 @@ class _NoUpdateViewState extends State<NoUpdateView> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              widget.data.prayer.userId != _currentUser.id
+              widget.data.prayer?.userId != _currentUser.id
                   ? Container(
                       padding: EdgeInsets.all(20),
                       margin: EdgeInsets.only(bottom: 20),
                       child: Text(
-                        widget.data.prayer.creatorName,
+                        widget.data.prayer?.creatorName ?? '',
                         style: AppTextStyles.regularText18b.copyWith(
                             color: AppColors.lightBlue4,
                             fontWeight: FontWeight.w500),
@@ -251,7 +259,8 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                       children: <Widget>[
                         Text(
                           DateFormat('hh:mma | MM.dd.yyyy')
-                              .format(widget.data.prayer.modifiedOn)
+                              .format(widget.data.prayer?.modifiedOn ??
+                                  DateTime.now())
                               .toLowerCase(),
                           style: AppTextStyles.regularText18b
                               .copyWith(color: AppColors.prayerModeBorder),
@@ -274,7 +283,7 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: EasyRichText(
-                        widget.data.prayer.description,
+                        widget.data.prayer?.description ?? '',
                         defaultStyle: AppTextStyles.regularText16b.copyWith(
                           color: AppColors.prayerTextColor,
                         ),
@@ -287,9 +296,9 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                                   ..onTap = () {
                                     _openShareModal(
                                         context,
-                                        widget.data.tags[i].phoneNumber,
-                                        widget.data.tags[i].email,
-                                        widget.data.tags[i].identifier);
+                                        widget.data.tags[i].phoneNumber ?? '',
+                                        widget.data.tags[i].email ?? '',
+                                        widget.data.tags[i].identifier ?? '');
                                   },
                                 style: AppTextStyles.regularText15.copyWith(
                                     color: AppColors.lightBlue2,

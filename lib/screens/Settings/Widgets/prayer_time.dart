@@ -11,10 +11,10 @@ import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -29,8 +29,6 @@ class PrayerTimeSettings extends StatefulWidget {
 }
 
 class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
-  BuildContext bcontext;
-
   @override
   void initState() {
     super.initState();
@@ -49,7 +47,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
 
   double itemExtent = 30.0;
   bool showUpdateField = false;
-  LocalNotificationModel reminder;
+  LocalNotificationModel reminder = LocalNotificationModel.defaultValue();
 
   _deletePrayerTime(
     int localNotificationId,
@@ -59,21 +57,22 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
       BeStilDialog.showLoading(
         context,
       );
-      await LocalNotification.unschedule(localNotificationId);
       await Provider.of<NotificationProvider>(context, listen: false)
-          .deleteLocalNotification(notificationId);
+          .deleteLocalNotification(notificationId, localNotificationId);
       BeStilDialog.hideLoading(context);
       setState(() {});
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -113,111 +112,118 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                             children: [
                               Row(
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 20.0,
-                                      right: 15.0,
-                                    ),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0,
-                                        vertical: 10.0,
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 20.0,
+                                        right: 15.0,
                                       ),
-                                      height: 40.0,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.75,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: AppColors.lightBlue6,
-                                          width: 1,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 20.0,
+                                          vertical: 10.0,
                                         ),
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Container(
-                                            child: Text(
-                                              data.frequency,
-                                              style: AppTextStyles.regularText15
-                                                  .copyWith(
-                                                      color: AppColors
-                                                          .prayerTextColor),
+                                        height: 40.0,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.75,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: AppColors.lightBlue6,
+                                            width: 1,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Container(
+                                              child: Text(
+                                                data.frequency ?? '',
+                                                style: AppTextStyles
+                                                    .regularText15
+                                                    .copyWith(
+                                                        color: AppColors
+                                                            .prayerTextColor),
+                                              ),
                                             ),
-                                          ),
-                                          data.frequency == Frequency.weekly
-                                              ? Container(
-                                                  child: Text(
-                                                    data.selectedDay,
-                                                    style: AppTextStyles
-                                                        .regularText15
-                                                        .copyWith(
-                                                      color: AppColors
-                                                          .prayerTextColor,
-                                                    ),
-                                                  ),
-                                                )
-                                              : data.frequency ==
-                                                      Frequency.one_time
-                                                  ? Container(
-                                                      child: Text(
-                                                        DateFormat('MM-dd-yy')
-                                                            .format(data
-                                                                .scheduledDate),
-                                                        style: AppTextStyles
-                                                            .regularText15
-                                                            .copyWith(
-                                                          color: AppColors
-                                                              .prayerTextColor,
-                                                        ),
+                                            data.frequency == Frequency.weekly
+                                                ? Container(
+                                                    child: Text(
+                                                      data.selectedDay ?? '',
+                                                      style: AppTextStyles
+                                                          .regularText15
+                                                          .copyWith(
+                                                        color: AppColors
+                                                            .prayerTextColor,
                                                       ),
-                                                    )
-                                                  : SizedBox(),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                data.selectedHour,
-                                                style: AppTextStyles
-                                                    .regularText15
-                                                    .copyWith(
-                                                  color:
-                                                      AppColors.prayerTextColor,
+                                                    ),
+                                                  )
+                                                : data.frequency ==
+                                                        Frequency.one_time
+                                                    ? Container(
+                                                        child: Text(
+                                                          DateFormat('MM-dd-yy')
+                                                              .format(data
+                                                                      .scheduledDate ??
+                                                                  DateTime
+                                                                      .now()),
+                                                          style: AppTextStyles
+                                                              .regularText15
+                                                              .copyWith(
+                                                            color: AppColors
+                                                                .prayerTextColor,
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : SizedBox(),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  data.selectedHour ?? '',
+                                                  style: AppTextStyles
+                                                      .regularText15
+                                                      .copyWith(
+                                                    color: AppColors
+                                                        .prayerTextColor,
+                                                  ),
                                                 ),
-                                              ),
-                                              SizedBox(width: 5),
-                                              Text(
-                                                ':',
-                                                style: AppTextStyles
-                                                    .regularText15
-                                                    .copyWith(
-                                                  color:
-                                                      AppColors.prayerTextColor,
+                                                SizedBox(width: 5),
+                                                Text(
+                                                  ':',
+                                                  style: AppTextStyles
+                                                      .regularText15
+                                                      .copyWith(
+                                                    color: AppColors
+                                                        .prayerTextColor,
+                                                  ),
                                                 ),
-                                              ),
-                                              SizedBox(width: 5),
-                                              Text(
-                                                data.selectedMinute,
-                                                style: AppTextStyles
-                                                    .regularText15
-                                                    .copyWith(
-                                                  color:
-                                                      AppColors.prayerTextColor,
+                                                SizedBox(width: 5),
+                                                Text(
+                                                  data.selectedMinute ?? '',
+                                                  style: AppTextStyles
+                                                      .regularText15
+                                                      .copyWith(
+                                                    color: AppColors
+                                                        .prayerTextColor,
+                                                  ),
                                                 ),
-                                              ),
-                                              SizedBox(width: 5),
-                                              Text(
-                                                data.period,
-                                                style: AppTextStyles
-                                                    .regularText15
-                                                    .copyWith(
-                                                  color:
-                                                      AppColors.prayerTextColor,
+                                                SizedBox(width: 5),
+                                                Text(
+                                                  data.period ?? '',
+                                                  style: AppTextStyles
+                                                      .regularText15
+                                                      .copyWith(
+                                                    color: AppColors
+                                                        .prayerTextColor,
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -290,8 +296,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                       InkWell(
                                         onTap: () {
                                           _deletePrayerTime(
-                                              data.localNotificationId,
-                                              data.id);
+                                              data.localNotificationId ?? 0,
+                                              data.id ?? '');
                                         },
                                         child: Container(
                                           width: 30,

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -28,7 +29,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  AnimationController _textAnimationController;
+  late AnimationController _textAnimationController;
   AuthenticationProvider _authenticationProvider = AuthenticationProvider();
 
   var _isInit = true;
@@ -50,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
         startTime();
       });
       setState(() => _isInit = false);
@@ -70,36 +71,44 @@ class _SplashScreenState extends State<SplashScreen>
             Settings.enabledContactPermission = p == PermissionStatus.granted);
       }
     } catch (e, s) {
-      BeStilDialog.showErrorDialog(context, e, null, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
     }
   }
 
   Future<void> setRouteDestination() async {
-    _getPermissions();
-    var message =
-        Provider.of<NotificationProvider>(context, listen: false).message;
-    if (message != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        if (message.type == NotificationType.prayer_time) {
-          await Provider.of<PrayerProvider>(context, listen: false)
-              .setPrayerTimePrayers(message.entityId);
-          AppCOntroller appCOntroller = Get.find();
-
-          appCOntroller.setCurrentPage(2, false);
-          Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
-          Navigator.of(context).pushNamedAndRemoveUntil(
-              EntryScreen.routeName, (Route<dynamic> route) => false);
-        }
-        if (message.type == NotificationType.prayer) {
-          await Provider.of<PrayerProvider>(context, listen: false)
-              .setPrayer(message.entityId);
-        }
-      });
-      Provider.of<NotificationProvider>(context, listen: false).clearMessage();
-    } else {
-      Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+    try {
+      _getPermissions();
+      final message =
+          Provider.of<NotificationProvider>(context, listen: false).message;
+      if ((message.entityId ?? '').isNotEmpty) {
+        WidgetsBinding.instance?.addPostFrameCallback((_) async {
+          if (message.type == NotificationType.prayer_time) {
+            await Provider.of<PrayerProvider>(context, listen: false)
+                .setPrayerTimePrayers(message.entityId ?? '');
+            AppCOntroller appCOntroller = Get.find();
+            appCOntroller.setCurrentPage(2, false);
+            Provider.of<MiscProvider>(context, listen: false)
+                .setLoadStatus(true);
+            Navigator.of(context).pushNamedAndRemoveUntil(
+                EntryScreen.routeName, (Route<dynamic> route) => false);
+          }
+          if (message.type == NotificationType.prayer) {
+            await Provider.of<PrayerProvider>(context, listen: false)
+                .setPrayer(message.entityId ?? '');
+          }
+        });
+        Provider.of<NotificationProvider>(context, listen: false)
+            .clearMessage();
+      } else {
+        Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            EntryScreen.routeName, (Route<dynamic> route) => false);
+      }
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -175,7 +184,7 @@ class _SplashScreenState extends State<SplashScreen>
                     setState(() => targetValue = targetValue);
                   },
                   duration: Duration(seconds: 2),
-                  builder: (BuildContext context, double size, Widget child) {
+                  builder: (BuildContext context, double size, Widget? child) {
                     return Container(
                       height: size,
                       child: Image.asset(

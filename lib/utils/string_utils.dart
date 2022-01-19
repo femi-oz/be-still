@@ -16,7 +16,7 @@ class StringUtils {
       'You have to be recently logged in the perform this action. Please re-login';
   static String backgroundImage = 'assets/images/bestill_arrows-bg-lt.png';
 
-  static String drawerBackgroundImage([bool isDarkMode]) {
+  static String drawerBackgroundImage() {
     String retVal;
     switch (Settings.isDarkMode) {
       case true:
@@ -55,12 +55,20 @@ class StringUtils {
       "Tap the Be Still logo to view your prayers one at a time in a distraction-free zone during your prayer time.";
   static String quickTipMore =
       " icon to access recommended online Bibles, learn more about the app in the help section, or log out.";
+  static String unathorized =
+      "You're unathorized to perform this action. Kindly log in";
+
+  static String getErrorMessage(e) {
+    return (e?.message != null ? e.message : StringUtils.errorOccured) ??
+        StringUtils.errorOccured;
+  }
+
   static generateExceptionMessage(exceptionCode) {
     String errorMessage;
     switch (exceptionCode) {
       case ErrorType.emailAlreadyExists:
         errorMessage =
-            "The email has already been registered. Please login or reset your password.";
+            "That email address is already in use. Please select another one.";
         break;
       case ErrorType.invalidEmail:
         errorMessage = "Email format is wrong";

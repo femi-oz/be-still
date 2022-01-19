@@ -10,8 +10,8 @@ import 'package:timezone/timezone.dart' as tz;
 class LocalNotification {
   static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-  static String reminderId;
-  static int localNotificationID;
+  static String reminderId = '';
+  static int localNotificationID = 0;
   static List<String> daysOfWeek = [
     DaysOfWeek.mon,
     DaysOfWeek.tue,
@@ -44,27 +44,27 @@ class LocalNotification {
     final location = tz.getLocation(timeZoneName);
     //set notification in new device
     for (int i = 0; i < _localNotifications.length; i++) {
-      final scheduledDate =
-          tz.TZDateTime.from(_localNotifications[i].scheduledDate, location);
+      final scheduledDate = tz.TZDateTime.from(
+          _localNotifications[i].scheduledDate ?? DateTime.now(), location);
       await setLocalNotification(
-        title: _localNotifications[i].title,
-        description: _localNotifications[i].description,
+        title: _localNotifications[i].title ?? '',
+        description: _localNotifications[i].description ?? '',
         scheduledDate: scheduledDate,
         payload: _localNotifications[i].payload,
-        frequency: _localNotifications[i].frequency,
+        frequency: _localNotifications[i].frequency ?? '',
         context: context,
       );
     }
   }
 
   static Future<void> setLocalNotification({
-    @required String title,
-    @required String description,
-    @required tz.TZDateTime scheduledDate,
-    @required payload,
-    @required String frequency,
-    @required BuildContext context,
-    int localNotificationId,
+    required String title,
+    required String description,
+    required tz.TZDateTime scheduledDate,
+    required payload,
+    required String frequency,
+    required BuildContext context,
+    int? localNotificationId,
   }) async {
     if (localNotificationId != null)
       localNotificationID = localNotificationId;
@@ -74,8 +74,9 @@ class LocalNotification {
               .localNotifications;
       final allIds = localNots.map((e) => e.localNotificationId).toList();
 
-      localNotificationID =
-          allIds.length > 0 ? allIds.reduce((a, b) => a > b ? a : b) + 1 : 0;
+      localNotificationID = allIds.length > 0
+          ? allIds.reduce((a, b) => (a ?? 0) > (b ?? 0) ? a : b) ?? 0 + 1
+          : 0;
     }
     await _flutterLocalNotificationsPlugin.zonedSchedule(
       localNotificationID,

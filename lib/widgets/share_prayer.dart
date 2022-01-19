@@ -9,6 +9,7 @@ import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_sms/flutter_sms.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -16,28 +17,27 @@ class SharePrayer extends StatefulWidget {
   final CombinePrayerStream prayerData;
   final bool hasReminder;
   final reminder;
-  SharePrayer({this.prayerData, this.hasReminder, this.reminder});
+  SharePrayer(
+      {required this.prayerData, required this.hasReminder, this.reminder});
 
   _SharePrayerState createState() => _SharePrayerState();
 }
 
 class _SharePrayerState extends State<SharePrayer> {
   List groups = [];
-  String _emailUpdatesToString;
-  String _textUpdatesToString;
+  String _emailUpdatesToString = '';
+  String _textUpdatesToString = '';
 
   _emailLink([bool isChurch = false]) async {
     final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final _churchEmail = Provider.of<SettingsProvider>(context, listen: false)
         .sharingSettings
         .churchEmail;
-    var _prayer =
-        toBeginningOfSentenceCase(widget.prayerData.prayer.description);
-    var firstName = _user.firstName;
-    firstName = toBeginningOfSentenceCase(firstName);
-    var lastName = _user.lastName;
-    lastName = toBeginningOfSentenceCase(lastName);
-    var _footerText =
+    final _prayer =
+        widget.prayerData.prayer?.description ?? ''.capitalizeFirst ?? '';
+    final firstName = _user.firstName ?? ''.capitalizeFirst ?? '';
+    final lastName = _user.lastName ?? ''.capitalizeFirst ?? '';
+    final _footerText =
         '''$firstName $lastName shared this prayer request with you from the Be Still app, which allows you to create a prayer list for yourself or a group of friends. Learn more about Be Still at 
 https://www.bestillapp.com.''';
     final Email email = Email(
@@ -45,18 +45,18 @@ https://www.bestillapp.com.''';
           ? '''I am sharing with you the following prayer request from my Be Still app: 
 
 $_emailUpdatesToString
-${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)}
+${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer?.createdOn ?? DateTime.now())}
 $_prayer   
 
 $_footerText'''
           : '''I am sharing with you the following prayer request from my Be Still app: 
 
-${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer.createdOn)}
+${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer?.createdOn ?? DateTime.now())}
 $_prayer   
 
 $_footerText''',
       subject: 'Prayer Request',
-      recipients: isChurch ? [_churchEmail] : [],
+      recipients: isChurch ? [_churchEmail ?? ''] : [],
       isHTML: false,
     );
 
@@ -67,17 +67,14 @@ $_footerText''',
     final _churchPhone = Provider.of<SettingsProvider>(context, listen: false)
         .sharingSettings
         .churchPhone;
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    final _prayer = widget.prayerData.prayer.description;
-    var name = _user.firstName;
-    name = toBeginningOfSentenceCase(name);
+    final _prayer = widget.prayerData.prayer?.description ?? '';
     final _footerText =
         "This prayer need has been shared with you from the Be Still app, which allows you to create a prayer list for yourself or a group of friends. \n\nhttps://www.bestillapp.com";
 
     await sendSMS(
             message:
-                "Please pray for $_prayer (${DateFormat('dd MMM yyyy').format(widget.prayerData.prayer.createdOn)}) ${_textUpdatesToString != '' ? ' $_textUpdatesToString \n\n' : '\n\n'}$_footerText",
-            recipients: isChurch ? [_churchPhone] : [])
+                "Please pray for $_prayer (${DateFormat('dd MMM yyyy').format(widget.prayerData.prayer?.createdOn ?? DateTime.now())}) ${_textUpdatesToString != '' ? ' $_textUpdatesToString \n\n' : '\n\n'}$_footerText",
+            recipients: isChurch ? [_churchPhone ?? ''] : [])
         .catchError((onError) {
       print(onError);
     });
@@ -85,13 +82,13 @@ $_footerText''',
 
   initState() {
     var emailUpdates = [];
-    widget.prayerData.updates.forEach((u) =>
-        emailUpdates.add('''${DateFormat('dd MMMM yyyy').format(u.createdOn)}
+    widget.prayerData.updates.forEach((u) => emailUpdates.add(
+        '''${DateFormat('dd MMMM yyyy').format(u.createdOn ?? DateTime.now())}
 ${u.description}
 '''));
     var textUpdates = [];
     widget.prayerData.updates.forEach((u) => textUpdates.add(
-        '${u.description} (${DateFormat('dd MMM yyyy').format(u.createdOn)})'));
+        '${u.description} (${DateFormat('dd MMM yyyy').format(u.createdOn ?? DateTime.now())})'));
 
     _emailUpdatesToString = emailUpdates.join(" ");
     _textUpdatesToString = textUpdates.join(" ");
@@ -150,7 +147,7 @@ ${u.description}
                     isScrollControlled: true,
                     builder: (BuildContext context) {
                       return PrayerMenu(context, widget.hasReminder,
-                          widget.reminder, null, widget.prayerData);
+                          widget.reminder, () {}, widget.prayerData);
                     },
                   );
                 },

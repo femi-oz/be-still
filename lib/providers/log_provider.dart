@@ -7,7 +7,11 @@ class LogProvider with ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   Future<void> setErrorLog(
       String message, String userId, String location) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    await locator<LogService>().createLog(message, userId, location);
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      await locator<LogService>().createLog(message, userId, location);
+    } catch (e) {
+      rethrow;
+    }
   }
 }

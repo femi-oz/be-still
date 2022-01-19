@@ -12,86 +12,118 @@ class SettingsProvider with ChangeNotifier {
   SettingsService _settingsService = locator<SettingsService>();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  SettingsModel _settings;
+  SettingsModel _settings = SettingsModel.defaultValue();
   SettingsModel get settings => _settings;
-  PrayerSettingsModel _prayerSettings;
+  PrayerSettingsModel _prayerSettings = PrayerSettingsModel.defaultValue();
   PrayerSettingsModel get prayerSetttings => _prayerSettings;
-  SharingSettingsModel _sharingSettings;
+  SharingSettingsModel _sharingSettings = SharingSettingsModel.defaultValue();
   SharingSettingsModel get sharingSettings => _sharingSettings;
-  GroupSettings _groupSettings;
+  GroupSettings _groupSettings = GroupSettings.defaultValue();
   GroupSettings get groupSettings => _groupSettings;
-  GroupPreferenceSettings _groupPreferenceSettings;
+  GroupPreferenceSettings _groupPreferenceSettings =
+      GroupPreferenceSettings.defaultValue();
   GroupPreferenceSettings get groupPreferenceSettings =>
       _groupPreferenceSettings;
 
   Future setSettings(String userId) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    var settings = await _settingsService.getSettings(userId);
-    _settings = settings;
-    notifyListeners();
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      var settings = await _settingsService.getSettings(userId);
+      _settings = settings;
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future setPrayerSettings(String userId) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    var settings = await _settingsService.getPrayerSettings(userId);
-    _prayerSettings = settings;
-    notifyListeners();
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      var settings = await _settingsService.getPrayerSettings(userId);
+      _prayerSettings = settings;
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future setSharingSettings(String userId) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    var settings = await _settingsService.getSharingSettings(userId);
-    _sharingSettings = settings;
-    notifyListeners();
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      var settings = await _settingsService.getSharingSettings(userId);
+      _sharingSettings = settings;
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  // Future setGroupSettings(String userId) async {
-  //   if (_firebaseAuth.currentUser == null) return null;
-  //   var settings = await _settingsService.getGroupSettings(userId);
-  //   _groupSettings = settings;
-  //   notifyListeners();
-  // }
-
   Future setGroupPreferenceSettings(String userId) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    var settings = await _settingsService.getGroupPreferenceSettings(userId);
-    _groupPreferenceSettings = settings;
-    notifyListeners();
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      var settings = await _settingsService.getGroupPreferenceSettings(userId);
+      _groupPreferenceSettings = settings;
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future updateSettings(
     String userId, {
-    String key,
-    dynamic value,
-    String settingsId,
+    required String key,
+    required dynamic value,
+    required String settingsId,
   }) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    await _settingsService.updateSettings(
-        key: key, settingsId: settingsId, value: value);
-    await setSettings(userId);
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      await _settingsService.updateSettings(
+          key: key, settingsId: settingsId, value: value);
+      await setSettings(userId);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future updatePrayerSettings(String userId,
-      {String key, dynamic value, String settingsId}) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    await _settingsService.updatePrayerSettings(
-        key: key, settingsId: settingsId, value: value);
-    await setPrayerSettings(userId);
+      {required String key,
+      required dynamic value,
+      required String settingsId}) async {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      await _settingsService.updatePrayerSettings(
+          key: key, settingsId: settingsId, value: value);
+      await setPrayerSettings(userId);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future updateSharingSettings(String userId,
-      {String key, dynamic value, String settingsId}) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    await _settingsService.updateSharingSettings(
-        key: key, settingsId: settingsId, value: value);
-    await setSharingSettings(userId);
+      {required String key,
+      required dynamic value,
+      required String settingsId}) async {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      await _settingsService.updateSharingSettings(
+          key: key, settingsId: settingsId, value: value);
+      await setSharingSettings(userId);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future updateGroupPrefenceSettings(String userId,
-      {String key, dynamic value, String settingsId}) async {
-    if (_firebaseAuth.currentUser == null) return null;
-    await _settingsService.updateGroupPreferenceSettings(
-        key: key, groupPreferenceSettingsId: settingsId, value: value);
-    await setGroupPreferenceSettings(userId);
+      {required String key,
+      required dynamic value,
+      required String settingsId}) async {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      await _settingsService.updateGroupPreferenceSettings(
+          key: key, groupPreferenceSettingsId: settingsId, value: value);
+      await setGroupPreferenceSettings(userId);
+    } catch (e) {
+      rethrow;
+    }
   }
 }

@@ -8,6 +8,7 @@ import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/navigation.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_edit_field.dart';
 import 'package:package_info/package_info.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -128,7 +129,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 10),
-                        height: 35,
+                        height: 30,
                         width: MediaQuery.of(context).size.width * .30,
                         decoration: BoxDecoration(
                           color: AppColors.grey.withOpacity(0.5),
@@ -225,7 +226,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   void _updateEmail(UserModel user) async {
     try {
       await Provider.of<UserProvider>(context, listen: false)
-          .updateEmail(_newEmail.text, user.id);
+          .updateEmail(_newEmail.text, user.id ?? '');
       BeStilDialog.showSuccessDialog(
         context,
         'Your email has been updated successfully. Verify your new email and re-login!',
@@ -244,16 +245,14 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
 
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
-      print(e.message);
-      var message = '';
-      if (e.message ==
+      String message = StringUtils.getErrorMessage(e);
+      if (message ==
           'The email address is already in use by another account.') {
         message =
             'That email address is already in use. Please select another email.';
-      } else {
-        message = e.message;
       }
 
       final user =
@@ -261,7 +260,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       PlatformException er =
           PlatformException(code: 'custom', message: message);
 
-      BeStilDialog.showErrorDialog(context, er, user, s);
+      BeStilDialog.showErrorDialog(context, message, user, s);
       _newEmail.clear();
     }
   }
@@ -279,7 +278,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
 
       _newPassword.clear();
       _newConfirmPassword.clear();
@@ -287,7 +287,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
       _newPassword.clear();
       _newConfirmPassword.clear();
     }
@@ -320,7 +320,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
           e.message == 'The application has encountered an error.') {
         message = 'Password is incorrect.';
       } else {
-        message = e.message;
+        message = e.message ?? '';
       }
       BeStilDialog.hideLoading(context);
       final user =
@@ -328,13 +328,14 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       PlatformException er =
           PlatformException(code: 'custom', message: message);
 
-      BeStilDialog.showErrorDialog(context, er, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(er), user, s);
     } catch (e, s) {
       _currentPassword.clear();
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -374,7 +375,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
             ),
             SizedBox(height: 30),
             CustomEditField(
-              value: _currentUser.email,
+              value: _currentUser.email ?? '',
               onPressed: () {
                 setState(() => isVerified = false);
                 _update(_ModalType.email, context);
@@ -443,7 +444,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     var _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final _formKey = GlobalKey<FormState>();
     bool _autoValidate = false;
-    _newEmail.text = _user.email;
+    _newEmail.text = _user.email ?? '';
     final alert = AlertDialog(
       insetPadding: EdgeInsets.all(10),
       backgroundColor: AppColors.backgroundColor[1],
@@ -467,7 +468,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               Form(
                 // ignore: deprecated_member_use
                 // autovalidate: _autoValidate,
-                autovalidateMode: _autoValidate
+                autovalidateMode: _autoValidate == true
                     ? AutovalidateMode.onUserInteraction
                     : AutovalidateMode.disabled,
                 key: _formKey,
@@ -520,7 +521,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                               isRequired: true,
                               label: 'Confirm New Password',
                               controller: _newConfirmPassword,
-                              validator: (value) {
+                              validator: (String? value) {
                                 if (_newPassword.text != value) {
                                   return 'Password fields do not match';
                                 }
@@ -569,8 +570,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                           ),
                           onPressed: () {
                             setState(() => _autoValidate = true);
-                            if (!_formKey.currentState.validate()) return null;
-                            _formKey.currentState.save();
+                            if (!_formKey.currentState!.validate()) return null;
+                            _formKey.currentState!.save();
                             _verifyPassword(
                               _user,
                               type,

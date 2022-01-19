@@ -10,8 +10,8 @@ class CustomButtonGroup extends StatelessWidget {
   final Color color;
   CustomButtonGroup({
     this.isSelected: false,
-    @required this.title,
-    @required this.onSelected,
+    required this.title,
+    required this.onSelected,
     this.length = 1,
     this.index = 0,
     this.color = AppColors.lightBlue4,
