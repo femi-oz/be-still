@@ -1,5 +1,6 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
@@ -153,7 +154,8 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
 
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .archivePrayer(widget.prayerData.groupPrayer?.id ?? '');
+          .archivePrayer(widget.prayerData.groupPrayer?.id ?? '',
+              widget.prayerData.prayer?.id ?? '');
       _deleteFollowedPrayers();
 
       BeStilDialog.hideLoading(context);
@@ -176,13 +178,35 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
-    reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == widget.prayerData.groupPrayer?.id,
+    return reminders.any(
+      (reminder) => reminder.entityId == widget.prayerData.groupPrayer?.id,
+    );
+  }
+
+  bool get isReminderActive {
+    final reminders = Provider.of<NotificationProvider>(context)
+        .localNotifications
+        .where((e) => e.type == NotificationType.reminder)
+        .toList();
+    LocalNotificationModel rem = reminders.firstWhere(
+        (reminder) =>
+            reminder.entityId == widget.prayerData.groupPrayer?.prayerId,
         orElse: () => LocalNotificationModel.defaultValue());
-    if ((reminder.id ?? '').isEmpty)
+    if ((rem.id ?? '').isNotEmpty) {
+      if (rem.frequency != Frequency.one_time) {
+        return true;
+      } else {
+        if ((rem.scheduledDate ?? DateTime.now().subtract(Duration(hours: 1)))
+            .isAfter(DateTime.now())) {
+          return true;
+        } else {
+          Provider.of<NotificationProvider>(context).deleteLocalNotification(
+              rem.id ?? '', rem.localNotificationId ?? 0);
+          return false;
+        }
+      }
+    } else {
       return false;
-    else {
-      return true;
     }
   }
 
@@ -333,7 +357,9 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     });
 
     bool isOwner = widget.prayerData.prayer?.createdBy == _user.id;
-
+    final isActivePrayer =
+        Provider.of<GroupPrayerProvider>(context).filterOption.toLowerCase() ==
+            'active';
     return Container(
       color: Colors.transparent,
       margin: EdgeInsets.symmetric(vertical: 7.0),
@@ -395,7 +421,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
                                           ),
                                         )
                                       : SizedBox(),
-                                  hasReminder
+                                  hasReminder && isReminderActive
                                       ? Padding(
                                           padding:
                                               const EdgeInsets.only(right: 5.0),
@@ -616,7 +642,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
                   _followPrayer();
                 }
               });
-            }, false),
+            }, !isActivePrayer || isOwner),
           if (isAdmin || isOwner)
             _buildSlideItem(
                 AppIcons.bestill_icons_bestill_archived_icon_revised_drk,

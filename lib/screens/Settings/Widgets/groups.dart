@@ -52,7 +52,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
           userName ?? '',
           _currentUser.id ?? '',
           user.userId ?? "",
-          'Remove from group',
+          'Removed from group',
           group.group?.id ?? "",
           [receiverData.pushToken ?? '']);
 
@@ -141,8 +141,6 @@ class _GroupsSettingsState extends State<GroupsSettings> {
               e.messageType == NotificationType.request &&
               e.groupId == data.group?.id)
           .toList();
-      // await Provider.of<GroupPrayerProvider>(context, listen: false)
-      //     .setFollowedPrayerByGroupId(data.group?.id ?? '');
 
       await Provider.of<GroupProvider>(context, listen: false)
           .deleteGroup(data.group?.id ?? '', requests);
@@ -585,7 +583,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   onPressed: () {
                                     const message =
                                         'Are you sure you want to remove this user from your group?';
-                                    const method = 'Remove';
+                                    const method = 'REMOVE';
                                     const title = 'Remove From Group';
                                     _openRemoveConfirmation(context, title,
                                         method, message, user, group);

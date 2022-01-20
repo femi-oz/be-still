@@ -104,6 +104,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
             image: DecorationImage(
               image: AssetImage(StringUtils.backgroundImage),
               alignment: Alignment.bottomCenter,
+              fit: BoxFit.cover,
             ),
           ),
           child: Container(

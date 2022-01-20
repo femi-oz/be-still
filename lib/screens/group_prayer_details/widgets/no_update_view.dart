@@ -284,11 +284,15 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                                   targetString: prayerData.tags?[i].displayName,
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
-                                      _openShareModal(
-                                          context,
-                                          prayerData.tags?[i].phoneNumber ?? '',
-                                          prayerData.tags?[i].email ?? '',
-                                          prayerData.tags?[i].identifier ?? '');
+                                      if (prayerData.tags?[i].userId ==
+                                          _currentUser.id)
+                                        _openShareModal(
+                                            context,
+                                            prayerData.tags?[i].phoneNumber ??
+                                                '',
+                                            prayerData.tags?[i].email ?? '',
+                                            prayerData.tags?[i].identifier ??
+                                                '');
                                     },
                                   style: prayerData.tags?[i].userId ==
                                           _currentUser.id
