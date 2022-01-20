@@ -342,8 +342,9 @@ class _UpdateView extends State<UpdateView> {
                             targetString: tags[i].displayName,
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                _openShareModal(context, tags[i].phoneNumber,
-                                    tags[i].email, tags[i].identifier);
+                                if (tags[i].userId == _currentUser.id)
+                                  _openShareModal(context, tags[i].phoneNumber,
+                                      tags[i].email, tags[i].identifier);
                               },
                             style: tags[i].userId == _currentUser.id
                                 ? AppTextStyles.regularText15.copyWith(
