@@ -467,7 +467,7 @@ class GroupPrayerService {
     }
   }
 
-  Future markPrayerAsAnswered(String prayerID, String userPrayerId) async {
+  Future markPrayerAsAnswered(String prayerID, String groupPrayerId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Stream.error(StringUtils.unathorized);
@@ -481,7 +481,7 @@ class GroupPrayerService {
         'ArchivedDate': DateTime.now(),
         'IsSnoozed': false
       };
-      _groupPrayerCollectionReference.doc(userPrayerId).update(data);
+      _groupPrayerCollectionReference.doc(groupPrayerId).update(data);
     } catch (e) {
       locator<LogService>().createLog(StringUtils.getErrorMessage(e), prayerID,
           'PRAYER/service/markPrayerAsAnswered');

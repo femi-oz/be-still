@@ -161,11 +161,15 @@ class _GroupScreenState extends State<GroupScreen> {
                     SizedBox(height: 30),
                     data.length == 0
                         ? Container(
-                            padding: EdgeInsets.only(right: 20, left: 20),
-                            child: Text(
-                              'You are currently not in any group',
-                              style: AppTextStyles.demiboldText34,
-                              textAlign: TextAlign.center,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 80, vertical: 60),
+                            child: Opacity(
+                              opacity: 0.3,
+                              child: Text(
+                                'You are currently not in any group',
+                                style: AppTextStyles.demiboldText34,
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           )
                         : Container(

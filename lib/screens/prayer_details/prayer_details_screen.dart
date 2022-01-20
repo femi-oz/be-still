@@ -78,15 +78,8 @@ class _PrayerDetailsState extends State<PrayerDetails> {
         .toList();
     final prayerData =
         Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
-    final reminder = reminders.firstWhere(
-        (reminder) =>
-            reminder.entityId == (prayerData.userPrayer?.prayerId ?? ''),
-        orElse: () => LocalNotificationModel.defaultValue());
-    reminderString = reminder.notificationText ?? '';
-    if ((reminder.id ?? '').isEmpty)
-      return false;
-    else
-      return true;
+    return reminders.any((reminder) =>
+        reminder.entityId == (prayerData.userPrayer?.prayerId ?? ''));
   }
 
   bool _isInit = true;
