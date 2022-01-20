@@ -1,5 +1,6 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
@@ -183,6 +184,33 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
       return false;
     else {
       return true;
+    }
+  }
+
+  bool get isReminderActive {
+    final reminders = Provider.of<NotificationProvider>(context)
+        .localNotifications
+        .where((e) => e.type == NotificationType.reminder)
+        .toList();
+    LocalNotificationModel rem = reminders.firstWhere(
+        (reminder) =>
+            reminder.entityId == widget.prayerData.groupPrayer?.prayerId,
+        orElse: () => LocalNotificationModel.defaultValue());
+    if ((rem.id ?? '').isNotEmpty) {
+      if (rem.frequency != Frequency.one_time) {
+        return true;
+      } else {
+        if ((rem.scheduledDate ?? DateTime.now().subtract(Duration(hours: 1)))
+            .isAfter(DateTime.now())) {
+          return true;
+        } else {
+          Provider.of<NotificationProvider>(context).deleteLocalNotification(
+              rem.id ?? '', rem.localNotificationId ?? 0);
+          return false;
+        }
+      }
+    } else {
+      return false;
     }
   }
 
@@ -395,7 +423,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
                                           ),
                                         )
                                       : SizedBox(),
-                                  hasReminder
+                                  hasReminder && isReminderActive
                                       ? Padding(
                                           padding:
                                               const EdgeInsets.only(right: 5.0),

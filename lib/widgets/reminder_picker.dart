@@ -195,6 +195,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
   setNotification() async {
     // AM 22= 22-12
     // pm 12 = 12+12
+    // selectedMinute = 54;
     var hour = selectedPeriod == PeriodOfDay.am && selectedHour >= 12
         ? selectedHour - 12
         : selectedPeriod == PeriodOfDay.pm && selectedHour < 12
