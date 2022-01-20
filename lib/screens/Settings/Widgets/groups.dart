@@ -34,9 +34,9 @@ class _GroupsSettingsState extends State<GroupsSettings> {
   _removeUserFromGroup(
       GroupUserModel user, CombineGroupUserStream group) async {
     try {
-      final message = 'You have removed the user from your group';
-      final _currentUser =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+    final message = 'You have removed the user from your group';
+    final _currentUser =
+        Provider.of<UserProvider>(context, listen: false).currentUser;
       final userName = ('${_currentUser.firstName}  ${_currentUser.lastName}')
           .capitalizeFirst;
       BeStilDialog.showLoading(context);
@@ -70,52 +70,52 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
-    }
+  }
   }
 
   leaveGroup(CombineGroupUserStream data) async {
     try {
-      Navigator.pop(context);
-      BeStilDialog.showLoading(context, '');
-      final _currentUser =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+    Navigator.pop(context);
+    BeStilDialog.showLoading(context, '');
+    final _currentUser =
+        Provider.of<UserProvider>(context, listen: false).currentUser;
       final id = (data.groupUsers ?? [])
           .firstWhere((e) => e.userId == _currentUser.id,
               orElse: () => GroupUserModel.defaultValue())
-          .id;
+        .id;
       await Provider.of<GroupProvider>(context, listen: false)
           .leaveGroup(id ?? "");
       var receiver = (data.groupUsers ?? [])
-          .firstWhere((element) => element.role == GroupUserRole.admin);
+        .firstWhere((element) => element.role == GroupUserRole.admin);
 
-      await Provider.of<UserProvider>(context, listen: false)
+    await Provider.of<UserProvider>(context, listen: false)
           .getUserById(receiver.userId ?? '');
-      await Future.delayed(Duration(milliseconds: 500));
-      final receiverData =
-          Provider.of<UserProvider>(context, listen: false).selectedUser;
-      var followedPrayers =
-          Provider.of<GroupPrayerProvider>(context, listen: false)
-              .followedPrayers
-              .where((element) =>
+    await Future.delayed(Duration(milliseconds: 500));
+    final receiverData =
+        Provider.of<UserProvider>(context, listen: false).selectedUser;
+    var followedPrayers =
+        Provider.of<GroupPrayerProvider>(context, listen: false)
+            .followedPrayers
+            .where((element) =>
                   element.groupId == data.group?.id &&
-                  element.userId == _currentUser.id);
-      followedPrayers.forEach((element) async {
-        await Provider.of<GroupPrayerProvider>(context, listen: false)
+                element.userId == _currentUser.id);
+    followedPrayers.forEach((element) async {
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
             .removeFromMyList(element.id ?? '', element.userPrayerId ?? '');
-      });
+    });
 
-      sendPushNotification(
+    sendPushNotification(
           '${_currentUser.firstName} has left your group ${data.group?.name}',
-          NotificationType.leave_group,
+        NotificationType.leave_group,
           _currentUser.firstName ?? '',
           _currentUser.id ?? '',
           receiver.userId ?? '',
-          'Groups',
+        'Groups',
           data.group?.id ?? '',
           [receiverData.pushToken ?? '']);
-      Provider.of<GroupProvider>(context, listen: false)
+    Provider.of<GroupProvider>(context, listen: false)
           .setUserGroups(_currentUser.id ?? '');
-      BeStilDialog.hideLoading(context);
+    BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -126,37 +126,37 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
-    }
+  }
   }
 
   deleteGroup(CombineGroupUserStream data) async {
     try {
-      BeStilDialog.showLoading(context, '');
-      final notifications =
+    BeStilDialog.showLoading(context, '');
+    final notifications =
           Provider.of<NotificationProvider>(context, listen: false)
               .notifications;
 
-      final requests = notifications
-          .where((e) =>
-              e.messageType == NotificationType.request &&
+    final requests = notifications
+        .where((e) =>
+            e.messageType == NotificationType.request &&
               e.groupId == data.group?.id)
-          .toList();
+        .toList();
       // await Provider.of<GroupPrayerProvider>(context, listen: false)
       //     .setFollowedPrayerByGroupId(data.group?.id ?? '');
 
-      await Provider.of<GroupProvider>(context, listen: false)
+    await Provider.of<GroupProvider>(context, listen: false)
           .deleteGroup(data.group?.id ?? '', requests);
-      var followedPrayers =
-          Provider.of<GroupPrayerProvider>(context, listen: false)
-              .followedPrayers
+    var followedPrayers =
+        Provider.of<GroupPrayerProvider>(context, listen: false)
+            .followedPrayers
               .where((element) => element.groupId == data.group?.id);
-      followedPrayers.forEach((element) async {
-        await Provider.of<GroupPrayerProvider>(context, listen: false)
+    followedPrayers.forEach((element) async {
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
             .removeFromMyList(element.id ?? '', element.userPrayerId ?? '');
-      });
-      await Future.delayed(Duration(milliseconds: 300));
-      Navigator.pop(context);
-      BeStilDialog.hideLoading(context);
+    });
+    await Future.delayed(Duration(milliseconds: 300));
+    Navigator.pop(context);
+    BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -167,7 +167,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
-    }
+  }
   }
 
   Future<void> acceptRequest(
@@ -246,9 +246,9 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       String entityId,
       List<String> tokens) async {
     try {
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .sendPushNotification(message, messageType, sender, senderId,
-              receiverId, title, '', entityId, tokens);
+    await Provider.of<NotificationProvider>(context, listen: false)
+        .sendPushNotification(message, messageType, sender, senderId,
+            receiverId, title, '', entityId, tokens);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
@@ -262,7 +262,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
-    }
+  }
   }
 
   void _showAlert(GroupUserModel user, CombineGroupUserStream group) async {
@@ -585,7 +585,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   onPressed: () {
                                     const message =
                                         'Are you sure you want to remove this user from your group?';
-                                    const method = 'Remove';
+                                    const method = 'REMOVE';
                                     const title = 'Remove From Group';
                                     _openRemoveConfirmation(context, title,
                                         method, message, user, group);
@@ -877,11 +877,11 @@ class _GroupsSettingsState extends State<GroupsSettings> {
   String getUser(CombineGroupUserStream data) {
     try {
       (data.groupUsers ?? []).forEach((element) {
-        Provider.of<UserProvider>(context, listen: false)
+      Provider.of<UserProvider>(context, listen: false)
             .getUserById(element.userId ?? '');
-      });
-      return Provider.of<UserProvider>(context, listen: false)
-              .selectedUser
+    });
+    return Provider.of<UserProvider>(context, listen: false)
+        .selectedUser
               .lastName ??
           '';
     } on HttpException catch (e, s) {
@@ -899,7 +899,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
       return '';
-    }
+  }
   }
 
   @override
@@ -953,24 +953,24 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                 try {
                   _settingsProvider.updateGroupPrefenceSettings(
                       _currentUser.id ?? '',
-                      key: 'EnableNotificationForAllGroups',
-                      value: value,
+                    key: 'EnableNotificationForAllGroups',
+                    value: value,
                       settingsId: _groupPreferenceSettings.id ?? '');
 
-                  if (value) {
-                    messaging = FirebaseMessaging.instance;
-                    messaging.getToken().then((value) => {
-                          Provider.of<NotificationProvider>(context,
-                                  listen: false)
+                if (value) {
+                  messaging = FirebaseMessaging.instance;
+                  messaging.getToken().then((value) => {
+                        Provider.of<NotificationProvider>(context,
+                                listen: false)
                               .enablePushNotifications(value ?? '',
                                   _currentUser.id ?? '', _currentUser)
-                        });
-                  } else {
-                    await Provider.of<NotificationProvider>(context,
-                            listen: false)
+                      });
+                } else {
+                  await Provider.of<NotificationProvider>(context,
+                          listen: false)
                         .disablePushNotifications(
                             _currentUser.id ?? '', _currentUser);
-                  }
+                }
                 } on HttpException catch (e, s) {
                   BeStilDialog.hideLoading(context);
 
@@ -1266,8 +1266,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   if (!value) {
                                     final activeRequests =
                                         (data.groupRequests ?? [])
-                                            .where((e) => e.status == '0')
-                                            .toList();
+                                        .where((e) => e.status == '0')
+                                        .toList();
                                     for (final req in activeRequests) {
                                       acceptRequest(
                                           req,
@@ -1496,11 +1496,11 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                         child: Container(
                                           width:
                                               MediaQuery.of(context).size.width,
-                                          child: Divider(
-                                            color: AppColors.lightBlue1,
-                                            thickness: 1,
-                                          ),
+                                        child: Divider(
+                                          color: AppColors.lightBlue1,
+                                          thickness: 1,
                                         ),
+                                      ),
                                       ),
                                     ],
                                   ),
@@ -1520,16 +1520,16 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                 try {
                                                   await Provider.of<
                                                               UserProvider>(
-                                                          context,
-                                                          listen: false)
+                                                        context,
+                                                        listen: false)
                                                       .getUserById(
                                                           user.userId ?? '');
-                                                  Future.delayed(
+                                                Future.delayed(
                                                       Duration(
                                                           milliseconds: 15),
-                                                      () {
-                                                    _showAlert(user, data);
-                                                  });
+                                                    () {
+                                                  _showAlert(user, data);
+                                                });
                                                 } on HttpException catch (e, s) {
                                                   BeStilDialog.hideLoading(
                                                       context);

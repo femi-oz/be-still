@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -51,15 +52,38 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
         Provider.of<NotificationProvider>(context).localNotifications;
     final prayerData =
         Provider.of<GroupPrayerProvider>(context, listen: false).currentPrayer;
-    final reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == prayerData.groupPrayer?.id,
-        orElse: () => LocalNotificationModel.defaultValue());
-    reminderString = reminder.notificationText ?? '';
+    return reminders.any(
+      (reminder) => reminder.entityId == prayerData.groupPrayer?.id,
+    );
+  }
 
-    if ((reminder.id ?? '').isEmpty)
+  bool get isReminderActive {
+    final reminders = Provider.of<NotificationProvider>(context)
+        .localNotifications
+        .where((e) => e.type == NotificationType.reminder)
+        .toList();
+    final prayerData =
+        Provider.of<GroupPrayerProvider>(context, listen: false).currentPrayer;
+
+    LocalNotificationModel rem = reminders.firstWhere(
+        (reminder) => reminder.entityId == prayerData.groupPrayer?.prayerId,
+        orElse: () => LocalNotificationModel.defaultValue());
+    if ((rem.id ?? '').isNotEmpty) {
+      if (rem.frequency != Frequency.one_time) {
+        return true;
+      } else {
+        if ((rem.scheduledDate ?? DateTime.now().subtract(Duration(hours: 1)))
+            .isAfter(DateTime.now())) {
+          return true;
+        } else {
+          Provider.of<NotificationProvider>(context).deleteLocalNotification(
+              rem.id ?? '', rem.localNotificationId ?? 0);
+          return false;
+        }
+      }
+    } else {
       return false;
-    else
-      return true;
+    }
   }
 
   bool _isInit = true;

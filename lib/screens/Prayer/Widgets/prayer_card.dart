@@ -1,4 +1,5 @@
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
@@ -10,6 +11,7 @@ import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:flutter/material.dart';
@@ -35,40 +37,48 @@ class _PrayerCardState extends State<PrayerCard> {
 
   @override
   void didChangeDependencies() {
-    // getGroup();
     super.didChangeDependencies();
   }
 
-  // getGroup() async {
-  //   try {
-  //     // var _userId =
-  //     //     Provider.of<UserProvider>(context, listen: false).currentUser.id;
-  //     // await Provider.of<GroupPrayerProvider>(context, listen: false)
-  //     //     .setFollowedPrayerByUserId(_userId ?? '');
-  //   } on HttpException catch (e, s) {
-  //     BeStilDialog.hideLoading(context);
-
-  //     final user =
-  //         Provider.of<UserProvider>(context, listen: false).currentUser;
-  //     BeStilDialog.showErrorDialog(
-  //         context, StringUtils.getErrorMessage(e), user, s);
-  //   } catch (e, s) {
-  //     BeStilDialog.hideLoading(context);
-  //     final user =
-  //         Provider.of<UserProvider>(context, listen: false).currentUser;
-  //     BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
-  //   }
-  // }
-
   bool get hasReminder {
-    var reminders = Provider.of<NotificationProvider>(context)
+    final reminders = Provider.of<NotificationProvider>(context)
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
-    return reminders.any(
-      (reminder) => reminder.entityId == widget.prayerData.userPrayer?.prayerId,
+    final res = reminders.any(
+      (reminder) => reminder.entityId == widget.prayerData.userPrayer?.id,
     );
+    return res;
   }
+
+  bool get isReminderActive {
+    final reminders = Provider.of<NotificationProvider>(context)
+        .localNotifications
+        .where((e) => e.type == NotificationType.reminder)
+        .toList();
+    LocalNotificationModel rem = reminders.firstWhere(
+        (reminder) => reminder.entityId == widget.prayerData.userPrayer?.id,
+        orElse: () => LocalNotificationModel.defaultValue());
+    if ((rem.id ?? '').isNotEmpty) {
+      if (rem.frequency != Frequency.one_time) {
+        return true;
+      } else {
+        if ((rem.scheduledDate ?? DateTime.now().subtract(Duration(hours: 1)))
+            .isAfter(DateTime.now())) {
+          return true;
+        } else {
+          Provider.of<NotificationProvider>(context).deleteLocalNotification(
+              rem.id ?? '', rem.localNotificationId ?? 0);
+          return false;
+        }
+      }
+    } else {
+      return false;
+    }
+  }
+
+  // recurring
+  // one time, check if the reminder is past
 
   void _onMarkAsAnswered() async {
     BeStilDialog.showLoading(context);
@@ -78,7 +88,7 @@ class _PrayerCardState extends State<PrayerCard> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.userPrayer?.prayerId &&
+                  e.entityId == widget.prayerData.userPrayer?.id &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
@@ -152,7 +162,7 @@ class _PrayerCardState extends State<PrayerCard> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.userPrayer?.prayerId &&
+                  e.entityId == widget.prayerData.userPrayer?.id &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
@@ -363,7 +373,7 @@ class _PrayerCardState extends State<PrayerCard> {
                                           ),
                                         )
                                       : SizedBox(),
-                                  hasReminder
+                                  hasReminder && isReminderActive
                                       ? Padding(
                                           padding:
                                               const EdgeInsets.only(right: 5.0),

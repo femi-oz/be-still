@@ -74,7 +74,7 @@ class LongButton extends StatelessWidget {
                           softWrap: false,
                           style: AppTextStyles.boldText18.copyWith(
                             color:
-                                textColor.withOpacity(isDisabled ? 0.5 : 1.0),
+                                textColor.withOpacity(isDisabled ? 0.3 : 1.0),
                             height: 1,
                           ),
                         ),

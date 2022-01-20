@@ -372,7 +372,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.userPrayer?.prayerId &&
+                  e.entityId == widget.prayerData.userPrayer?.id &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
@@ -451,7 +451,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.userPrayer?.prayerId &&
+                  e.entityId == widget.prayerData.userPrayer?.id &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
@@ -717,8 +717,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                             vertical: 30),
                                         child: ReminderPicker(
                                           isGroup: false,
-                                          entityId: widget.prayerData.userPrayer
-                                                  ?.prayerId ??
+                                          entityId: widget
+                                                  .prayerData.userPrayer?.id ??
                                               '',
                                           type: NotificationType.reminder,
                                           hideActionuttons: false,

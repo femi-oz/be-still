@@ -99,6 +99,7 @@ class _GroupScreenState extends State<GroupScreen> {
               image: DecorationImage(
                 image: AssetImage(StringUtils.backgroundImage),
                 alignment: Alignment.bottomCenter,
+                fit: BoxFit.cover,
               ),
             ),
             child: SizedBox(

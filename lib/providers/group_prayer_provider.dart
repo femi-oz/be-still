@@ -200,9 +200,9 @@ class GroupPrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> archivePrayer(String userPrayerId) async {
+  Future<void> archivePrayer(String groupPrayerId, String prayerId) async {
     try {
-      await _prayerService.archivePrayer(userPrayerId);
+      await _prayerService.archivePrayer(groupPrayerId, prayerId);
     } catch (e) {
       rethrow;
     }

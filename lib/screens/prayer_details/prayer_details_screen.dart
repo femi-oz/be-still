@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -78,8 +79,37 @@ class _PrayerDetailsState extends State<PrayerDetails> {
         .toList();
     final prayerData =
         Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
-    return reminders.any((reminder) =>
-        reminder.entityId == (prayerData.userPrayer?.prayerId ?? ''));
+    return reminders.any(
+        (reminder) => reminder.entityId == (prayerData.userPrayer?.id ?? ''));
+  }
+
+  bool get isReminderActive {
+    final reminders = Provider.of<NotificationProvider>(context)
+        .localNotifications
+        .where((e) => e.type == NotificationType.reminder)
+        .toList();
+    final prayerData =
+        Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+
+    LocalNotificationModel rem = reminders.firstWhere(
+        (reminder) => reminder.entityId == prayerData.userPrayer?.id,
+        orElse: () => LocalNotificationModel.defaultValue());
+    if ((rem.id ?? '').isNotEmpty) {
+      if (rem.frequency != Frequency.one_time) {
+        return true;
+      } else {
+        if ((rem.scheduledDate ?? DateTime.now().subtract(Duration(hours: 1)))
+            .isAfter(DateTime.now())) {
+          return true;
+        } else {
+          Provider.of<NotificationProvider>(context).deleteLocalNotification(
+              rem.id ?? '', rem.localNotificationId ?? 0);
+          return false;
+        }
+      }
+    } else {
+      return false;
+    }
   }
 
   bool _isInit = true;
@@ -119,8 +149,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications;
       _reminder = reminders.firstWhere(
-          (reminder) =>
-              reminder.entityId == (prayerData.userPrayer?.prayerId ?? ''),
+          (reminder) => reminder.entityId == (prayerData.userPrayer?.id ?? ''),
           orElse: () => LocalNotificationModel.defaultValue());
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -271,7 +300,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                 ),
                 SizedBox(width: 20),
               ]),
-            hasReminder
+            hasReminder && isReminderActive
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [

@@ -61,7 +61,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       Provider.of<NotificationProvider>(context, listen: false)
           .initLocal(context);
       _initializeFlutterFireFuture = _initializeFlutterFire();
+
       _getPermissions();
+
       var initializationSettingsAndroid =
           AndroidInitializationSettings('@mipmap/ic_launcher');
       var initializationSettingsIOs = IOSInitializationSettings();
@@ -71,6 +73,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
       _flutterLocalNotificationsPlugin.initialize(initSetttings,
           onSelectNotification: _onSelectNotification);
+
       FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
         showNotification(message);
       });

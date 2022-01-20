@@ -339,6 +339,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             image: DecorationImage(
               image: AssetImage(StringUtils.backgroundImage),
               alignment: Alignment.bottomCenter,
+              fit: BoxFit.cover,
             ),
           ),
           child: SingleChildScrollView(

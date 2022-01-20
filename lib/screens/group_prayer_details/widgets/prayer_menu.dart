@@ -219,16 +219,17 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
               .localNotifications
               .where((e) => e.entityId == widget.prayerData.prayer?.id)
               .toList();
-      var pushNotifications =
+      final pushNotifications =
           Provider.of<NotificationProvider>(context, listen: false)
               .notifications
               .where((element) =>
                   element.prayerId == widget.prayerData.prayer?.id ||
                   element.groupId == widget.prayerData.groupPrayer?.groupId);
 
-      notifications.forEach((e) async =>
-          await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
+      for (final not in notifications)
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .deleteLocalNotification(
+                not.id ?? '', not.localNotificationId ?? 0);
       pushNotifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
               .updateNotification(e.id ?? ''));
@@ -257,14 +258,25 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
 
   void _deleteFollowedPrayers() async {
     try {
-      var followedPrayers =
+      final followedPrayers =
           Provider.of<GroupPrayerProvider>(context, listen: false)
               .followedPrayers;
       if (followedPrayers.length > 0) {
-        followedPrayers.forEach((element) async {
+        for (final f in followedPrayers) {
           await Provider.of<GroupPrayerProvider>(context, listen: false)
-              .removeFromMyList(element.id ?? '', element.userPrayerId ?? '');
-        });
+              .removeFromMyList(f.id ?? '', f.userPrayerId ?? '');
+          final notifications =
+              Provider.of<NotificationProvider>(context, listen: false)
+                  .localNotifications
+                  .where((e) =>
+                      e.entityId == f.userPrayerId &&
+                      e.type == NotificationType.reminder)
+                  .toList();
+          notifications.forEach((e) async =>
+              await Provider.of<NotificationProvider>(context, listen: false)
+                  .deleteLocalNotification(
+                      e.id ?? '', e.localNotificationId ?? 0));
+        }
       }
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -490,19 +502,23 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     BeStilDialog.showLoading(context);
 
     try {
-      var notifications =
+      final notifications =
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
                   e.entityId == widget.prayerData.groupPrayer?.id &&
                   e.type == NotificationType.reminder)
               .toList();
+
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
 
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .archivePrayer(widget.prayerData.groupPrayer?.id ?? '');
+          .archivePrayer(
+        widget.prayerData.groupPrayer?.id ?? '',
+        widget.prayerData.prayer?.id ?? '',
+      );
       _deleteFollowedPrayers();
 
       BeStilDialog.hideLoading(context);
@@ -539,7 +555,9 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                 .role ==
             GroupUserRole.admin;
     bool isOwner = widget.prayerData.prayer?.createdBy == _currentUser.id;
-
+    final isActivePrayer =
+        Provider.of<GroupPrayerProvider>(context).filterOption.toLowerCase() ==
+            'active';
     return Container(
       padding: EdgeInsets.only(top: 50),
       width: MediaQuery.of(context).size.width,
@@ -812,8 +830,9 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                 : AppColors.white,
                         icon: Icons.star_border,
                         text: isFollowing ? 'Unfollow' : 'Follow',
-                        isDisabled: isOwner,
-                        onPress: () => isOwner
+                        isDisabled:
+                            isOwner || !isActivePrayer, //enabled only if active
+                        onPress: () => isOwner || !isActivePrayer
                             ? () {}
                             : isFollowing
                                 ? _unFollowPrayer()
