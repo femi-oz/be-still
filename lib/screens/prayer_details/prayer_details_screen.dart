@@ -79,8 +79,8 @@ class _PrayerDetailsState extends State<PrayerDetails> {
         .toList();
     final prayerData =
         Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
-    return reminders.any((reminder) =>
-        reminder.entityId == (prayerData.userPrayer?.prayerId ?? ''));
+    return reminders.any(
+        (reminder) => reminder.entityId == (prayerData.userPrayer?.id ?? ''));
   }
 
   bool get isReminderActive {
@@ -92,7 +92,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
         Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
 
     LocalNotificationModel rem = reminders.firstWhere(
-        (reminder) => reminder.entityId == prayerData.userPrayer?.prayerId,
+        (reminder) => reminder.entityId == prayerData.userPrayer?.id,
         orElse: () => LocalNotificationModel.defaultValue());
     if ((rem.id ?? '').isNotEmpty) {
       if (rem.frequency != Frequency.one_time) {
@@ -149,8 +149,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications;
       _reminder = reminders.firstWhere(
-          (reminder) =>
-              reminder.entityId == (prayerData.userPrayer?.prayerId ?? ''),
+          (reminder) => reminder.entityId == (prayerData.userPrayer?.id ?? ''),
           orElse: () => LocalNotificationModel.defaultValue());
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);

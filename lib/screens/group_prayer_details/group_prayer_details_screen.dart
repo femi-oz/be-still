@@ -52,15 +52,9 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
         Provider.of<NotificationProvider>(context).localNotifications;
     final prayerData =
         Provider.of<GroupPrayerProvider>(context, listen: false).currentPrayer;
-    final reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == prayerData.groupPrayer?.id,
-        orElse: () => LocalNotificationModel.defaultValue());
-    reminderString = reminder.notificationText ?? '';
-
-    if ((reminder.id ?? '').isEmpty)
-      return false;
-    else
-      return true;
+    return reminders.any(
+      (reminder) => reminder.entityId == prayerData.groupPrayer?.id,
+    );
   }
 
   bool get isReminderActive {

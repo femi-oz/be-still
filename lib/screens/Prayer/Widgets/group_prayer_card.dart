@@ -154,7 +154,8 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
 
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .archivePrayer(widget.prayerData.groupPrayer?.id ?? '');
+          .archivePrayer(widget.prayerData.groupPrayer?.id ?? '',
+              widget.prayerData.prayer?.id ?? '');
       _deleteFollowedPrayers();
 
       BeStilDialog.hideLoading(context);
@@ -177,14 +178,9 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
-    reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == widget.prayerData.groupPrayer?.id,
-        orElse: () => LocalNotificationModel.defaultValue());
-    if ((reminder.id ?? '').isEmpty)
-      return false;
-    else {
-      return true;
-    }
+    return reminders.any(
+      (reminder) => reminder.entityId == widget.prayerData.groupPrayer?.id,
+    );
   }
 
   bool get isReminderActive {

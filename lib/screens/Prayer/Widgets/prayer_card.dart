@@ -45,9 +45,10 @@ class _PrayerCardState extends State<PrayerCard> {
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
-    return reminders.any(
-      (reminder) => reminder.entityId == widget.prayerData.userPrayer?.prayerId,
+    final res = reminders.any(
+      (reminder) => reminder.entityId == widget.prayerData.userPrayer?.id,
     );
+    return res;
   }
 
   bool get isReminderActive {
@@ -56,8 +57,7 @@ class _PrayerCardState extends State<PrayerCard> {
         .where((e) => e.type == NotificationType.reminder)
         .toList();
     LocalNotificationModel rem = reminders.firstWhere(
-        (reminder) =>
-            reminder.entityId == widget.prayerData.userPrayer?.prayerId,
+        (reminder) => reminder.entityId == widget.prayerData.userPrayer?.id,
         orElse: () => LocalNotificationModel.defaultValue());
     if ((rem.id ?? '').isNotEmpty) {
       if (rem.frequency != Frequency.one_time) {
@@ -88,7 +88,7 @@ class _PrayerCardState extends State<PrayerCard> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.userPrayer?.prayerId &&
+                  e.entityId == widget.prayerData.userPrayer?.id &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
@@ -162,7 +162,7 @@ class _PrayerCardState extends State<PrayerCard> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.userPrayer?.prayerId &&
+                  e.entityId == widget.prayerData.userPrayer?.id &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
