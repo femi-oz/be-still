@@ -1,6 +1,5 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/screens/notifications/notifications_screen.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -50,8 +49,8 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
       actions: <Widget>[
         GestureDetector(
           onTap: () {
-            AppCOntroller appCOntroller = Get.find();
-            appCOntroller.setCurrentPage(14, false);
+            AppController appController = Get.find();
+            appController.setCurrentPage(14, false);
           },
           child: Container(
             child: Center(
@@ -68,8 +67,8 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
                               ? AppColors.red
                               : AppColors.white),
                       onPressed: () {
-                        AppCOntroller appCOntroller = Get.find();
-                        appCOntroller.setCurrentPage(14, false);
+                        AppController appController = Get.find();
+                        appController.setCurrentPage(14, false);
                       }),
                   notifications.length != 0
                       ? Padding(

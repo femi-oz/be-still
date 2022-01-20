@@ -1,12 +1,10 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/groups/widgets/filter_options.dart';
-import 'package:be_still/screens/notifications/notifications_screen.dart';
 import 'package:be_still/screens/prayer/widgets/filter_options.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -279,8 +277,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
         !widget.isSearchMode
             ? GestureDetector(
                 onTap: () {
-                  AppCOntroller appCOntroller = Get.find();
-                  appCOntroller.setCurrentPage(14, false);
+                  AppController appController = Get.find();
+                  appController.setCurrentPage(14, false);
                 },
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 10),

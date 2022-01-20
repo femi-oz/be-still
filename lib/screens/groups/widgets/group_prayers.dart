@@ -138,9 +138,9 @@ class _GroupPrayersState extends State<GroupPrayers> {
                                                   listen: false)
                                               .setPrayerFuture(
                                                   e.groupPrayer?.id ?? '');
-                                          AppCOntroller appCOntroller =
+                                          AppController appController =
                                               Get.find();
-                                          appCOntroller.setCurrentPage(9, true);
+                                          appController.setCurrentPage(9, true);
                                         } on HttpException catch (e, s) {
                                           final user =
                                               Provider.of<UserProvider>(context,
@@ -188,9 +188,9 @@ class _GroupPrayersState extends State<GroupPrayers> {
                           Provider.of<GroupPrayerProvider>(context,
                                   listen: false)
                               .setEditPrayer();
-                          AppCOntroller appCOntroller = Get.find();
+                          AppController appController = Get.find();
 
-                          appCOntroller.setCurrentPage(10, true);
+                          appController.setCurrentPage(10, true);
                         } on HttpException catch (e, s) {
                           final user =
                               Provider.of<UserProvider>(context, listen: false)

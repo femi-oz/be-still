@@ -239,9 +239,9 @@ class _LoginScreenState extends State<LoginScreen> {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .setPrayerTimePrayers(message.entityId ?? '');
             // Provider.of<MiscProvider>(context, listen: false).setCurrentPage(2);
-            AppCOntroller appCOntroller = Get.find();
+            AppController appController = Get.find();
 
-            appCOntroller.setCurrentPage(2, false);
+            appController.setCurrentPage(2, false);
             Provider.of<MiscProvider>(context, listen: false)
                 .setLoadStatus(true);
             Navigator.of(context).pushNamedAndRemoveUntil(
@@ -257,9 +257,9 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         await Provider.of<MiscProvider>(context, listen: false)
             .setLoadStatus(true);
-        AppCOntroller appCOntroller = Get.find();
+        AppController appController = Get.find();
 
-        appCOntroller.setCurrentPage(0, false);
+        appController.setCurrentPage(0, false);
         Navigator.of(context).pushNamedAndRemoveUntil(
             EntryScreen.routeName, (Route<dynamic> route) => false);
       }

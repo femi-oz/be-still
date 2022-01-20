@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class AppCOntroller extends GetxController
+class AppController extends GetxController
     with GetSingleTickerProviderStateMixin {
   late TabController tabController;
   Rx<int> _currentPage = 0.obs;

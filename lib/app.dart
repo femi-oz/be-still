@@ -7,7 +7,6 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/screens/splash/splash_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -111,8 +110,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     // Navigator.of(context).push(MaterialPageRoute(builder: (_) {
     //   return EntryScreen();
     // }));
-    AppCOntroller appCOntroller = Get.find();
-    appCOntroller.setCurrentPage(14, false);
+    AppController appController = Get.find();
+    appController.setCurrentPage(14, false);
   }
 
   void _getPermissions() async {
@@ -219,18 +218,18 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   gotoPage(NotificationMessage message) async {
     try {
       if (message.type == NotificationType.prayer_time) {
-        AppCOntroller appCOntroller = Get.find();
-        appCOntroller.setCurrentPage(2, false);
+        AppController appController = Get.find();
+        appController.setCurrentPage(2, false);
       }
       if (message.type == NotificationType.reminder) {
         if (message.isGroup ?? false) {
-          AppCOntroller appCOntroller = Get.find();
-          appCOntroller.setCurrentPage(9, false);
+          AppController appController = Get.find();
+          appController.setCurrentPage(9, false);
         } else {
           await Provider.of<PrayerProvider>(context, listen: false)
               .setPrayer(message.entityId ?? '');
-          AppCOntroller appCOntroller = Get.find();
-          appCOntroller.setCurrentPage(7, false);
+          AppController appController = Get.find();
+          appController.setCurrentPage(7, false);
         }
       }
     } catch (e, s) {

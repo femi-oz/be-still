@@ -105,7 +105,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       });
 
       sendPushNotification(
-          '${_currentUser.firstName} has left your group ${data.group?.name}',
+          '${(_currentUser.firstName ?? '').capitalizeFirst} ${(_currentUser.lastName ?? '').capitalizeFirst} has left your group ${data.group?.name}',
           NotificationType.leave_group,
           _currentUser.firstName ?? '',
           _currentUser.id ?? '',

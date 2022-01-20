@@ -257,8 +257,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      PlatformException er =
-          PlatformException(code: 'custom', message: message);
 
       BeStilDialog.showErrorDialog(context, message, user, s);
       _newEmail.clear();

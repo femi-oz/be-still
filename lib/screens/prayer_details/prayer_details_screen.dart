@@ -173,9 +173,8 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                       size: 20,
                     ),
                     onPressed: () {
-                      AppCOntroller appCOntroller = Get.find();
-
-                      appCOntroller.setCurrentPage(0, true);
+                      AppController appController = Get.find();
+                      appController.setCurrentPage(0, true);
                     },
                     label: Text(
                       'BACK',

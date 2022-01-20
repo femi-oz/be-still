@@ -86,8 +86,8 @@ class _SplashScreenState extends State<SplashScreen>
           if (message.type == NotificationType.prayer_time) {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .setPrayerTimePrayers(message.entityId ?? '');
-            AppCOntroller appCOntroller = Get.find();
-            appCOntroller.setCurrentPage(2, false);
+            AppController appController = Get.find();
+            appController.setCurrentPage(2, false);
             Provider.of<MiscProvider>(context, listen: false)
                 .setLoadStatus(true);
             Navigator.of(context).pushNamedAndRemoveUntil(

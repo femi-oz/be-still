@@ -48,7 +48,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
   String tagText = '';
   SaveOptionModel? selected;
   final widgetKey = GlobalKey();
-  AppCOntroller appCOntroller = Get.find();
+  AppController appController = Get.find();
   bool showDropdown = false;
 
   @override
@@ -122,6 +122,8 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
               _backupDescription,
             );
           } else {
+            await Provider.of<GroupProvider>(context, listen: false)
+                .setCurrentGroupById(selected?.id ?? '', _user.id ?? '');
             await Provider.of<GroupPrayerProvider>(context, listen: false)
                 .addPrayer(
               _descriptionController.text,
@@ -133,13 +135,13 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
             var prayerId =
                 Provider.of<GroupPrayerProvider>(context, listen: false)
                     .newPrayerId;
-            // await Provider.of<GroupPrayerProvider>(context, listen: false)
-            //     .setFollowedPrayer(prayerId);
+            await Provider.of<GroupProvider>(context, listen: false)
+                .setCurrentGroupById(_group.group?.id ?? '', _user.id ?? '');
             await Provider.of<NotificationProvider>(context, listen: false)
                 .sendPrayerNotification(
               prayerId,
               NotificationType.prayer,
-              _group.group?.id ?? '',
+              selected?.id ?? '',
               context,
               _descriptionController.text,
             );
@@ -159,12 +161,10 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
           if ((selected?.name ?? '').isEmpty ||
               (selected?.name) == 'My Prayers') {
             BeStilDialog.hideLoading(context);
-            appCOntroller.setCurrentPage(0, true);
+            appController.setCurrentPage(0, true);
           } else {
-            await Provider.of<GroupProvider>(context, listen: false)
-                .setCurrentGroupById(selected?.id ?? '', _user.id ?? '');
             BeStilDialog.hideLoading(context);
-            appCOntroller.setCurrentPage(8, true);
+            appController.setCurrentPage(8, true);
           }
         } else {
           if (updateTextControllers.length > 0) {
@@ -250,7 +250,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
           );
 
           BeStilDialog.hideLoading(context);
-          appCOntroller.setCurrentPage(8, true);
+          appController.setCurrentPage(8, true);
         }
       }
     } on HttpException catch (e, s) {
@@ -409,7 +409,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
       onCancel();
       return true;
     } else {
-      appCOntroller.setCurrentPage(8, true);
+      appController.setCurrentPage(8, true);
       // return (Navigator.of(context).pushNamedAndRemoveUntil(
       //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
       //     false;
@@ -557,7 +557,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        appCOntroller.setCurrentPage(8, true);
+                        appController.setCurrentPage(8, true);
                         Navigator.pop(context);
                         FocusManager.instance.primaryFocus?.unfocus();
                       },
@@ -682,7 +682,7 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                             : () {
                                 FocusScope.of(context)
                                     .requestFocus(new FocusNode());
-                                appCOntroller.setCurrentPage(8, true);
+                                appController.setCurrentPage(8, true);
                               },
                       ),
                       InkWell(

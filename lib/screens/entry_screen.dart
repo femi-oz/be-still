@@ -308,7 +308,7 @@ class _EntryScreenState extends State<EntryScreen> {
     final miscProvider = Provider.of<MiscProvider>(context);
     _isSearchMode = Provider.of<MiscProvider>(context, listen: false).search;
 
-    AppCOntroller appCOntroller = Get.find();
+    AppController appController = Get.find();
     return Scaffold(
       key: _scaffoldKey,
       body: Container(
@@ -323,7 +323,7 @@ class _EntryScreenState extends State<EntryScreen> {
             ? BeStilDialog.getLoading(context)
             : new TabBarView(
                 physics: NeverScrollableScrollPhysics(),
-                controller: appCOntroller.tabController,
+                controller: appController.tabController,
                 children: [
                   for (int i = 0; i < getItems().length; i++)
                     getItems().map((e) => e.page).toList()[i],
@@ -331,12 +331,12 @@ class _EntryScreenState extends State<EntryScreen> {
               ),
       ),
       bottomNavigationBar:
-          _createBottomNavigationBar(appCOntroller.currentPage),
+          _createBottomNavigationBar(appController.currentPage),
       endDrawer: CustomDrawer(
         (index) {
-          AppCOntroller appCOntroller = Get.find();
+          AppController appController = Get.find();
 
-          appCOntroller.setCurrentPage(index, true);
+          appController.setCurrentPage(index, true);
         },
         _keyButton,
         _keyButton2,
@@ -377,9 +377,8 @@ class _EntryScreenState extends State<EntryScreen> {
                         'You must have at least one active prayer to start prayer time.';
                     showInfoModal(message, 'PrayerTime', context);
                   } else {
-                    AppCOntroller appCOntroller = Get.find();
-
-                    appCOntroller.setCurrentPage(index, true);
+                    AppController appController = Get.find();
+                    appController.setCurrentPage(index, true);
                   }
                   break;
                 case 1:
@@ -387,16 +386,16 @@ class _EntryScreenState extends State<EntryScreen> {
                       .setEditMode(false, true);
                   Provider.of<PrayerProvider>(context, listen: false)
                       .setEditPrayer();
-                  AppCOntroller appCOntroller = Get.find();
+                  AppController appController = Get.find();
 
-                  appCOntroller.setCurrentPage(1, true);
+                  appController.setCurrentPage(1, true);
                   break;
                 case 4:
                   Scaffold.of(context).openEndDrawer();
                   break;
                 default:
-                  AppCOntroller appCOntroller = Get.find();
-                  appCOntroller.setCurrentPage(index, true);
+                  AppController appController = Get.find();
+                  appController.setCurrentPage(index, true);
                   break;
               }
             } catch (e, s) {

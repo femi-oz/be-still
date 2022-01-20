@@ -93,9 +93,9 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 
-      AppCOntroller appCOntroller = Get.find();
+      AppController appController = Get.find();
       if (widget.popTwice) Navigator.pop(context);
-      appCOntroller.setCurrentPage(0, true);
+      appController.setCurrentPage(0, true);
     } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300),
           () => {BeStilDialog.hideLoading(context)});

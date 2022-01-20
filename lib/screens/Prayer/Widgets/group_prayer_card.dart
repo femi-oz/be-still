@@ -58,8 +58,8 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
       // await Provider.of<GroupPrayerProvider>(context, listen: false)
       //     .setFollowedPrayerByUserId(user.id ?? '');
       BeStilDialog.hideLoading(context);
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(8, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(8, true);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
@@ -95,8 +95,8 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
       // await Provider.of<GroupPrayerProvider>(context, listen: false)
       //     .setFollowedPrayerByUserId(_userId ?? '');
       BeStilDialog.hideLoading(context);
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(8, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(8, true);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 

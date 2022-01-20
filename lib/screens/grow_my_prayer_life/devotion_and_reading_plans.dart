@@ -173,8 +173,8 @@ class _DevotionPlansState extends State<DevotionPlans> {
   }
 
   Future<bool> _onWillPop() async {
-    AppCOntroller appCOntroller = Get.find();
-    appCOntroller.setCurrentPage(0, true);
+    AppController appController = Get.find();
+    appController.setCurrentPage(0, true);
     return false;
   }
 

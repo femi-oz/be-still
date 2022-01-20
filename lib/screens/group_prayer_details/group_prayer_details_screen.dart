@@ -144,8 +144,8 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                         size: 20,
                       ),
                       onPressed: () {
-                        AppCOntroller appCOntroller = Get.find();
-                        appCOntroller.setCurrentPage(8, true);
+                        AppController appController = Get.find();
+                        appController.setCurrentPage(8, true);
                       },
                       label: Text(
                         'BACK',

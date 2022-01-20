@@ -122,8 +122,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(0, true);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
@@ -158,8 +158,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(0, true);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -183,8 +183,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
           .unfavoritePrayer(prayerData.userPrayer?.id ?? '');
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(0, true);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
@@ -217,9 +217,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 
-      AppCOntroller appCOntroller = Get.find();
+      AppController appController = Get.find();
       Navigator.pop(context);
-      appCOntroller.setCurrentPage(0, true);
+      appController.setCurrentPage(0, true);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -385,8 +385,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(0, true);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -410,8 +410,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(0, true);
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -433,8 +433,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(0, true);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -463,8 +463,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(0, true);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -512,8 +512,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(0, true);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -631,9 +631,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                 Navigator.pop(context);
                                 await Future.delayed(
                                     Duration(milliseconds: 200));
-                                AppCOntroller appCOntroller = Get.find();
+                                AppController appController = Get.find();
 
-                                appCOntroller.setCurrentPage(1, true);
+                                appController.setCurrentPage(1, true);
                               } on HttpException catch (e, s) {
                                 BeStilDialog.hideLoading(context);
                                 final user = Provider.of<UserProvider>(context,

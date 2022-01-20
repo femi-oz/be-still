@@ -98,9 +98,8 @@ class _PrayerListState extends State<PrayerList> {
           .setPrayer(prayerData.userPrayer?.id ?? '');
       await Future.delayed(const Duration(milliseconds: 300),
           () => BeStilDialog.hideLoading(context));
-      AppCOntroller appCOntroller = Get.find();
-
-      appCOntroller.setCurrentPage(7, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(7, true);
       // Navigator.push(context, SlideRightRoute(page: PrayerDetails()));
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -208,12 +207,12 @@ class _PrayerListState extends State<PrayerList> {
                                     child: LongButton(
                                       onPress: () {
                                         try {
-                                          AppCOntroller appCOntroller =
+                                          AppController appController =
                                               Get.find();
                                           Provider.of<PrayerProvider>(context,
                                                   listen: false)
                                               .setEditMode(false, true);
-                                          appCOntroller.setCurrentPage(1, true);
+                                          appController.setCurrentPage(1, true);
                                         } on HttpException catch (e, s) {
                                           BeStilDialog.hideLoading(context);
 
@@ -271,15 +270,15 @@ class _PrayerListState extends State<PrayerList> {
                                               : LongButton(
                                                   onPress: () {
                                                     try {
-                                                      AppCOntroller
-                                                          appCOntroller =
+                                                      AppController
+                                                          appController =
                                                           Get.find();
                                                       Provider.of<PrayerProvider>(
                                                               context,
                                                               listen: false)
                                                           .setEditMode(
                                                               false, true);
-                                                      appCOntroller
+                                                      appController
                                                           .setCurrentPage(
                                                               1, true);
                                                     } on HttpException catch (e, s) {

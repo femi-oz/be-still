@@ -128,8 +128,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(appCOntroller.currentPage, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(appController.currentPage, true);
     } else
       widget.onCancel();
     setState(() => null);
@@ -184,8 +184,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
         Navigator.pop(context);
       }
 
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(appCOntroller.currentPage, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(appController.currentPage, true);
     } else {
       Navigator.pop(context);
       widget.onCancel();
@@ -328,8 +328,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
         if (widget.popTwice) Navigator.pop(context);
         Navigator.pop(context);
 
-        AppCOntroller appCOntroller = Get.find();
-        appCOntroller.setCurrentPage(appCOntroller.currentPage, true);
+        AppController appController = Get.find();
+        appController.setCurrentPage(appController.currentPage, true);
       } else
         widget.onCancel();
     } on HttpException catch (e, s) {

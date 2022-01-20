@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -55,8 +53,8 @@ class _PrayerTimeState extends State<PrayerTime> {
   }
 
   Future<bool> _onWillPop() async {
-    AppCOntroller appCOntroller = Get.find();
-    appCOntroller.setCurrentPage(0, true);
+    AppController appController = Get.find();
+    appController.setCurrentPage(0, true);
     return false;
   }
 
@@ -141,9 +139,8 @@ class _PrayerTimeState extends State<PrayerTime> {
                           size: 30,
                         ),
                         onTap: () {
-                          AppCOntroller appCOntroller = Get.find();
-
-                          appCOntroller.setCurrentPage(0, true);
+                          AppController appController = Get.find();
+                          appController.setCurrentPage(0, true);
                         },
                       ),
                       InkWell(

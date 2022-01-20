@@ -74,7 +74,7 @@ Click here ${'https://' + FlavorConfig.instance.values.dynamicLink + url.path} t
   }
 
   var option = NotificationType.email;
-  AppCOntroller appCOntroller = Get.find();
+  AppController appController = Get.find();
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -228,7 +228,7 @@ Click here ${'https://' + FlavorConfig.instance.values.dynamicLink + url.path} t
                 ),
                 onPressed: () async {
                   // await Future.delayed(Duration(seconds: 2));
-                  appCOntroller.setCurrentPage(8, false);
+                  appController.setCurrentPage(8, false);
                 },
               ),
             ),

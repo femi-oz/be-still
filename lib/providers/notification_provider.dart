@@ -122,10 +122,9 @@ class NotificationProvider with ChangeNotifier {
           .getUserNotifications(userId)
           .asBroadcastStream()
           .listen((notifications) {
-        _notifications =
-            notifications.where((e) => e.status == Status.active).toList();
-        _notifications =
-            _notifications.where((e) => e.recieverId == userId).toList();
+        _notifications = notifications
+            .where((e) => e.status == Status.active && e.recieverId == userId)
+            .toList();
         notifyListeners();
       });
     } catch (e) {
@@ -210,7 +209,7 @@ class NotificationProvider with ChangeNotifier {
     String messageType,
     String sender,
     String senderId,
-    String recieverId,
+    String receiverId,
     String title,
     String prayerId,
     String groupId,
@@ -225,7 +224,7 @@ class NotificationProvider with ChangeNotifier {
           messageType: messageType,
           sender: sender,
           senderId: senderId,
-          recieverId: recieverId,
+          recieverId: receiverId,
           tokens: tokens,
           title: title);
     } catch (e) {
@@ -320,7 +319,7 @@ class NotificationProvider with ChangeNotifier {
       String notificationId, int localNotificationId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      ;
+
       await LocalNotification.unschedule(localNotificationId);
       await _notificationService.removeLocalNotification(notificationId);
     } catch (e) {
@@ -345,8 +344,14 @@ class NotificationProvider with ChangeNotifier {
     String? prayerDetail,
   ) async {
     try {
+      List _ids = [];
       final _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
+
+      final members = Provider.of<GroupProvider>(context, listen: false)
+              .currentGroup
+              .groupUsers ??
+          [].where((e) => e.userId != _user.id).map((e) => e.userId).toList();
 
       List<String> followers =
           Provider.of<GroupPrayerProvider>(context, listen: false)
@@ -361,7 +366,11 @@ class NotificationProvider with ChangeNotifier {
               .where((e) => e.role == GroupUserRole.admin)
               .map((e) => e.userId)
               .toList();
-      final _ids = [...followers, ...admins];
+      if (type == NotificationType.prayer) {
+        _ids = [...members];
+      } else {
+        _ids = [...followers, ...admins];
+      }
       _ids.removeWhere((e) => e == _user.id);
       _ids.forEach((e) async {
         await Provider.of<UserProvider>(context, listen: false)
@@ -375,7 +384,7 @@ class NotificationProvider with ChangeNotifier {
             _user.firstName ?? '' + ' ' + (_user.lastName ?? ''),
             _user.id ?? '',
             (e ?? ''),
-            type == NotificationType.prayer ? 'New Prayer' : 'Prayer Update',
+            type ?? '',
             prayerId ?? '',
             selectedGroupId ?? '',
             [value]);

@@ -235,14 +235,14 @@ class _AddPrayerState extends State<AddPrayer> {
         }
 
         BeStilDialog.hideLoading(context);
-        AppCOntroller appCOntroller = Get.find();
+        AppController appController = Get.find();
         if ((selected?.name ?? '').isEmpty ||
             (selected?.name) == 'My Prayers') {
-          appCOntroller.setCurrentPage(0, true);
+          appController.setCurrentPage(0, true);
         } else {
           await Provider.of<GroupProvider>(context, listen: false)
               .setCurrentGroupById(selected?.id ?? '', _user.id ?? '');
-          appCOntroller.setCurrentPage(8, true);
+          appController.setCurrentPage(8, true);
         }
       }
     } on HttpException catch (e, s) {
@@ -402,9 +402,9 @@ class _AddPrayerState extends State<AddPrayer> {
       onCancel();
       return true;
     } else {
-      AppCOntroller appCOntroller = Get.find();
+      AppController appController = Get.find();
 
-      appCOntroller.setCurrentPage(0, true);
+      appController.setCurrentPage(0, true);
       // return (Navigator.of(context).pushNamedAndRemoveUntil(
       //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
       //     false;
@@ -556,14 +556,14 @@ class _AddPrayerState extends State<AddPrayer> {
                           if (Provider.of<PrayerProvider>(context,
                                   listen: false)
                               .isEdit) {
-                            AppCOntroller appCOntroller = Get.find();
-                            appCOntroller.setCurrentPage(7, true);
+                            AppController appController = Get.find();
+                            appController.setCurrentPage(7, true);
                             Navigator.pop(context);
                             FocusManager.instance.primaryFocus?.unfocus();
                           } else {
-                            AppCOntroller appCOntroller = Get.find();
+                            AppController appController = Get.find();
 
-                            appCOntroller.setCurrentPage(0, true);
+                            appController.setCurrentPage(0, true);
                             Navigator.pop(context);
                             FocusManager.instance.primaryFocus?.unfocus();
                           }
@@ -703,17 +703,17 @@ class _AddPrayerState extends State<AddPrayer> {
                                     ? () {
                                         FocusScope.of(context)
                                             .requestFocus(new FocusNode());
-                                        AppCOntroller appCOntroller =
+                                        AppController appController =
                                             Get.find();
 
-                                        appCOntroller.setCurrentPage(7, true);
+                                        appController.setCurrentPage(7, true);
                                       }
                                     : () {
                                         FocusScope.of(context)
                                             .requestFocus(new FocusNode());
-                                        AppCOntroller appCOntroller =
+                                        AppController appController =
                                             Get.find();
-                                        appCOntroller.setCurrentPage(0, true);
+                                        appController.setCurrentPage(0, true);
                                       },
                           ),
                           InkWell(

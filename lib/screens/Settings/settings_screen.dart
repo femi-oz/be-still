@@ -116,7 +116,7 @@ class SettingsTabState extends State<SettingsTab>
     return false;
   }
 
-  AppCOntroller appCOntroller = Get.find();
+  AppController appController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +124,7 @@ class SettingsTabState extends State<SettingsTab>
     return WillPopScope(
       onWillPop: _onWillPop,
       child: DefaultTabController(
-        initialIndex: appCOntroller.settingsTab,
+        initialIndex: appController.settingsTab,
         length: 5,
         child: Scaffold(
           key: _scaffoldKey,

@@ -190,8 +190,8 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
         );
         FocusScope.of(context).requestFocus(FocusNode());
         BeStilDialog.hideLoading(context);
-        AppCOntroller appCOntroller = Get.find();
-        appCOntroller.setCurrentPage(8, true);
+        AppController appController = Get.find();
+        appController.setCurrentPage(8, true);
       }
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -216,8 +216,8 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
   }
 
   goBack() {
-    AppCOntroller appCOntroller = Get.find();
-    appCOntroller.setCurrentPage(9, true);
+    AppController appController = Get.find();
+    appController.setCurrentPage(9, true);
   }
 
   Future<void> onCancel() async {

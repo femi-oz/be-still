@@ -34,7 +34,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
         await Provider.of<MiscProvider>(context, listen: false)
             .setSearchQuery('');
         Provider.of<PrayerProvider>(context, listen: false)
-            .searchPrayers('', userId??'');
+            .searchPrayers('', userId ?? '');
       } catch (e, s) {
         final user =
             Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -54,9 +54,9 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
   }
 
   Future<bool> _onWillPop() async {
-    AppCOntroller appCOntroller = Get.find();
+    AppController appController = Get.find();
 
-    appCOntroller.setCurrentPage(0, true);
+    appController.setCurrentPage(0, true);
     // return (Navigator.of(context).pushNamedAndRemoveUntil(
     //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
     //     false;

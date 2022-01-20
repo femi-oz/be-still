@@ -242,8 +242,6 @@ class _UpdateView extends State<UpdateView> {
 
   Widget build(BuildContext context) {
     final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
-    final userId = Provider.of<UserProvider>(context).currentUser.id;
-    bool isOwner = prayerData.prayer?.createdBy == userId;
     var updates = prayerData.updates;
     updates.sort((a, b) => (b.modifiedOn ?? DateTime.now())
         .compareTo(a.modifiedOn ?? DateTime.now()));
