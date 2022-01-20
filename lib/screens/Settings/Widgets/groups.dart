@@ -585,7 +585,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   onPressed: () {
                                     const message =
                                         'Are you sure you want to remove this user from your group?';
-                                    const method = 'Remove';
+                                    const method = 'REMOVE';
                                     const title = 'Remove From Group';
                                     _openRemoveConfirmation(context, title,
                                         method, message, user, group);
