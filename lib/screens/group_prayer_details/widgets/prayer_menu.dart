@@ -539,7 +539,9 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                 .role ==
             GroupUserRole.admin;
     bool isOwner = widget.prayerData.prayer?.createdBy == _currentUser.id;
-
+    final isActivePrayer =
+        Provider.of<GroupPrayerProvider>(context).filterOption.toLowerCase() ==
+            'active';
     return Container(
       padding: EdgeInsets.only(top: 50),
       width: MediaQuery.of(context).size.width,
@@ -812,8 +814,9 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                 : AppColors.white,
                         icon: Icons.star_border,
                         text: isFollowing ? 'Unfollow' : 'Follow',
-                        isDisabled: isOwner,
-                        onPress: () => isOwner
+                        isDisabled:
+                            isOwner || !isActivePrayer, //enabled only if active
+                        onPress: () => isOwner || !isActivePrayer
                             ? () {}
                             : isFollowing
                                 ? _unFollowPrayer()
