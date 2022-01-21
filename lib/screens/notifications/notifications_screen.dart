@@ -686,28 +686,73 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                               ),
                                                             )
                                                           : Container(),
-                                                      Row(
-                                                        children: <Widget>[
-                                                          Text(
-                                                            ((snapshot.data ?? CombineGroupUserStream.defaultValue())
-                                                                            .group ??
-                                                                        GroupModel
-                                                                            .defaultValue())
-                                                                    .name ??
-                                                                ''.toUpperCase(),
-                                                            style: AppTextStyles
-                                                                .regularText15b
-                                                                .copyWith(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                              fontSize: 14,
-                                                              color: AppColors
-                                                                  .lightBlue4,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      )
+                                                      if ((notification
+                                                                  .groupId ??
+                                                              '')
+                                                          .isEmpty)
+                                                        Text(
+                                                          DateFormat(
+                                                                  'MM.dd.yyyy')
+                                                              .format(notification
+                                                                      .createdOn ??
+                                                                  DateTime
+                                                                      .now()),
+                                                          style: AppTextStyles
+                                                              .regularText15b
+                                                              .copyWith(
+                                                                  fontSize: 14,
+                                                                  color: AppColors
+                                                                      .lightBlue4),
+                                                        )
+                                                      else
+                                                        FutureBuilder<
+                                                                CombineGroupUserStream>(
+                                                            future: Provider.of<
+                                                                        GroupProvider>(
+                                                                    context)
+                                                                .getGroupFuture(
+                                                                    notification
+                                                                        .groupId,
+                                                                    userId ??
+                                                                        ''),
+                                                            builder: (context,
+                                                                snapshot) {
+                                                              if (!snapshot
+                                                                  .hasData)
+                                                                return SizedBox
+                                                                    .shrink();
+                                                              return Row(
+                                                                children: <
+                                                                    Widget>[
+                                                                  Container(
+                                                                    margin: EdgeInsets
+                                                                        .symmetric(
+                                                                      horizontal:
+                                                                          10,
+                                                                    ),
+                                                                    child: Text(
+                                                                      '|',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              AppColors.cardBorder),
+                                                                    ),
+                                                                  ),
+                                                                  Text(
+                                                                    DateFormat('MM.dd.yyyy').format(notification
+                                                                            .createdOn ??
+                                                                        DateTime
+                                                                            .now()),
+                                                                    style: AppTextStyles
+                                                                        .regularText15b
+                                                                        .copyWith(
+                                                                            fontSize:
+                                                                                14,
+                                                                            color:
+                                                                                AppColors.lightBlue4),
+                                                                  ),
+                                                                ],
+                                                              );
+                                                            })
                                                     ],
                                                   ),
                                                 ],
@@ -1644,7 +1689,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               margin: EdgeInsets.only(
                   left: MediaQuery.of(context).size.width * 0.1),
               child: Text(
-                NotificationType.edited_prayers,
+                NotificationType.archived_prayers,
                 textAlign: TextAlign.center,
                 style: AppTextStyles.boldText24.copyWith(
                   color: AppColors.white,
@@ -1817,7 +1862,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               margin: EdgeInsets.only(
                   left: MediaQuery.of(context).size.width * 0.1),
               child: Text(
-                NotificationType.edited_prayers,
+                NotificationType.answered_prayers,
                 textAlign: TextAlign.center,
                 style: AppTextStyles.boldText24.copyWith(
                   color: AppColors.white,

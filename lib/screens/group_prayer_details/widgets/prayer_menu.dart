@@ -220,7 +220,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .deletePrayer(widget.prayerData.groupPrayer?.id ?? '',
               widget.prayerData.prayer?.id ?? '');
-      _deleteFollowedPrayers();
+      // _deleteFollowedPrayers();
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppController appController = Get.find();
@@ -276,6 +276,17 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     }
   }
 
+  void _sendPrayerNotification(String type) async {
+    await Provider.of<NotificationProvider>(context, listen: false)
+        .sendPrayerNotification(
+            widget.prayerData.prayer?.id ?? '',
+            widget.prayerData.groupPrayer?.id ?? '',
+            type,
+            widget.prayerData.groupPrayer?.groupId ?? '',
+            context,
+            widget.prayerData.prayer?.description ?? '');
+  }
+
   void _onMarkAsAnswered() async {
     BeStilDialog.showLoading(context);
 
@@ -290,10 +301,11 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
+      _sendPrayerNotification(NotificationType.answered_prayers);
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .markPrayerAsAnswered(widget.prayerData.prayer?.id ?? '',
               widget.prayerData.groupPrayer?.id ?? '');
-      _deleteFollowedPrayers();
+      // _deleteFollowedPrayers();
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
@@ -497,18 +509,16 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
+      _sendPrayerNotification(NotificationType.archived_prayers);
 
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .archivePrayer(
         widget.prayerData.groupPrayer?.id ?? '',
         widget.prayerData.prayer?.id ?? '',
       );
-      _deleteFollowedPrayers();
 
       BeStilDialog.hideLoading(context);
-
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+      Navigator.pop(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =

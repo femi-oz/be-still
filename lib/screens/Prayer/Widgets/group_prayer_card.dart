@@ -39,6 +39,39 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
   LocalNotificationModel reminder = LocalNotificationModel.defaultValue();
   final SlidableController slidableController = SlidableController();
 
+  @override
+  void initState() {
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      try {
+        await Provider.of<GroupPrayerProvider>(context, listen: false)
+            .setFollowedPrayers(widget.prayerData.prayer?.id);
+      } on HttpException catch (e, s) {
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.getErrorMessage(e), user, s);
+      } catch (e, s) {
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.errorOccured, user, s);
+      }
+    });
+
+    super.initState();
+  }
+
+  void _sendPrayerNotification(String type) async {
+    await Provider.of<NotificationProvider>(context, listen: false)
+        .sendPrayerNotification(
+            widget.prayerData.prayer?.id ?? '',
+            widget.prayerData.groupPrayer?.id ?? '',
+            type,
+            widget.prayerData.groupPrayer?.groupId ?? '',
+            context,
+            widget.prayerData.prayer?.description ?? '');
+  }
+
   void _followPrayer() async {
     BeStilDialog.showLoading(context);
 
@@ -140,8 +173,6 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     BeStilDialog.showLoading(context);
 
     try {
-      // await Provider.of<GroupPrayerProvider>(context, listen: false)
-      //     .setFollowedPrayer(widget.prayerData.prayer?.id ?? '');
       var notifications =
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
@@ -152,11 +183,11 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
-
+      _sendPrayerNotification(NotificationType.archived_prayers);
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .archivePrayer(widget.prayerData.groupPrayer?.id ?? '',
               widget.prayerData.prayer?.id ?? '');
-      _deleteFollowedPrayers();
+      // _deleteFollowedPrayers();
 
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
@@ -291,8 +322,6 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     BeStilDialog.showLoading(context);
 
     try {
-      // await Provider.of<GroupPrayerProvider>(context, listen: false)
-      //     .setFollowedPrayer(widget.prayerData.prayer?.id ?? '');
       var notifications =
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
@@ -303,10 +332,11 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
+      _sendPrayerNotification(NotificationType.answered_prayers);
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .markPrayerAsAnswered(widget.prayerData.prayer?.id ?? '',
               widget.prayerData.groupPrayer?.id ?? '');
-      _deleteFollowedPrayers();
+      // _deleteFollowedPrayers();
 
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
