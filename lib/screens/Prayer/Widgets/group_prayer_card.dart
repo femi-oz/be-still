@@ -42,10 +42,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
   @override
   void initState() {
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
-      try {
-        await Provider.of<GroupPrayerProvider>(context, listen: false)
-            .setFollowedPrayers(widget.prayerData.prayer?.id);
-      } on HttpException catch (e, s) {
+      try {} on HttpException catch (e, s) {
         final user =
             Provider.of<UserProvider>(context, listen: false).currentUser;
         BeStilDialog.showErrorDialog(

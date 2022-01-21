@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
@@ -12,6 +13,7 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -59,7 +61,12 @@ class NotificationProvider with ChangeNotifier {
   }
 
   Future _onSelectNotification(String? payload) async {
-    _message = NotificationMessage.fromData(jsonDecode(payload ?? ''));
+    final messagePayload = jsonDecode(payload ?? '');
+    _message = NotificationMessage.fromData(messagePayload);
+    if ((payload ?? '').toLowerCase() == 'fcm message') {
+      AppController appController = Get.find();
+      appController.setCurrentPage(14, false);
+    }
     print('message -- prov _onSelectNotification ===> $_message');
   }
 
@@ -356,27 +363,17 @@ class NotificationProvider with ChangeNotifier {
           [].map((e) => e.userId).toList();
 
       List<FollowedPrayerModel> followers =
-          Provider.of<GroupPrayerProvider>(context, listen: false)
-              .memberPrayers
-              .where((element) =>
-                  element.prayerId == prayerId && element.userId != _user.id)
-              .toList();
+          await Provider.of<GroupPrayerProvider>(context, listen: false)
+              .setFollowedPrayers(prayerId);
 
-      // final admins = Provider.of<GroupProvider>(context, listen: false)
-      //         .currentGroup
-      //         .groupUsers ??
-      //     []
-      //         .where((e) => e.role == GroupUserRole.admin)
-      //         .map((e) => e.userId)
-      //         .toList();
       if (type == NotificationType.prayer) {
         _ids = [...members];
       } else {
         _ids = [...followers];
       }
       _ids.removeWhere((e) => e.userId == _user.id);
-      _ids.forEach((e) async {
-        await Provider.of<UserProvider>(context, listen: false)
+      _ids.forEach((e) {
+        Provider.of<UserProvider>(context, listen: false)
             .returnUserToken(e.userId ?? '');
         final value =
             Provider.of<UserProvider>(context, listen: false).userToken;

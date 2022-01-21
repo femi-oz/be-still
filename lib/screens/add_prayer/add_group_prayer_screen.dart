@@ -71,9 +71,6 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                     PrayerModel.defaultValue())
                 .id;
             if ((id ?? '').isEmpty) return;
-
-            await Provider.of<GroupPrayerProvider>(context, listen: false)
-                .setFollowedPrayers(id);
           }
         } on HttpException catch (e, s) {
           final user =

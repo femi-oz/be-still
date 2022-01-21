@@ -778,16 +778,18 @@ class GroupPrayerService {
     }
   }
 
-  Stream<List<FollowedPrayerModel>> getFollowedPrayers(String prayerId) {
+  Future<List<FollowedPrayerModel>> getFollowedPrayers(String prayerId) {
     try {
       if (_firebaseAuth.currentUser == null)
-        return Stream.error(StringUtils.unathorized);
+        return Future.error(StringUtils.unathorized);
       return _followedPrayerCollectionReference
           .where('PrayerId', isEqualTo: prayerId)
-          .snapshots()
-          .map((event) => event.docs
-              .map((e) => FollowedPrayerModel.fromData(e.data(), e.id))
-              .toList());
+          .get()
+          .then((event) {
+        return event.docs
+            .map((e) => FollowedPrayerModel.fromData(e.data(), e.id))
+            .toList();
+      });
     } catch (e) {
       locator<LogService>().createLog(StringUtils.getErrorMessage(e), '',
           'PRAYER/service/getFollowedPrayers');

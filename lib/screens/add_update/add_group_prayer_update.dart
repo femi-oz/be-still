@@ -52,11 +52,6 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
   @override
   void initState() {
     getContacts();
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
       try {
         var userId =
@@ -79,6 +74,11 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
             context, StringUtils.errorOccured, user, s);
       }
     });
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
     super.didChangeDependencies();
   }
 
@@ -148,12 +148,13 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
 
   Future<void> _save(
       String prayerId, String groupId, String groupPrayerId) async {
+    BeStilDialog.showLoading(context);
+
     setState(() => _autoValidate = true);
     if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
     final user = Provider.of<UserProvider>(context, listen: false).currentUser;
     try {
-      BeStilDialog.showLoading(context);
       if (_descriptionController.text.trim().isEmpty) {
         BeStilDialog.hideLoading(context);
         PlatformException e = PlatformException(

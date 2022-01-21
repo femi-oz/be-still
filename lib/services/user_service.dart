@@ -117,10 +117,14 @@ class UserService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      return _userCollectionReference
-          .doc(id)
-          .get()
-          .then((e) => UserModel.fromData(e.data()!, e.id));
+      return _userCollectionReference.doc(id).get().then((e) {
+        var g = e.data();
+        if (g != null) {
+          return UserModel.fromData(g, e.id);
+        } else {
+          return UserModel.defaultValue();
+        }
+      });
     } catch (e) {
       locator<LogService>().createLog(
           StringUtils.getErrorMessage(e), id, 'USER/service/getUserByIdFuture');

@@ -77,7 +77,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         showNotification(message);
       });
       FirebaseMessaging.onMessageOpenedApp.listen((message) {
-        print('Message clicked!');
+        AppController appController = Get.find();
+        appController.setCurrentPage(14, false);
+      });
+      FirebaseMessaging.instance.getInitialMessage().then((value) {
+        if (value != null) {
+          AppController appController = Get.find();
+          appController.setCurrentPage(14, false);
+        }
       });
     } catch (e, s) {
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, null, s);
@@ -105,7 +112,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       message.notification?.title ?? '',
       message.notification?.body ?? '',
       platformChannelSpecifics,
-      payload: 'New Payload',
+      payload: "{'type': 'fcm message'}",
     );
   }
 
