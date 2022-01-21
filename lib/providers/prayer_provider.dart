@@ -52,9 +52,8 @@ class PrayerProvider with ChangeNotifier {
       if (_firebaseAuth.currentUser == null) return null;
       _prayerService.getPrayers(userId).asBroadcastStream().listen(
         (data) {
-          _prayers = data
-              .where((e) => (e.userPrayer?.deleteStatus ?? 0) > -1)
-              .toList();
+          _prayers = data;
+
           filterPrayers();
           notifyListeners();
         },
@@ -96,9 +95,7 @@ class PrayerProvider with ChangeNotifier {
     try {
       _prayerService.getPrayers(userId).asBroadcastStream().listen(
         (data) {
-          _prayers = data
-              .where((e) => (e.userPrayer?.deleteStatus ?? 0) > -1)
-              .toList();
+          _prayers = data;
           _prayers.sort((a, b) => (b.prayer?.modifiedOn ?? DateTime.now())
               .compareTo(a.prayer?.modifiedOn ?? DateTime.now()));
 

@@ -130,9 +130,8 @@ class NotificationProvider with ChangeNotifier {
           .getUserNotifications(userId)
           .asBroadcastStream()
           .listen((notifications) {
-        _notifications = notifications
-            .where((e) => e.status == Status.active && e.recieverId == userId)
-            .toList();
+        _notifications = notifications;
+
         notifyListeners();
       });
     } catch (e) {

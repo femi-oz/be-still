@@ -54,9 +54,8 @@ class GroupPrayerProvider with ChangeNotifier {
       _filteredPrayers = [];
       _prayerService.getPrayers(groupId).asBroadcastStream().listen(
         (data) {
-          _prayers = data
-              .where((e) => (e.groupPrayer?.deleteStatus ?? 0) > -1)
-              .toList();
+          _prayers = data;
+
           _filteredPrayers = _prayers;
           filterPrayers();
           notifyListeners();
