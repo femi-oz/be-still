@@ -152,11 +152,10 @@ class _GroupPrayersState extends State<GroupPrayers> {
                                   .map((e) => GestureDetector(
                                       onTap: () async {
                                         try {
-                                          await Provider.of<
-                                                      GroupPrayerProvider>(
+                                          Provider.of<GroupPrayerProvider>(
                                                   context,
                                                   listen: false)
-                                              .setPrayerFuture(
+                                              .setCurrentPrayerId(
                                                   e.groupPrayer?.id ?? '');
                                           AppController appController =
                                               Get.find();

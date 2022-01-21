@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -38,32 +39,28 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
   Duration snoozeDurationinMinutes = Duration.zero;
   String durationText = '';
   int snoozeDuration = 0;
-  LocalNotificationModel _reminder = LocalNotificationModel.defaultValue();
+  // LocalNotificationModel _reminder = LocalNotificationModel.defaultValue();
   String reminderString = '';
-  Widget _buildMenu() {
-    final prayerData =
-        Provider.of<GroupPrayerProvider>(context, listen: false).currentPrayer;
-    return PrayerGroupMenu(
-        context, hasReminder, _reminder, () => updateUI(), prayerData);
+  Widget _buildMenu(
+      LocalNotificationModel _reminder, CombineGroupPrayerStream? prayerData) {
+    return PrayerGroupMenu(context, hasReminder(prayerData), _reminder,
+        () => updateUI(), prayerData);
   }
 
-  bool get hasReminder {
+  bool hasReminder(CombineGroupPrayerStream? prayerData) {
     var reminders =
         Provider.of<NotificationProvider>(context).localNotifications;
-    final prayerData =
-        Provider.of<GroupPrayerProvider>(context, listen: false).currentPrayer;
+
     return reminders.any(
-      (reminder) => reminder.entityId == prayerData.groupPrayer?.id,
+      (reminder) => reminder.entityId == (prayerData?.groupPrayer?.id ?? ''),
     );
   }
 
-  bool get isReminderActive {
+  bool isReminderActive(CombineGroupPrayerStream prayerData) {
     final reminders = Provider.of<NotificationProvider>(context)
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
-    final prayerData =
-        Provider.of<GroupPrayerProvider>(context, listen: false).currentPrayer;
 
     LocalNotificationModel rem = reminders.firstWhere(
         (reminder) => reminder.entityId == prayerData.groupPrayer?.prayerId,
@@ -134,224 +131,297 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
   Widget build(BuildContext context) {
     var reminders =
         Provider.of<NotificationProvider>(context).localNotifications;
-    final prayerData = Provider.of<GroupPrayerProvider>(context).currentPrayer;
+    // final prayerData = Provider.of<GroupPrayerProvider>(context).currentPrayer;
 
-    _reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == prayerData.groupPrayer?.id,
-        orElse: () => LocalNotificationModel.defaultValue());
     return Scaffold(
         appBar: CustomAppBar(
           showPrayerActions: false,
         ),
-        body: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: AppColors.backgroundColor,
-              ),
-            ),
-            child: Column(children: <Widget>[
-              Container(
-                padding: EdgeInsets.only(left: 10, top: 20, right: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    TextButton.icon(
-                      style: ButtonStyle(
-                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                            EdgeInsets.zero),
+        body: StreamBuilder<CombineGroupPrayerStream>(
+            stream: Provider.of<GroupPrayerProvider>(context).getPrayer(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final _reminder = reminders.firstWhere(
+                    (reminder) =>
+                        reminder.entityId == snapshot.data?.groupPrayer?.id,
+                    orElse: () => LocalNotificationModel.defaultValue());
+                return Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: AppColors.backgroundColor,
                       ),
-                      icon: Icon(
-                        AppIcons.bestill_back_arrow,
-                        color: AppColors.lightBlue3,
-                        size: 20,
+                    ),
+                    child: Column(children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.only(left: 10, top: 20, right: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            TextButton.icon(
+                              style: ButtonStyle(
+                                padding: MaterialStateProperty.all<
+                                    EdgeInsetsGeometry>(EdgeInsets.zero),
+                              ),
+                              icon: Icon(
+                                AppIcons.bestill_back_arrow,
+                                color: AppColors.lightBlue3,
+                                size: 20,
+                              ),
+                              onPressed: () {
+                                AppController appController = Get.find();
+                                appController.setCurrentPage(8, true);
+                              },
+                              label: Text(
+                                'BACK',
+                                style: AppTextStyles.boldText20.copyWith(
+                                  color: AppColors.lightBlue3,
+                                ),
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Transform.rotate(
+                                  angle: 90 * math.pi / 180,
+                                  child: IconButton(
+                                    icon: Icon(Icons.build,
+                                        color: AppColors.lightBlue3),
+                                    onPressed: () => showModalBottomSheet(
+                                      context: context,
+                                      barrierColor: Provider.of<ThemeProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .isDarkModeEnabled
+                                          ? AppColors.backgroundColor[0]
+                                              .withOpacity(0.8)
+                                          : Color(0xFF021D3C).withOpacity(0.7),
+                                      backgroundColor:
+                                          Provider.of<ThemeProvider>(context,
+                                                      listen: false)
+                                                  .isDarkModeEnabled
+                                              ? AppColors.backgroundColor[0]
+                                                  .withOpacity(0.8)
+                                              : Color(0xFF021D3C)
+                                                  .withOpacity(0.7),
+                                      isScrollControlled: true,
+                                      builder: (BuildContext context) {
+                                        return _buildMenu(
+                                            _reminder, snapshot.data);
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                      onPressed: () {
+                      if (snapshot.data?.groupPrayer?.isSnoozed ?? false)
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              InkWell(
+                                onTap: () => showDialog(
+                                  context: context,
+                                  barrierColor: AppColors
+                                      .detailBackgroundColor[1]
+                                      .withOpacity(0.5),
+                                  builder: (BuildContext context) {
+                                    return Dialog(
+                                      insetPadding: EdgeInsets.all(20),
+                                      backgroundColor:
+                                          AppColors.prayerCardBgColor,
+                                      shape: RoundedRectangleBorder(
+                                        side: BorderSide(
+                                            color: AppColors.darkBlue),
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(10.0),
+                                        ),
+                                      ),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 30),
+                                            child: ReminderPicker(
+                                              isGroup: true,
+                                              entityId: snapshot
+                                                      .data?.groupPrayer?.id ??
+                                                  '',
+                                              type: NotificationType.reminder,
+                                              reminder: _reminder,
+                                              hideActionuttons: false,
+                                              onCancel: () =>
+                                                  Navigator.of(context).pop(),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(
+                                      AppIcons.snooze,
+                                      size: 12,
+                                      color: AppColors.lightBlue5,
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(left: 7),
+                                      child: Text(
+                                          'Snoozed until ${DateFormat('MMM').format(snapshot.data?.groupPrayer?.snoozeEndDate ?? DateTime.now())} ${getDayText(snapshot.data?.groupPrayer?.snoozeEndDate ?? DateTime.now().day)}, ${DateFormat('yyyy h:mm a').format(snapshot.data?.groupPrayer?.snoozeEndDate ?? DateTime.now())}',
+                                          style: AppTextStyles.regularText12),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(width: 20),
+                            ]),
+                      hasReminder(snapshot.data)
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                  InkWell(
+                                      onTap: () => showDialog(
+                                            context: context,
+                                            barrierColor: AppColors
+                                                .detailBackgroundColor[1]
+                                                .withOpacity(0.5),
+                                            builder: (BuildContext context) {
+                                              return Dialog(
+                                                insetPadding:
+                                                    EdgeInsets.all(20),
+                                                backgroundColor:
+                                                    AppColors.prayerCardBgColor,
+                                                shape: RoundedRectangleBorder(
+                                                  side: BorderSide(
+                                                      color:
+                                                          AppColors.darkBlue),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(10.0),
+                                                  ),
+                                                ),
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          vertical: 30),
+                                                      child: ReminderPicker(
+                                                        isGroup: true,
+                                                        entityId: snapshot
+                                                                .data
+                                                                ?.groupPrayer
+                                                                ?.id ??
+                                                            '',
+                                                        type: NotificationType
+                                                            .reminder,
+                                                        reminder: _reminder,
+                                                        hideActionuttons: false,
+                                                        popTwice: false,
+                                                        onCancel: () =>
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                      child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: <Widget>[
+                                            Icon(
+                                              AppIcons.bestill_reminder,
+                                              size: 12,
+                                              color: AppColors.lightBlue5,
+                                            ),
+                                            Container(
+                                              margin: EdgeInsets.only(left: 7),
+                                              child: Text(reminderString,
+                                                  style: AppTextStyles
+                                                      .regularText12),
+                                            )
+                                          ])),
+                                  SizedBox(width: 20)
+                                ])
+                          : Container(),
+                      SizedBox(height: 10),
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 20),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: AppColors.prayerDetailsBgColor,
+                            border: Border.all(
+                              color: AppColors.cardBorder,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: (snapshot.data?.updates ?? []).length > 0
+                              ? UpdateView(snapshot.data)
+                              : NoUpdateView(snapshot.data),
+                        ),
+                      ),
+                      SizedBox(height: 30)
+                    ]));
+              }
+              return Container(
+                padding: EdgeInsets.symmetric(horizontal: 100, vertical: 60),
+                child: Column(
+                  children: [
+                    Opacity(
+                      opacity: 0.3,
+                      child: Text(
+                        'This prayer no longer exists',
+                        style: AppTextStyles.demiboldText34,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
                         AppController appController = Get.find();
                         appController.setCurrentPage(8, true);
                       },
-                      label: Text(
-                        'BACK',
-                        style: AppTextStyles.boldText20.copyWith(
-                          color: AppColors.lightBlue3,
+                      child: Container(
+                        height: 30,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        // width: MediaQuery.of(context).size.width * .30,
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          border: Border.all(
+                            color: AppColors.cardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
+                            'Go to prayer list',
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                    Row(
-                      children: [
-                        Transform.rotate(
-                          angle: 90 * math.pi / 180,
-                          child: IconButton(
-                            icon:
-                                Icon(Icons.build, color: AppColors.lightBlue3),
-                            onPressed: () => showModalBottomSheet(
-                              context: context,
-                              barrierColor: Provider.of<ThemeProvider>(context,
-                                          listen: false)
-                                      .isDarkModeEnabled
-                                  ? AppColors.backgroundColor[0]
-                                      .withOpacity(0.8)
-                                  : Color(0xFF021D3C).withOpacity(0.7),
-                              backgroundColor: Provider.of<ThemeProvider>(
-                                          context,
-                                          listen: false)
-                                      .isDarkModeEnabled
-                                  ? AppColors.backgroundColor[0]
-                                      .withOpacity(0.8)
-                                  : Color(0xFF021D3C).withOpacity(0.7),
-                              isScrollControlled: true,
-                              builder: (BuildContext context) {
-                                return _buildMenu();
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
                   ],
                 ),
-              ),
-              if (prayerData.groupPrayer?.isSnoozed ?? false)
-                Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  InkWell(
-                    onTap: () => showDialog(
-                      context: context,
-                      barrierColor:
-                          AppColors.detailBackgroundColor[1].withOpacity(0.5),
-                      builder: (BuildContext context) {
-                        return Dialog(
-                          insetPadding: EdgeInsets.all(20),
-                          backgroundColor: AppColors.prayerCardBgColor,
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(color: AppColors.darkBlue),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10.0),
-                            ),
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 30),
-                                child: ReminderPicker(
-                                  isGroup: true,
-                                  entityId: prayerData.groupPrayer?.id ?? '',
-                                  type: NotificationType.reminder,
-                                  reminder: _reminder,
-                                  hideActionuttons: false,
-                                  onCancel: () => Navigator.of(context).pop(),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(
-                          AppIcons.snooze,
-                          size: 12,
-                          color: AppColors.lightBlue5,
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: 7),
-                          child: Text(
-                              'Snoozed until ${DateFormat('MMM').format(prayerData.groupPrayer?.snoozeEndDate ?? DateTime.now())} ${getDayText(prayerData.groupPrayer?.snoozeEndDate ?? DateTime.now().day)}, ${DateFormat('yyyy h:mm a').format(prayerData.groupPrayer?.snoozeEndDate ?? DateTime.now())}',
-                              style: AppTextStyles.regularText12),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 20),
-                ]),
-              hasReminder
-                  ? Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                      InkWell(
-                          onTap: () => showDialog(
-                                context: context,
-                                barrierColor: AppColors.detailBackgroundColor[1]
-                                    .withOpacity(0.5),
-                                builder: (BuildContext context) {
-                                  return Dialog(
-                                    insetPadding: EdgeInsets.all(20),
-                                    backgroundColor:
-                                        AppColors.prayerCardBgColor,
-                                    shape: RoundedRectangleBorder(
-                                      side:
-                                          BorderSide(color: AppColors.darkBlue),
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(10.0),
-                                      ),
-                                    ),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 30),
-                                          child: ReminderPicker(
-                                            isGroup: true,
-                                            entityId:
-                                                prayerData.groupPrayer?.id ??
-                                                    '',
-                                            type: NotificationType.reminder,
-                                            reminder: _reminder,
-                                            hideActionuttons: false,
-                                            popTwice: false,
-                                            onCancel: () =>
-                                                Navigator.of(context).pop(),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                          child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  AppIcons.bestill_reminder,
-                                  size: 12,
-                                  color: AppColors.lightBlue5,
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(left: 7),
-                                  child: Text(reminderString,
-                                      style: AppTextStyles.regularText12),
-                                )
-                              ])),
-                      SizedBox(width: 20)
-                    ])
-                  : Container(),
-              SizedBox(height: 10),
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: AppColors.prayerDetailsBgColor,
-                    border: Border.all(
-                      color: AppColors.cardBorder,
-                      width: 1,
-                    ),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: (Provider.of<GroupPrayerProvider>(context)
-                                      .currentPrayer
-                                      .updates ??
-                                  [])
-                              .length >
-                          0
-                      ? UpdateView()
-                      : NoUpdateView(),
-                ),
-              ),
-              SizedBox(height: 30)
-            ])));
+              );
+            }));
   }
 }

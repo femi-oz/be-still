@@ -25,7 +25,7 @@ class PrayerGroupMenu extends StatefulWidget {
   final BuildContext parentcontext;
   final bool hasReminder;
   final Function updateUI;
-  final CombineGroupPrayerStream prayerData;
+  final CombineGroupPrayerStream? prayerData;
   final LocalNotificationModel reminder;
 
   @override
@@ -67,7 +67,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     try {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .addToMyList(
-        widget.prayerData.prayer?.id ?? '',
+        widget.prayerData?.prayer?.id ?? '',
         user.id ?? '',
         currentGroup.group?.id ?? '',
         isFollowedByAdmin,
@@ -101,7 +101,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
               .followedPrayers
               .firstWhere(
                   (element) =>
-                      element.prayerId == widget.prayerData.prayer?.id &&
+                      element.prayerId == widget.prayerData?.prayer?.id &&
                       element.createdBy == _userId,
                   orElse: () => FollowedPrayerModel.defaultValue());
       await Provider.of<GroupPrayerProvider>(context, listen: false)
@@ -144,8 +144,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
               _user.id ?? '',
               receiverId,
               'Prayer flagged as inappropriate',
-              widget.prayerData.groupPrayer?.id ?? '',
-              widget.prayerData.groupPrayer?.groupId ?? '',
+              widget.prayerData?.groupPrayer?.id ?? '',
+              widget.prayerData?.groupPrayer?.groupId ?? '',
               tokens);
     } on HttpException catch (e, s) {
       final user =
@@ -164,7 +164,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
 
     try {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .flagAsInappropriate(widget.prayerData.prayer?.id ?? '');
+          .flagAsInappropriate(widget.prayerData?.prayer?.id ?? '');
 
       var admin = (group.groupUsers ?? [])
           .firstWhere((element) => element.role == GroupUserRole.admin);
@@ -201,14 +201,14 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       var notifications =
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
-              .where((e) => e.entityId == widget.prayerData.prayer?.id)
+              .where((e) => e.entityId == widget.prayerData?.prayer?.id)
               .toList();
       final pushNotifications =
           Provider.of<NotificationProvider>(context, listen: false)
               .notifications
               .where((element) =>
-                  element.prayerId == widget.prayerData.prayer?.id ||
-                  element.groupId == widget.prayerData.groupPrayer?.groupId);
+                  element.prayerId == widget.prayerData?.prayer?.id ||
+                  element.groupId == widget.prayerData?.groupPrayer?.groupId);
 
       for (final not in notifications)
         await Provider.of<NotificationProvider>(context, listen: false)
@@ -218,8 +218,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
           await Provider.of<NotificationProvider>(context, listen: false)
               .updateNotification(e.id ?? ''));
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .deletePrayer(widget.prayerData.groupPrayer?.id ?? '',
-              widget.prayerData.prayer?.id ?? '');
+          .deletePrayer(widget.prayerData?.groupPrayer?.id ?? '',
+              widget.prayerData?.prayer?.id ?? '');
       // _deleteFollowedPrayers();
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
@@ -279,12 +279,12 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
   void _sendPrayerNotification(String type) async {
     await Provider.of<NotificationProvider>(context, listen: false)
         .sendPrayerNotification(
-            widget.prayerData.prayer?.id ?? '',
-            widget.prayerData.groupPrayer?.id ?? '',
+            widget.prayerData?.prayer?.id ?? '',
+            widget.prayerData?.groupPrayer?.id ?? '',
             type,
-            widget.prayerData.groupPrayer?.groupId ?? '',
+            widget.prayerData?.groupPrayer?.groupId ?? '',
             context,
-            widget.prayerData.prayer?.description ?? '');
+            widget.prayerData?.prayer?.description ?? '');
   }
 
   void _onMarkAsAnswered() async {
@@ -295,7 +295,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.groupPrayer?.prayerId &&
+                  e.entityId == widget.prayerData?.groupPrayer?.prayerId &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
@@ -303,8 +303,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       _sendPrayerNotification(NotificationType.answered_prayers);
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .markPrayerAsAnswered(widget.prayerData.prayer?.id ?? '',
-              widget.prayerData.groupPrayer?.id ?? '');
+          .markPrayerAsAnswered(widget.prayerData?.prayer?.id ?? '',
+              widget.prayerData?.groupPrayer?.id ?? '');
       // _deleteFollowedPrayers();
 
       BeStilDialog.hideLoading(context);
@@ -327,8 +327,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     BeStilDialog.showLoading(context);
     try {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .unMarkPrayerAsAnswered(widget.prayerData.prayer?.id ?? '',
-              widget.prayerData.groupPrayer?.id ?? '');
+          .unMarkPrayerAsAnswered(widget.prayerData?.prayer?.id ?? '',
+              widget.prayerData?.groupPrayer?.id ?? '');
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
     } on HttpException catch (e, s) {
@@ -469,12 +469,12 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
         });
   }
 
-  void _unArchive(CombineGroupPrayerStream prayerData) async {
+  void _unArchive(CombineGroupPrayerStream? prayerData) async {
     BeStilDialog.showLoading(context);
     try {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .unArchivePrayer(
-              prayerData.groupPrayer?.id ?? '', prayerData.prayer?.id ?? '');
+              prayerData?.groupPrayer?.id ?? '', prayerData?.prayer?.id ?? '');
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pushNamedAndRemoveUntil(
           EntryScreen.routeName, (Route<dynamic> route) => false);
@@ -494,7 +494,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     }
   }
 
-  void _onArchive(CombineGroupPrayerStream prayerData) async {
+  void _onArchive(CombineGroupPrayerStream? prayerData) async {
     BeStilDialog.showLoading(context);
 
     try {
@@ -502,7 +502,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.groupPrayer?.id &&
+                  e.entityId == widget.prayerData?.groupPrayer?.id &&
                   e.type == NotificationType.reminder)
               .toList();
 
@@ -513,8 +513,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
 
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .archivePrayer(
-        widget.prayerData.groupPrayer?.id ?? '',
-        widget.prayerData.prayer?.id ?? '',
+        widget.prayerData?.groupPrayer?.id ?? '',
+        widget.prayerData?.prayer?.id ?? '',
       );
 
       BeStilDialog.hideLoading(context);
@@ -536,7 +536,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
   bool get isFollowing {
     final isFollowing = Provider.of<GroupPrayerProvider>(context, listen: false)
         .followedPrayers
-        .any((element) => element.prayerId == widget.prayerData.prayer?.id);
+        .any((element) => element.prayerId == widget.prayerData?.prayer?.id);
     return isFollowing;
   }
 
@@ -548,7 +548,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                 .firstWhere((g) => g.userId == _currentUser.id)
                 .role ==
             GroupUserRole.admin;
-    bool isOwner = widget.prayerData.prayer?.createdBy == _currentUser.id;
+    bool isOwner = widget.prayerData?.prayer?.createdBy == _currentUser.id;
     final isActivePrayer =
         Provider.of<GroupPrayerProvider>(context).filterOption.toLowerCase() ==
             'active';
@@ -670,10 +670,10 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                           ? () {}
                           : () async {
                               try {
-                                await Provider.of<GroupPrayerProvider>(context,
+                                Provider.of<GroupPrayerProvider>(context,
                                         listen: false)
-                                    .setPrayerFuture(
-                                        widget.prayerData.groupPrayer?.id ??
+                                    .setCurrentPrayerId(
+                                        widget.prayerData?.groupPrayer?.id ??
                                             '');
                                 Navigator.pop(context);
                                 await Future.delayed(
@@ -759,10 +759,10 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                       icon: AppIcons.bestill_answered,
                       onPress: () => !isOwner && !isAdmin
                           ? () {}
-                          : widget.prayerData.prayer?.isAnswer ?? false
+                          : widget.prayerData?.prayer?.isAnswer ?? false
                               ? _unMarkAsAnswered()
                               : _onMarkAsAnswered(),
-                      text: widget.prayerData.prayer?.isAnswer ?? false
+                      text: widget.prayerData?.prayer?.isAnswer ?? false
                           ? 'Unmark as Answered'
                           : 'Mark as Answered',
                     ),
@@ -792,10 +792,10 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                           .bestill_icons_bestill_archived_icon_revised_drk,
                       onPress: () => !isOwner && !isAdmin
                           ? () {}
-                          : widget.prayerData.groupPrayer?.isArchived ?? false
+                          : widget.prayerData?.groupPrayer?.isArchived ?? false
                               ? _unArchive(widget.prayerData)
                               : _onArchive(widget.prayerData),
-                      text: widget.prayerData.groupPrayer?.isArchived ?? false
+                      text: widget.prayerData?.groupPrayer?.isArchived ?? false
                           ? 'Unarchive'
                           : 'Archive',
                     ),

@@ -255,8 +255,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             .setCurrentGroupById(notification.groupId ?? '', userId ?? '');
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .setGroupPrayers(notification.groupId ?? '');
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setPrayerFuture(notification.prayerId ?? '');
+      Provider.of<GroupPrayerProvider>(context, listen: false)
+          .setCurrentPrayerId(notification.prayerId ?? '');
       await deleteNotification(notification.id ?? '');
 
       BeStilDialog.hideLoading(context);

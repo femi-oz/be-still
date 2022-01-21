@@ -19,8 +19,6 @@ class GroupPrayerProvider with ChangeNotifier {
   List<CombineGroupPrayerStream> _filteredPrayers = [];
   Iterable<Contact> _localContacts = [];
 
-  CombineGroupPrayerStream _currentPrayer =
-      CombineGroupPrayerStream.defaultValue();
   List<HiddenPrayerModel> _hiddenPrayers = [];
   List<FollowedPrayerModel> _followedPrayers = [];
   List<FollowedPrayerModel> _memberPrayers = [];
@@ -30,7 +28,6 @@ class GroupPrayerProvider with ChangeNotifier {
   List<CombineGroupPrayerStream> get filteredPrayers => _filteredPrayers;
 
   Iterable<Contact> get localContacts => _localContacts;
-  CombineGroupPrayerStream get currentPrayer => _currentPrayer;
   List<HiddenPrayerModel> get hiddenPrayers => _hiddenPrayers;
   List<FollowedPrayerModel> get followedPrayers => _followedPrayers;
   List<FollowedPrayerModel> get memberPrayers => _memberPrayers;
@@ -66,23 +63,14 @@ class GroupPrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> setPrayer(String id) async {
-    try {
-      _prayerService.getPrayer(id).asBroadcastStream().listen((prayer) {
-        _currentPrayer = prayer;
-        notifyListeners();
-      });
-    } catch (e) {
-      rethrow;
-    }
-  }
+  String _currentPrayerId = '';
+  String get currentPrayerId => _currentPrayerId;
 
-  Future setPrayerFuture(String id) async {
+  void setCurrentPrayerId(String prayerId) => _currentPrayerId = prayerId;
+
+  Stream<CombineGroupPrayerStream> getPrayer() {
     try {
-      _prayerService.getPrayerFuture(id).then((prayer) {
-        _currentPrayer = prayer;
-        notifyListeners();
-      });
+      return _prayerService.getPrayer(_currentPrayerId);
     } catch (e) {
       rethrow;
     }
