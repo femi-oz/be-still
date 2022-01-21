@@ -52,7 +52,7 @@ class PrayerService {
         return Stream.error(StringUtils.unathorized);
       return _userPrayerCollectionReference
           .where('UserId', isEqualTo: userId)
-          .where('DeleteStatus', isGreaterThan: -1)
+          .where('DeleteStatus', isEqualTo: 0)
           .snapshots()
           .map((convert) {
         return convert.docs.map((f) {
