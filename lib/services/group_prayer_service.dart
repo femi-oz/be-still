@@ -107,18 +107,19 @@ class GroupPrayerService {
     }
   }
 
-  Stream<CombineGroupPrayerStream> getPrayer(String prayerID) {
+  Stream<CombineGroupPrayerStream> getPrayer(String groupPrayerId) {
     try {
-      print(prayerID);
       if (_firebaseAuth.currentUser == null)
         return Stream.error(StringUtils.unathorized);
-      var data = _groupPrayerCollectionReference.doc(prayerID).snapshots();
-      var _combineStream = data.map((_doc) {
+      return _groupPrayerCollectionReference
+          .doc(groupPrayerId)
+          .snapshots()
+          .map((_doc) {
         Stream<GroupPrayerModel> groupPrayer = Stream.value(_doc)
             .map<GroupPrayerModel>(
                 (doc) => GroupPrayerModel.fromData(doc.data()!, doc.id));
         Stream<PrayerModel> prayer = _prayerCollectionReference
-            .doc(prayerID)
+            .doc(_doc['PrayerId'])
             .snapshots()
             .map<PrayerModel>(
                 (doc) => PrayerModel.fromData(doc.data()!, doc.id));
@@ -154,10 +155,10 @@ class GroupPrayerService {
       }).switchMap((observables) {
         return observables;
       });
-      return _combineStream;
+      // return _combineStream;
     } catch (e) {
-      locator<LogService>().createLog(
-          StringUtils.getErrorMessage(e), prayerID, 'PRAYER/service/getPrayer');
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e),
+          groupPrayerId, 'PRAYER/service/getPrayer');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }

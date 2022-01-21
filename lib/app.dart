@@ -236,8 +236,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           AppController appController = Get.find();
           appController.setCurrentPage(9, false);
         } else {
-          await Provider.of<PrayerProvider>(context, listen: false)
-              .setPrayer(message.entityId ?? '');
+          Provider.of<PrayerProvider>(context, listen: false)
+              .setCurrentPrayerId(message.entityId ?? '');
           AppController appController = Get.find();
           appController.setCurrentPage(7, false);
         }

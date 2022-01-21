@@ -5,6 +5,7 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
+import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -27,17 +28,18 @@ class ReminderPicker extends StatefulWidget {
   final String type;
   final String entityId;
   final bool popTwice;
+  final CombinePrayerStream? prayerData;
 
   @override
-  ReminderPicker({
-    required this.hideActionuttons,
-    required this.onCancel,
-    this.reminder,
-    required this.type,
-    required this.entityId,
-    required this.isGroup,
-    this.popTwice = true,
-  });
+  ReminderPicker(
+      {required this.hideActionuttons,
+      required this.onCancel,
+      this.reminder,
+      required this.type,
+      required this.entityId,
+      required this.isGroup,
+      this.popTwice = true,
+      this.prayerData});
   _ReminderPickerState createState() => _ReminderPickerState();
 }
 
@@ -247,10 +249,10 @@ class _ReminderPickerState extends State<ReminderPicker> {
               ? '$selectedFrequency,  $selectedMonth $selectedDayOfMonth$suffix, $selectedYear $_selectedHourString:$_selectedMinuteString $selectedPeriod'
               : '$selectedFrequency, $_selectedHourString:$_selectedMinuteString $selectedPeriod';
 
-      final prayerData =
-          Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+      // final prayerData =
+      //     Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
       final title = '$selectedFrequency reminder to pray';
-      final description = prayerData.prayer?.description ?? '';
+      final description = widget.prayerData?.prayer?.description ?? '';
 
       final scheduleDate = LocalNotification.scheduleDate(
         hour,

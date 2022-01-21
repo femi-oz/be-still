@@ -94,8 +94,8 @@ class _PrayerListState extends State<PrayerList> {
   Future<void> onTapCard(CombinePrayerStream prayerData) async {
     BeStilDialog.showLoading(context, '');
     try {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayer(prayerData.userPrayer?.id ?? '');
+      Provider.of<PrayerProvider>(context, listen: false)
+          .setCurrentPrayerId(prayerData.userPrayer?.id ?? '');
       await Future.delayed(const Duration(milliseconds: 300),
           () => BeStilDialog.hideLoading(context));
       AppController appController = Get.find();

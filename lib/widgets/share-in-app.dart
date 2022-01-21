@@ -1,5 +1,6 @@
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
@@ -16,6 +17,10 @@ import 'package:provider/provider.dart';
 class ShareInApp extends StatefulWidget {
   @override
   _ShareInAppState createState() => _ShareInAppState();
+
+  final CombinePrayerStream? prayerData;
+
+  ShareInApp(this.prayerData);
 }
 
 class _ShareInAppState extends State<ShareInApp> {
@@ -30,11 +35,11 @@ class _ShareInAppState extends State<ShareInApp> {
     return matches;
   }
 
-  _share(receievrId) async {
+  _share(String receievrId, CombinePrayerStream? prayerData) async {
     if (userInput.text == '') return;
-    final _prayer = Provider.of<PrayerProvider>(context, listen: false)
-        .currentPrayer
-        .prayer;
+    // final _prayer = Provider.of<PrayerProvider>(context, listen: false)
+    //     .currentPrayer
+    //     .prayer;
     final user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final currentGroup =
         Provider.of<GroupProvider>(context, listen: false).currentGroup;
@@ -43,7 +48,7 @@ class _ShareInAppState extends State<ShareInApp> {
     try {
       BeStilDialog.showLoading(context);
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .addToMyList(_prayer?.id ?? '', receievrId,
+          .addToMyList(prayerData?.prayer?.id ?? '', receievrId,
               currentGroup.group?.id ?? '', isFollowedByAdmin);
 
       await Future.delayed(Duration(milliseconds: 300));
@@ -120,7 +125,8 @@ class _ShareInAppState extends State<ShareInApp> {
                         AppIcons.bestill_share,
                         color: AppColors.offWhite4,
                       ),
-                      onPressed: () => _share(selected.id)), //prayer, user id,
+                      onPressed: () => _share(selected.id ?? '',
+                          widget.prayerData)), //prayer, user id,
                 )
               ],
             )),

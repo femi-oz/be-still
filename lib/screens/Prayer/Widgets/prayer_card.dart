@@ -32,7 +32,7 @@ class PrayerCard extends StatefulWidget {
 }
 
 class _PrayerCardState extends State<PrayerCard> {
-  LocalNotificationModel reminder = LocalNotificationModel.defaultValue();
+  // LocalNotificationModel reminder = LocalNotificationModel.defaultValue();
   final SlidableController slidableController = SlidableController();
 
   @override
@@ -212,8 +212,16 @@ class _PrayerCardState extends State<PrayerCard> {
   }
 
   Widget _buildMenu() {
-    return PrayerMenu(
-        context, hasReminder, reminder, () => updateUI(), widget.prayerData);
+    return PrayerMenu(context, hasReminder, _reminder(widget.prayerData),
+        () => updateUI(), widget.prayerData);
+  }
+
+  LocalNotificationModel _reminder(CombinePrayerStream? prayerData) {
+    final reminders = Provider.of<NotificationProvider>(context, listen: false)
+        .localNotifications;
+    return reminders.firstWhere(
+        (reminder) => reminder.entityId == (prayerData?.userPrayer?.id ?? ''),
+        orElse: () => LocalNotificationModel.defaultValue());
   }
 
   updateUI() {
@@ -258,8 +266,8 @@ class _PrayerCardState extends State<PrayerCard> {
 
   Future<void> _setCurrentPrayer() async {
     try {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayer(widget.prayerData.userPrayer?.id ?? '');
+      Provider.of<PrayerProvider>(context, listen: false)
+          .setCurrentPrayerId(widget.prayerData.userPrayer?.id ?? '');
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -425,7 +433,11 @@ class _PrayerCardState extends State<PrayerCard> {
                                                               Navigator.of(
                                                                       context)
                                                                   .pop(),
-                                                          reminder: reminder,
+                                                          reminder: _reminder(
+                                                              widget
+                                                                  .prayerData),
+                                                          prayerData:
+                                                              widget.prayerData,
                                                         ),
                                                       ),
                                                     ],

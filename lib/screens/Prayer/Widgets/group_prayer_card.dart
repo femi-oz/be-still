@@ -448,78 +448,78 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
                                           ),
                                         )
                                       : SizedBox(),
-                                  hasReminder && isReminderActive
-                                      ? Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 5.0),
-                                          child: InkWell(
-                                            onTap: () => showDialog(
-                                              context: context,
-                                              barrierColor: AppColors
-                                                  .detailBackgroundColor[1]
-                                                  .withOpacity(0.5),
-                                              builder: (BuildContext context) {
-                                                return Dialog(
-                                                  insetPadding:
-                                                      EdgeInsets.all(20),
-                                                  backgroundColor: AppColors
-                                                      .prayerCardBgColor,
-                                                  shape: RoundedRectangleBorder(
-                                                    side: BorderSide(
-                                                        color:
-                                                            AppColors.darkBlue),
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                      Radius.circular(10.0),
-                                                    ),
-                                                  ),
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .symmetric(
-                                                                vertical: 30),
-                                                        child: ReminderPicker(
-                                                          entityId: (widget
-                                                                          .prayerData
-                                                                          .groupPrayer ??
-                                                                      GroupPrayerModel
-                                                                          .defaultValue())
-                                                                  .id ??
-                                                              '',
-                                                          isGroup: true,
-                                                          type: NotificationType
-                                                              .reminder,
-                                                          hideActionuttons:
-                                                              false,
-                                                          popTwice: false,
-                                                          onCancel: () =>
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop(),
-                                                          reminder: reminder,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 5, bottom: 5, right: 8),
-                                              child: Icon(
-                                                AppIcons.bestill_reminder,
-                                                size: 12,
-                                                color: AppColors.lightBlue3,
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                      : SizedBox(),
+                                  // hasReminder && isReminderActive
+                                  //     ? Padding(
+                                  //         padding:
+                                  //             const EdgeInsets.only(right: 5.0),
+                                  //         child: InkWell(
+                                  //           onTap: () => showDialog(
+                                  //             context: context,
+                                  //             barrierColor: AppColors
+                                  //                 .detailBackgroundColor[1]
+                                  //                 .withOpacity(0.5),
+                                  //             builder: (BuildContext context) {
+                                  //               return Dialog(
+                                  //                 insetPadding:
+                                  //                     EdgeInsets.all(20),
+                                  //                 backgroundColor: AppColors
+                                  //                     .prayerCardBgColor,
+                                  //                 shape: RoundedRectangleBorder(
+                                  //                   side: BorderSide(
+                                  //                       color:
+                                  //                           AppColors.darkBlue),
+                                  //                   borderRadius:
+                                  //                       BorderRadius.all(
+                                  //                     Radius.circular(10.0),
+                                  //                   ),
+                                  //                 ),
+                                  //                 child: Column(
+                                  //                   mainAxisSize:
+                                  //                       MainAxisSize.min,
+                                  //                   children: [
+                                  //                     Padding(
+                                  //                       padding:
+                                  //                           const EdgeInsets
+                                  //                                   .symmetric(
+                                  //                               vertical: 30),
+                                  //                       child: ReminderPicker(
+                                  //                         entityId: (widget
+                                  //                                         .prayerData
+                                  //                                         .groupPrayer ??
+                                  //                                     GroupPrayerModel
+                                  //                                         .defaultValue())
+                                  //                                 .id ??
+                                  //                             '',
+                                  //                         isGroup: true,
+                                  //                         type: NotificationType
+                                  //                             .reminder,
+                                  //                         hideActionuttons:
+                                  //                             false,
+                                  //                         popTwice: false,
+                                  //                         onCancel: () =>
+                                  //                             Navigator.of(
+                                  //                                     context)
+                                  //                                 .pop(),
+                                  //                         reminder: reminder,
+                                  //                       ),
+                                  //                     ),
+                                  //                   ],
+                                  //                 ),
+                                  //               );
+                                  //             },
+                                  //           ),
+                                  //           child: Padding(
+                                  //             padding: const EdgeInsets.only(
+                                  //                 top: 5, bottom: 5, right: 8),
+                                  //             child: Icon(
+                                  //               AppIcons.bestill_reminder,
+                                  //               size: 12,
+                                  //               color: AppColors.lightBlue3,
+                                  //             ),
+                                  //           ),
+                                  //         ),
+                                  //       )
+                                  //     : SizedBox(),
                                   Text(
                                     widget.prayerData.prayer?.creatorName ?? '',
                                     style: AppTextStyles.boldText14.copyWith(

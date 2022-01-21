@@ -248,8 +248,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 EntryScreen.routeName, (Route<dynamic> route) => false);
           }
           if (message.type == NotificationType.prayer) {
-            await Provider.of<PrayerProvider>(context, listen: false)
-                .setPrayer(message.entityId ?? '');
+            Provider.of<PrayerProvider>(context, listen: false)
+                .setCurrentPrayerId(message.entityId ?? '');
           }
         });
         Provider.of<NotificationProvider>(context, listen: false)

@@ -436,6 +436,8 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
         body: StreamBuilder<CombineGroupPrayerStream>(
             stream: Provider.of<GroupPrayerProvider>(context).getPrayer(),
             builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting)
+                return BeStilDialog.getLoading(context);
               if (snapshot.hasData) {
                 final updates = snapshot.data?.updates ??
                     [].where((element) => element.deleteStatus != -1).toList();

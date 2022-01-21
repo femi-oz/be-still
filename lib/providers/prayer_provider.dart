@@ -25,7 +25,6 @@ class PrayerProvider with ChangeNotifier {
   List<CombinePrayerStream> _filteredPrayerTimeList = [];
   Iterable<Contact> _localContacts = [];
 
-  CombinePrayerStream _currentPrayer = CombinePrayerStream.defaultValue();
   String _filterOption = Status.active;
 
   List<CombinePrayerStream> get prayers => _prayers;
@@ -36,7 +35,6 @@ class PrayerProvider with ChangeNotifier {
 
   Iterable<Contact> get localContacts => _localContacts;
   PrayerType get currentPrayerType => _currentPrayerType;
-  CombinePrayerStream get currentPrayer => _currentPrayer;
   String get filterOption => _filterOption;
 
   bool _isEdit = false;
@@ -95,7 +93,7 @@ class PrayerProvider with ChangeNotifier {
     try {
       _prayerService.getPrayers(userId).asBroadcastStream().listen(
         (data) {
-          _prayers = data;
+          _prayers = [...data];
           _prayers.sort((a, b) => (b.prayer?.modifiedOn ?? DateTime.now())
               .compareTo(a.prayer?.modifiedOn ?? DateTime.now()));
 
@@ -167,12 +165,14 @@ class PrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> setPrayer(String id) async {
+  String _currentPrayerId = '';
+  String get currentPrayerId => _currentPrayerId;
+
+  void setCurrentPrayerId(String prayerId) => _currentPrayerId = prayerId;
+
+  Stream<CombinePrayerStream> getPrayer() {
     try {
-      _prayerService.getPrayer(id).then((prayer) {
-        _currentPrayer = prayer;
-        notifyListeners();
-      });
+      return _prayerService.getPrayer(_currentPrayerId);
     } catch (e) {
       rethrow;
     }
