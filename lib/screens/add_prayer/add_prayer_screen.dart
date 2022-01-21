@@ -123,6 +123,8 @@ class _AddPrayerState extends State<AddPrayer> {
               _backupDescription,
             );
           } else {
+            await Provider.of<GroupProvider>(context, listen: false)
+                .setCurrentGroupById(selected?.id ?? '', _user.id ?? '');
             await Provider.of<GroupPrayerProvider>(context, listen: false)
                 .addPrayer(
               _descriptionController.text,
@@ -135,20 +137,15 @@ class _AddPrayerState extends State<AddPrayer> {
                 Provider.of<GroupPrayerProvider>(context, listen: false)
                     .newPrayerId;
 
-            if (prayerId.isNotEmpty) {
-              // await Provider.of<GroupPrayerProvider>(context, listen: false)
-              //     .setFollowedPrayer(prayerId);
-              await Provider.of<GroupProvider>(context, listen: false)
-                  .setCurrentGroupById(selected?.id ?? '', _user.id ?? '');
-              await Provider.of<NotificationProvider>(context, listen: false)
-                  .sendPrayerNotification(
-                prayerId,
-                NotificationType.prayer,
-                selected?.id ?? '',
-                context,
-                _descriptionController.text,
-              );
-            }
+            await Provider.of<NotificationProvider>(context, listen: false)
+                .sendPrayerNotification(
+              prayerId,
+              prayerId,
+              NotificationType.prayer,
+              selected?.id ?? '',
+              context,
+              _descriptionController.text,
+            );
           }
 
           if (contactList.length > 0) {

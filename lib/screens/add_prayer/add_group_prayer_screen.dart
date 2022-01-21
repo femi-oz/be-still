@@ -71,8 +71,9 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
                     PrayerModel.defaultValue())
                 .id;
             if ((id ?? '').isEmpty) return;
-            // await Provider.of<GroupPrayerProvider>(context, listen: false)
-            //     .setFollowedPrayer(id ?? '');
+
+            await Provider.of<GroupPrayerProvider>(context, listen: false)
+                .setFollowedPrayers(id);
           }
         } on HttpException catch (e, s) {
           final user =
@@ -135,13 +136,13 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
             var prayerId =
                 Provider.of<GroupPrayerProvider>(context, listen: false)
                     .newPrayerId;
-            await Provider.of<GroupProvider>(context, listen: false)
-                .setCurrentGroupById(_group.group?.id ?? '', _user.id ?? '');
+
             await Provider.of<NotificationProvider>(context, listen: false)
                 .sendPrayerNotification(
               prayerId,
+              prayerId,
               NotificationType.prayer,
-              selected?.id ?? '',
+              _group.group?.id ?? '',
               context,
               _descriptionController.text,
             );
@@ -232,18 +233,20 @@ class _AddGroupPrayerState extends State<AddGroupPrayer> {
             }
           }
 
-          final editPrayerId =
+          final groupPrayerId =
               (Provider.of<GroupPrayerProvider>(context, listen: false)
                           .prayerToEdit
                           .groupPrayer ??
                       GroupPrayerModel.defaultValue())
                   .id;
-          if ((editPrayerId ?? '').isEmpty) return;
+
+          if ((groupPrayerId ?? '').isEmpty) return;
 
           await Provider.of<NotificationProvider>(context, listen: false)
               .sendPrayerNotification(
-            editPrayerId ?? '',
-            NotificationType.prayer_updates,
+            id ?? '',
+            groupPrayerId ?? '',
+            NotificationType.edited_prayers,
             _group.group?.id ?? '',
             context,
             _descriptionController.text,

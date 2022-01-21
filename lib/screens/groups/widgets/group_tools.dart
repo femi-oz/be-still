@@ -79,10 +79,12 @@ class _GroupToolsState extends State<GroupTools> {
         });
         final adminData =
             Provider.of<UserProvider>(context, listen: false).selectedUser;
+        final userName =
+            '${(_currentUser.firstName ?? '').capitalizeFirst} ${(_currentUser.lastName ?? '').capitalizeFirst}';
         await sendPushNotification(
-            '${(_currentUser.firstName ?? '').capitalizeFirst} ${(_currentUser.lastName ?? '').capitalizeFirst} has left your group ${data.group?.name}',
+            '$userName has left your group ${data.group?.name}',
             NotificationType.leave_group,
-            _currentUser.firstName ?? '',
+            userName,
             _currentUser.id ?? '',
             adminData.id ?? '',
             'A member has left your group',

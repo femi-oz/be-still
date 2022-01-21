@@ -214,11 +214,18 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   gotoGroup(PushNotificationModel? notification) async {
+    BeStilDialog.showLoading(context);
+
     try {
-      final userId = Provider.of<UserProvider>(context).currentUser.id;
+      final userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
       await Provider.of<GroupProvider>(context, listen: false)
           .setCurrentGroupById(notification?.groupId ?? '', userId ?? '');
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .setGroupPrayers(notification?.groupId ?? '');
       deleteNotification(notification?.id ?? '');
+      BeStilDialog.hideLoading(context);
+
       // service get group by id
       // go to 8
       AppController appController = Get.find();
@@ -240,17 +247,21 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   gotoPrayer(PushNotificationModel notification) async {
     BeStilDialog.showLoading(context);
     try {
+      print(notification.prayerId);
       var userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
       if ((notification.groupId ?? '').isNotEmpty)
         await Provider.of<GroupProvider>(context, listen: false)
             .setCurrentGroupById(notification.groupId ?? '', userId ?? '');
       await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .setGroupPrayers(notification.groupId ?? '');
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
           .setPrayerFuture(notification.prayerId ?? '');
+      await deleteNotification(notification.id ?? '');
+
       BeStilDialog.hideLoading(context);
       AppController appController = Get.find();
       appController.setCurrentPage(9, true);
-      await deleteNotification(notification.id ?? '');
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -321,7 +332,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       await deleteNotification(notificationId);
       await Provider.of<NotificationProvider>(context, listen: false)
           .sendPushNotification(
-              'Your request to join ${groupData.group?.name ?? ''} has been accepted.',
+              'Your request to join ${(groupData.group?.name ?? '').toLowerCase()} has been accepted.',
               NotificationType.accept_request,
               admin.firstName ?? '',
               admin.id ?? '',
@@ -1343,12 +1354,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                     children: <Widget>[
                                                       notification.sender != ''
                                                           ? Text(
-                                                              ((snapshot.data ?? CombineGroupUserStream.defaultValue())
-                                                                              .group ??
-                                                                          GroupModel
-                                                                              .defaultValue())
-                                                                      .name ??
-                                                                  ''.toUpperCase(),
+                                                              (((snapshot.data ?? CombineGroupUserStream.defaultValue()).group ??
+                                                                              GroupModel.defaultValue())
+                                                                          .name ??
+                                                                      '')
+                                                                  .toUpperCase(),
                                                               style: AppTextStyles
                                                                   .regularText15b
                                                                   .copyWith(

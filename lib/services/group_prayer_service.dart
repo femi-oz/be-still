@@ -163,7 +163,6 @@ class GroupPrayerService {
 
   Future<CombineGroupPrayerStream> getPrayerFuture(String prayerID) {
     try {
-      print(prayerID);
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       var data = _groupPrayerCollectionReference.doc(prayerID).get();
@@ -779,6 +778,23 @@ class GroupPrayerService {
     }
   }
 
+  Stream<List<FollowedPrayerModel>> getFollowedPrayers(String prayerId) {
+    try {
+      if (_firebaseAuth.currentUser == null)
+        return Stream.error(StringUtils.unathorized);
+      return _followedPrayerCollectionReference
+          .where('PrayerId', isEqualTo: prayerId)
+          .snapshots()
+          .map((event) => event.docs
+              .map((e) => FollowedPrayerModel.fromData(e.data(), e.id))
+              .toList());
+    } catch (e) {
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), '',
+          'PRAYER/service/getFollowedPrayers');
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
   Future hideFromAllMembers(String prayerId, bool value) async {
     try {
       if (_firebaseAuth.currentUser == null)
@@ -833,6 +849,7 @@ class GroupPrayerService {
     final followedPrayerID = Uuid().v1();
 
     try {
+      print(prayerId);
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       //store user prayer

@@ -146,7 +146,8 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
     }
   }
 
-  Future<void> _save(String prayerId, String groupId) async {
+  Future<void> _save(
+      String prayerId, String groupId, String groupPrayerId) async {
     setState(() => _autoValidate = true);
     if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
@@ -180,9 +181,11 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
             }
           }
         }
+
         await Provider.of<NotificationProvider>(context, listen: false)
             .sendPrayerNotification(
           prayerId,
+          groupPrayerId,
           NotificationType.prayer_updates,
           groupId,
           context,
@@ -466,8 +469,10 @@ class _AddUpdateState extends State<AddGroupPrayerUpdate> {
                                   ? AppColors.lightBlue5.withOpacity(0.5)
                                   : Colors.blue)),
                       onTap: () => _descriptionController.text.isNotEmpty
-                          ? _save(prayerData.prayer?.id ?? '',
-                              prayerData.groupPrayer?.groupId ?? '')
+                          ? _save(
+                              prayerData.prayer?.id ?? '',
+                              prayerData.groupPrayer?.groupId ?? '',
+                              prayerData.groupPrayer?.id ?? '')
                           : null,
                     ),
                   ],

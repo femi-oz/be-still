@@ -23,6 +23,7 @@ class GroupPrayerProvider with ChangeNotifier {
       CombineGroupPrayerStream.defaultValue();
   List<HiddenPrayerModel> _hiddenPrayers = [];
   List<FollowedPrayerModel> _followedPrayers = [];
+  List<FollowedPrayerModel> _memberPrayers = [];
   List<FollowedPrayerModel> _groupFollowedPrayers = [];
 
   List<CombineGroupPrayerStream> get prayers => _prayers;
@@ -32,6 +33,7 @@ class GroupPrayerProvider with ChangeNotifier {
   CombineGroupPrayerStream get currentPrayer => _currentPrayer;
   List<HiddenPrayerModel> get hiddenPrayers => _hiddenPrayers;
   List<FollowedPrayerModel> get followedPrayers => _followedPrayers;
+  List<FollowedPrayerModel> get memberPrayers => _memberPrayers;
   List<FollowedPrayerModel> get groupFollowedPrayers => _groupFollowedPrayers;
 
   bool _isEdit = false;
@@ -129,6 +131,20 @@ class GroupPrayerProvider with ChangeNotifier {
         _followedPrayers = prayer;
         notifyListeners();
       });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> setFollowedPrayers(String? prayerId) async {
+    try {
+      _prayerService
+          .getFollowedPrayers(prayerId ?? '')
+          .asBroadcastStream()
+          .listen((prayer) {
+        _memberPrayers = prayer;
+      });
+      notifyListeners();
     } catch (e) {
       rethrow;
     }

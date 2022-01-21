@@ -5,6 +5,7 @@ import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/notification.model.dart';
+import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -338,6 +339,7 @@ class NotificationProvider with ChangeNotifier {
 
   Future sendPrayerNotification(
     String? prayerId,
+    String? groupPrayerId,
     String? type,
     String? selectedGroupId,
     BuildContext context,
@@ -351,30 +353,31 @@ class NotificationProvider with ChangeNotifier {
       final members = Provider.of<GroupProvider>(context, listen: false)
               .currentGroup
               .groupUsers ??
-          [].where((e) => e.userId != _user.id).map((e) => e.userId).toList();
+          [].map((e) => e.userId).toList();
 
-      List<String> followers =
+      List<FollowedPrayerModel> followers =
           Provider.of<GroupPrayerProvider>(context, listen: false)
-              .followedPrayers
-              .map((e) => e.userId ?? '')
+              .memberPrayers
+              .where((element) =>
+                  element.prayerId == prayerId && element.userId != _user.id)
               .toList();
 
-      final admins = Provider.of<GroupProvider>(context, listen: false)
-              .currentGroup
-              .groupUsers ??
-          []
-              .where((e) => e.role == GroupUserRole.admin)
-              .map((e) => e.userId)
-              .toList();
+      // final admins = Provider.of<GroupProvider>(context, listen: false)
+      //         .currentGroup
+      //         .groupUsers ??
+      //     []
+      //         .where((e) => e.role == GroupUserRole.admin)
+      //         .map((e) => e.userId)
+      //         .toList();
       if (type == NotificationType.prayer) {
         _ids = [...members];
       } else {
-        _ids = [...followers, ...admins];
+        _ids = [...followers];
       }
-      _ids.removeWhere((e) => e == _user.id);
+      _ids.removeWhere((e) => e.userId == _user.id);
       _ids.forEach((e) async {
         await Provider.of<UserProvider>(context, listen: false)
-            .returnUserToken(e ?? '');
+            .returnUserToken(e.userId ?? '');
         final value =
             Provider.of<UserProvider>(context, listen: false).userToken;
 
@@ -383,9 +386,9 @@ class NotificationProvider with ChangeNotifier {
             type ?? '',
             _user.firstName ?? '' + ' ' + (_user.lastName ?? ''),
             _user.id ?? '',
-            (e ?? ''),
+            (e.userId ?? ''),
             type ?? '',
-            prayerId ?? '',
+            groupPrayerId ?? '',
             selectedGroupId ?? '',
             [value]);
       });
