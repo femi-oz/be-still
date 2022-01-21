@@ -247,7 +247,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   gotoPrayer(PushNotificationModel notification) async {
     BeStilDialog.showLoading(context);
     try {
-      print(notification.prayerId);
       var userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
       if ((notification.groupId ?? '').isNotEmpty)

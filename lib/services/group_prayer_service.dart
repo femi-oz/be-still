@@ -853,7 +853,6 @@ class GroupPrayerService {
     final followedPrayerID = Uuid().v1();
 
     try {
-      print(prayerId);
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       //store user prayer
