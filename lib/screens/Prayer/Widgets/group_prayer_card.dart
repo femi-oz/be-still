@@ -744,7 +744,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
                 : isDisabled
                     ? AppColors.lightBlue3.withOpacity(0.4)
                     : AppColors.lightBlue3,
-        onTap: _onTap,
+        onTap: isDisabled ? () {} : _onTap,
       ),
     );
   }

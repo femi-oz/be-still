@@ -142,6 +142,22 @@ class _PrayerListState extends State<PrayerList> {
     }
   }
 
+  String get message {
+    final filterOption = Provider.of<PrayerProvider>(context).filterOption;
+
+    if (filterOption.toLowerCase() == Status.active.toLowerCase()) {
+      return 'You do not have any active prayers.';
+    } else if (filterOption.toLowerCase() == Status.answered.toLowerCase()) {
+      return 'You do not have any answered prayers.';
+    } else if (filterOption.toLowerCase() == Status.archived.toLowerCase()) {
+      return 'You do not have any archived prayers.';
+    } else if (filterOption.toLowerCase() == Status.snoozed.toLowerCase()) {
+      return 'You do not have any snoozed prayers.';
+    } else {
+      return 'You do not have any active prayers.';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
@@ -196,7 +212,7 @@ class _PrayerListState extends State<PrayerList> {
                                     child: Opacity(
                                       opacity: 0.3,
                                       child: Text(
-                                        'No Prayer in My Prayers',
+                                        message,
                                         style: AppTextStyles.demiboldText34,
                                         textAlign: TextAlign.center,
                                       ),

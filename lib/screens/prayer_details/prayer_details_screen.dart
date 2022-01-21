@@ -61,7 +61,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   Duration snoozeDurationinMinutes = Duration.zero;
   String durationText = '';
   int snoozeDuration = 0;
-  String reminderString = '';
+  // String reminderString = '';
   LocalNotificationModel _reminder = LocalNotificationModel.defaultValue();
 
   Widget _buildMenu() {
@@ -72,13 +72,27 @@ class _PrayerDetailsState extends State<PrayerDetails> {
         context, hasReminder, _reminder, () => updateUI(), prayerData);
   }
 
-  bool get hasReminder {
-    var reminders = Provider.of<NotificationProvider>(context)
+  String get reminderString {
+    final reminders = Provider.of<NotificationProvider>(context)
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
     final prayerData =
         Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+    LocalNotificationModel? reminder = reminders.firstWhere(
+        (reminder) => reminder.entityId == (prayerData.userPrayer?.id ?? ''),
+        orElse: () => LocalNotificationModel.defaultValue());
+    return reminder.notificationText ?? '';
+  }
+
+  bool get hasReminder {
+    final reminders = Provider.of<NotificationProvider>(context)
+        .localNotifications
+        .where((e) => e.type == NotificationType.reminder)
+        .toList();
+    final prayerData =
+        Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+
     return reminders.any(
         (reminder) => reminder.entityId == (prayerData.userPrayer?.id ?? ''));
   }
