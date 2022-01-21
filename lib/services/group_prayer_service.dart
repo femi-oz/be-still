@@ -53,7 +53,7 @@ class GroupPrayerService {
       if (_firebaseAuth.currentUser == null)
         return Stream.error(StringUtils.unathorized);
       return _groupPrayerCollectionReference
-          .where('DeleteStatus', isGreaterThan: -1)
+          .where('DeleteStatus', isEqualTo: 0)
           .where('GroupId', isEqualTo: groupId)
           .snapshots()
           .map((convert) {
