@@ -205,13 +205,15 @@ class _AddPrayerState extends State<AddPrayer> {
         BeStilDialog.showErrorDialog(
             context, StringUtils.getErrorMessage(e), user, s);
       } else {
+        final userName =
+            '${_user.firstName?.capitalizeFirst} ${_user.lastName?.capitalizeFirst}';
         if (!Provider.of<PrayerProvider>(context, listen: false).isEdit) {
           if ((selected?.name ?? '').isEmpty ||
               (selected?.name) == 'My Prayers') {
             await Provider.of<PrayerProvider>(context, listen: false).addPrayer(
               _descriptionController.text,
               _user.id ?? '',
-              '${_user.firstName} ${_user.lastName}',
+              userName,
               _backupDescription,
             );
           } else {
@@ -221,7 +223,7 @@ class _AddPrayerState extends State<AddPrayer> {
                 .addPrayer(
               _descriptionController.text,
               (selected?.id ?? ''),
-              '${_user.firstName} ${_user.lastName}',
+              userName,
               _backupDescription,
               _user.id ?? '',
             );

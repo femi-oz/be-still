@@ -543,7 +543,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                 ? Container(
                                     margin: EdgeInsets.only(bottom: 20),
                                     child: Text(
-                                      prayer.createdBy ?? '',
+                                      prayer.creatorName ?? '',
                                       style: AppTextStyles.regularText16b
                                           .copyWith(
                                               color: AppColors.lightBlue4),
