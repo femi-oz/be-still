@@ -77,15 +77,19 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                         EdgeInsets.zero),
                   ),
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: Icon(AppIcons.bestill_back_arrow,
-                      color: AppColors.lightBlue5),
+                   icon: Icon(
+                    AppIcons.bestill_back_arrow,
+                    size: 20,
+                    color: AppColors.lightBlue4,
+                  ),
                   label: Text(
                     'BACK',
-                    style: TextStyle(
-                      color: AppColors.lightBlue5,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: AppTextStyles.boldText20,
+                    // style: TextStyle(
+                    //   color: AppColors.lightBlue5,
+                    //   fontSize: 14,
+                    //   fontWeight: FontWeight.w500,
+                    // ),
                   ),
                 ),
               ),
