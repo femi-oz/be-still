@@ -1,9 +1,13 @@
 import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
+import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
@@ -180,9 +184,29 @@ class _AddUpdateState extends State<AddUpdate> {
             }
           }
         }
+        AppController appController = Get.find();
+
+        if (appController.previousPage == 9 ||
+            appController.previousPage == 8) {
+          final groupId = (Provider.of<GroupProvider>(context, listen: false)
+                          .currentGroup
+                          .group ??
+                      GroupModel.defaultValue())
+                  .id ??
+              '';
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .sendPrayerNotification(
+            prayerId,
+            prayerId,
+            NotificationType.edited_prayers,
+            groupId,
+            context,
+            _descriptionController.text,
+          );
+        }
+
         BeStilDialog.hideLoading(context);
         FocusScope.of(context).requestFocus(new FocusNode());
-        AppController appController = Get.find();
         appController.setCurrentPage(appController.previousPage, true, 13);
       }
     } on HttpException catch (e, s) {

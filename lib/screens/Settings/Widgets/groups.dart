@@ -35,26 +35,10 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       GroupUserModel user, CombineGroupUserStream group) async {
     try {
       final message = 'You have removed the user from your group';
-      final _currentUser =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      final userName = ('${_currentUser.firstName}  ${_currentUser.lastName}')
-          .capitalizeFirst;
+
       BeStilDialog.showLoading(context);
       await Provider.of<GroupProvider>(context, listen: false)
           .deleteFromGroup(user.userId ?? "", user.groupId ?? "");
-      await Provider.of<UserProvider>(context, listen: false)
-          .getUserById(user.userId ?? "");
-      final receiverData =
-          Provider.of<UserProvider>(context, listen: false).selectedUser;
-      sendPushNotification(
-          '$userName has removed you from ${group.group?.name}',
-          NotificationType.remove_from_group,
-          userName ?? '',
-          _currentUser.id ?? '',
-          user.userId ?? "",
-          'Removed from group',
-          group.group?.id ?? "",
-          [receiverData.pushToken ?? '']);
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);

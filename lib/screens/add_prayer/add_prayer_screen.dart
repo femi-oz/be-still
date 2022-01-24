@@ -170,7 +170,7 @@ class _AddPrayerState extends State<AddPrayer> {
           .sendPrayerNotification(
         prayerId,
         prayerId,
-        NotificationType.prayer,
+        NotificationType.edited_prayers,
         groupId,
         context,
         _descriptionController.text,
