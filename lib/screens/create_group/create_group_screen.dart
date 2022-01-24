@@ -179,7 +179,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        appController.setCurrentPage(3, true);
+                        appController.setCurrentPage(3, true, 12);
                         Navigator.pop(context);
                         FocusManager.instance.primaryFocus?.unfocus();
                       },
@@ -256,7 +256,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
   Future<bool> _onWillPop() async {
     AppController appController = Get.find();
-    appController.setCurrentPage(3, true);
+    appController.setCurrentPage(3, true, 12);
     return false;
   }
 
@@ -315,7 +315,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                       FocusScope.of(context)
                                           .requestFocus(new FocusNode());
                                       // Navigator.pop(context);
-                                      appController.setCurrentPage(3, true);
+                                      appController.setCurrentPage(3, true, 12);
                                     },
                             ),
                           ),

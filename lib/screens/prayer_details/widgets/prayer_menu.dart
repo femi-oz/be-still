@@ -59,6 +59,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   @override
   void didChangeDependencies() async {
+    Provider.of<PrayerProvider>(context).getPrayer();
     super.didChangeDependencies();
   }
 
@@ -123,7 +124,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       Navigator.pop(context);
 
       AppController appController = Get.find();
-      appController.setCurrentPage(0, true);
+      appController.setCurrentPage(0, true, 0);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
@@ -159,7 +160,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppController appController = Get.find();
-      appController.setCurrentPage(0, true);
+      appController.setCurrentPage(0, true, 0);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -184,7 +185,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppController appController = Get.find();
-      appController.setCurrentPage(0, true);
+      appController.setCurrentPage(0, true, 0);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
@@ -219,7 +220,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
       AppController appController = Get.find();
       Navigator.pop(context);
-      appController.setCurrentPage(0, true);
+      appController.setCurrentPage(0, true, 0);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -386,7 +387,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       Navigator.pop(context);
 
       AppController appController = Get.find();
-      appController.setCurrentPage(0, true);
+      appController.setCurrentPage(0, true, 0);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -411,7 +412,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       Navigator.pop(context);
 
       AppController appController = Get.find();
-      appController.setCurrentPage(0, true);
+      appController.setCurrentPage(0, true, 0);
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -434,7 +435,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       Navigator.pop(context);
 
       AppController appController = Get.find();
-      appController.setCurrentPage(0, true);
+      appController.setCurrentPage(0, true, 0);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -464,7 +465,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       Navigator.pop(context);
 
       AppController appController = Get.find();
-      appController.setCurrentPage(0, true);
+      appController.setCurrentPage(0, true, 0);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -513,7 +514,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       Navigator.pop(context);
 
       AppController appController = Get.find();
-      appController.setCurrentPage(0, true);
+      appController.setCurrentPage(0, true, 0);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -627,13 +628,19 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                     .setEditMode(true, false);
                                 Provider.of<PrayerProvider>(context,
                                         listen: false)
-                                    .setEditPrayer(data: widget.prayerData);
+                                    .setEditPrayer(
+                                        prayer: widget.prayerData?.prayer ??
+                                            PrayerModel.defaultValue(),
+                                        updates:
+                                            widget.prayerData?.updates ?? [],
+                                        tags: widget.prayerData?.tags ?? []);
                                 Navigator.pop(context);
                                 await Future.delayed(
                                     Duration(milliseconds: 200));
                                 AppController appController = Get.find();
 
-                                appController.setCurrentPage(1, true);
+                                appController.setCurrentPage(
+                                    1, true, appController.currentPage);
                               } on HttpException catch (e, s) {
                                 BeStilDialog.hideLoading(context);
                                 final user = Provider.of<UserProvider>(context,
@@ -661,14 +668,22 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               : AppColors.white,
                       icon: AppIcons.bestill_update,
                       isDisabled: isSnoozeAndUpdateDisable || !isOwner,
-                      onPress: () => isSnoozeAndUpdateDisable || !isOwner
+                      onPress: isSnoozeAndUpdateDisable || !isOwner
                           ? () {}
-                          : Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddUpdate(),
-                              ),
-                            ),
+                          : () {
+                              Provider.of<PrayerProvider>(context,
+                                      listen: false)
+                                  .setEditPrayer(
+                                      prayer: widget.prayerData?.prayer ??
+                                          PrayerModel.defaultValue(),
+                                      updates: widget.prayerData?.updates ?? [],
+                                      tags: widget.prayerData?.tags ?? []);
+
+                              AppController appController = Get.find();
+                              appController.setCurrentPage(
+                                  13, true, appController.currentPage);
+                              Navigator.pop(context);
+                            },
                       text: 'Add an Update',
                     ),
                     LongButton(

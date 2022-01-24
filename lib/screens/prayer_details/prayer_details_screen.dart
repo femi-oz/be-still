@@ -164,7 +164,8 @@ class _PrayerDetailsState extends State<PrayerDetails> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting)
               return BeStilDialog.getLoading(context);
-            if (snapshot.hasData) {
+            if (snapshot.hasData &&
+                (snapshot.data?.userPrayer?.deleteStatus ?? 0) == 0) {
               return Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -193,7 +194,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                             ),
                             onPressed: () {
                               AppController appController = Get.find();
-                              appController.setCurrentPage(0, true);
+                              appController.setCurrentPage(0, true, 7);
                             },
                             label: Text(
                               'BACK',
@@ -409,11 +410,11 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                       style: AppTextStyles.demiboldText34,
                       textAlign: TextAlign.center,
                     ),
-                  ),
+                  ).marginOnly(bottom: 50),
                   GestureDetector(
                     onTap: () {
                       AppController appController = Get.find();
-                      appController.setCurrentPage(0, true);
+                      appController.setCurrentPage(8, true, 9);
                     },
                     child: Container(
                       height: 30,
@@ -436,7 +437,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                             fontSize: 11,
                             fontWeight: FontWeight.w500,
                           ),
-                        ),
+                        ).paddingSymmetric(horizontal: 10, vertical: 5),
                       ),
                     ),
                   ),

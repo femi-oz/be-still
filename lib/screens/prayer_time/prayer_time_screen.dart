@@ -54,7 +54,7 @@ class _PrayerTimeState extends State<PrayerTime> {
 
   Future<bool> _onWillPop() async {
     AppController appController = Get.find();
-    appController.setCurrentPage(0, true);
+    appController.setCurrentPage(0, true, 2);
     return false;
   }
 
@@ -140,7 +140,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                         ),
                         onTap: () {
                           AppController appController = Get.find();
-                          appController.setCurrentPage(0, true);
+                          appController.setCurrentPage(0, true, 2);
                         },
                       ),
                       InkWell(

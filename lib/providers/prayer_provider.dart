@@ -42,8 +42,14 @@ class PrayerProvider with ChangeNotifier {
   bool _showDropDown = false;
   bool get showDropDown => _showDropDown;
 
-  CombinePrayerStream _prayerToEdit = CombinePrayerStream.defaultValue();
-  CombinePrayerStream get prayerToEdit => _prayerToEdit;
+  PrayerModel _prayerToEdit = PrayerModel.defaultValue();
+  PrayerModel get prayerToEdit => _prayerToEdit;
+
+  List<PrayerUpdateModel> _prayerToEditUpdate = [];
+  List<PrayerUpdateModel> get prayerToEditUpdate => _prayerToEditUpdate;
+
+  List<PrayerTagModel> _prayerToEditTags = [];
+  List<PrayerTagModel> get prayerToEditTags => _prayerToEditTags;
 
   Future<void> setPrayers(String userId) async {
     try {
@@ -500,9 +506,14 @@ class PrayerProvider with ChangeNotifier {
     }
   }
 
-  void setEditPrayer({CombinePrayerStream? data}) {
+  void setEditPrayer(
+      {required PrayerModel prayer,
+      required List<PrayerUpdateModel> updates,
+      required List<PrayerTagModel> tags}) {
     try {
-      _prayerToEdit = data ?? CombinePrayerStream.defaultValue();
+      _prayerToEdit = prayer;
+      _prayerToEditUpdate = updates;
+      _prayerToEditTags = tags;
       notifyListeners();
     } catch (e) {
       rethrow;

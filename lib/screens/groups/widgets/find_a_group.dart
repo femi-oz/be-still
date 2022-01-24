@@ -65,7 +65,7 @@ class _FindAGroupState extends State<FindAGroup> {
 
   Future<bool> _onWillPop() async {
     AppController appController = Get.find();
-    appController.setCurrentPage(3, true);
+    appController.setCurrentPage(3, true, 11);
 
     return false;
   }

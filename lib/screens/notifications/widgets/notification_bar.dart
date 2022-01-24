@@ -81,7 +81,7 @@ class NotificationBarState extends State<NotificationBar> {
         ),
         onPressed: () {
           AppController appController = Get.find();
-          appController.setCurrentPage(0, false);
+          appController.setCurrentPage(appController.previousPage, false, 14);
         },
       ),
       // actions: <Widget>[

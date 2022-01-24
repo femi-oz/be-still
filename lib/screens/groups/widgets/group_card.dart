@@ -53,7 +53,7 @@ class _GroupCardState extends State<GroupCard> {
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppController appController = Get.find();
-      appController.setCurrentPage(3, true);
+      appController.setCurrentPage(3, true, 11);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -96,7 +96,7 @@ class _GroupCardState extends State<GroupCard> {
 
       Navigator.of(context).pop();
       AppController appController = Get.find();
-      appController.setCurrentPage(3, true);
+      appController.setCurrentPage(3, true, 11);
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);

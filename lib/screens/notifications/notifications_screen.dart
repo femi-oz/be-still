@@ -229,7 +229,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       // service get group by id
       // go to 8
       AppController appController = Get.find();
-      appController.setCurrentPage(8, true);
+      appController.setCurrentPage(8, true, 14);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -247,7 +247,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   gotoPrayer(PushNotificationModel notification) async {
     BeStilDialog.showLoading(context);
     try {
-      print(notification.prayerId);
       var userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
       if ((notification.groupId ?? '').isNotEmpty)
@@ -261,7 +260,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
       BeStilDialog.hideLoading(context);
       AppController appController = Get.find();
-      appController.setCurrentPage(9, true);
+      appController.setCurrentPage(9, true, 14);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -2583,7 +2582,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           SizedBox(height: 40),
           data.length == 0
               ? Container(
-                  padding: EdgeInsets.symmetric(horizontal: 100, vertical: 60),
+                  padding: EdgeInsets.symmetric(horizontal: 60, vertical: 60),
                   child: Opacity(
                     opacity: 0.3,
                     child: Text(

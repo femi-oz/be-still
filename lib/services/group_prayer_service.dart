@@ -300,71 +300,71 @@ class GroupPrayerService {
     }
   }
 
-  Future editPrayer(
-    String description,
-    String prayerID,
-  ) async {
-    try {
-      if (_firebaseAuth.currentUser == null)
-        return Stream.error(StringUtils.unathorized);
-      newPrayerId = prayerID;
-      _prayerCollectionReference.doc(prayerID).update(
-        {"Description": description, "ModifiedOn": DateTime.now()},
-      );
-    } catch (e) {
-      locator<LogService>().createLog(StringUtils.getErrorMessage(e), prayerID,
-          'PRAYER/service/editPrayer');
-      throw HttpException(StringUtils.getErrorMessage(e));
-    }
-  }
+  // Future editPrayer(
+  //   String description,
+  //   String prayerID,
+  // ) async {
+  //   try {
+  //     if (_firebaseAuth.currentUser == null)
+  //       return Stream.error(StringUtils.unathorized);
+  //     newPrayerId = prayerID;
+  //     _prayerCollectionReference.doc(prayerID).update(
+  //       {"Description": description, "ModifiedOn": DateTime.now()},
+  //     );
+  //   } catch (e) {
+  //     locator<LogService>().createLog(StringUtils.getErrorMessage(e), prayerID,
+  //         'PRAYER/service/editPrayer');
+  //     throw HttpException(StringUtils.getErrorMessage(e));
+  //   }
+  // }
 
-  Future editUpdate(String description, String prayerID) async {
-    try {
-      if (_firebaseAuth.currentUser == null)
-        return Stream.error(StringUtils.unathorized);
-      _prayerUpdateCollectionReference.doc(prayerID).update(
-        {"Description": description, "ModifiedOn": DateTime.now()},
-      );
-    } catch (e) {
-      locator<LogService>().createLog(StringUtils.getErrorMessage(e), prayerID,
-          'PRAYER/service/editPrayerUpdate');
-      throw HttpException(StringUtils.getErrorMessage(e));
-    }
-  }
+  // Future editUpdate(String description, String prayerID) async {
+  //   try {
+  //     if (_firebaseAuth.currentUser == null)
+  //       return Stream.error(StringUtils.unathorized);
+  //     _prayerUpdateCollectionReference.doc(prayerID).update(
+  //       {"Description": description, "ModifiedOn": DateTime.now()},
+  //     );
+  //   } catch (e) {
+  //     locator<LogService>().createLog(StringUtils.getErrorMessage(e), prayerID,
+  //         'PRAYER/service/editPrayerUpdate');
+  //     throw HttpException(StringUtils.getErrorMessage(e));
+  //   }
+  // }
 
-  Future addPrayerUpdate(String userId, String prayer, String prayerId) async {
-    final updateId = Uuid().v1();
-    final prayerUpdate = PrayerUpdateModel(
-      id: updateId,
-      prayerId: prayerId,
-      deleteStatus: 0,
-      userId: userId,
-      title: '',
-      description: prayer,
-      modifiedBy: userId,
-      modifiedOn: DateTime.now(),
-      createdBy: userId,
-      createdOn: DateTime.now(),
-      descriptionBackup: '',
-    );
-    try {
-      if (_firebaseAuth.currentUser == null)
-        return Stream.error(StringUtils.unathorized);
+  // Future addPrayerUpdate(String userId, String prayer, String prayerId) async {
+  //   final updateId = Uuid().v1();
+  //   final prayerUpdate = PrayerUpdateModel(
+  //     id: updateId,
+  //     prayerId: prayerId,
+  //     deleteStatus: 0,
+  //     userId: userId,
+  //     title: '',
+  //     description: prayer,
+  //     modifiedBy: userId,
+  //     modifiedOn: DateTime.now(),
+  //     createdBy: userId,
+  //     createdOn: DateTime.now(),
+  //     descriptionBackup: '',
+  //   );
+  //   try {
+  //     if (_firebaseAuth.currentUser == null)
+  //       return Stream.error(StringUtils.unathorized);
 
-      prayerId = prayerId;
-      await _prayerCollectionReference
-          .doc(prayerId)
-          .update({'ModifiedOn': DateTime.now()});
+  //     prayerId = prayerId;
+  //     await _prayerCollectionReference
+  //         .doc(prayerId)
+  //         .update({'ModifiedOn': DateTime.now()});
 
-      _prayerUpdateCollectionReference.doc(updateId).set(
-            prayerUpdate.toJson(),
-          );
-    } catch (e) {
-      locator<LogService>().createLog(StringUtils.getErrorMessage(e),
-          prayerUpdate.userId ?? '', 'PRAYER/service/addPrayerUpdate');
-      throw HttpException(StringUtils.getErrorMessage(e));
-    }
-  }
+  //     _prayerUpdateCollectionReference.doc(updateId).set(
+  //           prayerUpdate.toJson(),
+  //         );
+  //   } catch (e) {
+  //     locator<LogService>().createLog(StringUtils.getErrorMessage(e),
+  //         prayerUpdate.userId ?? '', 'PRAYER/service/addPrayerUpdate');
+  //     throw HttpException(StringUtils.getErrorMessage(e));
+  //   }
+  // }
 
   Stream<List<PrayerUpdateModel>> getPrayerUpdates(
     String prayerId,
@@ -853,7 +853,6 @@ class GroupPrayerService {
     final followedPrayerID = Uuid().v1();
 
     try {
-      print(prayerId);
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       //store user prayer

@@ -32,7 +32,7 @@ class _GroupToolsState extends State<GroupTools> {
   Future<void> onEditTap(CombineGroupUserStream groupData) async {
     try {
       AppController appController = Get.find();
-      appController.setCurrentPage(12, true);
+      appController.setCurrentPage(12, true, 3);
       Provider.of<GroupProvider>(context, listen: false).setEditMode(true);
       await Provider.of<GroupProvider>(context, listen: false)
           .setCurrentGroup(groupData);
@@ -92,7 +92,7 @@ class _GroupToolsState extends State<GroupTools> {
             [adminData.pushToken ?? '']);
         BeStilDialog.hideLoading(context);
         AppController appController = Get.find();
-        appController.setCurrentPage(3, true);
+        appController.setCurrentPage(3, true, 3);
         await Provider.of<GroupProvider>(context, listen: false)
             .setUserGroups(_currentUser.id ?? '');
         Navigator.pop(context);
@@ -335,7 +335,7 @@ class _GroupToolsState extends State<GroupTools> {
                       icon: Icons.add,
                       onPress: () {
                         AppController appController = Get.find();
-                        appController.setCurrentPage(10, true);
+                        appController.setCurrentPage(1, true, 3);
                         Navigator.pop(context);
                       },
                       text: "Add a Prayer",
@@ -349,7 +349,7 @@ class _GroupToolsState extends State<GroupTools> {
                       icon: Icons.more_vert,
                       onPress: () {
                         AppController appController = Get.find();
-                        appController.setCurrentPage(4, true);
+                        appController.setCurrentPage(4, true, 3);
                         appController.settingsTab = 4;
                         Navigator.pop(context);
                       },

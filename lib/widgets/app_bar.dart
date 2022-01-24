@@ -46,7 +46,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
   @override
   void initState() {
     super.initState();
-    print(widget.showOnlyTitle);
   }
 
   void _searchPrayer(String value) async {
@@ -278,7 +277,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
             ? GestureDetector(
                 onTap: () {
                   AppController appController = Get.find();
-                  appController.setCurrentPage(14, false);
+                  appController.setCurrentPage(
+                      14, false, appController.currentPage);
                 },
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 10),

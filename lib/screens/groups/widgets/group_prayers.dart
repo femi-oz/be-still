@@ -6,6 +6,7 @@ import 'package:be_still/models/filter.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Prayer/Widgets/group_prayer_card.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -159,7 +160,8 @@ class _GroupPrayersState extends State<GroupPrayers> {
                                                   e.groupPrayer?.id ?? '');
                                           AppController appController =
                                               Get.find();
-                                          appController.setCurrentPage(9, true);
+                                          appController.setCurrentPage(
+                                              9, true, 8);
                                         } on HttpException catch (e, s) {
                                           final user =
                                               Provider.of<UserProvider>(context,
@@ -201,15 +203,11 @@ class _GroupPrayersState extends State<GroupPrayers> {
                     child: LongButton(
                       onPress: () {
                         try {
-                          Provider.of<GroupPrayerProvider>(context,
-                                  listen: false)
-                              .setEditMode(false);
-                          Provider.of<GroupPrayerProvider>(context,
-                                  listen: false)
-                              .setEditPrayer();
-                          AppController appController = Get.find();
+                          Provider.of<PrayerProvider>(context, listen: false)
+                              .setEditMode(false, false);
 
-                          appController.setCurrentPage(10, true);
+                          AppController appController = Get.find();
+                          appController.setCurrentPage(1, true, 8);
                         } on HttpException catch (e, s) {
                           final user =
                               Provider.of<UserProvider>(context, listen: false)

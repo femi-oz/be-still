@@ -241,7 +241,7 @@ class _LoginScreenState extends State<LoginScreen> {
             // Provider.of<MiscProvider>(context, listen: false).setCurrentPage(2);
             AppController appController = Get.find();
 
-            appController.setCurrentPage(2, false);
+            appController.setCurrentPage(2, false, 0);
             Provider.of<MiscProvider>(context, listen: false)
                 .setLoadStatus(true);
             Navigator.of(context).pushNamedAndRemoveUntil(
@@ -259,7 +259,7 @@ class _LoginScreenState extends State<LoginScreen> {
             .setLoadStatus(true);
         AppController appController = Get.find();
 
-        appController.setCurrentPage(0, false);
+        appController.setCurrentPage(0, false, 0);
         Navigator.of(context).pushNamedAndRemoveUntil(
             EntryScreen.routeName, (Route<dynamic> route) => false);
       }

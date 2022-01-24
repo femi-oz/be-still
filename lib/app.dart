@@ -78,12 +78,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       });
       FirebaseMessaging.onMessageOpenedApp.listen((message) {
         AppController appController = Get.find();
-        appController.setCurrentPage(14, false);
+        appController.setCurrentPage(14, false, 0);
       });
       FirebaseMessaging.instance.getInitialMessage().then((value) {
         if (value != null) {
           AppController appController = Get.find();
-          appController.setCurrentPage(14, false);
+          appController.setCurrentPage(14, false, 0);
         }
       });
     } catch (e, s) {
@@ -112,7 +112,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       message.notification?.title ?? '',
       message.notification?.body ?? '',
       platformChannelSpecifics,
-      payload: "{'type': 'fcm message'}",
+      payload: "{\"type\": \"fcm message\"}",
     );
   }
 
@@ -121,7 +121,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     //   return EntryScreen();
     // }));
     AppController appController = Get.find();
-    appController.setCurrentPage(14, false);
+    appController.setCurrentPage(14, false, 0);
   }
 
   void _getPermissions() async {
@@ -229,17 +229,17 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     try {
       if (message.type == NotificationType.prayer_time) {
         AppController appController = Get.find();
-        appController.setCurrentPage(2, false);
+        appController.setCurrentPage(2, false, 0);
       }
       if (message.type == NotificationType.reminder) {
         if (message.isGroup ?? false) {
           AppController appController = Get.find();
-          appController.setCurrentPage(9, false);
+          appController.setCurrentPage(9, false, 0);
         } else {
           Provider.of<PrayerProvider>(context, listen: false)
               .setCurrentPrayerId(message.entityId ?? '');
           AppController appController = Get.find();
-          appController.setCurrentPage(7, false);
+          appController.setCurrentPage(7, false, 0);
         }
       }
     } catch (e, s) {

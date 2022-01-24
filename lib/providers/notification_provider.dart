@@ -10,6 +10,7 @@ import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
@@ -61,13 +62,16 @@ class NotificationProvider with ChangeNotifier {
   }
 
   Future _onSelectNotification(String? payload) async {
-    final messagePayload = jsonDecode(payload ?? '');
-    _message = NotificationMessage.fromData(messagePayload);
-    if ((payload ?? '').toLowerCase() == 'fcm message') {
-      AppController appController = Get.find();
-      appController.setCurrentPage(14, false);
+    try {
+      final messagePayload = jsonDecode(payload ?? '');
+      _message = NotificationMessage.fromData(messagePayload);
+      if ((_message.type ?? '').toLowerCase() == 'fcm message') {
+        AppController appController = Get.find();
+        appController.setCurrentPage(14, false, 0);
+      }
+    } catch (e) {
+      print(e);
     }
-    print('message -- prov _onSelectNotification ===> $_message');
   }
 
   Future init(String token, String userId, UserModel currentUser) async {
@@ -352,37 +356,44 @@ class NotificationProvider with ChangeNotifier {
     String? prayerDetail,
   ) async {
     try {
-      List _ids = [];
+      List<String> _ids = [];
       final _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
 
-      final members = Provider.of<GroupProvider>(context, listen: false)
-              .currentGroup
-              .groupUsers ??
-          [].map((e) => e.userId).toList();
+      List<String> members = [];
 
-      List<FollowedPrayerModel> followers =
-          await Provider.of<GroupPrayerProvider>(context, listen: false)
-              .setFollowedPrayers(prayerId);
+      List<String> followers = [];
 
       if (type == NotificationType.prayer) {
+        members = (Provider.of<GroupProvider>(context, listen: false)
+                    .currentGroup
+                    .groupUsers ??
+                [])
+            .map((e) => e.userId ?? '')
+            .toList();
         _ids = [...members];
       } else {
+        final prayers =
+            await Provider.of<GroupPrayerProvider>(context, listen: false)
+                .setFollowedPrayers(prayerId);
+        followers = prayers.map((e) => e.userId ?? '').toList();
         _ids = [...followers];
       }
-      _ids.removeWhere((e) => e.userId == _user.id);
+      _ids.removeWhere((e) => e == _user.id);
       _ids.forEach((e) {
-        Provider.of<UserProvider>(context, listen: false)
-            .returnUserToken(e.userId ?? '');
+        Provider.of<UserProvider>(context, listen: false).returnUserToken(e);
         final value =
             Provider.of<UserProvider>(context, listen: false).userToken;
+        final name = ((_user.firstName ?? '').capitalizeFirst ?? '') +
+            ' ' +
+            ((_user.lastName ?? '').capitalizeFirst ?? '');
 
         sendPushNotification(
-            prayerDetail ?? '',
+            prayerDetail?.capitalizeFirst ?? '',
             type ?? '',
-            _user.firstName ?? '' + ' ' + (_user.lastName ?? ''),
+            name,
             _user.id ?? '',
-            (e.userId ?? ''),
+            (e),
             type ?? '',
             groupPrayerId ?? '',
             selectedGroupId ?? '',

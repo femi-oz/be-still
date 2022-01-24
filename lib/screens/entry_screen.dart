@@ -11,9 +11,8 @@ import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Prayer/prayer_list.dart';
 import 'package:be_still/screens/Settings/settings_screen.dart';
-import 'package:be_still/screens/add_prayer/add_group_prayer_screen.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
-import 'package:be_still/screens/add_update/add_group_prayer_update.dart';
+import 'package:be_still/screens/add_update/add_update.dart';
 import 'package:be_still/screens/create_group/create_group_screen.dart';
 import 'package:be_still/screens/group_prayer_details/group_prayer_details_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
@@ -336,7 +335,7 @@ class _EntryScreenState extends State<EntryScreen> {
         (index) {
           AppController appController = Get.find();
 
-          appController.setCurrentPage(index, true);
+          appController.setCurrentPage(index, true, 0);
         },
         _keyButton,
         _keyButton2,
@@ -378,24 +377,24 @@ class _EntryScreenState extends State<EntryScreen> {
                     showInfoModal(message, 'PrayerTime', context);
                   } else {
                     AppController appController = Get.find();
-                    appController.setCurrentPage(index, true);
+                    appController.setCurrentPage(index, true, 0);
                   }
                   break;
                 case 1:
                   Provider.of<PrayerProvider>(context, listen: false)
                       .setEditMode(false, true);
-                  Provider.of<PrayerProvider>(context, listen: false)
-                      .setEditPrayer();
+                  // Provider.of<PrayerProvider>(context, listen: false)
+                  //     .setEditPrayer();
                   AppController appController = Get.find();
 
-                  appController.setCurrentPage(1, true);
+                  appController.setCurrentPage(1, true, 0);
                   break;
                 case 4:
                   Scaffold.of(context).openEndDrawer();
                   break;
                 default:
                   AppController appController = Get.find();
-                  appController.setCurrentPage(index, true);
+                  appController.setCurrentPage(index, true, 0);
                   break;
               }
             } catch (e, s) {
@@ -555,7 +554,7 @@ class _EntryScreenState extends State<EntryScreen> {
             title: "More",
             padding: 7),
         TabNavigationItem(
-            page: AddGroupPrayer(), //10
+            page: Container(), //10
             icon: Icon(
               Icons.more_horiz,
               size: 20,
@@ -582,7 +581,7 @@ class _EntryScreenState extends State<EntryScreen> {
             title: "More",
             padding: 7),
         TabNavigationItem(
-            page: AddGroupPrayerUpdate(), //13
+            page: AddUpdate(), //13
             icon: Icon(
               Icons.more_horiz,
               size: 20,

@@ -12,7 +12,7 @@ class BeStilDialog {
   static Widget getLoading(context, [String message = '']) {
     precacheImage(AssetImage(StringUtils.backgroundImage), context);
     return Scaffold(
-      appBar: CustomAppBar(switchSearchMode: () {}, globalKey: GlobalKey()),
+      // appBar: CustomAppBar(switchSearchMode: () {}, globalKey: GlobalKey()),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(

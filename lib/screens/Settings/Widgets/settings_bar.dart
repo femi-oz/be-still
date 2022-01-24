@@ -50,7 +50,7 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
         GestureDetector(
           onTap: () {
             AppController appController = Get.find();
-            appController.setCurrentPage(14, false);
+            appController.setCurrentPage(14, false, 4);
           },
           child: Container(
             child: Center(
@@ -68,7 +68,7 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
                               : AppColors.white),
                       onPressed: () {
                         AppController appController = Get.find();
-                        appController.setCurrentPage(14, false);
+                        appController.setCurrentPage(14, false, 4);
                       }),
                   notifications.length != 0
                       ? Padding(
