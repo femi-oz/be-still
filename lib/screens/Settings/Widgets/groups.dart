@@ -1295,52 +1295,52 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       .enableNotificationForUpdates ??
                                   false,
                             ),
-                            if (isMember)
-                              CustomToggle(
-                                disabled: true,
-                                title:
-                                    'Notify me when new members joins this group',
-                                onChange: (value) => _groupProvider
-                                    .updateGroupSettings(_currentUser.id ?? '',
-                                        key: 'NotifyWhenNewMemberJoins',
-                                        value: value,
-                                        settingsId:
-                                            data.groupSettings?.id ?? ''),
-                                value: (data.groupSettings ??
-                                            GroupSettings.defaultValue())
-                                        .notifyWhenNewMemberJoins ??
-                                    false,
-                              ),
-                            if (isAdmin || isModerator)
-                              CustomToggle(
-                                disabled: true,
-                                title: 'Notify me of membership requests',
-                                onChange: (value) => _groupProvider
-                                    .updateGroupSettings(_currentUser.id ?? '',
-                                        key: 'NotifyOfMembershipRequest',
-                                        value: value,
-                                        settingsId:
-                                            data.groupSettings?.id ?? ''),
-                                value: (data.groupSettings ??
-                                            GroupSettings.defaultValue())
-                                        .notifyOfMembershipRequest ??
-                                    false,
-                              ),
-                            if (isAdmin || isModerator)
-                              CustomToggle(
-                                disabled: true,
-                                title: 'Notify me of flagged prayers',
-                                onChange: (value) => _groupProvider
-                                    .updateGroupSettings(_currentUser.id ?? '',
-                                        key: 'NotifyMeofFlaggedPrayers',
-                                        value: value,
-                                        settingsId:
-                                            data.groupSettings?.id ?? ''),
-                                value: (data.groupSettings ??
-                                            GroupSettings.defaultValue())
-                                        .notifyMeofFlaggedPrayers ??
-                                    false,
-                              ),
+                            // if (isMember)
+                            //   CustomToggle(
+                            //     disabled: true,
+                            //     title:
+                            //         'Notify me when new members joins this group',
+                            //     onChange: (value) => _groupProvider
+                            //         .updateGroupSettings(_currentUser.id ?? '',
+                            //             key: 'NotifyWhenNewMemberJoins',
+                            //             value: value,
+                            //             settingsId:
+                            //                 data.groupSettings?.id ?? ''),
+                            //     value: (data.groupSettings ??
+                            //                 GroupSettings.defaultValue())
+                            //             .notifyWhenNewMemberJoins ??
+                            //         false,
+                            //   ),
+                            // if (isAdmin || isModerator)
+                            //   CustomToggle(
+                            //     disabled: true,
+                            //     title: 'Notify me of membership requests',
+                            //     onChange: (value) => _groupProvider
+                            //         .updateGroupSettings(_currentUser.id ?? '',
+                            //             key: 'NotifyOfMembershipRequest',
+                            //             value: value,
+                            //             settingsId:
+                            //                 data.groupSettings?.id ?? ''),
+                            //     value: (data.groupSettings ??
+                            //                 GroupSettings.defaultValue())
+                            //             .notifyOfMembershipRequest ??
+                            //         false,
+                            //   ),
+                            // if (isAdmin || isModerator)
+                            //   CustomToggle(
+                            //     disabled: true,
+                            //     title: 'Notify me of flagged prayers',
+                            //     onChange: (value) => _groupProvider
+                            //         .updateGroupSettings(_currentUser.id ?? '',
+                            //             key: 'NotifyMeofFlaggedPrayers',
+                            //             value: value,
+                            //             settingsId:
+                            //                 data.groupSettings?.id ?? ''),
+                            //     value: (data.groupSettings ??
+                            //                 GroupSettings.defaultValue())
+                            //             .notifyMeofFlaggedPrayers ??
+                            //         false,
+                            //   ),
                           ],
                         ),
                         // (isAdmin || isModerator)

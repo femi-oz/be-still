@@ -385,7 +385,6 @@ class NotificationProvider with ChangeNotifier {
         final setting =
             await Provider.of<SettingsProvider>(context, listen: false)
                 .getGroupSettings(id, selectedGroupId ?? '');
-        print(setting.toJson());
         if (type == NotificationType.prayer) {
           if (setting.enableNotificationFormNewPrayers ?? false) {
             Provider.of<UserProvider>(context, listen: false)
