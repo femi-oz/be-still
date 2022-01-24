@@ -335,7 +335,7 @@ class _GroupToolsState extends State<GroupTools> {
                       icon: Icons.add,
                       onPress: () {
                         AppController appController = Get.find();
-                        appController.setCurrentPage(10, true);
+                        appController.setCurrentPage(1, true);
                         Navigator.pop(context);
                       },
                       text: "Add a Prayer",
