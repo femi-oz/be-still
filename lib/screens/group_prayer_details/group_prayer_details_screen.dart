@@ -415,7 +415,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                         child: FittedBox(
                           fit: BoxFit.contain,
                           child: Text(
-                            'Go to prayers',
+                            'Go to groups',
                             style: TextStyle(
                               color: AppColors.lightBlue4,
                               fontSize: 15,

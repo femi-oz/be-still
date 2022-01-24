@@ -634,17 +634,17 @@ class GroupService {
           .where('GroupId', isEqualTo: groupId)
           .get()
           .then((value) {
-        value.docs.forEach((element) {
-          element.reference.delete();
-        });
+        for (final doc in value.docs) {
+          doc.reference.delete();
+        }
       });
       _groupPrayerCollectionReference
           .where('GroupId', isEqualTo: groupId)
           .get()
           .then((value) {
-        value.docs.forEach((element) {
-          element.reference.delete();
-        });
+        for (final doc in value.docs) {
+          doc.reference.delete();
+        }
       });
     } catch (e) {
       locator<LogService>().createLog(
