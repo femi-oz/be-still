@@ -97,10 +97,14 @@ class LongButton extends StatelessWidget {
                           children: [
                             child ?? SizedBox.shrink(),
                             InkWell(
-                                onTap: () {
-                                  if (onPressMore != null) onPressMore!();
-                                },
-                                child: Icon(Icons.more_vert, color: textColor)),
+                              onTap: () {
+                                if (onPressMore != null) onPressMore!();
+                              },
+                              child: Container(
+                                width: 40,
+                                child: Icon(Icons.more_vert, color: textColor),
+                              ),
+                            ),
                           ],
                         )
                       : Container(),

@@ -193,6 +193,7 @@ class _GroupToolsState extends State<GroupTools> {
                   GestureDetector(
                     onTap: () {
                       Navigator.of(context).pop();
+                      Navigator.of(context).pop();
                     },
                     child: Container(
                       height: 30,
