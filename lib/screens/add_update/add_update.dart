@@ -190,8 +190,8 @@ class _AddUpdateState extends State<AddUpdate> {
         if (appController.previousPage == 9 ||
             appController.previousPage == 8) {
           final groupPrayerId =
-              (Provider.of<GroupPrayerProvider>(context, listen: false)
-                  .currentPrayerId);
+              Provider.of<GroupPrayerProvider>(context, listen: false)
+                  .currentPrayerId;
           final groupId = (Provider.of<GroupProvider>(context, listen: false)
                           .currentGroup
                           .group ??

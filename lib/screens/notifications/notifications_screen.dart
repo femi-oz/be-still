@@ -2582,7 +2582,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           SizedBox(height: 40),
           data.length == 0
               ? Container(
-                  padding: EdgeInsets.symmetric(horizontal: 100, vertical: 60),
+                  padding: EdgeInsets.symmetric(horizontal: 60, vertical: 60),
                   child: Opacity(
                     opacity: 0.3,
                     child: Text(
