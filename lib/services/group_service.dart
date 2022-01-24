@@ -37,6 +37,9 @@ class GroupService {
   final CollectionReference<Map<String, dynamic>>
       _userPrayerCollectionReference =
       FirebaseFirestore.instance.collection("UserPrayer");
+  final CollectionReference<Map<String, dynamic>>
+      _groupPrayerCollectionReference =
+      FirebaseFirestore.instance.collection("GroupPrayer");
 
   GroupUserModel populateGroupUser(
     // GroupModel groupData,
@@ -628,6 +631,14 @@ class GroupService {
         return Future.error(StringUtils.unathorized);
       _groupCollectionReference.doc(groupId).delete();
       _userGroupCollectionReference
+          .where('GroupId', isEqualTo: groupId)
+          .get()
+          .then((value) {
+        value.docs.forEach((element) {
+          element.reference.delete();
+        });
+      });
+      _groupPrayerCollectionReference
           .where('GroupId', isEqualTo: groupId)
           .get()
           .then((value) {

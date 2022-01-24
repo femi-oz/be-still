@@ -387,35 +387,38 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                     Opacity(
                       opacity: 0.3,
                       child: Text(
-                        'This prayer no longer exists',
+                        'This prayer or group no longer exist',
                         style: AppTextStyles.demiboldText34,
                         textAlign: TextAlign.center,
                       ),
                     ).marginOnly(bottom: 50),
-                    GestureDetector(
-                      onTap: () {
-                        AppController appController = Get.find();
-                        appController.setCurrentPage(8, true, 9);
-                      },
-                      child: Container(
-                        height: 30,
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        // width: MediaQuery.of(context).size.width * .30,
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          border: Border.all(
-                            color: AppColors.cardBorder,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(5),
+                    Container(
+                      height: 30,
+                      padding: EdgeInsets.symmetric(horizontal: 15.0),
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        border: Border.all(
+                          color: AppColors.lightBlue4,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: OutlinedButton(
+                        onPressed: () {
+                          AppController appController = Get.find();
+                          appController.setCurrentPage(3, true, 9);
+                        },
+                        style: ButtonStyle(
+                          side: MaterialStateProperty.all<BorderSide>(
+                              BorderSide(color: Colors.transparent)),
                         ),
                         child: FittedBox(
                           fit: BoxFit.contain,
                           child: Text(
-                            'Go to prayer list',
+                            'Go to prayers',
                             style: TextStyle(
-                              color: AppColors.white,
-                              fontSize: 11,
+                              color: AppColors.lightBlue4,
+                              fontSize: 15,
                               fontWeight: FontWeight.w500,
                             ),
                           ).paddingSymmetric(horizontal: 10, vertical: 5),
