@@ -120,11 +120,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
           Provider.of<NotificationProvider>(context, listen: false)
               .notifications;
 
-      final requests = notifications
-          .where((e) =>
-              e.messageType == NotificationType.request &&
-              e.groupId == data.group?.id)
-          .toList();
+      final requests =
+          notifications.where((e) => e.groupId == data.group?.id).toList();
 
       await Provider.of<GroupProvider>(context, listen: false)
           .deleteGroup(data.group?.id ?? '', requests);

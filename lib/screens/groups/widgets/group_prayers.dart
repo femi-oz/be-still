@@ -204,7 +204,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
                       onPress: () {
                         try {
                           Provider.of<PrayerProvider>(context, listen: false)
-                              .setEditMode(false, false);
+                              .setEditMode(false, true);
 
                           AppController appController = Get.find();
                           appController.setCurrentPage(1, true, 8);

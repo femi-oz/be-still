@@ -579,6 +579,7 @@ class _AddPrayerState extends State<AddPrayer> {
                           AppController appController = Get.find();
                           appController.setCurrentPage(
                               appController.previousPage, true, 1);
+                          Navigator.pop(context);
                         } on HttpException catch (e, s) {
                           final user =
                               Provider.of<UserProvider>(context, listen: false)
