@@ -379,11 +379,13 @@ class NotificationProvider with ChangeNotifier {
         followers = prayers.map((e) => e.userId ?? '').toList();
         _ids = [...followers];
       }
+      print(_ids);
       _ids.removeWhere((e) => e == _user.id);
       for (final id in _ids) {
         final setting =
             await Provider.of<SettingsProvider>(context, listen: false)
-                .getGroupSettings(_user.id ?? '', selectedGroupId ?? '');
+                .getGroupSettings(id, selectedGroupId ?? '');
+        print(setting.toJson());
         if (type == NotificationType.prayer) {
           if (setting.enableNotificationFormNewPrayers ?? false) {
             Provider.of<UserProvider>(context, listen: false)
