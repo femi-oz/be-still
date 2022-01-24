@@ -142,7 +142,8 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting)
                 return BeStilDialog.getLoading(context);
-              if (snapshot.hasData) {
+              if (snapshot.hasData &&
+                  (snapshot.data?.groupPrayer?.deleteStatus ?? 0) == 0) {
                 final _reminder = reminders.firstWhere(
                     (reminder) =>
                         reminder.entityId == snapshot.data?.groupPrayer?.id,
@@ -390,7 +391,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                         style: AppTextStyles.demiboldText34,
                         textAlign: TextAlign.center,
                       ),
-                    ),
+                    ).marginOnly(bottom: 50),
                     GestureDetector(
                       onTap: () {
                         AppController appController = Get.find();
@@ -417,7 +418,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                               fontSize: 11,
                               fontWeight: FontWeight.w500,
                             ),
-                          ),
+                          ).paddingSymmetric(horizontal: 10, vertical: 5),
                         ),
                       ),
                     ),
