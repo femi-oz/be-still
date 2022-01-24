@@ -1268,7 +1268,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                               ),
                             SizedBox(height: 15),
                             CustomToggle(
-                              disabled: true,
+                              disabled: false,
                               title:
                                   'Enable notifications for New Prayers for this group?',
                               onChange: (value) => _groupProvider
@@ -1282,7 +1282,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   false,
                             ),
                             CustomToggle(
-                              disabled: true,
+                              disabled: false,
                               title:
                                   'Enable notifications for Prayer Updates for this group?',
                               onChange: (value) => _groupProvider
@@ -1292,7 +1292,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       settingsId: data.groupSettings?.id ?? ''),
                               value: (data.groupSettings ??
                                           GroupSettings.defaultValue())
-                                      .enableNotificationFormNewPrayers ??
+                                      .enableNotificationForUpdates ??
                                   false,
                             ),
                             if (isMember)

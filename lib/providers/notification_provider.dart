@@ -9,6 +9,7 @@ import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -369,6 +370,7 @@ class NotificationProvider with ChangeNotifier {
                 [])
             .map((e) => e.userId ?? '')
             .toList();
+
         _ids = [...members];
       } else {
         final prayers =
@@ -378,25 +380,54 @@ class NotificationProvider with ChangeNotifier {
         _ids = [...followers];
       }
       _ids.removeWhere((e) => e == _user.id);
-      _ids.forEach((e) {
-        Provider.of<UserProvider>(context, listen: false).returnUserToken(e);
-        final value =
-            Provider.of<UserProvider>(context, listen: false).userToken;
-        final name = ((_user.firstName ?? '').capitalizeFirst ?? '') +
-            ' ' +
-            ((_user.lastName ?? '').capitalizeFirst ?? '');
+      for (final id in _ids) {
+        final setting =
+            await Provider.of<SettingsProvider>(context, listen: false)
+                .getGroupSettings(_user.id ?? '', selectedGroupId ?? '');
+        if (type == NotificationType.prayer) {
+          if (setting.enableNotificationFormNewPrayers ?? false) {
+            Provider.of<UserProvider>(context, listen: false)
+                .returnUserToken(id);
+            final value =
+                Provider.of<UserProvider>(context, listen: false).userToken;
+            final name = ((_user.firstName ?? '').capitalizeFirst ?? '') +
+                ' ' +
+                ((_user.lastName ?? '').capitalizeFirst ?? '');
 
-        sendPushNotification(
-            prayerDetail?.capitalizeFirst ?? '',
-            type ?? '',
-            name,
-            _user.id ?? '',
-            (e),
-            type ?? '',
-            groupPrayerId ?? '',
-            selectedGroupId ?? '',
-            [value]);
-      });
+            sendPushNotification(
+                prayerDetail?.capitalizeFirst ?? '',
+                type ?? '',
+                name,
+                _user.id ?? '',
+                (id),
+                type ?? '',
+                groupPrayerId ?? '',
+                selectedGroupId ?? '',
+                [value]);
+          }
+        } else if (type == NotificationType.prayer_updates) {
+          if (setting.enableNotificationForUpdates ?? false) {
+            Provider.of<UserProvider>(context, listen: false)
+                .returnUserToken(id);
+            final value =
+                Provider.of<UserProvider>(context, listen: false).userToken;
+            final name = ((_user.firstName ?? '').capitalizeFirst ?? '') +
+                ' ' +
+                ((_user.lastName ?? '').capitalizeFirst ?? '');
+
+            sendPushNotification(
+                prayerDetail?.capitalizeFirst ?? '',
+                type ?? '',
+                name,
+                _user.id ?? '',
+                (id),
+                type ?? '',
+                groupPrayerId ?? '',
+                selectedGroupId ?? '',
+                [value]);
+          }
+        }
+      }
     } catch (e) {
       rethrow;
     }

@@ -39,7 +39,7 @@ class TutorialTarget {
             'MY PRAYERS',
             2,
             '',
-            " List",
+            " My Prayers",
             "Tap",
             StringUtils.quickTipList,
           ))

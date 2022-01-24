@@ -338,6 +338,7 @@ class GroupService {
           Stream<List<GroupSettings>> groupSettings =
               _groupSettingsCollectionReference
                   .where('GroupId', isEqualTo: f['GroupId'])
+                  .where('UserId', isEqualTo: userId)
                   .snapshots()
                   .asyncMap((e) {
             if (e.docs.length == 0) {
