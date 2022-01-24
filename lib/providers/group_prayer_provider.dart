@@ -278,13 +278,13 @@ class GroupPrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> editUpdate(String description, String prayerID) async {
-    try {
-      await _prayerService.editUpdate(description, prayerID);
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // Future<void> editUpdate(String description, String prayerID) async {
+  //   try {
+  //     await _prayerService.editUpdate(description, prayerID);
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
   Future<void> addPrayerTag(List<Contact> contactData, UserModel user,
       String message, String prayerId) async {
@@ -295,13 +295,13 @@ class GroupPrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> editprayer(String description, String prayerID) async {
-    try {
-      await _prayerService.editPrayer(description, prayerID);
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // Future<void> editprayer(String description, String prayerID) async {
+  //   try {
+  //     await _prayerService.editPrayer(description, prayerID);
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
   Future<void> removePrayerTag(String tagId) async {
     try {
@@ -341,32 +341,32 @@ class GroupPrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> addPrayerUpdate(
-      String userId, String prayer, String prayerId) async {
-    try {
-      await _prayerService.addPrayerUpdate(userId, prayer, prayerId);
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // Future<void> addPrayerUpdate(
+  //     String userId, String prayer, String prayerId) async {
+  //   try {
+  //     await _prayerService.addPrayerUpdate(userId, prayer, prayerId);
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
-  void setEditMode(bool value) {
-    try {
-      _isEdit = value;
-      notifyListeners();
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // void setEditMode(bool value) {
+  //   try {
+  //     _isEdit = value;
+  //     notifyListeners();
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
-  void setEditPrayer({CombineGroupPrayerStream? data}) {
-    try {
-      _prayerToEdit = data ?? CombineGroupPrayerStream.defaultValue();
-      notifyListeners();
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // void setEditPrayer({CombineGroupPrayerStream? data}) {
+  //   try {
+  //     _prayerToEdit = data ?? CombineGroupPrayerStream.defaultValue();
+  //     notifyListeners();
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
   void setPrayerFilterOptions(String option) {
     try {

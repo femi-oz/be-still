@@ -67,7 +67,7 @@ class NotificationProvider with ChangeNotifier {
       _message = NotificationMessage.fromData(messagePayload);
       if ((_message.type ?? '').toLowerCase() == 'fcm message') {
         AppController appController = Get.find();
-        appController.setCurrentPage(14, false);
+        appController.setCurrentPage(14, false, 0);
       }
     } catch (e) {
       print(e);

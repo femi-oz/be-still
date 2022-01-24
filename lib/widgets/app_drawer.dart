@@ -277,7 +277,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             onTap: () async {
                               AppController appController = Get.find();
 
-                              appController.setCurrentPage(6, false);
+                              appController.setCurrentPage(6, false, 0);
                               await Future.delayed(Duration(milliseconds: 300));
                               Navigator.pop(context);
                             },
@@ -292,7 +292,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                               onTap: () async {
                                 AppController appController = Get.find();
 
-                                appController.setCurrentPage(5, false);
+                                appController.setCurrentPage(5, false, 0);
                                 await Future.delayed(
                                     Duration(milliseconds: 300));
                                 Navigator.pop(context);
@@ -307,7 +307,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             onTap: () async {
                               AppController appController = Get.find();
 
-                              appController.setCurrentPage(4, false);
+                              appController.setCurrentPage(4, false, 0);
                               appController.settingsTab = 0;
                               await Future.delayed(Duration(milliseconds: 300));
                               Navigator.pop(context);
@@ -332,7 +332,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             onTap: () {
                               AppController appController = Get.find();
 
-                              appController.setCurrentPage(0, true);
+                              appController.setCurrentPage(0, true, 0);
                               Navigator.pop(context);
                               TutorialTarget.showTutorial(
                                 context,

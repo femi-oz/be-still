@@ -193,7 +193,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                             ),
                             onPressed: () {
                               AppController appController = Get.find();
-                              appController.setCurrentPage(0, true);
+                              appController.setCurrentPage(0, true, 7);
                             },
                             label: Text(
                               'BACK',
@@ -413,7 +413,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                   GestureDetector(
                     onTap: () {
                       AppController appController = Get.find();
-                      appController.setCurrentPage(0, true);
+                      appController.setCurrentPage(0, true, 7);
                     },
                     child: Container(
                       height: 30,

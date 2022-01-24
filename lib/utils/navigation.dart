@@ -71,7 +71,7 @@ class NavigationService {
 
   Future<dynamic> goHome(int index) async {
     AppController appController = Get.find();
-    appController.setCurrentPage(index, true);
+    appController.setCurrentPage(index, true, 0);
     return navigationKey.currentState!
         .pushReplacement(SlideLeftRoute(page: EntryScreen()));
   }

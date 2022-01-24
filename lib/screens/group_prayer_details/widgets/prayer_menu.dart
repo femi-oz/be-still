@@ -8,8 +8,10 @@ import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/screens/add_update/add_update.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -76,7 +78,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppController appController = Get.find();
-      appController.setCurrentPage(8, true);
+      appController.setCurrentPage(8, true, 8);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -111,7 +113,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppController appController = Get.find();
-      appController.setCurrentPage(8, true);
+      appController.setCurrentPage(8, true, 8);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
@@ -176,7 +178,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
           adminData.id ?? '', group.group?.name ?? '');
       BeStilDialog.hideLoading(context);
       AppController appController = Get.find();
-      appController.setCurrentPage(8, true);
+      appController.setCurrentPage(8, true, 8);
       Navigator.pop(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -224,7 +226,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppController appController = Get.find();
-      appController.setCurrentPage(8, true);
+      appController.setCurrentPage(8, true, 8);
       Navigator.pop(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -630,17 +632,23 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                           ? () {}
                           : () async {
                               try {
-                                Provider.of<GroupPrayerProvider>(context,
+                                Provider.of<PrayerProvider>(context,
                                         listen: false)
-                                    .setEditMode(true);
-                                Provider.of<GroupPrayerProvider>(context,
+                                    .setEditMode(true, false);
+                                Provider.of<PrayerProvider>(context,
                                         listen: false)
-                                    .setEditPrayer(data: widget.prayerData);
+                                    .setEditPrayer(
+                                        prayer: widget.prayerData?.prayer ??
+                                            PrayerModel.defaultValue(),
+                                        updates:
+                                            widget.prayerData?.updates ?? [],
+                                        tags: widget.prayerData?.tags ?? []);
                                 Navigator.pop(context);
                                 await Future.delayed(
                                     Duration(milliseconds: 200));
                                 AppController appController = Get.find();
-                                appController.setCurrentPage(1, true);
+                                appController.setCurrentPage(
+                                    1, true, appController.currentPage);
                               } on HttpException catch (e, s) {
                                 final user = Provider.of<UserProvider>(context,
                                         listen: false)
@@ -675,11 +683,21 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                     .setCurrentPrayerId(
                                         widget.prayerData?.groupPrayer?.id ??
                                             '');
+
+                                Provider.of<PrayerProvider>(context,
+                                        listen: false)
+                                    .setEditPrayer(
+                                        prayer: widget.prayerData?.prayer ??
+                                            PrayerModel.defaultValue(),
+                                        updates:
+                                            widget.prayerData?.updates ?? [],
+                                        tags: widget.prayerData?.tags ?? []);
                                 Navigator.pop(context);
                                 await Future.delayed(
                                     Duration(milliseconds: 200));
                                 AppController appController = Get.find();
-                                appController.setCurrentPage(13, true);
+                                appController.setCurrentPage(
+                                    13, true, appController.currentPage);
                               } on HttpException catch (e, s) {
                                 final user = Provider.of<UserProvider>(context,
                                         listen: false)

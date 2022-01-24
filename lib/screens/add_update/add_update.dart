@@ -53,30 +53,35 @@ class _AddUpdateState extends State<AddUpdate> {
     super.initState();
   }
 
+  bool isInit = true;
+
   @override
   void didChangeDependencies() {
-    WidgetsBinding.instance?.addPostFrameCallback((_) async {
-      try {
-        var userId =
-            Provider.of<UserProvider>(context, listen: false).currentUser.id;
-        await Provider.of<MiscProvider>(context, listen: false)
-            .setSearchMode(false);
-        await Provider.of<MiscProvider>(context, listen: false)
-            .setSearchQuery('');
-        Provider.of<PrayerProvider>(context, listen: false)
-            .searchPrayers('', userId ?? '');
-      } on HttpException catch (e, s) {
-        final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
-        BeStilDialog.showErrorDialog(
-            context, StringUtils.getErrorMessage(e), user, s);
-      } catch (e, s) {
-        final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
-        BeStilDialog.showErrorDialog(
-            context, StringUtils.errorOccured, user, s);
-      }
-    });
+    if (isInit) {
+      WidgetsBinding.instance?.addPostFrameCallback((_) async {
+        try {
+          var userId =
+              Provider.of<UserProvider>(context, listen: false).currentUser.id;
+          await Provider.of<MiscProvider>(context, listen: false)
+              .setSearchMode(false);
+          await Provider.of<MiscProvider>(context, listen: false)
+              .setSearchQuery('');
+          Provider.of<PrayerProvider>(context, listen: false)
+              .searchPrayers('', userId ?? '');
+        } on HttpException catch (e, s) {
+          final user =
+              Provider.of<UserProvider>(context, listen: false).currentUser;
+          BeStilDialog.showErrorDialog(
+              context, StringUtils.getErrorMessage(e), user, s);
+        } catch (e, s) {
+          final user =
+              Provider.of<UserProvider>(context, listen: false).currentUser;
+          BeStilDialog.showErrorDialog(
+              context, StringUtils.errorOccured, user, s);
+        }
+      });
+      isInit = false;
+    }
     super.didChangeDependencies();
   }
 
@@ -176,8 +181,9 @@ class _AddUpdateState extends State<AddUpdate> {
           }
         }
         BeStilDialog.hideLoading(context);
-        Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false);
+        FocusScope.of(context).requestFocus(new FocusNode());
+        AppController appController = Get.find();
+        appController.setCurrentPage(appController.previousPage, true, 13);
       }
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -248,9 +254,11 @@ class _AddUpdateState extends State<AddUpdate> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            EntryScreen.routeName,
-                            (Route<dynamic> route) => false);
+                        FocusScope.of(context).requestFocus(new FocusNode());
+                        AppController appController = Get.find();
+                        appController.setCurrentPage(
+                            appController.previousPage, true, 13);
+                        Navigator.pop(context);
                       },
                       child: Container(
                         height: 30,
@@ -387,7 +395,8 @@ class _AddUpdateState extends State<AddUpdate> {
 
   Widget build(BuildContext context) {
     final currentUser = Provider.of<UserProvider>(context).currentUser;
-    // final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
+    final prayer = Provider.of<PrayerProvider>(context).prayerToEdit;
+    final updates = Provider.of<PrayerProvider>(context).prayerToEditUpdate;
 
     var positionOffset = 3.0;
     var positionOffset2 = 0.0;
@@ -407,317 +416,239 @@ class _AddUpdateState extends State<AddUpdate> {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-        body: StreamBuilder<CombinePrayerStream>(
-            stream: Provider.of<PrayerProvider>(context).getPrayer(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting)
-                return BeStilDialog.getLoading(context);
-              if (snapshot.hasData) {
-                final updates = (snapshot.data?.updates ?? [])
-                    .where((element) => element.deleteStatus != -1)
-                    .toList();
-
-                return Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: AppColors.backgroundColor,
-                    ),
-                  ),
-                  padding: EdgeInsets.only(
-                      bottom: 20,
-                      left: 20,
-                      right: 20,
-                      top: MediaQuery.of(context).padding.top + 20),
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            InkWell(
-                                child: Text(
-                                  'CANCEL',
-                                  style: AppTextStyles.boldText18
-                                      .copyWith(color: AppColors.grey),
-                                ),
-                                onTap: () => _descriptionController
-                                        .text.isNotEmpty
-                                    ? onCancel()
-                                    : Navigator.of(context)
-                                        .pushNamedAndRemoveUntil(
-                                            EntryScreen.routeName,
-                                            (Route<dynamic> route) => false)),
-                            InkWell(
-                              child: Text('SAVE',
-                                  style: AppTextStyles.boldText18.copyWith(
-                                      color: _descriptionController.text.isEmpty
-                                          ? AppColors.lightBlue5
-                                              .withOpacity(0.5)
-                                          : Colors.blue)),
-                              onTap: () =>
-                                  _descriptionController.text.isNotEmpty
-                                      ? _save(snapshot.data?.prayer?.id ?? '')
-                                      : null,
-                            ),
-                          ],
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: AppColors.backgroundColor,
+            ),
+          ),
+          padding: EdgeInsets.only(
+              bottom: 20,
+              left: 20,
+              right: 20,
+              top: MediaQuery.of(context).padding.top + 20),
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    InkWell(
+                        child: Text(
+                          'CANCEL',
+                          style: AppTextStyles.boldText18
+                              .copyWith(color: AppColors.grey),
                         ),
+                        onTap: _descriptionController.text.isNotEmpty
+                            ? () => onCancel()
+                            : () {
+                                FocusScope.of(context)
+                                    .requestFocus(new FocusNode());
+                                AppController appController = Get.find();
+                                appController.setCurrentPage(
+                                    appController.previousPage, true, 13);
+                              }),
+                    InkWell(
+                      child: Text('SAVE',
+                          style: AppTextStyles.boldText18.copyWith(
+                              color: _descriptionController.text.isEmpty
+                                  ? AppColors.lightBlue5.withOpacity(0.5)
+                                  : Colors.blue)),
+                      onTap: () => _descriptionController.text.isNotEmpty
+                          ? _save(prayer.id ?? '')
+                          : null,
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Stack(
+                        children: [
+                          Form(
+                            // ignore: deprecated_member_use
+                            // autovalidate: _autoValidate,
+                            autovalidateMode: _autoValidate
+                                ? AutovalidateMode.onUserInteraction
+                                : AutovalidateMode.disabled,
+                            key: _formKey,
+                            child: CustomInput(
+                              textkey: _prayerKey,
+                              label: "Enter your prayer update here",
+                              controller: _descriptionController,
+                              maxLines: 23,
+                              isRequired: true,
+                              showSuffix: false,
+                              textInputAction: TextInputAction.newline,
+                              focusNode: _focusNode,
+                              onTextchanged: (val) => _onTextChange(val),
+                              isSearch: false,
+                            ),
+                          ),
+                          tagText.length > 1 &&
+                                  Settings.enabledContactPermission
+                              ? contactDropdown(
+                                  context, positionOffset, positionOffset2)
+                              : SizedBox(),
+                        ],
                       ),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              Stack(
-                                children: [
-                                  Form(
-                                    // ignore: deprecated_member_use
-                                    // autovalidate: _autoValidate,
-                                    autovalidateMode: _autoValidate
-                                        ? AutovalidateMode.onUserInteraction
-                                        : AutovalidateMode.disabled,
-                                    key: _formKey,
-                                    child: CustomInput(
-                                      textkey: _prayerKey,
-                                      label: "Enter your prayer update here",
-                                      controller: _descriptionController,
-                                      maxLines: 23,
-                                      isRequired: true,
-                                      showSuffix: false,
-                                      textInputAction: TextInputAction.newline,
-                                      focusNode: _focusNode,
-                                      onTextchanged: (val) =>
-                                          _onTextChange(val),
-                                      isSearch: false,
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: AppColors.lightBlue3,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        margin: EdgeInsets.only(top: 20),
+                        width: double.infinity,
+                        padding: EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            prayer.userId != currentUser.id
+                                ? Container(
+                                    margin: EdgeInsets.only(bottom: 20),
+                                    child: Text(
+                                      prayer.createdBy ?? '',
+                                      style: AppTextStyles.regularText16b
+                                          .copyWith(
+                                              color: AppColors.lightBlue4),
+                                      textAlign: TextAlign.center,
                                     ),
-                                  ),
-                                  tagText.length > 1 &&
-                                          Settings.enabledContactPermission
-                                      ? contactDropdown(context, positionOffset,
-                                          positionOffset2)
-                                      : SizedBox(),
-                                ],
-                              ),
-                              Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: AppColors.lightBlue3,
-                                    width: 1,
-                                  ),
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                margin: EdgeInsets.only(top: 20),
-                                width: double.infinity,
-                                padding: EdgeInsets.all(20),
+                                  )
+                                : Container(),
+                            ...updates.map(
+                              (u) => Container(
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
-                                    snapshot.data?.prayer?.userId !=
-                                            currentUser.id
-                                        ? Container(
-                                            margin: EdgeInsets.only(bottom: 20),
-                                            child: Text(
-                                              snapshot.data?.prayer
-                                                      ?.createdBy ??
-                                                  '',
-                                              style: AppTextStyles
-                                                  .regularText16b
-                                                  .copyWith(
-                                                      color:
-                                                          AppColors.lightBlue4),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          )
-                                        : Container(),
-                                    ...updates.map(
-                                      (u) => Container(
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: <Widget>[
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: <Widget>[
-                                                Container(
-                                                  margin: EdgeInsets.only(
-                                                      right: 30),
-                                                  child: Row(
-                                                    children: <Widget>[
-                                                      Text(
-                                                        intl.DateFormat(
-                                                                'hh:mma | MM.dd.yyyy')
-                                                            .format(
-                                                                u.modifiedOn ??
-                                                                    DateTime
-                                                                        .now()),
-                                                        style: AppTextStyles
-                                                            .regularText18b
-                                                            .copyWith(
-                                                                color: AppColors
-                                                                    .prayerModeBorder),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: Divider(
-                                                    color: AppColors.lightBlue3,
-                                                    thickness: 1,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            Container(
-                                              child: Padding(
-                                                padding: EdgeInsets.all(20),
-                                                child: Center(
-                                                  child: Text(
-                                                    u.description ?? '',
-                                                    style: AppTextStyles
-                                                        .regularText16b
-                                                        .copyWith(
-                                                            color: AppColors
-                                                                .lightBlue3),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      child: Column(
-                                        children: <Widget>[
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Container(
+                                          margin: EdgeInsets.only(right: 30),
+                                          child: Row(
                                             children: <Widget>[
-                                              Container(
-                                                margin:
-                                                    EdgeInsets.only(right: 30),
-                                                child: Row(
-                                                  children: <Widget>[
-                                                    Text(
-                                                      'Initial Prayer |',
-                                                      style: AppTextStyles
-                                                          .regularText18b
-                                                          .copyWith(
-                                                              color: AppColors
-                                                                  .prayerModeBorder),
-                                                    ),
-                                                    Text(
-                                                      intl.DateFormat(
-                                                              ' MM.dd.yyyy')
-                                                          .format(snapshot
-                                                                  .data
-                                                                  ?.prayer
-                                                                  ?.modifiedOn ??
-                                                              DateTime.now()),
-                                                      style: AppTextStyles
-                                                          .regularText18b
-                                                          .copyWith(
-                                                              color: AppColors
-                                                                  .prayerModeBorder),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Expanded(
-                                                child: Divider(
-                                                  color: AppColors.lightBlue3,
-                                                  thickness: 1,
-                                                ),
+                                              Text(
+                                                intl.DateFormat(
+                                                        'hh:mma | MM.dd.yyyy')
+                                                    .format(u.modifiedOn ??
+                                                        DateTime.now()),
+                                                style: AppTextStyles
+                                                    .regularText18b
+                                                    .copyWith(
+                                                        color: AppColors
+                                                            .prayerModeBorder),
                                               ),
                                             ],
                                           ),
-                                          Container(
-                                            constraints: BoxConstraints(
-                                              minHeight: 200,
-                                            ),
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 20.0,
-                                                  horizontal: 20),
-                                              child: Center(
-                                                child: Text(
-                                                  snapshot.data?.prayer
-                                                          ?.description ??
-                                                      '',
-                                                  style: AppTextStyles
-                                                      .regularText16b
-                                                      .copyWith(
-                                                          color: AppColors
-                                                              .prayerTextColor),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ),
-                                            ),
+                                        ),
+                                        Expanded(
+                                          child: Divider(
+                                            color: AppColors.lightBlue3,
+                                            thickness: 1,
                                           ),
-                                        ],
+                                        ),
+                                      ],
+                                    ),
+                                    Container(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(20),
+                                        child: Center(
+                                          child: Text(
+                                            u.description ?? '',
+                                            style: AppTextStyles.regularText16b
+                                                .copyWith(
+                                                    color:
+                                                        AppColors.lightBlue3),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                            Container(
+                              child: Column(
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Container(
+                                        margin: EdgeInsets.only(right: 30),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Text(
+                                              'Initial Prayer |',
+                                              style: AppTextStyles
+                                                  .regularText18b
+                                                  .copyWith(
+                                                      color: AppColors
+                                                          .prayerModeBorder),
+                                            ),
+                                            Text(
+                                              intl.DateFormat(' MM.dd.yyyy')
+                                                  .format(prayer.modifiedOn ??
+                                                      DateTime.now()),
+                                              style: AppTextStyles
+                                                  .regularText18b
+                                                  .copyWith(
+                                                      color: AppColors
+                                                          .prayerModeBorder),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Divider(
+                                          color: AppColors.lightBlue3,
+                                          thickness: 1,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    constraints: BoxConstraints(
+                                      minHeight: 200,
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 20.0, horizontal: 20),
+                                      child: Center(
+                                        child: Text(
+                                          prayer.description ?? '',
+                                          style: AppTextStyles.regularText16b
+                                              .copyWith(
+                                                  color: AppColors
+                                                      .prayerTextColor),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                );
-              }
-              return Container(
-                padding: EdgeInsets.symmetric(horizontal: 100, vertical: 60),
-                child: Column(
-                  children: [
-                    Opacity(
-                      opacity: 0.3,
-                      child: Text(
-                        'This prayer no longer exists',
-                        style: AppTextStyles.demiboldText34,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        AppController appController = Get.find();
-                        appController.setCurrentPage(0, true);
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        height: 30,
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        // width: MediaQuery.of(context).size.width * .30,
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          border: Border.all(
-                            color: AppColors.cardBorder,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: FittedBox(
-                          fit: BoxFit.contain,
-                          child: Text(
-                            'Go to prayer list',
-                            style: TextStyle(
-                              color: AppColors.white,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
-              );
-            }),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

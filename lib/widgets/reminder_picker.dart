@@ -131,7 +131,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
       Navigator.pop(context);
 
       AppController appController = Get.find();
-      appController.setCurrentPage(appController.currentPage, true);
+      appController.setCurrentPage(appController.currentPage, true, 0);
     } else
       widget.onCancel();
     setState(() => null);
@@ -187,7 +187,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
       }
 
       AppController appController = Get.find();
-      appController.setCurrentPage(appController.currentPage, true);
+      appController.setCurrentPage(appController.currentPage, true, 0);
     } else {
       Navigator.pop(context);
       widget.onCancel();
@@ -332,7 +332,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
         Navigator.pop(context);
 
         AppController appController = Get.find();
-        appController.setCurrentPage(appController.currentPage, true);
+        appController.setCurrentPage(appController.currentPage, true, 0);
       } else
         widget.onCancel();
     } on HttpException catch (e, s) {

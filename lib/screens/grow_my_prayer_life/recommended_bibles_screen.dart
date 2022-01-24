@@ -56,7 +56,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
   Future<bool> _onWillPop() async {
     AppController appController = Get.find();
 
-    appController.setCurrentPage(0, true);
+    appController.setCurrentPage(0, true, 6);
     // return (Navigator.of(context).pushNamedAndRemoveUntil(
     //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
     //     false;
@@ -109,7 +109,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                               color: AppColors.lightBlue3,
                               size: 20,
                             ),
-                            // onPressed: () => widget.setCurrentIndex(0, true),
+                            // onPressed: () => widget.setCurrentIndex(0, true, 6),
                             onPressed: () =>
                                 Scaffold.of(context).openEndDrawer(),
                             label: Container(

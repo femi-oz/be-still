@@ -116,7 +116,7 @@ class _GroupScreenState extends State<GroupScreen> {
                           try {
                             Provider.of<MiscProvider>(context, listen: false)
                                 .setPageTitle('FIND A GROUP');
-                            appController.setCurrentPage(11, true);
+                            appController.setCurrentPage(11, true, 3);
                           } catch (e, s) {
                             final user = Provider.of<UserProvider>(context,
                                     listen: false)
@@ -143,7 +143,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                 .setPageTitle('CREATE A GROUP');
                             Provider.of<GroupProvider>(context, listen: false)
                                 .setEditMode(false);
-                            appController.setCurrentPage(12, true);
+                            appController.setCurrentPage(12, true, 3);
                           } catch (e, s) {
                             final user = Provider.of<UserProvider>(context,
                                     listen: false)
@@ -194,7 +194,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                           try {
                                             _getPrayers(e);
                                             appController.setCurrentPage(
-                                                8, true);
+                                                8, true, 3);
                                           } on HttpException catch (e, s) {
                                             final user =
                                                 Provider.of<UserProvider>(

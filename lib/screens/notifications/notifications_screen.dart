@@ -229,7 +229,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       // service get group by id
       // go to 8
       AppController appController = Get.find();
-      appController.setCurrentPage(8, true);
+      appController.setCurrentPage(8, true, 14);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -260,7 +260,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
       BeStilDialog.hideLoading(context);
       AppController appController = Get.find();
-      appController.setCurrentPage(9, true);
+      appController.setCurrentPage(9, true, 14);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =

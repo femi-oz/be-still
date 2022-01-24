@@ -99,7 +99,7 @@ class _PrayerListState extends State<PrayerList> {
       await Future.delayed(const Duration(milliseconds: 300),
           () => BeStilDialog.hideLoading(context));
       AppController appController = Get.find();
-      appController.setCurrentPage(7, true);
+      appController.setCurrentPage(7, true, 0);
       // Navigator.push(context, SlideRightRoute(page: PrayerDetails()));
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -228,7 +228,8 @@ class _PrayerListState extends State<PrayerList> {
                                           Provider.of<PrayerProvider>(context,
                                                   listen: false)
                                               .setEditMode(false, true);
-                                          appController.setCurrentPage(1, true);
+                                          appController.setCurrentPage(
+                                              1, true, 0);
                                         } on HttpException catch (e, s) {
                                           BeStilDialog.hideLoading(context);
 
@@ -296,7 +297,7 @@ class _PrayerListState extends State<PrayerList> {
                                                               false, true);
                                                       appController
                                                           .setCurrentPage(
-                                                              1, true);
+                                                              1, true, 0);
                                                     } on HttpException catch (e, s) {
                                                       BeStilDialog.hideLoading(
                                                           context);
