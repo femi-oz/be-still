@@ -363,14 +363,16 @@ class NotificationService {
     }
   }
 
-  Stream<List<PushNotificationModel>> getAllNotifications() {
+  Future<List<PushNotificationModel>> getAllNotifications(
+      String prayerId) async {
     try {
       if (_firebaseAuth.currentUser == null)
-        return Stream.error(StringUtils.unathorized);
+        return Future.error(StringUtils.unathorized);
       return _pushNotificationCollectionReference
           .where('Status', isEqualTo: Status.active)
-          .snapshots()
-          .map((e) => e.docs
+          .where('PrayerId', isEqualTo: prayerId)
+          .get()
+          .then((e) => e.docs
               .map((doc) => PushNotificationModel.fromData(doc.data(), doc.id))
               .toList());
     } catch (e) {
