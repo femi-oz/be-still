@@ -112,7 +112,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       message.notification?.title ?? '',
       message.notification?.body ?? '',
       platformChannelSpecifics,
-      payload: "{'type': 'fcm message'}",
+      payload: "{\"type\": \"fcm message\"}",
     );
   }
 

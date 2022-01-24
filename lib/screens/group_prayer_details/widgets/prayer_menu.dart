@@ -640,7 +640,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                 await Future.delayed(
                                     Duration(milliseconds: 200));
                                 AppController appController = Get.find();
-                                appController.setCurrentPage(10, true);
+                                appController.setCurrentPage(1, true);
                               } on HttpException catch (e, s) {
                                 final user = Provider.of<UserProvider>(context,
                                         listen: false)

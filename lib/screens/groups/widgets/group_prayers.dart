@@ -209,7 +209,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
                               .setEditPrayer();
                           AppController appController = Get.find();
 
-                          appController.setCurrentPage(10, true);
+                          appController.setCurrentPage(1, true);
                         } on HttpException catch (e, s) {
                           final user =
                               Provider.of<UserProvider>(context, listen: false)
