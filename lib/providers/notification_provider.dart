@@ -112,15 +112,13 @@ class NotificationProvider with ChangeNotifier {
     } catch (e) {}
   }
 
-  Future<void> setNotifications() async {
+  Future<List<PushNotificationModel>?> getNotifications(String prayerId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      _notificationService
-          .getAllNotifications()
-          .asBroadcastStream()
-          .listen((notifications) {
-        _notifications = notifications;
-        notifyListeners();
+      return _notificationService
+          .getAllNotifications(prayerId)
+          .then((notifications) {
+        return notifications;
       });
     } catch (e) {
       rethrow;

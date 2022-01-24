@@ -206,17 +206,17 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
               .where((e) => e.entityId == widget.prayerData?.prayer?.id)
               .toList();
       final pushNotifications =
-          Provider.of<NotificationProvider>(context, listen: false)
-              .notifications
-              .where((element) =>
-                  element.prayerId == widget.prayerData?.groupPrayer?.id ||
-                  element.groupId == widget.prayerData?.groupPrayer?.groupId);
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .getNotifications(widget.prayerData?.groupPrayer?.id ?? '');
+      (pushNotifications ?? []).where((element) =>
+          element.prayerId == widget.prayerData?.groupPrayer?.id ||
+          element.groupId == widget.prayerData?.groupPrayer?.groupId);
 
       for (final not in notifications)
         await Provider.of<NotificationProvider>(context, listen: false)
             .deleteLocalNotification(
                 not.id ?? '', not.localNotificationId ?? 0);
-      pushNotifications.forEach((e) async =>
+      (pushNotifications ?? []).forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
               .updateNotification(e.id ?? ''));
       await Provider.of<GroupPrayerProvider>(context, listen: false)
