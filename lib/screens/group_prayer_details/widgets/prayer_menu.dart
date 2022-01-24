@@ -200,7 +200,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     BeStilDialog.showLoading(context);
 
     try {
-      var notifications =
+      final notifications =
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) => e.entityId == widget.prayerData?.prayer?.id)
@@ -209,7 +209,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
           Provider.of<NotificationProvider>(context, listen: false)
               .notifications
               .where((element) =>
-                  element.prayerId == widget.prayerData?.prayer?.id ||
+                  element.prayerId == widget.prayerData?.groupPrayer?.id ||
                   element.groupId == widget.prayerData?.groupPrayer?.groupId);
 
       for (final not in notifications)
