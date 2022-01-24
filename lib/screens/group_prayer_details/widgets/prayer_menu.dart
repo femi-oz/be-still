@@ -632,6 +632,11 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                           ? () {}
                           : () async {
                               try {
+                                Provider.of<GroupPrayerProvider>(context,
+                                        listen: false)
+                                    .setCurrentPrayerId(
+                                        widget.prayerData?.groupPrayer?.id ??
+                                            '');
                                 Provider.of<PrayerProvider>(context,
                                         listen: false)
                                     .setEditMode(true, false);

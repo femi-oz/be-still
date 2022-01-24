@@ -157,9 +157,12 @@ class _AddPrayerState extends State<AddPrayer> {
     BeStilDialog.hideLoading(context);
     AppController appController = Get.find();
 
-    if (appController.previousPage == 0) {
+    if (appController.previousPage == 0 || appController.previousPage == 7) {
       appController.setCurrentPage(0, true, 1);
     } else {
+      final groupPrayerId =
+          (Provider.of<GroupPrayerProvider>(context, listen: false)
+              .currentPrayerId);
       final groupId = (Provider.of<GroupProvider>(context, listen: false)
                       .currentGroup
                       .group ??
@@ -169,7 +172,7 @@ class _AddPrayerState extends State<AddPrayer> {
       await Provider.of<NotificationProvider>(context, listen: false)
           .sendPrayerNotification(
         prayerId,
-        prayerId,
+        groupPrayerId,
         NotificationType.edited_prayers,
         groupId,
         context,

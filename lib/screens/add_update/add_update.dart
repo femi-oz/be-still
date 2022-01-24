@@ -4,6 +4,7 @@ import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
@@ -188,6 +189,9 @@ class _AddUpdateState extends State<AddUpdate> {
 
         if (appController.previousPage == 9 ||
             appController.previousPage == 8) {
+          final groupPrayerId =
+              (Provider.of<GroupPrayerProvider>(context, listen: false)
+                  .currentPrayerId);
           final groupId = (Provider.of<GroupProvider>(context, listen: false)
                           .currentGroup
                           .group ??
@@ -197,8 +201,8 @@ class _AddUpdateState extends State<AddUpdate> {
           await Provider.of<NotificationProvider>(context, listen: false)
               .sendPrayerNotification(
             prayerId,
-            prayerId,
-            NotificationType.edited_prayers,
+            groupPrayerId,
+            NotificationType.prayer_updates,
             groupId,
             context,
             _descriptionController.text,
