@@ -408,7 +408,7 @@ class _AddUpdateState extends State<AddUpdate> {
       onWillPop: _onWillPop,
       child: Scaffold(
         body: StreamBuilder<CombinePrayerStream>(
-            stream: null,
+            stream: Provider.of<PrayerProvider>(context).getPrayer(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting)
                 return BeStilDialog.getLoading(context);
@@ -687,6 +687,7 @@ class _AddUpdateState extends State<AddUpdate> {
                       onTap: () {
                         AppController appController = Get.find();
                         appController.setCurrentPage(0, true);
+                        Navigator.pop(context);
                       },
                       child: Container(
                         height: 30,

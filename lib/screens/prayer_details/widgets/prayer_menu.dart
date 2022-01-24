@@ -59,6 +59,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   @override
   void didChangeDependencies() async {
+    Provider.of<PrayerProvider>(context).getPrayer();
     super.didChangeDependencies();
   }
 
