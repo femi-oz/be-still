@@ -163,7 +163,7 @@ class _GroupCardState extends State<GroupCard> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   IconButton(
                     onPressed: () =>
