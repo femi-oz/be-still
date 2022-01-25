@@ -227,7 +227,7 @@ class _AddPrayerState extends State<AddPrayer> {
               _backupDescription,
               _user.id ?? '',
             );
-            var prayerId =
+            final prayerId =
                 Provider.of<GroupPrayerProvider>(context, listen: false)
                     .newPrayerId;
 
@@ -330,14 +330,11 @@ class _AddPrayerState extends State<AddPrayer> {
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     saveOptions.add(SaveOptionModel(id: userId, name: 'My Prayers'));
     if (userGroups.length > 0) {
-      // userGroups.forEach((element) {
       for (final element in userGroups) {
         final option = new SaveOptionModel(
             id: element.group?.id ?? '', name: element.group?.name ?? '');
         saveOptions.add(option);
       }
-      // });
-
     }
     selected = saveOptions[0];
     super.initState();
