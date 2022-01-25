@@ -233,7 +233,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                                     fontSize: 12),
                                                 textAlign: TextAlign.center,
                                               )
-                                            : SizedBox.shrink(),
+                                            : null,
                                         onPressMore: () => showModalBottomSheet(
                                           context: context,
                                           barrierColor:
