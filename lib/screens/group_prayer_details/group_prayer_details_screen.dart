@@ -387,7 +387,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                     Opacity(
                       opacity: 0.3,
                       child: Text(
-                        'This prayer or group no longer exist',
+                        'This prayer or group is no longer available',
                         style: AppTextStyles.demiboldText34,
                         textAlign: TextAlign.center,
                       ),

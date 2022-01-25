@@ -406,7 +406,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                   Opacity(
                     opacity: 0.3,
                     child: Text(
-                      'This prayer no longer exist',
+                      'This prayer is no longer available',
                       style: AppTextStyles.demiboldText34,
                       textAlign: TextAlign.center,
                     ),
