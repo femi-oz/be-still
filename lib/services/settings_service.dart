@@ -214,10 +214,12 @@ class SettingsService {
           .get();
       if (settings.docs.length < 1) {
         await addGroupSettings(userId, groupId, false);
+        return GroupSettings.defaultValue();
+      } else {
+        return settings.docs
+            .map((e) => GroupSettings.fromData(e.data(), e.id))
+            .toList()[0];
       }
-      return settings.docs
-          .map((e) => GroupSettings.fromData(e.data(), e.id))
-          .toList()[0];
     } catch (e) {
       locator<LogService>().createLog(StringUtils.getErrorMessage(e), userId,
           'SETTINGS/service/getGroupSettings');

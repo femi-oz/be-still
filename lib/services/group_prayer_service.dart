@@ -46,7 +46,7 @@ class GroupPrayerService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   final _notificationService = locator<NotificationService>();
-  var newPrayerId;
+  String newPrayerId = '';
 
   Stream<List<CombineGroupPrayerStream>> getPrayers(String groupId) {
     try {
