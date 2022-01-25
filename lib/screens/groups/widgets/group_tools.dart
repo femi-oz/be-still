@@ -31,8 +31,8 @@ class GroupTools extends StatefulWidget {
 class _GroupToolsState extends State<GroupTools> {
   Future<void> onEditTap(CombineGroupUserStream groupData) async {
     try {
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(12, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(12, true, 3);
       Provider.of<GroupProvider>(context, listen: false).setEditMode(true);
       await Provider.of<GroupProvider>(context, listen: false)
           .setCurrentGroup(groupData);
@@ -55,8 +55,9 @@ class _GroupToolsState extends State<GroupTools> {
       final _currentUser =
           Provider.of<UserProvider>(context, listen: false).currentUser;
 
-      var admin = (data.groupUsers ?? [])
-          .firstWhere((element) => element.role == GroupUserRole.admin);
+      var admin = (data.groupUsers ?? []).firstWhere(
+          (element) => element.role == GroupUserRole.admin,
+          orElse: () => GroupUserModel.defaultValue());
       await Provider.of<UserProvider>(context, listen: false)
           .getUserById(admin.userId ?? '');
       final id = (data.groupUsers ?? [])
@@ -78,18 +79,20 @@ class _GroupToolsState extends State<GroupTools> {
         });
         final adminData =
             Provider.of<UserProvider>(context, listen: false).selectedUser;
+        final userName =
+            '${(_currentUser.firstName ?? '').capitalizeFirst} ${(_currentUser.lastName ?? '').capitalizeFirst}';
         await sendPushNotification(
-            '${_currentUser.firstName} has left your group ${data.group?.name}',
+            '$userName has left your group ${data.group?.name}',
             NotificationType.leave_group,
-            _currentUser.firstName ?? '',
+            userName,
             _currentUser.id ?? '',
             adminData.id ?? '',
-            'Groups',
+            'A member has left your group',
             data.group?.id ?? '',
             [adminData.pushToken ?? '']);
         BeStilDialog.hideLoading(context);
-        AppCOntroller appCOntroller = Get.find();
-        appCOntroller.setCurrentPage(3, true);
+        AppController appController = Get.find();
+        appController.setCurrentPage(3, true, 3);
         await Provider.of<GroupProvider>(context, listen: false)
             .setUserGroups(_currentUser.id ?? '');
         Navigator.pop(context);
@@ -189,6 +192,7 @@ class _GroupToolsState extends State<GroupTools> {
                 children: <Widget>[
                   GestureDetector(
                     onTap: () {
+                      Navigator.of(context).pop();
                       Navigator.of(context).pop();
                     },
                     child: Container(
@@ -331,8 +335,8 @@ class _GroupToolsState extends State<GroupTools> {
                     LongButton(
                       icon: Icons.add,
                       onPress: () {
-                        AppCOntroller appCOntroller = Get.find();
-                        appCOntroller.setCurrentPage(10, true);
+                        AppController appController = Get.find();
+                        appController.setCurrentPage(1, true, 3);
                         Navigator.pop(context);
                       },
                       text: "Add a Prayer",
@@ -345,10 +349,9 @@ class _GroupToolsState extends State<GroupTools> {
                     LongButton(
                       icon: Icons.more_vert,
                       onPress: () {
-                        AppCOntroller appCOntroller = Get.find();
-
-                        appCOntroller.setCurrentPage(4, true);
-                        appCOntroller.settingsTab = 4;
+                        AppController appController = Get.find();
+                        appController.setCurrentPage(4, true, 3);
+                        appController.settingsTab = 4;
                         Navigator.pop(context);
                       },
                       text: "Manage Settings",

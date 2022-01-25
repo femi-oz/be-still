@@ -1,9 +1,12 @@
 import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
+import 'package:be_still/enums/status.dart';
+import 'package:be_still/models/filter.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Prayer/Widgets/group_prayer_card.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -68,9 +71,26 @@ class _GroupPrayersState extends State<GroupPrayers> {
     super.didChangeDependencies();
   }
 
+  String get message {
+    final filterOption = Provider.of<GroupPrayerProvider>(context).filterOption;
+
+    if (filterOption.toLowerCase() == Status.active.toLowerCase()) {
+      return 'You do not have any active prayers.';
+    } else if (filterOption.toLowerCase() == Status.answered.toLowerCase()) {
+      return 'You do not have any answered prayers.';
+    } else if (filterOption.toLowerCase() == Status.archived.toLowerCase()) {
+      return 'You do not have any archived prayers.';
+    } else if (filterOption.toLowerCase() == Status.snoozed.toLowerCase()) {
+      return 'You do not have any snoozed prayers.';
+    } else {
+      return 'You do not have any active prayers.';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var data = Provider.of<GroupPrayerProvider>(context).filteredPrayers;
+
     final _hiddenPrayers =
         Provider.of<GroupPrayerProvider>(context, listen: false).hiddenPrayers;
     data.forEach((element) {
@@ -104,6 +124,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
             image: DecorationImage(
               image: AssetImage(StringUtils.backgroundImage),
               alignment: Alignment.bottomCenter,
+              fit: BoxFit.cover,
             ),
           ),
           child: Container(
@@ -114,11 +135,11 @@ class _GroupPrayersState extends State<GroupPrayers> {
                   data.length == 0
                       ? Container(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 100, vertical: 60),
+                              horizontal: 60, vertical: 60),
                           child: Opacity(
                             opacity: 0.3,
                             child: Text(
-                              'You do not have any prayer in your list.',
+                              message,
                               style: AppTextStyles.demiboldText34,
                               textAlign: TextAlign.center,
                             ),
@@ -132,15 +153,15 @@ class _GroupPrayersState extends State<GroupPrayers> {
                                   .map((e) => GestureDetector(
                                       onTap: () async {
                                         try {
-                                          await Provider.of<
-                                                      GroupPrayerProvider>(
+                                          Provider.of<GroupPrayerProvider>(
                                                   context,
                                                   listen: false)
-                                              .setPrayerFuture(
+                                              .setCurrentPrayerId(
                                                   e.groupPrayer?.id ?? '');
-                                          AppCOntroller appCOntroller =
+                                          AppController appController =
                                               Get.find();
-                                          appCOntroller.setCurrentPage(9, true);
+                                          appController.setCurrentPage(
+                                              9, true, 8);
                                         } on HttpException catch (e, s) {
                                           final user =
                                               Provider.of<UserProvider>(context,
@@ -182,15 +203,11 @@ class _GroupPrayersState extends State<GroupPrayers> {
                     child: LongButton(
                       onPress: () {
                         try {
-                          Provider.of<GroupPrayerProvider>(context,
-                                  listen: false)
-                              .setEditMode(false);
-                          Provider.of<GroupPrayerProvider>(context,
-                                  listen: false)
-                              .setEditPrayer();
-                          AppCOntroller appCOntroller = Get.find();
+                          Provider.of<PrayerProvider>(context, listen: false)
+                              .setEditMode(false, true);
 
-                          appCOntroller.setCurrentPage(10, true);
+                          AppController appController = Get.find();
+                          appController.setCurrentPage(1, true, 8);
                         } on HttpException catch (e, s) {
                           final user =
                               Provider.of<UserProvider>(context, listen: false)

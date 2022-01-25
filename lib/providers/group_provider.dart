@@ -107,7 +107,11 @@ class GroupProvider with ChangeNotifier {
         return Future.error(StringUtils.unathorized);
       _groupService.getAllGroups(userId).asBroadcastStream().listen((groups) {
         _allGroups = groups;
-        _filteredAllGroups = [];
+        if (_isAdvanceSearch)
+          advanceSearchAllGroups(
+              _groupName, userId, _location, _church, _adminName, _purpose);
+        else
+          searchAllGroups(_searchQuery, userId);
         notifyListeners();
       });
     } catch (e) {
@@ -115,8 +119,20 @@ class GroupProvider with ChangeNotifier {
     }
   }
 
+//search params
+  String _searchQuery = '';
+  String _groupName = '';
+  String _adminName = '';
+  String _location = '';
+  String _church = '';
+  String _purpose = '';
+  bool _isAdvanceSearch = false;
+  //search params end
+
   Future searchAllGroups(String searchQuery, String userId) async {
     try {
+      _searchQuery = searchQuery;
+      _isAdvanceSearch = false;
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       if (searchQuery.trim().isEmpty) {
@@ -139,6 +155,12 @@ class GroupProvider with ChangeNotifier {
   Future advanceSearchAllGroups(String name, String userId, String location,
       String church, String admin, String purpose) async {
     try {
+      _groupName = name;
+      _adminName = admin;
+      _location = location;
+      _church = church;
+      _purpose = purpose;
+      _isAdvanceSearch = true;
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       List<CombineGroupUserStream> filteredGroups = _allGroups

@@ -94,13 +94,12 @@ class _PrayerListState extends State<PrayerList> {
   Future<void> onTapCard(CombinePrayerStream prayerData) async {
     BeStilDialog.showLoading(context, '');
     try {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayer(prayerData.userPrayer?.id ?? '');
+      Provider.of<PrayerProvider>(context, listen: false)
+          .setCurrentPrayerId(prayerData.userPrayer?.id ?? '');
       await Future.delayed(const Duration(milliseconds: 300),
           () => BeStilDialog.hideLoading(context));
-      AppCOntroller appCOntroller = Get.find();
-
-      appCOntroller.setCurrentPage(7, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(7, true, 0);
       // Navigator.push(context, SlideRightRoute(page: PrayerDetails()));
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -140,6 +139,22 @@ class _PrayerListState extends State<PrayerList> {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
+  }
+
+  String get message {
+    final filterOption = Provider.of<PrayerProvider>(context).filterOption;
+
+    if (filterOption.toLowerCase() == Status.active.toLowerCase()) {
+      return 'You do not have any active prayers.';
+    } else if (filterOption.toLowerCase() == Status.answered.toLowerCase()) {
+      return 'You do not have any answered prayers.';
+    } else if (filterOption.toLowerCase() == Status.archived.toLowerCase()) {
+      return 'You do not have any archived prayers.';
+    } else if (filterOption.toLowerCase() == Status.snoozed.toLowerCase()) {
+      return 'You do not have any snoozed prayers.';
+    } else {
+      return 'You do not have any active prayers.';
     }
   }
 
@@ -197,7 +212,7 @@ class _PrayerListState extends State<PrayerList> {
                                     child: Opacity(
                                       opacity: 0.3,
                                       child: Text(
-                                        'No Prayer in My Prayers',
+                                        message,
                                         style: AppTextStyles.demiboldText34,
                                         textAlign: TextAlign.center,
                                       ),
@@ -208,12 +223,13 @@ class _PrayerListState extends State<PrayerList> {
                                     child: LongButton(
                                       onPress: () {
                                         try {
-                                          AppCOntroller appCOntroller =
+                                          AppController appController =
                                               Get.find();
                                           Provider.of<PrayerProvider>(context,
                                                   listen: false)
                                               .setEditMode(false, true);
-                                          appCOntroller.setCurrentPage(1, true);
+                                          appController.setCurrentPage(
+                                              1, true, 0);
                                         } on HttpException catch (e, s) {
                                           BeStilDialog.hideLoading(context);
 
@@ -271,17 +287,17 @@ class _PrayerListState extends State<PrayerList> {
                                               : LongButton(
                                                   onPress: () {
                                                     try {
-                                                      AppCOntroller
-                                                          appCOntroller =
+                                                      AppController
+                                                          appController =
                                                           Get.find();
                                                       Provider.of<PrayerProvider>(
                                                               context,
                                                               listen: false)
                                                           .setEditMode(
                                                               false, true);
-                                                      appCOntroller
+                                                      appController
                                                           .setCurrentPage(
-                                                              1, true);
+                                                              1, true, 0);
                                                     } on HttpException catch (e, s) {
                                                       BeStilDialog.hideLoading(
                                                           context);

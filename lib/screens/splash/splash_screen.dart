@@ -86,16 +86,16 @@ class _SplashScreenState extends State<SplashScreen>
           if (message.type == NotificationType.prayer_time) {
             await Provider.of<PrayerProvider>(context, listen: false)
                 .setPrayerTimePrayers(message.entityId ?? '');
-            AppCOntroller appCOntroller = Get.find();
-            appCOntroller.setCurrentPage(2, false);
+            AppController appController = Get.find();
+            appController.setCurrentPage(2, false, 0);
             Provider.of<MiscProvider>(context, listen: false)
                 .setLoadStatus(true);
             Navigator.of(context).pushNamedAndRemoveUntil(
                 EntryScreen.routeName, (Route<dynamic> route) => false);
           }
           if (message.type == NotificationType.prayer) {
-            await Provider.of<PrayerProvider>(context, listen: false)
-                .setPrayer(message.entityId ?? '');
+            Provider.of<PrayerProvider>(context, listen: false)
+                .setCurrentPrayerId(message.entityId ?? '');
           }
         });
         Provider.of<NotificationProvider>(context, listen: false)

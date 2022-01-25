@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -18,8 +19,8 @@ class UpdateView extends StatefulWidget {
   static const routeName = '/update';
 
   @override
-  UpdateView();
-
+  UpdateView(this.prayerData);
+  CombineGroupPrayerStream? prayerData;
   @override
   _UpdateView createState() => _UpdateView();
 }
@@ -239,8 +240,8 @@ class _UpdateView extends State<UpdateView> {
   }
 
   Widget build(BuildContext context) {
-    final prayerData = Provider.of<GroupPrayerProvider>(context).currentPrayer;
-    var updates = prayerData.updates ?? [];
+    // final prayerData = Provider.of<GroupPrayerProvider>(context).currentPrayer;
+    var updates = widget.prayerData?.updates ?? [];
     updates.sort((a, b) => (b.modifiedOn ?? DateTime.now())
         .compareTo(a.modifiedOn ?? DateTime.now()));
     updates = updates.where((element) => element.deleteStatus != -1).toList();
@@ -251,11 +252,11 @@ class _UpdateView extends State<UpdateView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              prayerData.prayer?.groupId != '0'
+              widget.prayerData?.prayer?.groupId != '0'
                   ? Container(
                       margin: EdgeInsets.only(bottom: 15),
                       child: Text(
-                        prayerData.prayer?.creatorName ?? '',
+                        widget.prayerData?.prayer?.creatorName ?? '',
                         style: AppTextStyles.regularText18b.copyWith(
                             color: AppColors.prayerPrimaryColor,
                             fontWeight: FontWeight.w500),
@@ -265,12 +266,12 @@ class _UpdateView extends State<UpdateView> {
                   : Container(),
               for (int i = 0; i < updates.length; i++)
                 _buildDetail('', updates[i].modifiedOn, updates[i].description,
-                    prayerData.tags, context),
+                    widget.prayerData?.tags, context),
               _buildDetail(
                   'Initial Prayer | ',
-                  prayerData.prayer?.createdOn ?? DateTime.now(),
-                  prayerData.prayer?.description,
-                  prayerData.tags,
+                  widget.prayerData?.prayer?.createdOn ?? DateTime.now(),
+                  widget.prayerData?.prayer?.description,
+                  widget.prayerData?.tags,
                   context),
             ],
           ),
@@ -342,8 +343,9 @@ class _UpdateView extends State<UpdateView> {
                             targetString: tags[i].displayName,
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                _openShareModal(context, tags[i].phoneNumber,
-                                    tags[i].email, tags[i].identifier);
+                                if (tags[i].userId == _currentUser.id)
+                                  _openShareModal(context, tags[i].phoneNumber,
+                                      tags[i].email, tags[i].identifier);
                               },
                             style: tags[i].userId == _currentUser.id
                                 ? AppTextStyles.regularText15.copyWith(

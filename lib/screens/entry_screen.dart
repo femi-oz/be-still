@@ -11,9 +11,8 @@ import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Prayer/prayer_list.dart';
 import 'package:be_still/screens/Settings/settings_screen.dart';
-import 'package:be_still/screens/add_prayer/add_group_prayer_screen.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
-import 'package:be_still/screens/add_update/add_group_prayer_update.dart';
+import 'package:be_still/screens/add_update/add_update.dart';
 import 'package:be_still/screens/create_group/create_group_screen.dart';
 import 'package:be_still/screens/group_prayer_details/group_prayer_details_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
@@ -308,7 +307,7 @@ class _EntryScreenState extends State<EntryScreen> {
     final miscProvider = Provider.of<MiscProvider>(context);
     _isSearchMode = Provider.of<MiscProvider>(context, listen: false).search;
 
-    AppCOntroller appCOntroller = Get.find();
+    AppController appController = Get.find();
     return Scaffold(
       key: _scaffoldKey,
       body: Container(
@@ -323,7 +322,7 @@ class _EntryScreenState extends State<EntryScreen> {
             ? BeStilDialog.getLoading(context)
             : new TabBarView(
                 physics: NeverScrollableScrollPhysics(),
-                controller: appCOntroller.tabController,
+                controller: appController.tabController,
                 children: [
                   for (int i = 0; i < getItems().length; i++)
                     getItems().map((e) => e.page).toList()[i],
@@ -331,12 +330,12 @@ class _EntryScreenState extends State<EntryScreen> {
               ),
       ),
       bottomNavigationBar:
-          _createBottomNavigationBar(appCOntroller.currentPage),
+          _createBottomNavigationBar(appController.currentPage),
       endDrawer: CustomDrawer(
         (index) {
-          AppCOntroller appCOntroller = Get.find();
+          AppController appController = Get.find();
 
-          appCOntroller.setCurrentPage(index, true);
+          appController.setCurrentPage(index, true, 0);
         },
         _keyButton,
         _keyButton2,
@@ -377,26 +376,25 @@ class _EntryScreenState extends State<EntryScreen> {
                         'You must have at least one active prayer to start prayer time.';
                     showInfoModal(message, 'PrayerTime', context);
                   } else {
-                    AppCOntroller appCOntroller = Get.find();
-
-                    appCOntroller.setCurrentPage(index, true);
+                    AppController appController = Get.find();
+                    appController.setCurrentPage(index, true, 0);
                   }
                   break;
                 case 1:
                   Provider.of<PrayerProvider>(context, listen: false)
                       .setEditMode(false, true);
-                  Provider.of<PrayerProvider>(context, listen: false)
-                      .setEditPrayer();
-                  AppCOntroller appCOntroller = Get.find();
+                  // Provider.of<PrayerProvider>(context, listen: false)
+                  //     .setEditPrayer();
+                  AppController appController = Get.find();
 
-                  appCOntroller.setCurrentPage(1, true);
+                  appController.setCurrentPage(1, true, 0);
                   break;
                 case 4:
                   Scaffold.of(context).openEndDrawer();
                   break;
                 default:
-                  AppCOntroller appCOntroller = Get.find();
-                  appCOntroller.setCurrentPage(index, true);
+                  AppController appController = Get.find();
+                  appController.setCurrentPage(index, true, 0);
                   break;
               }
             } catch (e, s) {
@@ -556,7 +554,7 @@ class _EntryScreenState extends State<EntryScreen> {
             title: "More",
             padding: 7),
         TabNavigationItem(
-            page: AddGroupPrayer(), //10
+            page: Container(), //10
             icon: Icon(
               Icons.more_horiz,
               size: 20,
@@ -583,7 +581,7 @@ class _EntryScreenState extends State<EntryScreen> {
             title: "More",
             padding: 7),
         TabNavigationItem(
-            page: AddGroupPrayerUpdate(), //13
+            page: AddUpdate(), //13
             icon: Icon(
               Icons.more_horiz,
               size: 20,

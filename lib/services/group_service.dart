@@ -3,6 +3,7 @@ import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/group_settings_model.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/services/log_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -29,6 +30,16 @@ class GroupService {
   final CollectionReference<Map<String, dynamic>>
       _groupSettingsCollectionReference =
       FirebaseFirestore.instance.collection("GroupSettings");
+
+  final CollectionReference<Map<String, dynamic>>
+      _followedPrayerCollectionReference =
+      FirebaseFirestore.instance.collection("FollowedPrayer");
+  final CollectionReference<Map<String, dynamic>>
+      _userPrayerCollectionReference =
+      FirebaseFirestore.instance.collection("UserPrayer");
+  final CollectionReference<Map<String, dynamic>>
+      _groupPrayerCollectionReference =
+      FirebaseFirestore.instance.collection("GroupPrayer");
 
   GroupUserModel populateGroupUser(
     // GroupModel groupData,
@@ -330,6 +341,7 @@ class GroupService {
           Stream<List<GroupSettings>> groupSettings =
               _groupSettingsCollectionReference
                   .where('GroupId', isEqualTo: f['GroupId'])
+                  .where('UserId', isEqualTo: userId)
                   .snapshots()
                   .asyncMap((e) {
             if (e.docs.length == 0) {
@@ -622,9 +634,17 @@ class GroupService {
           .where('GroupId', isEqualTo: groupId)
           .get()
           .then((value) {
-        value.docs.forEach((element) {
-          element.reference.delete();
-        });
+        for (final doc in value.docs) {
+          doc.reference.delete();
+        }
+      });
+      _groupPrayerCollectionReference
+          .where('GroupId', isEqualTo: groupId)
+          .get()
+          .then((value) {
+        for (final doc in value.docs) {
+          doc.reference.delete();
+        }
       });
     } catch (e) {
       locator<LogService>().createLog(
@@ -647,6 +667,21 @@ class GroupService {
                   _userGroupCollectionReference.doc(id).delete();
                 })
               });
+
+      final userPrayers = _followedPrayerCollectionReference
+          .where('UserId', isEqualTo: userId)
+          .get();
+      userPrayers.then((value) {
+        final prayers = value.docs
+            .map((e) => FollowedPrayerModel.fromData(e.data(), e.id))
+            .toList();
+        prayers.forEach((element) {
+          if (element.groupId == groupId) {
+            _followedPrayerCollectionReference.doc(element.id).delete();
+            _userPrayerCollectionReference.doc(element.userPrayerId).delete();
+          }
+        });
+      });
     } catch (e) {
       locator<LogService>().createLog(StringUtils.getErrorMessage(e), userId,
           'GROUP/service/removeFromGroup');

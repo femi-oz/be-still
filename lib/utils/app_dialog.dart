@@ -5,7 +5,6 @@ import 'package:be_still/widgets/custom_alert_dialog.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:get/get.dart';
 
 import 'essentials.dart';
 
@@ -13,7 +12,7 @@ class BeStilDialog {
   static Widget getLoading(context, [String message = '']) {
     precacheImage(AssetImage(StringUtils.backgroundImage), context);
     return Scaffold(
-      appBar: CustomAppBar(switchSearchMode: () {}, globalKey: GlobalKey()),
+      // appBar: CustomAppBar(switchSearchMode: () {}, globalKey: GlobalKey()),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(

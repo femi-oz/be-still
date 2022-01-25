@@ -50,7 +50,7 @@ class CreateGroupForm extends StatelessWidget {
             isRequired: true,
             showSuffix: false,
           ),
-          SizedBox(height: 12.0),
+          //SizedBox(height: 12.0),
 
           // CustomInput(
           //   // textkey: GlobalKey<FormFieldState>(),
@@ -96,8 +96,8 @@ class CreateGroupForm extends StatelessWidget {
               Container(
                 width: MediaQuery.of(context).size.width * 0.7,
                 child: Text(
-                  'Require admin approval to join group',
-                  style: AppTextStyles.regularText15.copyWith(
+                  'Require admin approval to join group:',
+                  style: AppTextStyles.regularText14.copyWith(
                       color: AppColors.lightBlue4, fontWeight: FontWeight.w500),
                 ),
               ),

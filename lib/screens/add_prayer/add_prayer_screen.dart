@@ -1,7 +1,9 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
@@ -92,6 +94,96 @@ class _AddPrayerState extends State<AddPrayer> {
     super.didChangeDependencies();
   }
 
+  Future<void> _edit(UserModel _user) async {
+    PrayerModel prayerToEdit =
+        Provider.of<PrayerProvider>(context, listen: false).prayerToEdit;
+    final prayerId = prayerToEdit.id ?? '';
+
+    if (updateTextControllers.length > 0) {
+      updateTextControllers.forEach((element) async {
+        if (element.ctrl.text == '') {
+          await Provider.of<PrayerProvider>(context, listen: false)
+              .deleteUpdate(element.id);
+        }
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .editUpdate(element.ctrl.text, element.id);
+      });
+    }
+    await Provider.of<PrayerProvider>(context, listen: false)
+        .editprayer(_descriptionController.text, prayerId);
+
+    //tags
+    final tags = [
+      ...Provider.of<PrayerProvider>(context, listen: false).prayerToEditTags
+    ];
+    final List<String> ids = [];
+    if (updates.length > 0) {
+      for (final up in updateTextControllers) {
+        if (up.backupText != up.ctrl.text) {
+          for (final c in up.contactList) {
+            if (!tags.any((t) => t.identifier == c.identifier)) {
+              await Provider.of<PrayerProvider>(context, listen: false)
+                  .addPrayerTag(up.contactList, _user, up.ctrl.text, '');
+              ids.add(up.ctrl.text);
+            }
+          }
+        }
+      }
+    }
+
+    if (_backupDescription != _descriptionController.text) {
+      if (tags.any((tag) =>
+          _descriptionController.text.contains(tag.displayName ?? ''))) {}
+
+      for (final c in contactList) {
+        if (!tags.any((t) => t.identifier == c.identifier)) {
+          await Provider.of<PrayerProvider>(context, listen: false)
+              .addPrayerTag(
+                  contactList, _user, _descriptionController.text, '');
+          ids.add(_descriptionController.text);
+        }
+      }
+    }
+
+    for (final tag in tags) {
+      if (!_descriptionController.text.contains(tag.displayName ?? '') &&
+          !updateTextControllers
+              .any((u) => u.ctrl.text.contains(tag.displayName ?? ''))) {
+        await Provider.of<PrayerProvider>(context, listen: false)
+            .removePrayerTag(tag.id ?? '');
+      }
+    }
+
+    BeStilDialog.hideLoading(context);
+    AppController appController = Get.find();
+
+    if (appController.previousPage == 0 || appController.previousPage == 7) {
+      appController.setCurrentPage(0, true, 1);
+    } else {
+      final groupPrayerId =
+          (Provider.of<GroupPrayerProvider>(context, listen: false)
+              .currentPrayerId);
+      final groupId = (Provider.of<GroupProvider>(context, listen: false)
+                      .currentGroup
+                      .group ??
+                  GroupModel.defaultValue())
+              .id ??
+          '';
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .sendPrayerNotification(
+        prayerId,
+        groupPrayerId,
+        NotificationType.edited_prayers,
+        groupId,
+        context,
+        _descriptionController.text,
+      );
+      await Provider.of<GroupProvider>(context, listen: false)
+          .setCurrentGroupById(groupId, _user.id ?? '');
+      appController.setCurrentPage(8, true, 1);
+    }
+  }
+
   Future<void> _save() async {
     BeStilDialog.showLoading(context);
     FocusScope.of(context).unfocus();
@@ -113,42 +205,41 @@ class _AddPrayerState extends State<AddPrayer> {
         BeStilDialog.showErrorDialog(
             context, StringUtils.getErrorMessage(e), user, s);
       } else {
+        final userName =
+            '${_user.firstName?.capitalizeFirst} ${_user.lastName?.capitalizeFirst}';
         if (!Provider.of<PrayerProvider>(context, listen: false).isEdit) {
           if ((selected?.name ?? '').isEmpty ||
               (selected?.name) == 'My Prayers') {
             await Provider.of<PrayerProvider>(context, listen: false).addPrayer(
               _descriptionController.text,
               _user.id ?? '',
-              '${_user.firstName} ${_user.lastName}',
+              userName,
               _backupDescription,
             );
           } else {
+            await Provider.of<GroupProvider>(context, listen: false)
+                .setCurrentGroupById(selected?.id ?? '', _user.id ?? '');
             await Provider.of<GroupPrayerProvider>(context, listen: false)
                 .addPrayer(
               _descriptionController.text,
               (selected?.id ?? ''),
-              '${_user.firstName} ${_user.lastName}',
+              userName,
               _backupDescription,
               _user.id ?? '',
             );
-            var prayerId =
+            final prayerId =
                 Provider.of<GroupPrayerProvider>(context, listen: false)
                     .newPrayerId;
 
-            if (prayerId.isNotEmpty) {
-              // await Provider.of<GroupPrayerProvider>(context, listen: false)
-              //     .setFollowedPrayer(prayerId);
-              await Provider.of<GroupProvider>(context, listen: false)
-                  .setCurrentGroupById(selected?.id ?? '', _user.id ?? '');
-              await Provider.of<NotificationProvider>(context, listen: false)
-                  .sendPrayerNotification(
-                prayerId,
-                NotificationType.prayer,
-                selected?.id ?? '',
-                context,
-                _descriptionController.text,
-              );
-            }
+            await Provider.of<NotificationProvider>(context, listen: false)
+                .sendPrayerNotification(
+              prayerId,
+              prayerId,
+              NotificationType.prayer,
+              selected?.id ?? '',
+              context,
+              _descriptionController.text,
+            );
           }
 
           if (contactList.length > 0) {
@@ -168,81 +259,20 @@ class _AddPrayerState extends State<AddPrayer> {
               }
             }
           }
+          BeStilDialog.hideLoading(context);
+          AppController appController = Get.find();
+          if ((selected?.name ?? '').isEmpty ||
+              (selected?.name) == 'My Prayers') {
+            appController.setCurrentPage(0, true, 1);
+          } else {
+            await Provider.of<GroupProvider>(context, listen: false)
+                .setCurrentGroupById(selected?.id ?? '', _user.id ?? '');
+            await Provider.of<GroupPrayerProvider>(context, listen: false)
+                .setGroupPrayers(selected?.id ?? '');
+            appController.setCurrentPage(8, true, 1);
+          }
         } else {
-          final prayerId = (Provider.of<PrayerProvider>(context, listen: false)
-                          .prayerToEdit
-                          .prayer ??
-                      PrayerModel.defaultValue())
-                  .id ??
-              '';
-
-          if (updateTextControllers.length > 0) {
-            updateTextControllers.forEach((element) async {
-              if (element.ctrl.text == '') {
-                await Provider.of<PrayerProvider>(context, listen: false)
-                    .deleteUpdate(element.id);
-              }
-              await Provider.of<PrayerProvider>(context, listen: false)
-                  .editUpdate(element.ctrl.text, element.id);
-            });
-          }
-          await Provider.of<PrayerProvider>(context, listen: false)
-              .editprayer(_descriptionController.text, prayerId);
-
-          //tags
-          final tags = [
-            ...Provider.of<PrayerProvider>(context, listen: false)
-                .prayerToEdit
-                .tags
-          ];
-          final List<String> ids = [];
-          if (updates.length > 0) {
-            for (final up in updateTextControllers) {
-              if (up.backupText != up.ctrl.text) {
-                for (final c in up.contactList) {
-                  if (!tags.any((t) => t.identifier == c.identifier)) {
-                    await Provider.of<PrayerProvider>(context, listen: false)
-                        .addPrayerTag(up.contactList, _user, up.ctrl.text, '');
-                    ids.add(up.ctrl.text);
-                  }
-                }
-              }
-            }
-          }
-
-          if (_backupDescription != _descriptionController.text) {
-            if (tags.any((tag) =>
-                _descriptionController.text.contains(tag.displayName ?? ''))) {}
-
-            for (final c in contactList) {
-              if (!tags.any((t) => t.identifier == c.identifier)) {
-                await Provider.of<PrayerProvider>(context, listen: false)
-                    .addPrayerTag(
-                        contactList, _user, _descriptionController.text, '');
-                ids.add(_descriptionController.text);
-              }
-            }
-          }
-
-          for (final tag in tags) {
-            if (!_descriptionController.text.contains(tag.displayName ?? '') &&
-                !updateTextControllers
-                    .any((u) => u.ctrl.text.contains(tag.displayName ?? ''))) {
-              await Provider.of<PrayerProvider>(context, listen: false)
-                  .removePrayerTag(tag.id ?? '');
-            }
-          }
-        }
-
-        BeStilDialog.hideLoading(context);
-        AppCOntroller appCOntroller = Get.find();
-        if ((selected?.name ?? '').isEmpty ||
-            (selected?.name) == 'My Prayers') {
-          appCOntroller.setCurrentPage(0, true);
-        } else {
-          await Provider.of<GroupProvider>(context, listen: false)
-              .setCurrentGroupById(selected?.id ?? '', _user.id ?? '');
-          appCOntroller.setCurrentPage(8, true);
+          _edit(_user);
         }
       }
     } on HttpException catch (e, s) {
@@ -264,10 +294,7 @@ class _AddPrayerState extends State<AddPrayer> {
     getContacts();
     final isEdit = Provider.of<PrayerProvider>(context, listen: false).isEdit;
     _descriptionController.text = isEdit
-        ? (Provider.of<PrayerProvider>(context, listen: false)
-                        .prayerToEdit
-                        .prayer ??
-                    PrayerModel.defaultValue())
+        ? (Provider.of<PrayerProvider>(context, listen: false).prayerToEdit)
                 .description ??
             ''
         : '';
@@ -278,8 +305,7 @@ class _AddPrayerState extends State<AddPrayer> {
       showDropdown = false;
 
       updates = Provider.of<PrayerProvider>(context, listen: false)
-          .prayerToEdit
-          .updates;
+          .prayerToEditUpdate;
       updates.sort((a, b) => (b.modifiedOn ?? DateTime.now())
           .compareTo(a.modifiedOn ?? DateTime.now()));
       updates = updates.where((element) => element.deleteStatus != -1).toList();
@@ -304,14 +330,11 @@ class _AddPrayerState extends State<AddPrayer> {
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     saveOptions.add(SaveOptionModel(id: userId, name: 'My Prayers'));
     if (userGroups.length > 0) {
-      // userGroups.forEach((element) {
       for (final element in userGroups) {
         final option = new SaveOptionModel(
             id: element.group?.id ?? '', name: element.group?.name ?? '');
         saveOptions.add(option);
       }
-      // });
-
     }
     selected = saveOptions[0];
     super.initState();
@@ -402,12 +425,8 @@ class _AddPrayerState extends State<AddPrayer> {
       onCancel();
       return true;
     } else {
-      AppCOntroller appCOntroller = Get.find();
-
-      appCOntroller.setCurrentPage(0, true);
-      // return (Navigator.of(context).pushNamedAndRemoveUntil(
-      //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
-      //     false;
+      AppController appController = Get.find();
+      appController.setCurrentPage(0, true, 1);
       return false;
     }
   }
@@ -553,20 +572,11 @@ class _AddPrayerState extends State<AddPrayer> {
                     child: GestureDetector(
                       onTap: () {
                         try {
-                          if (Provider.of<PrayerProvider>(context,
-                                  listen: false)
-                              .isEdit) {
-                            AppCOntroller appCOntroller = Get.find();
-                            appCOntroller.setCurrentPage(7, true);
-                            Navigator.pop(context);
-                            FocusManager.instance.primaryFocus?.unfocus();
-                          } else {
-                            AppCOntroller appCOntroller = Get.find();
-
-                            appCOntroller.setCurrentPage(0, true);
-                            Navigator.pop(context);
-                            FocusManager.instance.primaryFocus?.unfocus();
-                          }
+                          FocusScope.of(context).requestFocus(new FocusNode());
+                          AppController appController = Get.find();
+                          appController.setCurrentPage(
+                              appController.previousPage, true, 1);
+                          Navigator.pop(context);
                         } on HttpException catch (e, s) {
                           final user =
                               Provider.of<UserProvider>(context, listen: false)
@@ -655,6 +665,8 @@ class _AddPrayerState extends State<AddPrayer> {
 
   @override
   Widget build(BuildContext context) {
+    PrayerModel prayerToEdit =
+        Provider.of<PrayerProvider>(context).prayerToEdit;
     final userGroups = Provider.of<GroupProvider>(context).userGroups;
     bool isValid = (!Provider.of<PrayerProvider>(context).isEdit &&
             _descriptionController.text.trim().isNotEmpty) ||
@@ -690,32 +702,21 @@ class _AddPrayerState extends State<AddPrayer> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           InkWell(
-                            child: Text(
-                              'CANCEL',
-                              style: AppTextStyles.boldText18
-                                  .copyWith(color: AppColors.grey),
-                            ),
-                            onTap: isValid
-                                ? () => onCancel()
-                                : Provider.of<PrayerProvider>(context,
-                                            listen: false)
-                                        .isEdit
-                                    ? () {
-                                        FocusScope.of(context)
-                                            .requestFocus(new FocusNode());
-                                        AppCOntroller appCOntroller =
-                                            Get.find();
+                              child: Text(
+                                'CANCEL',
+                                style: AppTextStyles.boldText18
+                                    .copyWith(color: AppColors.grey),
+                              ),
+                              onTap: isValid
+                                  ? () => onCancel()
+                                  : () {
+                                      FocusScope.of(context)
+                                          .requestFocus(new FocusNode());
+                                      AppController appController = Get.find();
 
-                                        appCOntroller.setCurrentPage(7, true);
-                                      }
-                                    : () {
-                                        FocusScope.of(context)
-                                            .requestFocus(new FocusNode());
-                                        AppCOntroller appCOntroller =
-                                            Get.find();
-                                        appCOntroller.setCurrentPage(0, true);
-                                      },
-                          ),
+                                      appController.setCurrentPage(
+                                          appController.previousPage, true, 1);
+                                    }),
                           InkWell(
                             child: Text('SAVE',
                                 style: AppTextStyles.boldText18.copyWith(
@@ -821,10 +822,8 @@ class _AddPrayerState extends State<AddPrayer> {
                             ],
                           ),
                           if (((Provider.of<PrayerProvider>(context,
-                                                      listen: false)
-                                                  .prayerToEdit
-                                                  .prayer ??
-                                              PrayerModel.defaultValue())
+                                                  listen: false)
+                                              .prayerToEdit)
                                           .id ??
                                       '')
                                   .isNotEmpty &&

@@ -23,7 +23,7 @@ class GroupScreen extends StatefulWidget {
 }
 
 class _GroupScreenState extends State<GroupScreen> {
-  AppCOntroller appCOntroller = Get.find();
+  AppController appController = Get.find();
 
   Future<bool> _onWillPop() async {
     // return (Navigator.of(context).pushNamedAndRemoveUntil(
@@ -99,6 +99,7 @@ class _GroupScreenState extends State<GroupScreen> {
               image: DecorationImage(
                 image: AssetImage(StringUtils.backgroundImage),
                 alignment: Alignment.bottomCenter,
+                fit: BoxFit.cover,
               ),
             ),
             child: SizedBox(
@@ -115,7 +116,7 @@ class _GroupScreenState extends State<GroupScreen> {
                           try {
                             Provider.of<MiscProvider>(context, listen: false)
                                 .setPageTitle('FIND A GROUP');
-                            appCOntroller.setCurrentPage(11, true);
+                            appController.setCurrentPage(11, true, 3);
                           } catch (e, s) {
                             final user = Provider.of<UserProvider>(context,
                                     listen: false)
@@ -142,7 +143,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                 .setPageTitle('CREATE A GROUP');
                             Provider.of<GroupProvider>(context, listen: false)
                                 .setEditMode(false);
-                            appCOntroller.setCurrentPage(12, true);
+                            appController.setCurrentPage(12, true, 3);
                           } catch (e, s) {
                             final user = Provider.of<UserProvider>(context,
                                     listen: false)
@@ -191,15 +192,9 @@ class _GroupScreenState extends State<GroupScreen> {
                                       LongButton(
                                         onPress: () async {
                                           try {
-                                            // await Provider.of<
-                                            //             GroupPrayerProvider>(
-                                            //         context,
-                                            //         listen: false)
-                                            //     .setFollowedPrayerByUserId(
-                                            //         _currentUser.id ?? '');
                                             _getPrayers(e);
-                                            appCOntroller.setCurrentPage(
-                                                8, true);
+                                            appController.setCurrentPage(
+                                                8, true, 3);
                                           } on HttpException catch (e, s) {
                                             final user =
                                                 Provider.of<UserProvider>(
@@ -238,7 +233,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                                     fontSize: 12),
                                                 textAlign: TextAlign.center,
                                               )
-                                            : SizedBox.shrink(),
+                                            : null,
                                         onPressMore: () => showModalBottomSheet(
                                           context: context,
                                           barrierColor:

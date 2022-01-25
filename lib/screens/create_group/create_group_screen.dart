@@ -29,7 +29,7 @@ class CreateGroupScreen extends StatefulWidget {
 class _CreateGroupScreenState extends State<CreateGroupScreen> {
   GroupType _option = GroupType.normal;
   int _step = 1;
-  AppCOntroller appCOntroller = Get.find();
+  AppController appController = Get.find();
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _groupNameController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
@@ -179,7 +179,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        appCOntroller.setCurrentPage(3, true);
+                        appController.setCurrentPage(3, true, 12);
                         Navigator.pop(context);
                         FocusManager.instance.primaryFocus?.unfocus();
                       },
@@ -255,8 +255,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   }
 
   Future<bool> _onWillPop() async {
-    AppCOntroller appCOntroller = Get.find();
-    appCOntroller.setCurrentPage(3, true);
+    AppController appController = Get.find();
+    appController.setCurrentPage(3, true, 12);
     return false;
   }
 
@@ -315,7 +315,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                       FocusScope.of(context)
                                           .requestFocus(new FocusNode());
                                       // Navigator.pop(context);
-                                      appCOntroller.setCurrentPage(3, true);
+                                      appController.setCurrentPage(3, true, 12);
                                     },
                             ),
                           ),

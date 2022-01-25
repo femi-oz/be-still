@@ -1,8 +1,14 @@
 import 'dart:io';
 
+import 'package:be_still/controllers/app_controller.dart';
+import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
+import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
@@ -15,6 +21,7 @@ import 'package:be_still/widgets/input_field.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'package:provider/provider.dart';
@@ -51,30 +58,35 @@ class _AddUpdateState extends State<AddUpdate> {
     super.initState();
   }
 
+  bool isInit = true;
+
   @override
   void didChangeDependencies() {
-    WidgetsBinding.instance?.addPostFrameCallback((_) async {
-      try {
-        var userId =
-            Provider.of<UserProvider>(context, listen: false).currentUser.id;
-        await Provider.of<MiscProvider>(context, listen: false)
-            .setSearchMode(false);
-        await Provider.of<MiscProvider>(context, listen: false)
-            .setSearchQuery('');
-        Provider.of<PrayerProvider>(context, listen: false)
-            .searchPrayers('', userId ?? '');
-      } on HttpException catch (e, s) {
-        final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
-        BeStilDialog.showErrorDialog(
-            context, StringUtils.getErrorMessage(e), user, s);
-      } catch (e, s) {
-        final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
-        BeStilDialog.showErrorDialog(
-            context, StringUtils.errorOccured, user, s);
-      }
-    });
+    if (isInit) {
+      WidgetsBinding.instance?.addPostFrameCallback((_) async {
+        try {
+          var userId =
+              Provider.of<UserProvider>(context, listen: false).currentUser.id;
+          await Provider.of<MiscProvider>(context, listen: false)
+              .setSearchMode(false);
+          await Provider.of<MiscProvider>(context, listen: false)
+              .setSearchQuery('');
+          Provider.of<PrayerProvider>(context, listen: false)
+              .searchPrayers('', userId ?? '');
+        } on HttpException catch (e, s) {
+          final user =
+              Provider.of<UserProvider>(context, listen: false).currentUser;
+          BeStilDialog.showErrorDialog(
+              context, StringUtils.getErrorMessage(e), user, s);
+        } catch (e, s) {
+          final user =
+              Provider.of<UserProvider>(context, listen: false).currentUser;
+          BeStilDialog.showErrorDialog(
+              context, StringUtils.errorOccured, user, s);
+        }
+      });
+      isInit = false;
+    }
     super.didChangeDependencies();
   }
 
@@ -173,9 +185,33 @@ class _AddUpdateState extends State<AddUpdate> {
             }
           }
         }
+        AppController appController = Get.find();
+
+        if (appController.previousPage == 9 ||
+            appController.previousPage == 8) {
+          final groupPrayerId =
+              Provider.of<GroupPrayerProvider>(context, listen: false)
+                  .currentPrayerId;
+          final groupId = (Provider.of<GroupProvider>(context, listen: false)
+                          .currentGroup
+                          .group ??
+                      GroupModel.defaultValue())
+                  .id ??
+              '';
+          await Provider.of<NotificationProvider>(context, listen: false)
+              .sendPrayerNotification(
+            prayerId,
+            groupPrayerId,
+            NotificationType.prayer_updates,
+            groupId,
+            context,
+            _descriptionController.text,
+          );
+        }
+
         BeStilDialog.hideLoading(context);
-        Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false);
+        FocusScope.of(context).requestFocus(new FocusNode());
+        appController.setCurrentPage(appController.previousPage, true, 13);
       }
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -246,9 +282,11 @@ class _AddUpdateState extends State<AddUpdate> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            EntryScreen.routeName,
-                            (Route<dynamic> route) => false);
+                        FocusScope.of(context).requestFocus(new FocusNode());
+                        AppController appController = Get.find();
+                        appController.setCurrentPage(
+                            appController.previousPage, true, 13);
+                        Navigator.pop(context);
                       },
                       child: Container(
                         height: 30,
@@ -317,12 +355,77 @@ class _AddUpdateState extends State<AddUpdate> {
     showDialog(context: context, builder: (BuildContext context) => dialog);
   }
 
+  Widget contactDropdown(
+      context, double positionOffset, double positionOffset2) {
+    return Positioned(
+      top: ((numberOfLines * positionOffset) * positionOffset2) +
+          (_descriptionController.selection.baseOffset / 1.8),
+      left: 10,
+      height: MediaQuery.of(context).size.height * 0.4,
+      child: Container(
+        padding: EdgeInsets.all(20),
+        color: AppColors.backgroundColor[0],
+        width: MediaQuery.of(context).size.width * 0.85,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ...localContacts.map((s) {
+                displayName = s.displayName ?? '';
+                var name = '';
+
+                var displayNameList =
+                    displayName.toLowerCase().split(new RegExp(r"\s"));
+                displayNameList.forEach((e) {
+                  if (e
+                      .toLowerCase()
+                      .contains(tagText.toLowerCase().substring(1))) {
+                    name = e;
+                  }
+                });
+                if (name.isNotEmpty) {
+                  return GestureDetector(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        padding: EdgeInsets.symmetric(vertical: 10.0),
+                        child: Text(
+                          displayName,
+                          style: AppTextStyles.regularText14.copyWith(
+                            color: AppColors.lightBlue4,
+                          ),
+                        ),
+                      ),
+                      onTap: () => _onTagSelected(s, _descriptionController));
+                } else {
+                  return SizedBox();
+                }
+              }).toList(),
+              tagList.length == 0
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      child: Text(
+                        'No matching contacts found.',
+                        style: AppTextStyles.regularText14.copyWith(
+                          color: AppColors.lightBlue4,
+                        ),
+                      ),
+                    )
+                  : Container(),
+              SizedBox(
+                height: 50,
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget build(BuildContext context) {
     final currentUser = Provider.of<UserProvider>(context).currentUser;
-    final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
-    final updates = prayerData.updates
-        .where((element) => element.deleteStatus != -1)
-        .toList();
+    final prayer = Provider.of<PrayerProvider>(context).prayerToEdit;
+    final updates = Provider.of<PrayerProvider>(context).prayerToEditUpdate;
+
     var positionOffset = 3.0;
     var positionOffset2 = 0.0;
 
@@ -336,71 +439,6 @@ class _AddUpdateState extends State<AddUpdate> {
       positionOffset2 = 7;
     } else {
       positionOffset2 = 9;
-    }
-
-    Widget contactDropdown(context) {
-      return Positioned(
-        top: ((numberOfLines * positionOffset) * positionOffset2) +
-            (_descriptionController.selection.baseOffset / 1.8),
-        left: 10,
-        height: MediaQuery.of(context).size.height * 0.4,
-        child: Container(
-          padding: EdgeInsets.all(20),
-          color: AppColors.backgroundColor[0],
-          width: MediaQuery.of(context).size.width * 0.85,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ...localContacts.map((s) {
-                  displayName = s.displayName ?? '';
-                  var name = '';
-
-                  var displayNameList =
-                      displayName.toLowerCase().split(new RegExp(r"\s"));
-                  displayNameList.forEach((e) {
-                    if (e
-                        .toLowerCase()
-                        .contains(tagText.toLowerCase().substring(1))) {
-                      name = e;
-                    }
-                  });
-                  if (name.isNotEmpty) {
-                    return GestureDetector(
-                        child: Container(
-                          width: MediaQuery.of(context).size.width * 0.5,
-                          padding: EdgeInsets.symmetric(vertical: 10.0),
-                          child: Text(
-                            displayName,
-                            style: AppTextStyles.regularText14.copyWith(
-                              color: AppColors.lightBlue4,
-                            ),
-                          ),
-                        ),
-                        onTap: () => _onTagSelected(s, _descriptionController));
-                  } else {
-                    return SizedBox();
-                  }
-                }).toList(),
-                tagList.length == 0
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10.0),
-                        child: Text(
-                          'No matching contacts found.',
-                          style: AppTextStyles.regularText14.copyWith(
-                            color: AppColors.lightBlue4,
-                          ),
-                        ),
-                      )
-                    : Container(),
-                SizedBox(
-                  height: 50,
-                )
-              ],
-            ),
-          ),
-        ),
-      );
     }
 
     return WillPopScope(
@@ -432,11 +470,15 @@ class _AddUpdateState extends State<AddUpdate> {
                           style: AppTextStyles.boldText18
                               .copyWith(color: AppColors.grey),
                         ),
-                        onTap: () => _descriptionController.text.isNotEmpty
-                            ? onCancel()
-                            : Navigator.of(context).pushNamedAndRemoveUntil(
-                                EntryScreen.routeName,
-                                (Route<dynamic> route) => false)),
+                        onTap: _descriptionController.text.isNotEmpty
+                            ? () => onCancel()
+                            : () {
+                                FocusScope.of(context)
+                                    .requestFocus(new FocusNode());
+                                AppController appController = Get.find();
+                                appController.setCurrentPage(
+                                    appController.previousPage, true, 13);
+                              }),
                     InkWell(
                       child: Text('SAVE',
                           style: AppTextStyles.boldText18.copyWith(
@@ -444,7 +486,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                   ? AppColors.lightBlue5.withOpacity(0.5)
                                   : Colors.blue)),
                       onTap: () => _descriptionController.text.isNotEmpty
-                          ? _save(prayerData.prayer?.id ?? '')
+                          ? _save(prayer.id ?? '')
                           : null,
                     ),
                   ],
@@ -478,7 +520,8 @@ class _AddUpdateState extends State<AddUpdate> {
                           ),
                           tagText.length > 1 &&
                                   Settings.enabledContactPermission
-                              ? contactDropdown(context)
+                              ? contactDropdown(
+                                  context, positionOffset, positionOffset2)
                               : SizedBox(),
                         ],
                       ),
@@ -496,11 +539,11 @@ class _AddUpdateState extends State<AddUpdate> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            prayerData.prayer?.userId != currentUser.id
+                            prayer.userId != currentUser.id
                                 ? Container(
                                     margin: EdgeInsets.only(bottom: 20),
                                     child: Text(
-                                      prayerData.prayer?.createdBy ?? '',
+                                      prayer.creatorName ?? '',
                                       style: AppTextStyles.regularText16b
                                           .copyWith(
                                               color: AppColors.lightBlue4),
@@ -583,8 +626,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                             ),
                                             Text(
                                               intl.DateFormat(' MM.dd.yyyy')
-                                                  .format(prayerData
-                                                          .prayer?.modifiedOn ??
+                                                  .format(prayer.modifiedOn ??
                                                       DateTime.now()),
                                               style: AppTextStyles
                                                   .regularText18b
@@ -612,7 +654,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                           vertical: 20.0, horizontal: 20),
                                       child: Center(
                                         child: Text(
-                                          prayerData.prayer?.description ?? '',
+                                          prayer.description ?? '',
                                           style: AppTextStyles.regularText16b
                                               .copyWith(
                                                   color: AppColors

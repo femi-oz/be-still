@@ -5,6 +5,7 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
+import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -27,17 +28,18 @@ class ReminderPicker extends StatefulWidget {
   final String type;
   final String entityId;
   final bool popTwice;
+  final CombinePrayerStream? prayerData;
 
   @override
-  ReminderPicker({
-    required this.hideActionuttons,
-    required this.onCancel,
-    this.reminder,
-    required this.type,
-    required this.entityId,
-    required this.isGroup,
-    this.popTwice = true,
-  });
+  ReminderPicker(
+      {required this.hideActionuttons,
+      required this.onCancel,
+      this.reminder,
+      required this.type,
+      required this.entityId,
+      required this.isGroup,
+      this.popTwice = true,
+      this.prayerData});
   _ReminderPickerState createState() => _ReminderPickerState();
 }
 
@@ -128,8 +130,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(appCOntroller.currentPage, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(appController.currentPage, true, 0);
     } else
       widget.onCancel();
     setState(() => null);
@@ -184,8 +186,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
         Navigator.pop(context);
       }
 
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(appCOntroller.currentPage, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(appController.currentPage, true, 0);
     } else {
       Navigator.pop(context);
       widget.onCancel();
@@ -195,6 +197,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
   setNotification() async {
     // AM 22= 22-12
     // pm 12 = 12+12
+    // selectedMinute = 54;
     var hour = selectedPeriod == PeriodOfDay.am && selectedHour >= 12
         ? selectedHour - 12
         : selectedPeriod == PeriodOfDay.pm && selectedHour < 12
@@ -246,10 +249,10 @@ class _ReminderPickerState extends State<ReminderPicker> {
               ? '$selectedFrequency,  $selectedMonth $selectedDayOfMonth$suffix, $selectedYear $_selectedHourString:$_selectedMinuteString $selectedPeriod'
               : '$selectedFrequency, $_selectedHourString:$_selectedMinuteString $selectedPeriod';
 
-      final prayerData =
-          Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+      // final prayerData =
+      //     Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
       final title = '$selectedFrequency reminder to pray';
-      final description = prayerData.prayer?.description ?? '';
+      final description = widget.prayerData?.prayer?.description ?? '';
 
       final scheduleDate = LocalNotification.scheduleDate(
         hour,
@@ -328,8 +331,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
         if (widget.popTwice) Navigator.pop(context);
         Navigator.pop(context);
 
-        AppCOntroller appCOntroller = Get.find();
-        appCOntroller.setCurrentPage(appCOntroller.currentPage, true);
+        AppController appController = Get.find();
+        appController.setCurrentPage(appController.currentPage, true, 0);
       } else
         widget.onCancel();
     } on HttpException catch (e, s) {

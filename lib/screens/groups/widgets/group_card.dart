@@ -52,8 +52,8 @@ class _GroupCardState extends State<GroupCard> {
               [admin.pushToken ?? '']);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(3, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(3, true, 11);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -68,18 +68,35 @@ class _GroupCardState extends State<GroupCard> {
     }
   }
 
-  Future<void> _joinGroup(String groupId) async {
+  Future<void> _joinGroup(CombineGroupUserStream groupData, String userId,
+      String userName, UserModel admin) async {
     BeStilDialog.showLoading(context);
     try {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
+      const title = 'Someone joined your group';
+
       await Provider.of<GroupProvider>(context, listen: false).autoJoinGroup(
-          groupId,
+          groupData.group?.id ?? '',
           user.id ?? '',
-          (user.firstName ?? '') + ' ' + (user.lastName ?? ''));
+          ((user.firstName ?? '').capitalizeFirst ?? '') +
+              ' ' +
+              ((user.lastName ?? '').capitalizeFirst ?? ''));
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .sendPushNotification(
+              '$userName has joined your group',
+              NotificationType.join_group,
+              userName,
+              userId,
+              admin.id ?? '',
+              title,
+              '',
+              groupData.group?.id ?? '',
+              [admin.pushToken ?? '']);
+
       Navigator.of(context).pop();
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(3, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(3, true, 11);
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -146,7 +163,7 @@ class _GroupCardState extends State<GroupCard> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   IconButton(
                     onPressed: () =>
@@ -354,7 +371,15 @@ class _GroupCardState extends State<GroupCard> {
                                           .requireAdminApproval ??
                                       false)) {
                                     _joinGroup(
-                                        widget.groupData.group?.id ?? '');
+                                      this.widget.groupData,
+                                      Provider.of<UserProvider>(context,
+                                                  listen: false)
+                                              .currentUser
+                                              .id ??
+                                          '',
+                                      '${(Provider.of<UserProvider>(context, listen: false).currentUser.firstName?.capitalizeFirst ?? '') + ' ' + (Provider.of<UserProvider>(context, listen: false).currentUser.lastName?.capitalizeFirst ?? '')}',
+                                      adminData,
+                                    );
                                   } else {
                                     _requestToJoinGroup(
                                       this.widget.groupData,

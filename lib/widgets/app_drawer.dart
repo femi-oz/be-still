@@ -247,8 +247,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           color: AppColors.topNavTextColor,
                         ),
                         onTap: () {
-                          // AppCOntroller appCOntroller = Get.find();
-                          // appCOntroller.setCurrentPage(0, false);
+                          // appController appController = Get.find();
+                          // appController.setCurrentPage(0, false);
                           Navigator.pop(context);
                         },
                       )
@@ -275,9 +275,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: InkWell(
                             onTap: () async {
-                              AppCOntroller appCOntroller = Get.find();
+                              AppController appController = Get.find();
 
-                              appCOntroller.setCurrentPage(6, false);
+                              appController.setCurrentPage(6, false, 0);
                               await Future.delayed(Duration(milliseconds: 300));
                               Navigator.pop(context);
                             },
@@ -290,9 +290,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: InkWell(
                               onTap: () async {
-                                AppCOntroller appCOntroller = Get.find();
+                                AppController appController = Get.find();
 
-                                appCOntroller.setCurrentPage(5, false);
+                                appController.setCurrentPage(5, false, 0);
                                 await Future.delayed(
                                     Duration(milliseconds: 300));
                                 Navigator.pop(context);
@@ -305,10 +305,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: InkWell(
                             onTap: () async {
-                              AppCOntroller appCOntroller = Get.find();
+                              AppController appController = Get.find();
 
-                              appCOntroller.setCurrentPage(4, false);
-                              appCOntroller.settingsTab = 0;
+                              appController.setCurrentPage(4, false, 0);
+                              appController.settingsTab = 0;
                               await Future.delayed(Duration(milliseconds: 300));
                               Navigator.pop(context);
                             },
@@ -330,9 +330,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: InkWell(
                             onTap: () {
-                              AppCOntroller appCOntroller = Get.find();
+                              AppController appController = Get.find();
 
-                              appCOntroller.setCurrentPage(0, true);
+                              appController.setCurrentPage(0, true, 0);
                               Navigator.pop(context);
                               TutorialTarget.showTutorial(
                                 context,

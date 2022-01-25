@@ -25,7 +25,6 @@ class PrayerProvider with ChangeNotifier {
   List<CombinePrayerStream> _filteredPrayerTimeList = [];
   Iterable<Contact> _localContacts = [];
 
-  CombinePrayerStream _currentPrayer = CombinePrayerStream.defaultValue();
   String _filterOption = Status.active;
 
   List<CombinePrayerStream> get prayers => _prayers;
@@ -36,7 +35,6 @@ class PrayerProvider with ChangeNotifier {
 
   Iterable<Contact> get localContacts => _localContacts;
   PrayerType get currentPrayerType => _currentPrayerType;
-  CombinePrayerStream get currentPrayer => _currentPrayer;
   String get filterOption => _filterOption;
 
   bool _isEdit = false;
@@ -44,17 +42,22 @@ class PrayerProvider with ChangeNotifier {
   bool _showDropDown = false;
   bool get showDropDown => _showDropDown;
 
-  CombinePrayerStream _prayerToEdit = CombinePrayerStream.defaultValue();
-  CombinePrayerStream get prayerToEdit => _prayerToEdit;
+  PrayerModel _prayerToEdit = PrayerModel.defaultValue();
+  PrayerModel get prayerToEdit => _prayerToEdit;
+
+  List<PrayerUpdateModel> _prayerToEditUpdate = [];
+  List<PrayerUpdateModel> get prayerToEditUpdate => _prayerToEditUpdate;
+
+  List<PrayerTagModel> _prayerToEditTags = [];
+  List<PrayerTagModel> get prayerToEditTags => _prayerToEditTags;
 
   Future<void> setPrayers(String userId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       _prayerService.getPrayers(userId).asBroadcastStream().listen(
         (data) {
-          _prayers = data
-              .where((e) => (e.userPrayer?.deleteStatus ?? 0) > -1)
-              .toList();
+          _prayers = data;
+
           filterPrayers();
           notifyListeners();
         },
@@ -96,9 +99,7 @@ class PrayerProvider with ChangeNotifier {
     try {
       _prayerService.getPrayers(userId).asBroadcastStream().listen(
         (data) {
-          _prayers = data
-              .where((e) => (e.userPrayer?.deleteStatus ?? 0) > -1)
-              .toList();
+          _prayers = [...data];
           _prayers.sort((a, b) => (b.prayer?.modifiedOn ?? DateTime.now())
               .compareTo(a.prayer?.modifiedOn ?? DateTime.now()));
 
@@ -170,12 +171,14 @@ class PrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> setPrayer(String id) async {
+  String _currentPrayerId = '';
+  String get currentPrayerId => _currentPrayerId;
+
+  void setCurrentPrayerId(String prayerId) => _currentPrayerId = prayerId;
+
+  Stream<CombinePrayerStream> getPrayer() {
     try {
-      _prayerService.getPrayer(id).then((prayer) {
-        _currentPrayer = prayer;
-        notifyListeners();
-      });
+      return _prayerService.getPrayer(_currentPrayerId);
     } catch (e) {
       rethrow;
     }
@@ -503,9 +506,14 @@ class PrayerProvider with ChangeNotifier {
     }
   }
 
-  void setEditPrayer({CombinePrayerStream? data}) {
+  void setEditPrayer(
+      {required PrayerModel prayer,
+      required List<PrayerUpdateModel> updates,
+      required List<PrayerTagModel> tags}) {
     try {
-      _prayerToEdit = data ?? CombinePrayerStream.defaultValue();
+      _prayerToEdit = prayer;
+      _prayerToEditUpdate = updates;
+      _prayerToEditTags = tags;
       notifyListeners();
     } catch (e) {
       rethrow;

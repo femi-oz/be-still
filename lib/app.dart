@@ -7,7 +7,6 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/screens/splash/splash_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -61,7 +60,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       Provider.of<NotificationProvider>(context, listen: false)
           .initLocal(context);
       _initializeFlutterFireFuture = _initializeFlutterFire();
+
       _getPermissions();
+
       var initializationSettingsAndroid =
           AndroidInitializationSettings('@mipmap/ic_launcher');
       var initializationSettingsIOs = IOSInitializationSettings();
@@ -71,11 +72,19 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
       _flutterLocalNotificationsPlugin.initialize(initSetttings,
           onSelectNotification: _onSelectNotification);
+
       FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
         showNotification(message);
       });
       FirebaseMessaging.onMessageOpenedApp.listen((message) {
-        print('Message clicked!');
+        AppController appController = Get.find();
+        appController.setCurrentPage(14, false, 0);
+      });
+      FirebaseMessaging.instance.getInitialMessage().then((value) {
+        if (value != null) {
+          AppController appController = Get.find();
+          appController.setCurrentPage(14, false, 0);
+        }
       });
     } catch (e, s) {
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, null, s);
@@ -103,7 +112,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       message.notification?.title ?? '',
       message.notification?.body ?? '',
       platformChannelSpecifics,
-      payload: 'New Payload',
+      payload: "{\"type\": \"fcm message\"}",
     );
   }
 
@@ -111,8 +120,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     // Navigator.of(context).push(MaterialPageRoute(builder: (_) {
     //   return EntryScreen();
     // }));
-    AppCOntroller appCOntroller = Get.find();
-    appCOntroller.setCurrentPage(14, false);
+    AppController appController = Get.find();
+    appController.setCurrentPage(14, false, 0);
   }
 
   void _getPermissions() async {
@@ -219,18 +228,18 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   gotoPage(NotificationMessage message) async {
     try {
       if (message.type == NotificationType.prayer_time) {
-        AppCOntroller appCOntroller = Get.find();
-        appCOntroller.setCurrentPage(2, false);
+        AppController appController = Get.find();
+        appController.setCurrentPage(2, false, 0);
       }
       if (message.type == NotificationType.reminder) {
         if (message.isGroup ?? false) {
-          AppCOntroller appCOntroller = Get.find();
-          appCOntroller.setCurrentPage(9, false);
+          AppController appController = Get.find();
+          appController.setCurrentPage(9, false, 0);
         } else {
-          await Provider.of<PrayerProvider>(context, listen: false)
-              .setPrayer(message.entityId ?? '');
-          AppCOntroller appCOntroller = Get.find();
-          appCOntroller.setCurrentPage(7, false);
+          Provider.of<PrayerProvider>(context, listen: false)
+              .setCurrentPrayerId(message.entityId ?? '');
+          AppController appController = Get.find();
+          appController.setCurrentPage(7, false, 0);
         }
       }
     } catch (e, s) {

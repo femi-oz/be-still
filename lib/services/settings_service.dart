@@ -31,6 +31,10 @@ class SettingsService {
       FirebaseFirestore.instance.collection("GroupPreferenceSettings");
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
+  final CollectionReference<Map<String, dynamic>>
+      _groupSettingsCollectionReference =
+      FirebaseFirestore.instance.collection("GroupSettings");
+
   populateSettings(String deviceId, String userId, String email, String id) {
     SettingsModel settings = SettingsModel(
         id: id,
@@ -200,27 +204,67 @@ class SettingsService {
     }
   }
 
-  // Future<GroupSettings> getGroupSettings(String userId) async {
-  //   try {
-  //     if (_firebaseAuth.currentUser == null) return Future.error(StringUtils.unathorized);
-  //     var settings = await _groupSettingsCollectionReference
-  //         .where('UserId', isEqualTo: userId)
-  //         .get();
-  //     if (settings.docs.length < 1) {
-  //       await addGroupSettings(userId);
-  //       settings = await _groupSettingsCollectionReference
-  //           .where('UserId', isEqualTo: userId)
-  //           .get();
-  //     }
-  //     return settings.docs.map((e) => GroupSettings.fromData(e)).toList()[0];
-  //   } catch (e) {
-  //     locator<LogService>().createLog(
-  //         StringUtils.getErrorMessage(e),
-  //         userId,
-  //         'SETTINGS/service/getGroupSettings');
-  //     throw HttpException( StringUtils.getErrorMessage(e));
-  //   }
-  // }
+  Future<GroupSettings> getGroupSettings(String userId, String groupId) async {
+    try {
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
+      final settings = await _groupSettingsCollectionReference
+          .where('UserId', isEqualTo: userId)
+          .where('GroupId', isEqualTo: groupId)
+          .get();
+      if (settings.docs.length < 1) {
+        await addGroupSettings(userId, groupId, false);
+        return GroupSettings.defaultValue();
+      } else {
+        return settings.docs
+            .map((e) => GroupSettings.fromData(e.data(), e.id))
+            .toList()[0];
+      }
+    } catch (e) {
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), userId,
+          'SETTINGS/service/getGroupSettings');
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
+  populateGroupSettings(
+      String userId, String groupId, bool requireAdminApproval, String id) {
+    GroupSettings groupsSettings = GroupSettings(
+        id: id,
+        requireAdminApproval: requireAdminApproval,
+        groupId: groupId,
+        userId: userId,
+        enableNotificationFormNewPrayers: false,
+        enableNotificationForUpdates: false,
+        notifyOfMembershipRequest: false,
+        notifyMeofFlaggedPrayers: false,
+        notifyWhenNewMemberJoins: false,
+        createdBy: userId,
+        createdOn: DateTime.now(),
+        modifiedBy: userId,
+        modifiedOn: DateTime.now());
+    return groupsSettings;
+  }
+
+  Future<bool> addGroupSettings(
+      String userId, String groupId, bool requireAdminApproval) async {
+    final groupSettingsId = Uuid().v1();
+
+    try {
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
+
+      _groupSettingsCollectionReference.doc(groupSettingsId).set(
+          populateGroupSettings(
+                  userId, groupId, requireAdminApproval, groupSettingsId)
+              .toJson());
+      return true;
+    } catch (e) {
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), userId,
+          'SETTINGS/service/addGroupSettings');
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
 
   Future<GroupPreferenceSettings> getGroupPreferenceSettings(
       String userId) async {

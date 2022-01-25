@@ -126,4 +126,12 @@ class SettingsProvider with ChangeNotifier {
       rethrow;
     }
   }
+
+  Future<GroupSettings> getGroupSettings(String userId, String groupId) async {
+    try {
+      return _settingsService.getGroupSettings(userId, groupId);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

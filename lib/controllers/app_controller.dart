@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class AppCOntroller extends GetxController
+class AppController extends GetxController
     with GetSingleTickerProviderStateMixin {
   late TabController tabController;
   Rx<int> _currentPage = 0.obs;
   int get currentPage => _currentPage.value;
+  Rx<int> _previousPage = 0.obs;
+  int get previousPage => _previousPage.value;
   Rx<int> _settingsTab = 0.obs;
   int get settingsTab => _settingsTab.value;
   set settingsTab(int i) => _settingsTab.value = i;
@@ -16,12 +18,13 @@ class AppCOntroller extends GetxController
     super.onInit();
   }
 
-  setCurrentPage(int index, bool animate) {
+  setCurrentPage(int index, bool animate, int previousIndex) {
     if (animate)
       tabController.animateTo(index);
     else
       tabController.index = index;
 
     _currentPage.value = index;
+    _previousPage.value = previousIndex;
   }
 }

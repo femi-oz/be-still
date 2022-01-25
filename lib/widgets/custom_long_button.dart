@@ -56,31 +56,25 @@ class LongButton extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
-                child: Container(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      hasIcon
-                          ? Icon(icon, color: textColor, size: 18)
-                          : Container(),
-                      SizedBox(width: 10),
-                      Container(
-                        width: suffix != null
-                            ? MediaQuery.of(context).size.width * 0.3
-                            : MediaQuery.of(context).size.width * 0.5,
-                        child: Text(
-                          text,
-                          overflow: TextOverflow.ellipsis,
-                          softWrap: false,
-                          style: AppTextStyles.boldText18.copyWith(
-                            color:
-                                textColor.withOpacity(isDisabled ? 0.5 : 1.0),
-                            height: 1,
-                          ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    hasIcon
+                        ? Icon(icon, color: textColor, size: 18)
+                        : Container(),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        text,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: false,
+                        style: AppTextStyles.boldText18.copyWith(
+                          color: textColor.withOpacity(isDisabled ? 0.3 : 1.0),
+                          height: 1,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
               suffix != null
@@ -95,12 +89,19 @@ class LongButton extends StatelessWidget {
                   : hasMore
                       ? Row(
                           children: [
-                            child ?? SizedBox.shrink(),
+                            child ??
+                                SizedBox(
+                                  width: 15,
+                                ),
                             InkWell(
-                                onTap: () {
-                                  if (onPressMore != null) onPressMore!();
-                                },
-                                child: Icon(Icons.more_vert, color: textColor)),
+                              onTap: () {
+                                if (onPressMore != null) onPressMore!();
+                              },
+                              child: Container(
+                                width: 40,
+                                child: Icon(Icons.more_vert, color: textColor),
+                              ),
+                            ),
                           ],
                         )
                       : Container(),

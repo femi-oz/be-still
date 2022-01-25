@@ -35,26 +35,10 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       GroupUserModel user, CombineGroupUserStream group) async {
     try {
       final message = 'You have removed the user from your group';
-      final _currentUser =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      final userName = ('${_currentUser.firstName}  ${_currentUser.lastName}')
-          .capitalizeFirst;
+
       BeStilDialog.showLoading(context);
       await Provider.of<GroupProvider>(context, listen: false)
           .deleteFromGroup(user.userId ?? "", user.groupId ?? "");
-      await Provider.of<UserProvider>(context, listen: false)
-          .getUserById(user.userId ?? "");
-      final receiverData =
-          Provider.of<UserProvider>(context, listen: false).selectedUser;
-      sendPushNotification(
-          '$userName has removed you from ${group.group?.name}',
-          NotificationType.remove_from_group,
-          userName ?? '',
-          _currentUser.id ?? '',
-          user.userId ?? "",
-          'Remove from group',
-          group.group?.id ?? "",
-          [receiverData.pushToken ?? '']);
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
@@ -105,7 +89,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       });
 
       sendPushNotification(
-          '${_currentUser.firstName} has left your group ${data.group?.name}',
+          '${(_currentUser.firstName ?? '').capitalizeFirst} ${(_currentUser.lastName ?? '').capitalizeFirst} has left your group ${data.group?.name}',
           NotificationType.leave_group,
           _currentUser.firstName ?? '',
           _currentUser.id ?? '',
@@ -136,13 +120,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
           Provider.of<NotificationProvider>(context, listen: false)
               .notifications;
 
-      final requests = notifications
-          .where((e) =>
-              e.messageType == NotificationType.request &&
-              e.groupId == data.group?.id)
-          .toList();
-      // await Provider.of<GroupPrayerProvider>(context, listen: false)
-      //     .setFollowedPrayerByGroupId(data.group?.id ?? '');
+      final requests =
+          notifications.where((e) => e.groupId == data.group?.id).toList();
 
       await Provider.of<GroupProvider>(context, listen: false)
           .deleteGroup(data.group?.id ?? '', requests);
@@ -585,7 +564,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   onPressed: () {
                                     const message =
                                         'Are you sure you want to remove this user from your group?';
-                                    const method = 'Remove';
+                                    const method = 'REMOVE';
                                     const title = 'Remove From Group';
                                     _openRemoveConfirmation(context, title,
                                         method, message, user, group);
@@ -1289,7 +1268,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                               ),
                             SizedBox(height: 15),
                             CustomToggle(
-                              disabled: true,
+                              disabled: false,
                               title:
                                   'Enable notifications for New Prayers for this group?',
                               onChange: (value) => _groupProvider
@@ -1303,7 +1282,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   false,
                             ),
                             CustomToggle(
-                              disabled: true,
+                              disabled: false,
                               title:
                                   'Enable notifications for Prayer Updates for this group?',
                               onChange: (value) => _groupProvider
@@ -1313,55 +1292,55 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       settingsId: data.groupSettings?.id ?? ''),
                               value: (data.groupSettings ??
                                           GroupSettings.defaultValue())
-                                      .enableNotificationFormNewPrayers ??
+                                      .enableNotificationForUpdates ??
                                   false,
                             ),
-                            if (isMember)
-                              CustomToggle(
-                                disabled: true,
-                                title:
-                                    'Notify me when new members joins this group',
-                                onChange: (value) => _groupProvider
-                                    .updateGroupSettings(_currentUser.id ?? '',
-                                        key: 'NotifyWhenNewMemberJoins',
-                                        value: value,
-                                        settingsId:
-                                            data.groupSettings?.id ?? ''),
-                                value: (data.groupSettings ??
-                                            GroupSettings.defaultValue())
-                                        .notifyWhenNewMemberJoins ??
-                                    false,
-                              ),
-                            if (isAdmin || isModerator)
-                              CustomToggle(
-                                disabled: true,
-                                title: 'Notify me of membership requests',
-                                onChange: (value) => _groupProvider
-                                    .updateGroupSettings(_currentUser.id ?? '',
-                                        key: 'NotifyOfMembershipRequest',
-                                        value: value,
-                                        settingsId:
-                                            data.groupSettings?.id ?? ''),
-                                value: (data.groupSettings ??
-                                            GroupSettings.defaultValue())
-                                        .notifyOfMembershipRequest ??
-                                    false,
-                              ),
-                            if (isAdmin || isModerator)
-                              CustomToggle(
-                                disabled: true,
-                                title: 'Notify me of flagged prayers',
-                                onChange: (value) => _groupProvider
-                                    .updateGroupSettings(_currentUser.id ?? '',
-                                        key: 'NotifyMeofFlaggedPrayers',
-                                        value: value,
-                                        settingsId:
-                                            data.groupSettings?.id ?? ''),
-                                value: (data.groupSettings ??
-                                            GroupSettings.defaultValue())
-                                        .notifyMeofFlaggedPrayers ??
-                                    false,
-                              ),
+                            // if (isMember)
+                            //   CustomToggle(
+                            //     disabled: true,
+                            //     title:
+                            //         'Notify me when new members joins this group',
+                            //     onChange: (value) => _groupProvider
+                            //         .updateGroupSettings(_currentUser.id ?? '',
+                            //             key: 'NotifyWhenNewMemberJoins',
+                            //             value: value,
+                            //             settingsId:
+                            //                 data.groupSettings?.id ?? ''),
+                            //     value: (data.groupSettings ??
+                            //                 GroupSettings.defaultValue())
+                            //             .notifyWhenNewMemberJoins ??
+                            //         false,
+                            //   ),
+                            // if (isAdmin || isModerator)
+                            //   CustomToggle(
+                            //     disabled: true,
+                            //     title: 'Notify me of membership requests',
+                            //     onChange: (value) => _groupProvider
+                            //         .updateGroupSettings(_currentUser.id ?? '',
+                            //             key: 'NotifyOfMembershipRequest',
+                            //             value: value,
+                            //             settingsId:
+                            //                 data.groupSettings?.id ?? ''),
+                            //     value: (data.groupSettings ??
+                            //                 GroupSettings.defaultValue())
+                            //             .notifyOfMembershipRequest ??
+                            //         false,
+                            //   ),
+                            // if (isAdmin || isModerator)
+                            //   CustomToggle(
+                            //     disabled: true,
+                            //     title: 'Notify me of flagged prayers',
+                            //     onChange: (value) => _groupProvider
+                            //         .updateGroupSettings(_currentUser.id ?? '',
+                            //             key: 'NotifyMeofFlaggedPrayers',
+                            //             value: value,
+                            //             settingsId:
+                            //                 data.groupSettings?.id ?? ''),
+                            //     value: (data.groupSettings ??
+                            //                 GroupSettings.defaultValue())
+                            //             .notifyMeofFlaggedPrayers ??
+                            //         false,
+                            //   ),
                           ],
                         ),
                         // (isAdmin || isModerator)

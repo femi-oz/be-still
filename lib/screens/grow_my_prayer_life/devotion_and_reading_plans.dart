@@ -173,8 +173,8 @@ class _DevotionPlansState extends State<DevotionPlans> {
   }
 
   Future<bool> _onWillPop() async {
-    AppCOntroller appCOntroller = Get.find();
-    appCOntroller.setCurrentPage(0, true);
+    AppController appController = Get.find();
+    appController.setCurrentPage(0, true, 5);
     return false;
   }
 
@@ -225,7 +225,7 @@ class _DevotionPlansState extends State<DevotionPlans> {
                               color: AppColors.lightBlue3,
                               size: 20,
                             ),
-                            // onPressed: () => widget.setCurrentIndex(0, true),
+                            // onPressed: () => widget.setCurrentIndex(0, true, 5),
                             onPressed: () =>
                                 Scaffold.of(context).openEndDrawer(),
                             label: Container(

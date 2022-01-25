@@ -1,4 +1,5 @@
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -14,8 +15,9 @@ import 'package:provider/provider.dart';
 import 'package:easy_rich_text/easy_rich_text.dart';
 
 class NoUpdateView extends StatefulWidget {
+  final CombinePrayerStream? prayerData;
   @override
-  NoUpdateView();
+  NoUpdateView(this.prayerData);
 
   @override
   _NoUpdateViewState createState() => _NoUpdateViewState();
@@ -246,18 +248,18 @@ class _NoUpdateViewState extends State<NoUpdateView> {
   }
 
   Widget build(BuildContext context) {
-    final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
+    // final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
     final userId = Provider.of<UserProvider>(context).currentUser.id;
-    bool isOwner = prayerData.prayer?.createdBy == userId;
+    bool isOwner = widget.prayerData?.prayer?.createdBy == userId;
     return Container(
       padding: EdgeInsets.all(20),
       child: Column(
         children: <Widget>[
-          prayerData.prayer?.groupId != '0'
+          widget.prayerData?.prayer?.groupId != '0'
               ? Container(
                   margin: EdgeInsets.only(bottom: 20),
                   child: Text(
-                    prayerData.prayer?.creatorName ?? '',
+                    widget.prayerData?.prayer?.creatorName ?? '',
                     style: AppTextStyles.boldText16.copyWith(
                       color: AppColors.lightBlue4,
                     ),
@@ -274,8 +276,8 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                   children: <Widget>[
                     Text(
                       DateFormat('hh:mma | MM.dd.yyyy')
-                          .format(
-                              prayerData.prayer?.createdOn ?? DateTime.now())
+                          .format(widget.prayerData?.prayer?.createdOn ??
+                              DateTime.now())
                           .toLowerCase(),
                       style: AppTextStyles.regularText18b
                           .copyWith(color: AppColors.prayerModeBorder),
@@ -306,26 +308,33 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                     child: SingleChildScrollView(
                       child: isOwner
                           ? EasyRichText(
-                              prayerData.prayer?.description ?? '',
+                              widget.prayerData?.prayer?.description ?? '',
                               defaultStyle:
                                   AppTextStyles.regularText16b.copyWith(
                                 color: AppColors.prayerTextColor,
                               ),
                               textAlign: TextAlign.left,
                               patternList: [
-                                for (var i = 0; i < prayerData.tags.length; i++)
+                                for (var i = 0;
+                                    i < (widget.prayerData?.tags ?? []).length;
+                                    i++)
                                   EasyRichTextPattern(
-                                      targetString:
-                                          (prayerData.tags[i].displayName ?? '')
-                                              .trim(),
+                                      targetString: (widget.prayerData?.tags[i]
+                                                  .displayName ??
+                                              '')
+                                          .trim(),
                                       recognizer: TapGestureRecognizer()
                                         ..onTap = () {
                                           _openShareModal(
                                               context,
-                                              prayerData.tags[i].phoneNumber ??
+                                              widget.prayerData?.tags[i]
+                                                      .phoneNumber ??
                                                   '',
-                                              prayerData.tags[i].email ?? '',
-                                              prayerData.tags[i].identifier ??
+                                              widget.prayerData?.tags[i]
+                                                      .email ??
+                                                  '',
+                                              widget.prayerData?.tags[i]
+                                                      .identifier ??
                                                   '');
                                         },
                                       style: AppTextStyles.regularText15
@@ -336,7 +345,7 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                               ],
                             )
                           : Text(
-                              prayerData.prayer?.description ?? '',
+                              widget.prayerData?.prayer?.description ?? '',
                               style: AppTextStyles.regularText16b.copyWith(
                                 color: AppColors.prayerTextColor,
                               ),

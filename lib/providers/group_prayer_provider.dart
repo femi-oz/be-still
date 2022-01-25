@@ -19,19 +19,18 @@ class GroupPrayerProvider with ChangeNotifier {
   List<CombineGroupPrayerStream> _filteredPrayers = [];
   Iterable<Contact> _localContacts = [];
 
-  CombineGroupPrayerStream _currentPrayer =
-      CombineGroupPrayerStream.defaultValue();
   List<HiddenPrayerModel> _hiddenPrayers = [];
   List<FollowedPrayerModel> _followedPrayers = [];
+  List<FollowedPrayerModel> _memberPrayers = [];
   List<FollowedPrayerModel> _groupFollowedPrayers = [];
 
   List<CombineGroupPrayerStream> get prayers => _prayers;
   List<CombineGroupPrayerStream> get filteredPrayers => _filteredPrayers;
 
   Iterable<Contact> get localContacts => _localContacts;
-  CombineGroupPrayerStream get currentPrayer => _currentPrayer;
   List<HiddenPrayerModel> get hiddenPrayers => _hiddenPrayers;
   List<FollowedPrayerModel> get followedPrayers => _followedPrayers;
+  List<FollowedPrayerModel> get memberPrayers => _memberPrayers;
   List<FollowedPrayerModel> get groupFollowedPrayers => _groupFollowedPrayers;
 
   bool _isEdit = false;
@@ -52,9 +51,8 @@ class GroupPrayerProvider with ChangeNotifier {
       _filteredPrayers = [];
       _prayerService.getPrayers(groupId).asBroadcastStream().listen(
         (data) {
-          _prayers = data
-              .where((e) => (e.groupPrayer?.deleteStatus ?? 0) > -1)
-              .toList();
+          _prayers = data;
+
           _filteredPrayers = _prayers;
           filterPrayers();
           notifyListeners();
@@ -65,23 +63,14 @@ class GroupPrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> setPrayer(String id) async {
-    try {
-      _prayerService.getPrayer(id).asBroadcastStream().listen((prayer) {
-        _currentPrayer = prayer;
-        notifyListeners();
-      });
-    } catch (e) {
-      rethrow;
-    }
-  }
+  String _currentPrayerId = '';
+  String get currentPrayerId => _currentPrayerId;
 
-  Future setPrayerFuture(String id) async {
+  void setCurrentPrayerId(String prayerId) => _currentPrayerId = prayerId;
+
+  Stream<CombineGroupPrayerStream> getPrayer() {
     try {
-      _prayerService.getPrayerFuture(id).then((prayer) {
-        _currentPrayer = prayer;
-        notifyListeners();
-      });
+      return _prayerService.getPrayer(_currentPrayerId);
     } catch (e) {
       rethrow;
     }
@@ -129,6 +118,14 @@ class GroupPrayerProvider with ChangeNotifier {
         _followedPrayers = prayer;
         notifyListeners();
       });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<FollowedPrayerModel>> setFollowedPrayers(String? prayerId) async {
+    try {
+      return _prayerService.getFollowedPrayers(prayerId ?? '');
     } catch (e) {
       rethrow;
     }
@@ -200,9 +197,9 @@ class GroupPrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> archivePrayer(String userPrayerId) async {
+  Future<void> archivePrayer(String groupPrayerId, String prayerId) async {
     try {
-      await _prayerService.archivePrayer(userPrayerId);
+      await _prayerService.archivePrayer(groupPrayerId, prayerId);
     } catch (e) {
       rethrow;
     }
@@ -281,13 +278,13 @@ class GroupPrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> editUpdate(String description, String prayerID) async {
-    try {
-      await _prayerService.editUpdate(description, prayerID);
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // Future<void> editUpdate(String description, String prayerID) async {
+  //   try {
+  //     await _prayerService.editUpdate(description, prayerID);
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
   Future<void> addPrayerTag(List<Contact> contactData, UserModel user,
       String message, String prayerId) async {
@@ -298,13 +295,13 @@ class GroupPrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> editprayer(String description, String prayerID) async {
-    try {
-      await _prayerService.editPrayer(description, prayerID);
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // Future<void> editprayer(String description, String prayerID) async {
+  //   try {
+  //     await _prayerService.editPrayer(description, prayerID);
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
   Future<void> removePrayerTag(String tagId) async {
     try {
@@ -344,32 +341,32 @@ class GroupPrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> addPrayerUpdate(
-      String userId, String prayer, String prayerId) async {
-    try {
-      await _prayerService.addPrayerUpdate(userId, prayer, prayerId);
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // Future<void> addPrayerUpdate(
+  //     String userId, String prayer, String prayerId) async {
+  //   try {
+  //     await _prayerService.addPrayerUpdate(userId, prayer, prayerId);
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
-  void setEditMode(bool value) {
-    try {
-      _isEdit = value;
-      notifyListeners();
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // void setEditMode(bool value) {
+  //   try {
+  //     _isEdit = value;
+  //     notifyListeners();
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
-  void setEditPrayer({CombineGroupPrayerStream? data}) {
-    try {
-      _prayerToEdit = data ?? CombineGroupPrayerStream.defaultValue();
-      notifyListeners();
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // void setEditPrayer({CombineGroupPrayerStream? data}) {
+  //   try {
+  //     _prayerToEdit = data ?? CombineGroupPrayerStream.defaultValue();
+  //     notifyListeners();
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
   void setPrayerFilterOptions(String option) {
     try {
