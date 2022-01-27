@@ -1581,7 +1581,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                                 .spaceBetween,
                                                         children: [
                                                           Text(
-                                                              user.fullName ??
+                                                              user.fullName
+                                                                      ?.sentenceCase() ??
                                                                   '',
                                                               style: AppTextStyles
                                                                   .boldText14
@@ -1592,12 +1593,12 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                             user.role ==
                                                                     GroupUserRole
                                                                         .admin
-                                                                ? 'ADMIN'
+                                                                ? 'Admin'
                                                                 : user.role ==
                                                                         GroupUserRole
                                                                             .moderator
-                                                                    ? 'MODERATOR'
-                                                                    : 'MEMBER',
+                                                                    ? 'Moderator'
+                                                                    : 'Member',
                                                             style: AppTextStyles
                                                                 .regularText14
                                                                 .copyWith(
@@ -1607,8 +1608,11 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                         ],
                                                       )),
                                                       Icon(Icons.more_vert,
-                                                          color: AppColors
-                                                              .lightBlue4)
+                                                              color: AppColors
+                                                                  .lightBlue4)
+                                                          .marginOnly(
+                                                              left: 10,
+                                                              right: 5)
                                                     ],
                                                   ),
                                                 ),

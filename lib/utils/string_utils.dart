@@ -1,5 +1,6 @@
 import 'package:be_still/enums/error_type.dart';
 import 'package:be_still/utils/settings.dart';
+import 'package:get/get.dart';
 
 class StringUtils {
   static String enumName(String enumToString) {
@@ -105,5 +106,13 @@ class StringUtils {
     }
 
     return errorMessage;
+  }
+}
+
+extension StringExtension on String {
+  String sentenceCase() {
+    List<String> strings = this.split(' ');
+    strings = strings.map((e) => e.capitalizeFirst ?? '').toList();
+    return strings.join(' ');
   }
 }
