@@ -336,7 +336,15 @@ class _AddPrayerState extends State<AddPrayer> {
         saveOptions.add(option);
       }
     }
-    selected = saveOptions[0];
+    AppController appController = Get.find();
+    if (appController.previousPage == 0 || appController.previousPage == 7) {
+      selected = saveOptions[0];
+    } else {
+      final group =
+          Provider.of<GroupProvider>(context, listen: false).currentGroup;
+      selected = saveOptions
+          .firstWhere((element) => element.id == (group.group?.id ?? ''));
+    }
     super.initState();
   }
 
