@@ -154,7 +154,6 @@ class _GroupCardState extends State<GroupCard> {
       content: Container(
         width: double.infinity,
         margin: EdgeInsets.only(bottom: 20),
-        padding: EdgeInsets.all(20.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
         ),
@@ -168,11 +167,15 @@ class _GroupCardState extends State<GroupCard> {
                   IconButton(
                     onPressed: () =>
                         Navigator.of(context, rootNavigator: true).pop(),
-                    icon: Icon(AppIcons.bestill_close),
+                    icon: Icon(
+                      AppIcons.bestill_close,
+                      color: AppColors.grey4,
+                    ),
                   )
                 ],
               ),
               Container(
+                padding: EdgeInsets.symmetric(horizontal: 20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
