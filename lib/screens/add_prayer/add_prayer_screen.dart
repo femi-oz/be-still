@@ -342,8 +342,11 @@ class _AddPrayerState extends State<AddPrayer> {
     } else {
       final group =
           Provider.of<GroupProvider>(context, listen: false).currentGroup;
-      selected = saveOptions
-          .firstWhere((element) => element.id == (group.group?.id ?? ''));
+      saveOptions.forEach((element) {
+        if (element.id == (group.group?.id ?? '')) {
+          selected = element;
+        }
+      });
     }
     super.initState();
   }
