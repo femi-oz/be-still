@@ -259,16 +259,17 @@ class _AddPrayerState extends State<AddPrayer> {
               }
             }
           }
-          BeStilDialog.hideLoading(context);
           AppController appController = Get.find();
           if ((selected?.name ?? '').isEmpty ||
               (selected?.name) == 'My Prayers') {
+            BeStilDialog.hideLoading(context);
             appController.setCurrentPage(0, true, 1);
           } else {
             await Provider.of<GroupProvider>(context, listen: false)
                 .setCurrentGroupById(selected?.id ?? '', _user.id ?? '');
             await Provider.of<GroupPrayerProvider>(context, listen: false)
                 .setGroupPrayers(selected?.id ?? '');
+            BeStilDialog.hideLoading(context);
             appController.setCurrentPage(8, true, 1);
           }
         } else {

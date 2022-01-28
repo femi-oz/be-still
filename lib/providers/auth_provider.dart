@@ -5,6 +5,7 @@ import 'package:be_still/services/auth_service.dart';
 import 'package:be_still/services/log_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthenticationProvider with ChangeNotifier {
   AuthenticationService _authService = locator<AuthenticationService>();

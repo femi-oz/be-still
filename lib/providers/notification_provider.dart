@@ -1,17 +1,14 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
-import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/notification.model.dart';
-import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/utils/app_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
@@ -34,6 +31,9 @@ class NotificationProvider with ChangeNotifier {
   static final NotificationProvider _instance = NotificationProvider._();
   static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+
+  // StreamController<List<PushNotificationModel>> _streamController =
+  //     StreamController<List<PushNotificationModel>>.broadcast();
 
   List<PushNotificationModel> _notifications = [];
   List<PushNotificationModel> get notifications => _notifications;
@@ -126,14 +126,15 @@ class NotificationProvider with ChangeNotifier {
     }
   }
 
-  Future<void> setUserNotifications(String userId) async {
+  Future setUserNotifications(String userId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       _notificationService
           .getUserNotifications(userId)
           .asBroadcastStream()
-          .listen((notifications) {
+          .listen((notifications) async {
         _notifications = notifications;
+        // _streamController.sink.add(_notifications);
 
         notifyListeners();
       });
@@ -227,7 +228,7 @@ class NotificationProvider with ChangeNotifier {
   ) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      return await _notificationService.sendPushNotification(
+      await _notificationService.sendPushNotification(
           message: message,
           prayerId: prayerId,
           groupId: groupId,
@@ -237,6 +238,7 @@ class NotificationProvider with ChangeNotifier {
           recieverId: receiverId,
           tokens: tokens,
           title: title);
+      setUserNotifications(senderId);
     } catch (e) {
       rethrow;
     }
@@ -379,8 +381,9 @@ class NotificationProvider with ChangeNotifier {
         followers = prayers.map((e) => e.userId ?? '').toList();
         _ids = [...followers];
       }
-      print(_ids);
+
       _ids.removeWhere((e) => e == _user.id);
+
       for (final id in _ids) {
         final setting =
             await Provider.of<SettingsProvider>(context, listen: false)
@@ -400,7 +403,7 @@ class NotificationProvider with ChangeNotifier {
                 type ?? '',
                 name,
                 _user.id ?? '',
-                (id),
+                id,
                 type ?? '',
                 groupPrayerId ?? '',
                 selectedGroupId ?? '',
@@ -428,9 +431,17 @@ class NotificationProvider with ChangeNotifier {
                 [value]);
           }
         }
+        setUserNotifications(_user.id ?? '');
       }
     } catch (e) {
       rethrow;
     }
+  }
+
+  closeStream() {
+    _instance.removeListener(() {});
+    // _instance._notifications = [];
+    // _instance.dispose();
+    // _streamController.close();
   }
 }

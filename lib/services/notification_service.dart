@@ -350,8 +350,8 @@ class NotificationService {
       if (_firebaseAuth.currentUser == null)
         return Stream.error(StringUtils.unathorized);
       return _pushNotificationCollectionReference
-          .where('Status', isEqualTo: Status.active)
           .where('RecieverId', isEqualTo: userId)
+          .where('Status', isEqualTo: Status.active)
           .snapshots()
           .map((e) => e.docs
               .map((doc) => PushNotificationModel.fromData(doc.data(), doc.id))
