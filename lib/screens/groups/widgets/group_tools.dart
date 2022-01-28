@@ -79,10 +79,10 @@ class _GroupToolsState extends State<GroupTools> {
 
         final userName =
             '${(_currentUser.firstName ?? '').capitalizeFirst} ${(_currentUser.lastName ?? '').capitalizeFirst}';
-        if ((admin.id ?? '').isNotEmpty) {
+        if (admin.id != '') {
           await Provider.of<UserProvider>(context, listen: false)
               .getUserById(admin.userId ?? '');
-          await Future.delayed(Duration(milliseconds: 500));
+          // await Future.delayed(Duration(milliseconds: 500));
           final adminData =
               Provider.of<UserProvider>(context, listen: false).selectedUser;
           await sendPushNotification(
