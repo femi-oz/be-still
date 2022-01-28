@@ -54,19 +54,16 @@ class _GroupToolsState extends State<GroupTools> {
     try {
       final _currentUser =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-
-      var admin = (data.groupUsers ?? []).firstWhere(
-          (element) => element.role == GroupUserRole.admin,
-          orElse: () => GroupUserModel.defaultValue());
-      await Provider.of<UserProvider>(context, listen: false)
-          .getUserById(admin.userId ?? '');
       final id = (data.groupUsers ?? [])
           .firstWhere((e) => e.userId == _currentUser.id,
               orElse: () => GroupUserModel.defaultValue())
           .id;
+
       if ((id ?? '').isNotEmpty) {
-        await Provider.of<GroupProvider>(context, listen: false)
-            .leaveGroup(id ?? '');
+        var admin = (data.groupUsers ?? []).firstWhere(
+            (element) => element.role == GroupUserRole.admin,
+            orElse: () => GroupUserModel.defaultValue());
+
         var followedPrayers =
             Provider.of<GroupPrayerProvider>(context, listen: false)
                 .followedPrayers
@@ -77,19 +74,28 @@ class _GroupToolsState extends State<GroupTools> {
           await Provider.of<GroupPrayerProvider>(context, listen: false)
               .removeFromMyList(element.id ?? '', element.userPrayerId ?? '');
         });
-        final adminData =
-            Provider.of<UserProvider>(context, listen: false).selectedUser;
+        await Provider.of<GroupProvider>(context, listen: false)
+            .leaveGroup(id ?? '');
+
         final userName =
             '${(_currentUser.firstName ?? '').capitalizeFirst} ${(_currentUser.lastName ?? '').capitalizeFirst}';
-        await sendPushNotification(
-            '$userName has left your group ${data.group?.name}',
-            NotificationType.leave_group,
-            userName,
-            _currentUser.id ?? '',
-            adminData.id ?? '',
-            'A member has left your group',
-            data.group?.id ?? '',
-            [adminData.pushToken ?? '']);
+        if ((admin.id ?? '').isNotEmpty) {
+          await Provider.of<UserProvider>(context, listen: false)
+              .getUserById(admin.userId ?? '');
+          await Future.delayed(Duration(milliseconds: 500));
+          final adminData =
+              Provider.of<UserProvider>(context, listen: false).selectedUser;
+          await sendPushNotification(
+              '$userName has left your group ${data.group?.name}',
+              NotificationType.leave_group,
+              userName,
+              _currentUser.id ?? '',
+              adminData.id ?? '',
+              'A member has left your group',
+              data.group?.id ?? '',
+              [adminData.pushToken ?? '']);
+        }
+
         BeStilDialog.hideLoading(context);
         AppController appController = Get.find();
         appController.setCurrentPage(3, true, 3);

@@ -32,7 +32,7 @@ class UserProvider with ChangeNotifier {
 
   Future getUserById(String id) async {
     try {
-      return _userService.getUserById(id).then((event) {
+      return _userService.getUserByIdFuture(id).then((event) {
         _selectedUser = event;
         notifyListeners();
       });
