@@ -238,7 +238,7 @@ class NotificationProvider with ChangeNotifier {
           recieverId: receiverId,
           tokens: tokens,
           title: title);
-      setUserNotifications(senderId);
+      await setUserNotifications(senderId);
     } catch (e) {
       rethrow;
     }
@@ -431,7 +431,7 @@ class NotificationProvider with ChangeNotifier {
                 [value]);
           }
         }
-        setUserNotifications(_user.id ?? '');
+        await setUserNotifications(_user.id ?? '');
       }
     } catch (e) {
       rethrow;

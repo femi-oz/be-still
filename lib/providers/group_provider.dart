@@ -325,7 +325,7 @@ class GroupProvider with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      setUserGroups(userId);
+      await setUserGroups(userId);
       return await _groupService.joinRequest(groupId, userId, createdBy);
     } catch (e) {
       rethrow;
