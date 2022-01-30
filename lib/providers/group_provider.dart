@@ -14,6 +14,10 @@ class GroupProvider with ChangeNotifier {
   GroupService _groupService = locator<GroupService>();
   NotificationService _notificationService = locator<NotificationService>();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  GroupProvider._();
+  factory GroupProvider() => _instance;
+  static final GroupProvider _instance = GroupProvider._();
+
   List<CombineGroupUserStream> _userGroups = [];
   List<CombineGroupUserStream> _allGroups = [];
   List<CombineGroupUserStream> _filteredAllGroups = [];
@@ -321,6 +325,7 @@ class GroupProvider with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
+      setUserGroups(userId);
       return await _groupService.joinRequest(groupId, userId, createdBy);
     } catch (e) {
       rethrow;
@@ -395,5 +400,12 @@ class GroupProvider with ChangeNotifier {
     } catch (e) {
       rethrow;
     }
+  }
+
+  closeStream() {
+    _instance.removeListener(() {});
+    // _instance._notifications = [];
+    // _instance.dispose();
+    // _streamController.close();
   }
 }

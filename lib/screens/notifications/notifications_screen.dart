@@ -29,6 +29,11 @@ class NotificationsScreen extends StatefulWidget {
 class _NotificationsScreenState extends State<NotificationsScreen> {
   final SlidableController slidableController = SlidableController();
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   void _showAlert(String groupId, String message, String senderId,
       String notificationId, String receiverId, GroupModel group) {
     FocusScope.of(context).unfocus();
