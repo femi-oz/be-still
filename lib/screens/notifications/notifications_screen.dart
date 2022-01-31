@@ -30,7 +30,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   final SlidableController slidableController = SlidableController();
 
   @override
-  void dispose() {
+  void dispose() async {
     super.dispose();
   }
 
@@ -334,11 +334,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           groupRequest.id ?? '',
           (requestor.firstName ?? '') + ' ' + (requestor.lastName ?? ''));
       await deleteNotification(notificationId);
+      final adminName = (admin.firstName?.capitalizeFirst ?? '') +
+          ' ' +
+          (admin.lastName?.capitalizeFirst ?? '');
       await Provider.of<NotificationProvider>(context, listen: false)
           .sendPushNotification(
-              'Your request to join ${(groupData.group?.name ?? '').toLowerCase()} has been accepted.',
+              'Your request to join ${(groupData.group?.name?.capitalizeFirst ?? '')} has been accepted.',
               NotificationType.accept_request,
-              admin.firstName ?? '',
+              adminName,
               admin.id ?? '',
               receiverId,
               'Request Accepted',

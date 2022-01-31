@@ -97,8 +97,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
           'Groups',
           data.group?.id ?? '',
           [receiverData.pushToken ?? '']);
-      Provider.of<GroupProvider>(context, listen: false)
-          .setUserGroups(_currentUser.id ?? '');
+      // Provider.of<GroupProvider>(context, listen: false)
+      //     .setUserGroups(_currentUser.id ?? '');
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       final user =

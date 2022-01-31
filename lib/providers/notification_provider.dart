@@ -32,8 +32,9 @@ class NotificationProvider with ChangeNotifier {
   static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  // StreamController<List<PushNotificationModel>> _streamController =
-  //     StreamController<List<PushNotificationModel>>.broadcast();
+  late StreamSubscription<List<PushNotificationModel>> userNotificationStream;
+  late StreamSubscription<List<LocalNotificationModel>> localNotificationStream;
+  late StreamSubscription<List<LocalNotificationModel>> prayerTimeStream;
 
   List<PushNotificationModel> _notifications = [];
   List<PushNotificationModel> get notifications => _notifications;
@@ -46,6 +47,13 @@ class NotificationProvider with ChangeNotifier {
   List<LocalNotificationModel> get localNotifications => _localNotifications;
   NotificationMessage _message = NotificationMessage.defaultValue();
   NotificationMessage get message => _message;
+
+  resetValues() {
+    _notifications = [];
+    _prayerTimeNotifications = [];
+    _localNotifications = [];
+    _message = NotificationMessage.defaultValue();
+  }
 
   Future<void> initLocal(BuildContext context) async {
     tz.initializeTimeZones();
@@ -129,12 +137,11 @@ class NotificationProvider with ChangeNotifier {
   Future setUserNotifications(String userId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      _notificationService
+      userNotificationStream = _notificationService
           .getUserNotifications(userId)
           .asBroadcastStream()
           .listen((notifications) async {
         _notifications = notifications;
-        // _streamController.sink.add(_notifications);
 
         notifyListeners();
       });
@@ -158,7 +165,7 @@ class NotificationProvider with ChangeNotifier {
   Future<void> setLocalNotifications(userId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      _notificationService
+      localNotificationStream = _notificationService
           .getLocalNotifications(userId)
           .asBroadcastStream()
           .listen((notifications) {
@@ -192,7 +199,7 @@ class NotificationProvider with ChangeNotifier {
   Future<void> setPrayerTimeNotifications(userId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      _notificationService
+      prayerTimeStream = _notificationService
           .getLocalNotifications(userId)
           .asBroadcastStream()
           .listen((notifications) {
@@ -238,7 +245,6 @@ class NotificationProvider with ChangeNotifier {
           recieverId: receiverId,
           tokens: tokens,
           title: title);
-      await setUserNotifications(senderId);
     } catch (e) {
       rethrow;
     }
@@ -431,7 +437,6 @@ class NotificationProvider with ChangeNotifier {
                 [value]);
           }
         }
-        await setUserNotifications(_user.id ?? '');
       }
     } catch (e) {
       rethrow;
@@ -439,9 +444,9 @@ class NotificationProvider with ChangeNotifier {
   }
 
   closeStream() {
-    _instance.removeListener(() {});
-    // _instance._notifications = [];
-    // _instance.dispose();
-    // _streamController.close();
+    userNotificationStream.cancel();
+    localNotificationStream.cancel();
+    prayerTimeStream.cancel();
+    resetValues();
   }
 }

@@ -18,6 +18,9 @@ class GroupProvider with ChangeNotifier {
   factory GroupProvider() => _instance;
   static final GroupProvider _instance = GroupProvider._();
 
+  late StreamSubscription<List<CombineGroupUserStream>> groupUserStream;
+  late StreamSubscription<List<CombineGroupUserStream>> allGroupsStream;
+
   List<CombineGroupUserStream> _userGroups = [];
   List<CombineGroupUserStream> _allGroups = [];
   List<CombineGroupUserStream> _filteredAllGroups = [];
@@ -32,11 +35,21 @@ class GroupProvider with ChangeNotifier {
   String _groupJoinId = '';
   String get groupJoinId => _groupJoinId;
 
+  resetValues() {
+    _userGroups = [];
+    _allGroups = [];
+    _filteredAllGroups = [];
+    _currentGroup = CombineGroupUserStream.defaultValue();
+    _isEdit = false;
+    _groupJoinId = '';
+    notifyListeners();
+  }
+
   Future<void> setUserGroups(String userId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      _groupService
+      groupUserStream = _groupService
           .getUserGroups(userId)
           .asBroadcastStream()
           .listen((userGroups) {
@@ -109,7 +122,10 @@ class GroupProvider with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      _groupService.getAllGroups(userId).asBroadcastStream().listen((groups) {
+      allGroupsStream = _groupService
+          .getAllGroups(userId)
+          .asBroadcastStream()
+          .listen((groups) {
         _allGroups = groups;
         if (_isAdvanceSearch)
           advanceSearchAllGroups(
@@ -325,7 +341,6 @@ class GroupProvider with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      await setUserGroups(userId);
       return await _groupService.joinRequest(groupId, userId, createdBy);
     } catch (e) {
       rethrow;
@@ -403,9 +418,8 @@ class GroupProvider with ChangeNotifier {
   }
 
   closeStream() {
-    _instance.removeListener(() {});
-    // _instance._notifications = [];
-    // _instance.dispose();
-    // _streamController.close();
+    allGroupsStream.cancel();
+    groupUserStream.cancel();
+    resetValues();
   }
 }

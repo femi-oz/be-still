@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
@@ -87,11 +88,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
     }
   }
 
+  closeAllStreams() {
+    Provider.of<GroupProvider>(context, listen: false).closeStream();
+    Provider.of<NotificationProvider>(context, listen: false).closeStream();
+  }
+
   _openLogoutConfirmation(BuildContext context) {
     final _authProvider =
         Provider.of<AuthenticationProvider>(context, listen: false);
-    final _notificationProvider =
-        Provider.of<NotificationProvider>(context, listen: false);
+
     final dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
@@ -172,8 +177,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      await _notificationProvider.closeStream();
                       await _authProvider.signOut();
+                      closeAllStreams();
                       Navigator.pushReplacement(
                         context,
                         SlideRightRoute(page: LoginScreen()),
