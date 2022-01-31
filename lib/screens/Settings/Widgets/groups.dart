@@ -1277,7 +1277,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             CustomToggle(
                               disabled: false,
                               title:
-                                  'Enable alerts for New Prayers for this group?',
+                                  'Enable alerts for new prayers for this group?',
                               onChange: (value) => _groupProvider
                                   .updateGroupSettings(_currentUser.id ?? '',
                                       key: 'EnableNotificationFormNewPrayers',
@@ -1291,7 +1291,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             CustomToggle(
                               disabled: false,
                               title:
-                                  'Enable alerts for Prayer Updates for this group?',
+                                  'Enable alerts for prayer updates for this group?',
                               onChange: (value) => _groupProvider
                                   .updateGroupSettings(_currentUser.id ?? '',
                                       key: 'EnableNotificationForUpdates',
