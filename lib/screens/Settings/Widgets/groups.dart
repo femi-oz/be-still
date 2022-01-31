@@ -67,8 +67,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
           .firstWhere((e) => e.userId == _currentUser.id,
               orElse: () => GroupUserModel.defaultValue())
           .id;
-      await Provider.of<GroupProvider>(context, listen: false)
-          .leaveGroup(id ?? "");
+
       var receiver = (data.groupUsers ?? [])
           .firstWhere((element) => element.role == GroupUserRole.admin);
 
@@ -83,12 +82,17 @@ class _GroupsSettingsState extends State<GroupsSettings> {
               .where((element) =>
                   element.groupId == data.group?.id &&
                   element.userId == _currentUser.id);
-      followedPrayers.forEach((element) async {
-        await Provider.of<GroupPrayerProvider>(context, listen: false)
-            .removeFromMyList(element.id ?? '', element.userPrayerId ?? '');
-      });
+      if (followedPrayers.length > 0) {
+        for (var followedPrayer in followedPrayers) {
+          await Provider.of<GroupPrayerProvider>(context, listen: false)
+              .removeFromMyList(
+                  followedPrayer.id ?? '', followedPrayer.userPrayerId ?? '');
+        }
+      }
+      await Provider.of<GroupProvider>(context, listen: false)
+          .leaveGroup(id ?? "");
 
-      sendPushNotification(
+      await sendPushNotification(
           '${(_currentUser.firstName ?? '').capitalizeFirst} ${(_currentUser.lastName ?? '').capitalizeFirst} has left your group ${data.group?.name}',
           NotificationType.leave_group,
           _currentUser.firstName ?? '',
