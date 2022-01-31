@@ -650,15 +650,27 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           : Container(),
                                                       Row(
                                                         children: <Widget>[
-                                                          Text(
-                                                            snapshot.data?.group
-                                                                    ?.name ??
-                                                                '',
-                                                            style: TextStyle(
-                                                                color: AppColors
-                                                                    .lightBlue4),
-                                                          ).marginOnly(
-                                                              right: 5),
+                                                          Container(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.3,
+                                                            child: Text(
+                                                              snapshot
+                                                                      .data
+                                                                      ?.group
+                                                                      ?.name ??
+                                                                  '',
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              style: TextStyle(
+                                                                  color: AppColors
+                                                                      .lightBlue4),
+                                                            ).marginOnly(
+                                                                right: 5),
+                                                          ),
                                                           Text(
                                                             '|',
                                                             style: TextStyle(
@@ -1860,14 +1872,25 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                         : Container(),
                                                     Row(
                                                       children: <Widget>[
-                                                        Text(
-                                                          snapshot.data?.group
-                                                                  ?.name ??
-                                                              '',
-                                                          style: TextStyle(
-                                                              color: AppColors
-                                                                  .lightBlue4),
-                                                        ).marginOnly(right: 5),
+                                                        Container(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.3,
+                                                          child: Text(
+                                                            snapshot.data?.group
+                                                                    ?.name ??
+                                                                '',
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            style: TextStyle(
+                                                                color: AppColors
+                                                                    .lightBlue4),
+                                                          ).marginOnly(
+                                                              right: 5),
+                                                        ),
                                                         Text(
                                                           '|',
                                                           style: TextStyle(
@@ -2032,15 +2055,27 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           : Container(),
                                                       Row(
                                                         children: <Widget>[
-                                                          Text(
-                                                            snapshot.data?.group
-                                                                    ?.name ??
-                                                                '',
-                                                            style: TextStyle(
-                                                                color: AppColors
-                                                                    .lightBlue4),
-                                                          ).marginOnly(
-                                                              right: 5),
+                                                          Container(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.3,
+                                                            child: Text(
+                                                              snapshot
+                                                                      .data
+                                                                      ?.group
+                                                                      ?.name ??
+                                                                  '',
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              style: TextStyle(
+                                                                  color: AppColors
+                                                                      .lightBlue4),
+                                                            ).marginOnly(
+                                                                right: 5),
+                                                          ),
                                                           Text(
                                                             '|',
                                                             style: TextStyle(

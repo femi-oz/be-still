@@ -186,7 +186,6 @@ class _AddPrayerState extends State<AddPrayer> {
 
   Future<void> _save() async {
     BeStilDialog.showLoading(context);
-    FocusScope.of(context).unfocus();
 
     try {
       final _user =
@@ -259,6 +258,8 @@ class _AddPrayerState extends State<AddPrayer> {
               }
             }
           }
+          FocusScope.of(context).unfocus();
+
           AppController appController = Get.find();
           if ((selected?.name ?? '').isEmpty ||
               (selected?.name) == 'My Prayers') {
@@ -675,7 +676,7 @@ class _AddPrayerState extends State<AddPrayer> {
         });
   }
 
-  Future<void> onGroupPrayerSave() async {
+  Future<void> _onGroupPrayerSave() async {
     AlertDialog dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
@@ -688,18 +689,19 @@ class _AddPrayerState extends State<AddPrayer> {
       ),
       content: Container(
         width: double.infinity,
-        height: MediaQuery.of(context).size.height * 0.3,
+        height: MediaQuery.of(context).size.height * 0.33,
+        padding: EdgeInsets.symmetric(vertical: 10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
               margin: EdgeInsets.only(bottom: 5.0),
               child: Text(
-                'CANCEL',
+                'Add Prayer',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: AppColors.lightBlue1,
-                  fontSize: 18,
+                  color: AppColors.lightBlue4,
+                  fontSize: 20,
                   fontWeight: FontWeight.w800,
                   height: 1.5,
                 ),
@@ -726,25 +728,7 @@ class _AddPrayerState extends State<AddPrayer> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        try {
-                          FocusScope.of(context).requestFocus(new FocusNode());
-                          AppController appController = Get.find();
-                          appController.setCurrentPage(
-                              appController.previousPage, true, 1);
-                          Navigator.pop(context);
-                        } on HttpException catch (e, s) {
-                          final user =
-                              Provider.of<UserProvider>(context, listen: false)
-                                  .currentUser;
-                          BeStilDialog.showErrorDialog(
-                              context, StringUtils.getErrorMessage(e), user, s);
-                        } catch (e, s) {
-                          final user =
-                              Provider.of<UserProvider>(context, listen: false)
-                                  .currentUser;
-                          BeStilDialog.showErrorDialog(
-                              context, StringUtils.errorOccured, user, s);
-                        }
+                        Navigator.pop(context);
                       },
                       child: Container(
                         height: 30,
@@ -757,13 +741,12 @@ class _AddPrayerState extends State<AddPrayer> {
                           borderRadius: BorderRadius.circular(5),
                           color: AppColors.grey.withOpacity(0.5),
                         ),
-                        child: FittedBox(
-                          fit: BoxFit.contain,
+                        child: Center(
                           child: Text(
                             'Cancel',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: 11,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -776,7 +759,12 @@ class _AddPrayerState extends State<AddPrayer> {
                   ),
                   Expanded(
                     child: GestureDetector(
-                      onTap: () => Navigator.of(context).pop(),
+                      onTap: () {
+                        FocusScope.of(context).requestFocus(new FocusNode());
+                        Navigator.pop(context);
+
+                        _save();
+                      },
                       child: Container(
                         height: 30,
                         padding: EdgeInsets.symmetric(horizontal: 10),
@@ -789,13 +777,12 @@ class _AddPrayerState extends State<AddPrayer> {
                           ),
                           borderRadius: BorderRadius.circular(5),
                         ),
-                        child: FittedBox(
-                          fit: BoxFit.contain,
+                        child: Center(
                           child: Text(
                             'OK',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: 11,
+                              fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -873,13 +860,19 @@ class _AddPrayerState extends State<AddPrayer> {
                                           appController.previousPage, true, 1);
                                     }),
                           InkWell(
-                            child: Text('SAVE',
-                                style: AppTextStyles.boldText18.copyWith(
-                                    color: !isValid
-                                        ? AppColors.lightBlue5.withOpacity(0.5)
-                                        : Colors.blue)),
-                            onTap: isValid ? () => _save() : null,
-                          ),
+                              child: Text('SAVE',
+                                  style: AppTextStyles.boldText18.copyWith(
+                                      color: !isValid
+                                          ? AppColors.lightBlue5
+                                              .withOpacity(0.5)
+                                          : Colors.blue)),
+                              onTap: () {
+                                if (isValid)
+                                  (selected?.name ?? '').isEmpty ||
+                                          (selected?.name) == 'My Prayers'
+                                      ? _save()
+                                      : _onGroupPrayerSave();
+                              }),
                         ])),
                 showDropdown && userGroups.length > 0
                     ? Container(
