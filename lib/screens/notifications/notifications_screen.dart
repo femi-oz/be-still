@@ -339,9 +339,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           (admin.lastName?.capitalizeFirst ?? '');
       await Provider.of<NotificationProvider>(context, listen: false)
           .sendPushNotification(
-              'Your request to join ${(groupData.group?.name?.capitalizeFirst ?? '')} has been accepted.',
+              'Your request to join this group has been accepted.',
               NotificationType.accept_request,
-              adminName,
+              '${(groupData.group?.name?.capitalizeFirst ?? '')}',
               admin.id ?? '',
               receiverId,
               'Request Accepted',
