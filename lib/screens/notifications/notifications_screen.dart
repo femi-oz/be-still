@@ -472,23 +472,25 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: <Widget>[
-                                                notification.sender != ''
-                                                    ? Text(
-                                                        ((snapshot.data ?? CombineGroupUserStream.defaultValue())
-                                                                        .group ??
-                                                                    GroupModel
-                                                                        .defaultValue())
-                                                                .name ??
-                                                            ''.toUpperCase(),
-                                                        style: AppTextStyles
-                                                            .regularText15b
-                                                            .copyWith(
-                                                          fontSize: 14,
-                                                          color: AppColors
-                                                              .lightBlue4,
-                                                        ),
-                                                      )
-                                                    : Container(),
+                                                Expanded(
+                                                  child: Text(
+                                                    snapshot.data?.group?.name
+                                                            ?.sentenceCase() ??
+                                                        '',
+                                                    style: AppTextStyles
+                                                        .regularText15b
+                                                        .copyWith(
+                                                            fontSize: 14,
+                                                            color: AppColors
+                                                                .lightBlue4,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
                                                 Row(
                                                   children: <Widget>[
                                                     Text(
@@ -809,18 +811,25 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                         MainAxisAlignment
                                                             .spaceBetween,
                                                     children: <Widget>[
-                                                      Text(
-                                                        snapshot.data?.group
-                                                                ?.name
-                                                                ?.sentenceCase() ??
-                                                            '',
-                                                        style: AppTextStyles
-                                                            .regularText15b
-                                                            .copyWith(
-                                                          fontSize: 14,
-                                                          color: AppColors
-                                                              .lightBlue4,
+                                                      Expanded(
+                                                        child: Text(
+                                                          snapshot.data?.group
+                                                                  ?.name
+                                                                  ?.sentenceCase() ??
+                                                              '',
+                                                          style: AppTextStyles
+                                                              .regularText15b
+                                                              .copyWith(
+                                                                  fontSize: 14,
+                                                                  color: AppColors
+                                                                      .lightBlue4,
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis),
                                                         ),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 10,
                                                       ),
                                                       Row(
                                                         children: <Widget>[
@@ -969,18 +978,25 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                         MainAxisAlignment
                                                             .spaceBetween,
                                                     children: <Widget>[
-                                                      Text(
-                                                        (snapshot.data?.group
-                                                                ?.name
-                                                                ?.sentenceCase() ??
-                                                            ''),
-                                                        style: AppTextStyles
-                                                            .regularText15b
-                                                            .copyWith(
-                                                          fontSize: 14,
-                                                          color: AppColors
-                                                              .lightBlue4,
+                                                      Expanded(
+                                                        child: Text(
+                                                          snapshot.data?.group
+                                                                  ?.name
+                                                                  ?.sentenceCase() ??
+                                                              '',
+                                                          style: AppTextStyles
+                                                              .regularText15b
+                                                              .copyWith(
+                                                                  fontSize: 14,
+                                                                  color: AppColors
+                                                                      .lightBlue4,
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis),
                                                         ),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 10,
                                                       ),
                                                       Row(
                                                         children: <Widget>[
@@ -1130,19 +1146,26 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                             .spaceBetween,
                                                     children: <Widget>[
                                                       notification.sender != ''
-                                                          ? Text(
-                                                              notification
-                                                                      .sender ??
-                                                                  '',
-                                                              style: AppTextStyles
-                                                                  .regularText15b
-                                                                  .copyWith(
-                                                                fontSize: 14,
-                                                                color: AppColors
-                                                                    .lightBlue4,
+                                                          ? Expanded(
+                                                              child: Text(
+                                                                notification
+                                                                        .sender ??
+                                                                    '',
+                                                                style: AppTextStyles
+                                                                    .regularText15b
+                                                                    .copyWith(
+                                                                        fontSize:
+                                                                            14,
+                                                                        color: AppColors
+                                                                            .lightBlue4,
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis),
                                                               ),
                                                             )
                                                           : Container(),
+                                                      SizedBox(
+                                                        width: 10,
+                                                      ),
                                                       Row(
                                                         children: <Widget>[
                                                           Text(
