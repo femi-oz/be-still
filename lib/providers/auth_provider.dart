@@ -35,9 +35,9 @@ class AuthenticationProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> biometricSignin(String email) async {
+  Future<bool> biometricSignin() async {
     try {
-      return await _authService.biometricAuthentication(email);
+      return await _authService.biometricAuthentication();
     } catch (e) {
       rethrow;
     }

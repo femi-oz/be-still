@@ -443,7 +443,7 @@ class NotificationProvider with ChangeNotifier {
     }
   }
 
-  closeStream() {
+  void flush() {
     userNotificationStream.cancel();
     localNotificationStream.cancel();
     prayerTimeStream.cancel();

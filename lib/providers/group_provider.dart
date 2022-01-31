@@ -417,7 +417,7 @@ class GroupProvider with ChangeNotifier {
     }
   }
 
-  closeStream() {
+  flush() {
     allGroupsStream.cancel();
     groupUserStream.cancel();
     resetValues();

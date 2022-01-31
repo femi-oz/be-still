@@ -89,8 +89,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
   }
 
   closeAllStreams() {
-    Provider.of<GroupProvider>(context, listen: false).closeStream();
-    Provider.of<NotificationProvider>(context, listen: false).closeStream();
+    Provider.of<GroupProvider>(context, listen: false).flush();
+    Provider.of<NotificationProvider>(context, listen: false).flush();
   }
 
   _openLogoutConfirmation(BuildContext context) {
