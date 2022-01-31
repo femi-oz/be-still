@@ -811,7 +811,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                     children: <Widget>[
                                                       Text(
                                                         snapshot.data?.group
-                                                                ?.name ??
+                                                                ?.name
+                                                                ?.sentenceCase() ??
                                                             '',
                                                         style: AppTextStyles
                                                             .regularText15b
@@ -970,10 +971,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                     children: <Widget>[
                                                       Text(
                                                         (snapshot.data?.group
-                                                                        ?.name ??
-                                                                    '')
-                                                                .capitalizeFirst ??
-                                                            '',
+                                                                ?.name
+                                                                ?.sentenceCase() ??
+                                                            ''),
                                                         style: AppTextStyles
                                                             .regularText15b
                                                             .copyWith(
