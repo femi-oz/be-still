@@ -278,7 +278,7 @@ class GroupProvider with ChangeNotifier {
         return Future.error(StringUtils.unathorized);
 
       for (final req in requests) {
-        _notificationService.updatePushNotification(req.id ?? '');
+        await _notificationService.updatePushNotification(req.id ?? '');
       }
       return await _groupService.deleteGroup(groupId);
     } catch (e) {

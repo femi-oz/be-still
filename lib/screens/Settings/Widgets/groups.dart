@@ -101,16 +101,15 @@ class _GroupsSettingsState extends State<GroupsSettings> {
           'Groups',
           data.group?.id ?? '',
           [receiverData.pushToken ?? '']);
-      // Provider.of<GroupProvider>(context, listen: false)
-      //     .setUserGroups(_currentUser.id ?? '');
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
+      BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
@@ -119,6 +118,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
 
   deleteGroup(CombineGroupUserStream data) async {
     try {
+      Navigator.pop(context);
       BeStilDialog.showLoading(context, '');
       final notifications =
           Provider.of<NotificationProvider>(context, listen: false)
@@ -127,26 +127,29 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       final requests =
           notifications.where((e) => e.groupId == data.group?.id).toList();
 
-      await Provider.of<GroupProvider>(context, listen: false)
-          .deleteGroup(data.group?.id ?? '', requests);
       var followedPrayers =
           Provider.of<GroupPrayerProvider>(context, listen: false)
               .followedPrayers
               .where((element) => element.groupId == data.group?.id);
-      followedPrayers.forEach((element) async {
-        await Provider.of<GroupPrayerProvider>(context, listen: false)
-            .removeFromMyList(element.id ?? '', element.userPrayerId ?? '');
-      });
-      await Future.delayed(Duration(milliseconds: 300));
-      Navigator.pop(context);
+      if (followedPrayers.length > 0) {
+        for (var followedPrayer in followedPrayers) {
+          await Provider.of<GroupPrayerProvider>(context, listen: false)
+              .removeFromMyList(
+                  followedPrayer.id ?? '', followedPrayer.userPrayerId ?? '');
+        }
+      }
+
+      await Provider.of<GroupProvider>(context, listen: false)
+          .deleteGroup(data.group?.id ?? '', requests);
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
+      BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);

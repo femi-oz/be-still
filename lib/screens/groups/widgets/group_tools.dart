@@ -71,10 +71,13 @@ class _GroupToolsState extends State<GroupTools> {
                 .where((element) =>
                     element.groupId == data.group?.id &&
                     element.userId == _currentUser.id);
-        followedPrayers.forEach((element) async {
-          await Provider.of<GroupPrayerProvider>(context, listen: false)
-              .removeFromMyList(element.id ?? '', element.userPrayerId ?? '');
-        });
+        if (followedPrayers.length > 0) {
+          for (var followedPrayer in followedPrayers) {
+            await Provider.of<GroupPrayerProvider>(context, listen: false)
+                .removeFromMyList(
+                    followedPrayer.id ?? '', followedPrayer.userPrayerId ?? '');
+          }
+        }
         await Provider.of<GroupProvider>(context, listen: false)
             .leaveGroup(id ?? '');
 
