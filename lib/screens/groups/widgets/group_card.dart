@@ -43,7 +43,7 @@ class _GroupCardState extends State<GroupCard> {
           .sendPushNotification(
               '$userName has requested to join your group',
               NotificationType.request,
-              userName,
+              groupData.group?.name?.sentenceCase() ?? '',
               userId,
               admin.id ?? '',
               title,
