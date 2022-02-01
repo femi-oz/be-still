@@ -186,7 +186,6 @@ class _AddPrayerState extends State<AddPrayer> {
 
   Future<void> _save() async {
     BeStilDialog.showLoading(context);
-    FocusScope.of(context).unfocus();
 
     try {
       final _user =
@@ -259,6 +258,7 @@ class _AddPrayerState extends State<AddPrayer> {
               }
             }
           }
+
           AppController appController = Get.find();
           if ((selected?.name ?? '').isEmpty ||
               (selected?.name) == 'My Prayers') {
@@ -675,6 +675,135 @@ class _AddPrayerState extends State<AddPrayer> {
         });
   }
 
+  Future<void> _onGroupPrayerSave() async {
+    AlertDialog dialog = AlertDialog(
+      actionsPadding: EdgeInsets.all(0),
+      contentPadding: EdgeInsets.all(0),
+      backgroundColor: AppColors.prayerCardBgColor,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: AppColors.darkBlue),
+        borderRadius: BorderRadius.all(
+          Radius.circular(10.0),
+        ),
+      ),
+      content: Container(
+        width: double.infinity,
+        height: MediaQuery.of(context).size.height * 0.33,
+        padding: EdgeInsets.symmetric(vertical: 10),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(bottom: 5.0),
+              child: Text(
+                'Add Prayer',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.lightBlue4,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                  height: 1.5,
+                ),
+              ),
+            ),
+            Flexible(
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.5,
+                child: Text(
+                  'You are about to add a new prayer to ${selected?.name ?? ''}, where it can be seen by other members of the group.',
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.regularText16b
+                      .copyWith(color: AppColors.lightBlue4),
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 30),
+              width: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        height: 30,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: AppColors.cardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                          color: AppColors.grey.withOpacity(0.5),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Cancel',
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        // FocusScope.of(context).requestFocus(new FocusNode());
+                        Navigator.pop(context);
+
+                        _save();
+                      },
+                      child: Container(
+                        height: 30,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        // width: MediaQuery.of(context).size.width * .30,
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          border: Border.all(
+                            color: AppColors.cardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'OK',
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return dialog;
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     PrayerModel prayerToEdit =
@@ -730,13 +859,21 @@ class _AddPrayerState extends State<AddPrayer> {
                                           appController.previousPage, true, 1);
                                     }),
                           InkWell(
-                            child: Text('SAVE',
-                                style: AppTextStyles.boldText18.copyWith(
-                                    color: !isValid
-                                        ? AppColors.lightBlue5.withOpacity(0.5)
-                                        : Colors.blue)),
-                            onTap: isValid ? () => _save() : null,
-                          ),
+                              child: Text('SAVE',
+                                  style: AppTextStyles.boldText18.copyWith(
+                                      color: !isValid
+                                          ? AppColors.lightBlue5
+                                              .withOpacity(0.5)
+                                          : Colors.blue)),
+                              onTap: () {
+                                FocusScope.of(context).unfocus();
+
+                                if (isValid)
+                                  (selected?.name ?? '').isEmpty ||
+                                          (selected?.name) == 'My Prayers'
+                                      ? _save()
+                                      : _onGroupPrayerSave();
+                              }),
                         ])),
                 showDropdown && userGroups.length > 0
                     ? Container(

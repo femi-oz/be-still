@@ -178,6 +178,15 @@ class NotificationProvider with ChangeNotifier {
     }
   }
 
+  Future<List<LocalNotificationModel>> getLocalNotificationsFuture(
+      userId) async {
+    try {
+      return _notificationService.getLocalNotificationsFuture(userId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> _deletePastReminder(List<LocalNotificationModel> data) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
@@ -443,7 +452,11 @@ class NotificationProvider with ChangeNotifier {
     }
   }
 
-  closeStream() {
+  void cancelLocalNotifications() {
+    _flutterLocalNotificationsPlugin.cancelAll();
+  }
+
+  void flush() {
     userNotificationStream.cancel();
     localNotificationStream.cancel();
     prayerTimeStream.cancel();

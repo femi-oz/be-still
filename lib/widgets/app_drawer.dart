@@ -89,8 +89,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
   }
 
   closeAllStreams() {
-    Provider.of<GroupProvider>(context, listen: false).closeStream();
-    Provider.of<NotificationProvider>(context, listen: false).closeStream();
+    Provider.of<GroupProvider>(context, listen: false).flush();
+    Provider.of<NotificationProvider>(context, listen: false).flush();
   }
 
   _openLogoutConfirmation(BuildContext context) {
@@ -177,7 +177,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   ),
                   GestureDetector(
                     onTap: () async {
+                      final userId =
+                          Provider.of<UserProvider>(context, listen: false)
+                              .currentUser
+                              .id;
                       await _authProvider.signOut();
+                      Provider.of<NotificationProvider>(context, listen: false)
+                          .cancelLocalNotifications();
+                      Provider.of<UserProvider>(context, listen: false)
+                          .removePushToken(userId ?? '');
                       closeAllStreams();
                       Navigator.pushReplacement(
                         context,

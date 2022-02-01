@@ -14,6 +14,7 @@ import 'package:dio/dio.dart';
 import '../locator.dart';
 
 class GroupService {
+  final _databaseReference = FirebaseFirestore.instance;
   final CollectionReference<Map<String, dynamic>> _groupCollectionReference =
       FirebaseFirestore.instance.collection("Group");
   final CollectionReference<Map<String, dynamic>>
@@ -340,22 +341,23 @@ class GroupService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
+      final groupSettingsId = Uuid().v1();
 
-      _groupCollectionReference
-          .doc(groupData.id)
-          .set(populateGroup(groupData, groupData.id ?? '').toJson());
+      var batch = _databaseReference.batch();
+      batch.set(_groupCollectionReference.doc(groupData.id),
+          populateGroup(groupData, groupData.id ?? '').toJson());
+      batch.set(
+          _userGroupCollectionReference.doc(userGroupId),
+          populateGroupUser(userId, groupData.id ?? '', GroupUserRole.admin,
+                  groupData.createdBy ?? '', fullName, userGroupId)
+              .toJson());
+      batch.set(
+          _groupSettingsCollectionReference.doc(groupSettingsId),
+          populateGroupSettings(userId, groupData.id ?? '',
+                  requireAdminApproval, groupSettingsId)
+              .toJson());
+      await batch.commit();
 
-      _userGroupCollectionReference.doc(userGroupId).set(populateGroupUser(
-              userId,
-              groupData.id ?? '',
-              GroupUserRole.admin,
-              groupData.createdBy ?? '',
-              fullName,
-              userGroupId)
-          .toJson());
-      //store group settings
-
-      addGroupSettings(userId, groupData.id ?? '', requireAdminApproval);
       return userGroupId;
     } catch (e) {
       locator<LogService>().createLog(
@@ -631,7 +633,7 @@ class GroupService {
     }
   }
 
-  populateGroupSettings(
+  GroupSettings populateGroupSettings(
       String userId, String groupId, bool requireAdminApproval, String id) {
     GroupSettings groupsSettings = GroupSettings(
         id: id,

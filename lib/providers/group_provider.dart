@@ -218,6 +218,13 @@ class GroupProvider with ChangeNotifier {
                         .contains(admin.toLowerCase()) &&
                     u.role == GroupUserRole.admin))
             .toList();
+      if (admin.trim().isEmpty &&
+          purpose.trim().isEmpty &&
+          church.trim().isEmpty &&
+          location.trim().isEmpty &&
+          _groupName.isEmpty) {
+        filteredGroups = [];
+      }
 
       _filteredAllGroups = filteredGroups;
       notifyListeners();
@@ -278,7 +285,7 @@ class GroupProvider with ChangeNotifier {
         return Future.error(StringUtils.unathorized);
 
       for (final req in requests) {
-        _notificationService.updatePushNotification(req.id ?? '');
+        await _notificationService.updatePushNotification(req.id ?? '');
       }
       return await _groupService.deleteGroup(groupId);
     } catch (e) {
@@ -417,7 +424,7 @@ class GroupProvider with ChangeNotifier {
     }
   }
 
-  closeStream() {
+  flush() {
     allGroupsStream.cancel();
     groupUserStream.cancel();
     resetValues();

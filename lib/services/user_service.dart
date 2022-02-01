@@ -170,4 +170,12 @@ class UserService {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
+
+  Future removePushToken(String userId) async {
+    try {
+      _userCollectionReference.doc(userId).update({'PushToken': ''});
+    } catch (e) {
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
 }
