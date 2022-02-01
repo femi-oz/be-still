@@ -6,6 +6,7 @@ import 'package:be_still/models/group.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -54,47 +55,55 @@ class _GroupToolsState extends State<GroupTools> {
     try {
       final _currentUser =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-
-      var admin = (data.groupUsers ?? []).firstWhere(
-          (element) => element.role == GroupUserRole.admin,
-          orElse: () => GroupUserModel.defaultValue());
-      await Provider.of<UserProvider>(context, listen: false)
-          .getUserById(admin.userId ?? '');
       final id = (data.groupUsers ?? [])
           .firstWhere((e) => e.userId == _currentUser.id,
               orElse: () => GroupUserModel.defaultValue())
           .id;
+
       if ((id ?? '').isNotEmpty) {
-        await Provider.of<GroupProvider>(context, listen: false)
-            .leaveGroup(id ?? '');
+        var admin = (data.groupUsers ?? []).firstWhere(
+            (element) => element.role == GroupUserRole.admin,
+            orElse: () => GroupUserModel.defaultValue());
+
         var followedPrayers =
             Provider.of<GroupPrayerProvider>(context, listen: false)
                 .followedPrayers
                 .where((element) =>
                     element.groupId == data.group?.id &&
                     element.userId == _currentUser.id);
-        followedPrayers.forEach((element) async {
-          await Provider.of<GroupPrayerProvider>(context, listen: false)
-              .removeFromMyList(element.id ?? '', element.userPrayerId ?? '');
-        });
-        final adminData =
-            Provider.of<UserProvider>(context, listen: false).selectedUser;
+        if (followedPrayers.length > 0) {
+          for (var followedPrayer in followedPrayers) {
+            await Provider.of<GroupPrayerProvider>(context, listen: false)
+                .removeFromMyList(
+                    followedPrayer.id ?? '', followedPrayer.userPrayerId ?? '');
+          }
+        }
+        await Provider.of<GroupProvider>(context, listen: false)
+            .leaveGroup(id ?? '');
+
         final userName =
             '${(_currentUser.firstName ?? '').capitalizeFirst} ${(_currentUser.lastName ?? '').capitalizeFirst}';
-        await sendPushNotification(
-            '$userName has left your group ${data.group?.name}',
-            NotificationType.leave_group,
-            userName,
-            _currentUser.id ?? '',
-            adminData.id ?? '',
-            'A member has left your group',
-            data.group?.id ?? '',
-            [adminData.pushToken ?? '']);
+        if (admin.id != '') {
+          await Provider.of<UserProvider>(context, listen: false)
+              .getUserById(admin.userId ?? '');
+          // await Future.delayed(Duration(milliseconds: 500));
+          final adminData =
+              Provider.of<UserProvider>(context, listen: false).selectedUser;
+          await sendPushNotification(
+              '$userName has left this group',
+              NotificationType.leave_group,
+              userName,
+              _currentUser.id ?? '',
+              adminData.id ?? '',
+              'A member has left your group',
+              data.group?.id ?? '',
+              [adminData.pushToken ?? '']);
+        }
+
         BeStilDialog.hideLoading(context);
         AppController appController = Get.find();
         appController.setCurrentPage(3, true, 3);
-        await Provider.of<GroupProvider>(context, listen: false)
-            .setUserGroups(_currentUser.id ?? '');
+
         Navigator.pop(context);
         Navigator.pop(context);
       }
@@ -289,133 +298,145 @@ class _GroupToolsState extends State<GroupTools> {
             alignment: Alignment.bottomCenter,
           ),
         ),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(height: 80),
-              Row(
-                children: [
-                  TextButton.icon(
-                    style: ButtonStyle(
-                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                          EdgeInsets.zero),
-                    ),
-                    icon: Icon(
-                      AppIcons.bestill_back_arrow,
-                      color: AppColors.lightBlue4,
-                    ),
-                    onPressed: () => Navigator.pop(context),
-                    label: Text(
-                      'BACK',
-                      style: AppTextStyles.boldText20.copyWith(
-                        color: AppColors.prayerPrimaryColor,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(height: 10),
-                    currentGroupUser.role == GroupUserRole.admin
-                        ? LongButton(
-                            icon: Icons.edit,
-                            onPress: () => onEditTap(widget.groupData),
-                            text: "Edit Group",
-                            backgroundColor:
-                                AppColors.groupActionBgColor.withOpacity(0.9),
-                            textColor: AppColors.addprayerTextColor,
-                            onPressMore: () => null,
-                          )
-                        : Container(),
-
-                    SizedBox(height: 10),
-                    LongButton(
-                      icon: Icons.add,
-                      onPress: () {
-                        AppController appController = Get.find();
-                        appController.setCurrentPage(1, true, 3);
-                        Navigator.pop(context);
-                      },
-                      text: "Add a Prayer",
-                      backgroundColor:
-                          AppColors.groupActionBgColor.withOpacity(0.9),
-                      textColor: AppColors.addprayerTextColor,
-                      onPressMore: () => null,
-                    ),
-                    SizedBox(height: 10),
-                    LongButton(
-                      icon: Icons.more_vert,
-                      onPress: () {
-                        AppController appController = Get.find();
-                        appController.setCurrentPage(4, true, 3);
-                        appController.settingsTab = 4;
-                        Navigator.pop(context);
-                      },
-                      text: "Manage Settings",
-                      backgroundColor:
-                          AppColors.groupActionBgColor.withOpacity(0.9),
-                      textColor: AppColors.addprayerTextColor,
-                      onPressMore: () => null,
-                    ),
-                    SizedBox(height: 10),
-                    currentGroupUser.role != GroupUserRole.admin
-                        ? LongButton(
-                            icon: Icons.exit_to_app,
-                            onPress: () {
-                              const message =
-                                  'Are you sure you want to leave this group?';
-                              const method = 'LEAVE';
-                              const title = 'Leave Group';
-                              _openDeleteConfirmation(context, message, method,
-                                  title, widget.groupData);
-                            },
-                            text: "Leave Group",
-                            backgroundColor:
-                                AppColors.groupActionBgColor.withOpacity(0.9),
-                            textColor: AppColors.addprayerTextColor,
-                            onPressMore: () => null,
-                          )
-                        : Container(),
-                    // SizedBox(height: 10),
-                    // LongButton(
-                    //   icon: Icons.share,
-                    //   onPress: null,
-                    //   text: "Invite - Email",
-                    //   backgroundColor: Settings.isDarkMode
-                    //       ? AppColors.backgroundColor[0]
-                    //       : Colors.white,
-                    //   textColor: AppColors.lightBlue3,
-                    //   onPressMore: () => null,
-                    // ),
-                    // SizedBox(height: 10),
-                    // LongButton(
-                    //   icon: Icons.share,
-                    //   onPress: null,
-                    //   text: "Invite - Text",
-                    //   backgroundColor: Settings.isDarkMode
-                    //       ? AppColors.backgroundColor[0]
-                    //       : Colors.white,
-                    //   textColor: AppColors.lightBlue3,
-                    //   onPressMore: () => null,
-                    // ),
-                    // SizedBox(height: 10),
-                    // LongButton(
-                    //   icon: Icons.share,
-                    //   onPress: null,
-                    //   text: "Invite - QR Code",
-                    //   backgroundColor: Settings.isDarkMode
-                    //       ? AppColors.backgroundColor[0]
-                    //       : Colors.white,
-                    //   textColor: AppColors.lightBlue3,
-                    //   onPressMore: () => null,
-                    // ),
-                    SizedBox(height: 60),
-                  ],
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <
+            Widget>[
+          SizedBox(height: 80),
+          Row(
+            children: [
+              TextButton.icon(
+                style: ButtonStyle(
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      EdgeInsets.zero),
                 ),
-              )
-            ]));
+                icon: Icon(
+                  AppIcons.bestill_back_arrow,
+                  color: AppColors.lightBlue4,
+                ),
+                onPressed: () => Navigator.pop(context),
+                label: Text(
+                  'BACK',
+                  style: AppTextStyles.boldText20.copyWith(
+                    color: AppColors.prayerPrimaryColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 10),
+                currentGroupUser.role == GroupUserRole.admin
+                    ? LongButton(
+                        icon: Icons.edit,
+                        onPress: () => onEditTap(widget.groupData),
+                        text: "Edit Group",
+                        backgroundColor:
+                            AppColors.groupActionBgColor.withOpacity(0.9),
+                        textColor: AppColors.addprayerTextColor,
+                        onPressMore: () => null,
+                      )
+                    : Container(),
+
+                SizedBox(height: 10),
+                LongButton(
+                  icon: Icons.add,
+                  onPress: () async {
+                    try {
+                      Provider.of<PrayerProvider>(context, listen: false)
+                          .setEditMode(false, true);
+                      await Provider.of<GroupProvider>(context, listen: false)
+                          .setCurrentGroupById(
+                              widget.groupData.group?.id ?? '', _user.id ?? '');
+                      AppController appController = Get.find();
+                      appController.setCurrentPage(1, true, 3);
+                      Navigator.pop(context);
+                    } on HttpException catch (e, s) {
+                      BeStilDialog.showErrorDialog(
+                          context, StringUtils.getErrorMessage(e), _user, s);
+                    } catch (e, s) {
+                      BeStilDialog.showErrorDialog(
+                          context, StringUtils.errorOccured, _user, s);
+                    }
+                  },
+                  text: "Add a Prayer",
+                  backgroundColor:
+                      AppColors.groupActionBgColor.withOpacity(0.9),
+                  textColor: AppColors.addprayerTextColor,
+                  onPressMore: () => null,
+                ),
+                SizedBox(height: 10),
+                LongButton(
+                  icon: Icons.more_vert,
+                  onPress: () {
+                    AppController appController = Get.find();
+                    appController.setCurrentPage(4, true, 3);
+                    appController.settingsTab = 4;
+                    Navigator.pop(context);
+                  },
+                  text: "Manage Settings",
+                  backgroundColor:
+                      AppColors.groupActionBgColor.withOpacity(0.9),
+                  textColor: AppColors.addprayerTextColor,
+                  onPressMore: () => null,
+                ),
+                SizedBox(height: 10),
+                currentGroupUser.role != GroupUserRole.admin
+                    ? LongButton(
+                        icon: Icons.exit_to_app,
+                        onPress: () {
+                          const message =
+                              'Are you sure you want to leave this group?';
+                          const method = 'LEAVE';
+                          const title = 'Leave Group';
+                          _openDeleteConfirmation(context, message, method,
+                              title, widget.groupData);
+                        },
+                        text: "Leave Group",
+                        backgroundColor:
+                            AppColors.groupActionBgColor.withOpacity(0.9),
+                        textColor: AppColors.addprayerTextColor,
+                        onPressMore: () => null,
+                      )
+                    : Container(),
+                // SizedBox(height: 10),
+                // LongButton(
+                //   icon: Icons.share,
+                //   onPress: null,
+                //   text: "Invite - Email",
+                //   backgroundColor: Settings.isDarkMode
+                //       ? AppColors.backgroundColor[0]
+                //       : Colors.white,
+                //   textColor: AppColors.lightBlue3,
+                //   onPressMore: () => null,
+                // ),
+                // SizedBox(height: 10),
+                // LongButton(
+                //   icon: Icons.share,
+                //   onPress: null,
+                //   text: "Invite - Text",
+                //   backgroundColor: Settings.isDarkMode
+                //       ? AppColors.backgroundColor[0]
+                //       : Colors.white,
+                //   textColor: AppColors.lightBlue3,
+                //   onPressMore: () => null,
+                // ),
+                // SizedBox(height: 10),
+                // LongButton(
+                //   icon: Icons.share,
+                //   onPress: null,
+                //   text: "Invite - QR Code",
+                //   backgroundColor: Settings.isDarkMode
+                //       ? AppColors.backgroundColor[0]
+                //       : Colors.white,
+                //   textColor: AppColors.lightBlue3,
+                //   onPressMore: () => null,
+                // ),
+                SizedBox(height: 60),
+              ],
+            ),
+          )
+        ]));
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/services/auth_service.dart';
 import 'package:be_still/services/log_service.dart';
 import 'package:be_still/services/settings_service.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -15,6 +16,9 @@ class UserService {
   final CollectionReference<Map<String, dynamic>> _userCollectionReference =
       FirebaseFirestore.instance.collection("User");
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  AuthenticationService _authenticationService =
+      locator<AuthenticationService>();
 
   deviceModel() async {
     var deviceInfo = DeviceInfoPlugin();
@@ -150,8 +154,8 @@ class UserService {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       await user?.updateEmail(newEmail.toLowerCase());
-      await user?.sendEmailVerification();
-      await _userCollectionReference.doc(userId).update({'Email': newEmail});
+      _userCollectionReference.doc(userId).update({'Email': newEmail});
+      _authenticationService.sendEmailVerification();
     } catch (e) {
       locator<LogService>().createLog(
           StringUtils.getErrorMessage(e), userId, 'USER/service/updateEmail');
@@ -167,6 +171,14 @@ class UserService {
     } catch (e) {
       locator<LogService>().createLog(StringUtils.getErrorMessage(e),
           user?.email ?? '', 'USER/service/updatePassword');
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
+  Future removePushToken(String userId) async {
+    try {
+      _userCollectionReference.doc(userId).update({'PushToken': ''});
+    } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }

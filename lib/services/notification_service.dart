@@ -345,13 +345,31 @@ class NotificationService {
     }
   }
 
+  Future<List<LocalNotificationModel>> getLocalNotificationsFuture(
+      String userId) {
+    try {
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
+      return _localNotificationCollectionReference
+          .where('UserId', isEqualTo: userId)
+          .get()
+          .then((e) => e.docs
+              .map((doc) => LocalNotificationModel.fromData(doc.data(), doc.id))
+              .toList());
+    } catch (e) {
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), userId,
+          'NOTIFICATION/service/getLocalNotifications');
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
   Stream<List<PushNotificationModel>> getUserNotifications(String userId) {
     try {
       if (_firebaseAuth.currentUser == null)
         return Stream.error(StringUtils.unathorized);
       return _pushNotificationCollectionReference
-          .where('Status', isEqualTo: Status.active)
           .where('RecieverId', isEqualTo: userId)
+          .where('Status', isEqualTo: Status.active)
           .snapshots()
           .map((e) => e.docs
               .map((doc) => PushNotificationModel.fromData(doc.data(), doc.id))

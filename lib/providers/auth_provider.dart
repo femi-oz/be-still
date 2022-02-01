@@ -5,6 +5,7 @@ import 'package:be_still/services/auth_service.dart';
 import 'package:be_still/services/log_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthenticationProvider with ChangeNotifier {
   AuthenticationService _authService = locator<AuthenticationService>();
@@ -34,9 +35,9 @@ class AuthenticationProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> biometricSignin(String email) async {
+  Future<bool> biometricSignin() async {
     try {
-      return await _authService.biometricAuthentication(email);
+      return await _authService.biometricAuthentication();
     } catch (e) {
       rethrow;
     }

@@ -1,17 +1,14 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
-import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/notification.model.dart';
-import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/utils/app_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
@@ -35,6 +32,10 @@ class NotificationProvider with ChangeNotifier {
   static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
+  late StreamSubscription<List<PushNotificationModel>> userNotificationStream;
+  late StreamSubscription<List<LocalNotificationModel>> localNotificationStream;
+  late StreamSubscription<List<LocalNotificationModel>> prayerTimeStream;
+
   List<PushNotificationModel> _notifications = [];
   List<PushNotificationModel> get notifications => _notifications;
 
@@ -46,6 +47,13 @@ class NotificationProvider with ChangeNotifier {
   List<LocalNotificationModel> get localNotifications => _localNotifications;
   NotificationMessage _message = NotificationMessage.defaultValue();
   NotificationMessage get message => _message;
+
+  resetValues() {
+    _notifications = [];
+    _prayerTimeNotifications = [];
+    _localNotifications = [];
+    _message = NotificationMessage.defaultValue();
+  }
 
   Future<void> initLocal(BuildContext context) async {
     tz.initializeTimeZones();
@@ -126,13 +134,13 @@ class NotificationProvider with ChangeNotifier {
     }
   }
 
-  Future<void> setUserNotifications(String userId) async {
+  Future setUserNotifications(String userId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      _notificationService
+      userNotificationStream = _notificationService
           .getUserNotifications(userId)
           .asBroadcastStream()
-          .listen((notifications) {
+          .listen((notifications) async {
         _notifications = notifications;
 
         notifyListeners();
@@ -157,7 +165,7 @@ class NotificationProvider with ChangeNotifier {
   Future<void> setLocalNotifications(userId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      _notificationService
+      localNotificationStream = _notificationService
           .getLocalNotifications(userId)
           .asBroadcastStream()
           .listen((notifications) {
@@ -165,6 +173,15 @@ class NotificationProvider with ChangeNotifier {
         _deletePastReminder(notifications);
         notifyListeners();
       });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<LocalNotificationModel>> getLocalNotificationsFuture(
+      userId) async {
+    try {
+      return _notificationService.getLocalNotificationsFuture(userId);
     } catch (e) {
       rethrow;
     }
@@ -191,7 +208,7 @@ class NotificationProvider with ChangeNotifier {
   Future<void> setPrayerTimeNotifications(userId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      _notificationService
+      prayerTimeStream = _notificationService
           .getLocalNotifications(userId)
           .asBroadcastStream()
           .listen((notifications) {
@@ -227,7 +244,7 @@ class NotificationProvider with ChangeNotifier {
   ) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      return await _notificationService.sendPushNotification(
+      await _notificationService.sendPushNotification(
           message: message,
           prayerId: prayerId,
           groupId: groupId,
@@ -379,8 +396,9 @@ class NotificationProvider with ChangeNotifier {
         followers = prayers.map((e) => e.userId ?? '').toList();
         _ids = [...followers];
       }
-      print(_ids);
+
       _ids.removeWhere((e) => e == _user.id);
+
       for (final id in _ids) {
         final setting =
             await Provider.of<SettingsProvider>(context, listen: false)
@@ -400,7 +418,7 @@ class NotificationProvider with ChangeNotifier {
                 type ?? '',
                 name,
                 _user.id ?? '',
-                (id),
+                id,
                 type ?? '',
                 groupPrayerId ?? '',
                 selectedGroupId ?? '',
@@ -432,5 +450,16 @@ class NotificationProvider with ChangeNotifier {
     } catch (e) {
       rethrow;
     }
+  }
+
+  void cancelLocalNotifications() {
+    _flutterLocalNotificationsPlugin.cancelAll();
+  }
+
+  void flush() {
+    userNotificationStream.cancel();
+    localNotificationStream.cancel();
+    prayerTimeStream.cancel();
+    resetValues();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
@@ -32,9 +33,11 @@ class LocalNotification {
       (i) => DateFormat('MMM').format(DateTime(DateTime.now().year, i + 1)));
 
   static Future<void> setNotificationsOnNewDevice(context) async {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
     final _localNotifications =
-        Provider.of<NotificationProvider>(context, listen: false)
-            .localNotifications;
+        await Provider.of<NotificationProvider>(context, listen: false)
+            .getLocalNotificationsFuture(userId);
     //set notification in new device
 
     // The device's timezone.
@@ -91,11 +94,9 @@ class LocalNotification {
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: frequency.toString().toLowerCase() ==
-              Frequency.daily.toLowerCase()
-          ? DateTimeComponents.time
-          : frequency.toString().toLowerCase() == Frequency.daily.toLowerCase()
-              ? null
+      matchDateTimeComponents:
+          frequency.toString().toLowerCase() == Frequency.daily.toLowerCase()
+              ? DateTimeComponents.time
               : DateTimeComponents.dayOfWeekAndTime,
     );
   }

@@ -10,6 +10,7 @@ import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/debouncer.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/navigation.dart';
@@ -40,8 +41,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  bool rememberMe = false;
-
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -50,14 +49,18 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordKey = GlobalKey();
   final _usernameKey = GlobalKey();
   final LocalAuthentication _localAuthentication = LocalAuthentication();
-  bool isBioMetricAvailable = false;
+  final _debounce = Debouncer(delay: const Duration(seconds: 1));
   List<BiometricType> listOfBiometrics = [];
+  String verificationSendMessage = 'Resend verification email';
+
+  bool rememberMe = false;
+  bool isBioMetricAvailable = false;
   bool showFingerPrint = false;
   bool showFaceId = false;
   bool showSuffix = true;
   bool _autoValidate = false;
   bool verificationSent = false;
-  String verificationSendMessage = 'Resend verification email';
+  bool isLoading = false;
   bool needsVerification = false;
 
   Future<void> _isBiometricAvailable() async {
@@ -231,27 +234,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> setRouteDestination() async {
     try {
-      var message =
+      final message =
           Provider.of<NotificationProvider>(context, listen: false).message;
       if ((message.entityId ?? '').isNotEmpty) {
-        WidgetsBinding.instance!.addPostFrameCallback((_) async {
-          if (message.type == NotificationType.prayer_time) {
-            await Provider.of<PrayerProvider>(context, listen: false)
-                .setPrayerTimePrayers(message.entityId ?? '');
-            // Provider.of<MiscProvider>(context, listen: false).setCurrentPage(2);
-            AppController appController = Get.find();
-
-            appController.setCurrentPage(2, false, 0);
-            Provider.of<MiscProvider>(context, listen: false)
-                .setLoadStatus(true);
-            Navigator.of(context).pushNamedAndRemoveUntil(
-                EntryScreen.routeName, (Route<dynamic> route) => false);
-          }
-          if (message.type == NotificationType.prayer) {
-            Provider.of<PrayerProvider>(context, listen: false)
-                .setCurrentPrayerId(message.entityId ?? '');
-          }
-        });
+        if (message.type == NotificationType.prayer_time) {
+          await Provider.of<PrayerProvider>(context, listen: false)
+              .setPrayerTimePrayers(message.entityId ?? '');
+          AppController appController = Get.find();
+          appController.setCurrentPage(2, false, 0);
+          Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              EntryScreen.routeName, (Route<dynamic> route) => false);
+        }
+        if (message.type == NotificationType.prayer) {
+          Provider.of<PrayerProvider>(context, listen: false)
+              .setCurrentPrayerId(message.entityId ?? '');
+        }
         Provider.of<NotificationProvider>(context, listen: false)
             .clearMessage();
       } else {
@@ -312,7 +310,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _login() async {
     setState(() => _autoValidate = true);
-    if (!_formKey.currentState!.validate()) return null;
+    if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
 
     BeStilDialog.showLoading(context, 'Authenticating');
@@ -354,28 +352,43 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void _biologin() async {
+  Future<void> _biologin() async {
     try {
-      var userInfo = jsonDecode(Settings.lastUser);
-      var usernname = userInfo['email'];
-      var password = Settings.userPassword;
+      final userInfo = jsonDecode(Settings.lastUser);
+      final usernname = userInfo['email'];
+      final password = Settings.userPassword;
       await Provider.of<AuthenticationProvider>(context, listen: false).signIn(
         email: usernname,
         password: password,
       );
-      var isAuth =
+      final isAuth =
           await Provider.of<AuthenticationProvider>(context, listen: false)
-              .biometricSignin(_usernameController.text);
+              .biometricSignin();
+      BeStilDialog.showLoading(context, 'Authenticating');
+      isLoading = true;
       if (isAuth) {
         await Provider.of<UserProvider>(context, listen: false)
             .setCurrentUser(false);
+        BeStilDialog.hideLoading(context);
+        isLoading = false;
 
         await setRouteDestination();
+      } else {
+        BeStilDialog.hideLoading(context);
+        isLoading = false;
       }
     } on HttpException catch (e, s) {
+      if (isLoading) {
+        BeStilDialog.hideLoading(context);
+        isLoading = false;
+      }
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
     } catch (e, s) {
+      if (isLoading) {
+        BeStilDialog.hideLoading(context);
+        isLoading = false;
+      }
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
 
@@ -567,29 +580,27 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _bioButton() {
     return Container(
-      padding: EdgeInsets.only(
-        left: 40,
-      ),
-      child: Container(
-        width: 50.0,
-        height: 50.0,
-        padding: EdgeInsets.only(top: 15.0, right: 15.0),
-        child: GestureDetector(
-            onTap: () => _biologin(),
-            child: showFingerPrint && showFaceId
-                ? Image.asset(
-                    'assets/images/icon_face_id_ios.png',
-                  )
-                : !showFingerPrint && showFaceId
-                    ? Image.asset(
-                        'assets/images/icon_face_id_ios.png',
-                      )
-                    : Icon(
-                        Icons.fingerprint,
-                        color: Colors.black,
-                        size: 37,
-                      )),
-      ),
+      width: 50.0,
+      height: 50.0,
+      margin: EdgeInsets.only(left: 40),
+      padding: EdgeInsets.only(top: 15.0, right: 15.0),
+      child: GestureDetector(
+          onTap: () => _debounce(() {
+                _biologin();
+              }),
+          child: showFingerPrint && showFaceId
+              ? Image.asset(
+                  'assets/images/icon_face_id_ios.png',
+                )
+              : !showFingerPrint && showFaceId
+                  ? Image.asset(
+                      'assets/images/icon_face_id_ios.png',
+                    )
+                  : Icon(
+                      Icons.fingerprint,
+                      color: Colors.black,
+                      size: 37,
+                    )),
     );
   }
 
@@ -650,7 +661,9 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               Align(
                   alignment: Alignment.bottomRight,
-                  child: Settings.enableLocalAuth ? _bioButton() : Container())
+                  child: Settings.enableLocalAuth
+                      ? _bioButton()
+                      : SizedBox.shrink())
             ],
           )
         ],

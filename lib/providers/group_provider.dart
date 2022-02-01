@@ -14,6 +14,13 @@ class GroupProvider with ChangeNotifier {
   GroupService _groupService = locator<GroupService>();
   NotificationService _notificationService = locator<NotificationService>();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  GroupProvider._();
+  factory GroupProvider() => _instance;
+  static final GroupProvider _instance = GroupProvider._();
+
+  late StreamSubscription<List<CombineGroupUserStream>> groupUserStream;
+  late StreamSubscription<List<CombineGroupUserStream>> allGroupsStream;
+
   List<CombineGroupUserStream> _userGroups = [];
   List<CombineGroupUserStream> _allGroups = [];
   List<CombineGroupUserStream> _filteredAllGroups = [];
@@ -28,11 +35,21 @@ class GroupProvider with ChangeNotifier {
   String _groupJoinId = '';
   String get groupJoinId => _groupJoinId;
 
+  resetValues() {
+    _userGroups = [];
+    _allGroups = [];
+    _filteredAllGroups = [];
+    _currentGroup = CombineGroupUserStream.defaultValue();
+    _isEdit = false;
+    _groupJoinId = '';
+    notifyListeners();
+  }
+
   Future<void> setUserGroups(String userId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      _groupService
+      groupUserStream = _groupService
           .getUserGroups(userId)
           .asBroadcastStream()
           .listen((userGroups) {
@@ -105,7 +122,10 @@ class GroupProvider with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      _groupService.getAllGroups(userId).asBroadcastStream().listen((groups) {
+      allGroupsStream = _groupService
+          .getAllGroups(userId)
+          .asBroadcastStream()
+          .listen((groups) {
         _allGroups = groups;
         if (_isAdvanceSearch)
           advanceSearchAllGroups(
@@ -198,6 +218,13 @@ class GroupProvider with ChangeNotifier {
                         .contains(admin.toLowerCase()) &&
                     u.role == GroupUserRole.admin))
             .toList();
+      if (admin.trim().isEmpty &&
+          purpose.trim().isEmpty &&
+          church.trim().isEmpty &&
+          location.trim().isEmpty &&
+          _groupName.isEmpty) {
+        filteredGroups = [];
+      }
 
       _filteredAllGroups = filteredGroups;
       notifyListeners();
@@ -258,7 +285,7 @@ class GroupProvider with ChangeNotifier {
         return Future.error(StringUtils.unathorized);
 
       for (final req in requests) {
-        _notificationService.updatePushNotification(req.id ?? '');
+        await _notificationService.updatePushNotification(req.id ?? '');
       }
       return await _groupService.deleteGroup(groupId);
     } catch (e) {
@@ -395,5 +422,11 @@ class GroupProvider with ChangeNotifier {
     } catch (e) {
       rethrow;
     }
+  }
+
+  flush() {
+    allGroupsStream.cancel();
+    groupUserStream.cancel();
+    resetValues();
   }
 }

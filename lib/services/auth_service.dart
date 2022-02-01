@@ -13,12 +13,11 @@ import 'package:local_auth/local_auth.dart';
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final _localAuth = LocalAuthentication();
-  bool isAuthenticated = false;
 
-  Future<bool> biometricAuthentication(String email) async {
+  Future<bool> biometricAuthentication() async {
     if (Settings.enableLocalAuth) {
       try {
-        isAuthenticated = await _localAuth.authenticate(
+        final isAuthenticated = await _localAuth.authenticate(
           localizedReason: 'authenticate to access',
           useErrorDialogs: true,
           stickyAuth: true,
@@ -34,8 +33,6 @@ class AuthenticationService {
         _localAuth.stopAuthentication();
         signOut();
         final message = StringUtils.generateExceptionMessage(e.code);
-        await locator<LogService>().createLog(
-            message, email, 'AUTHENTICATION/service/biometricAuthentication');
         throw HttpException(message);
       }
     } else

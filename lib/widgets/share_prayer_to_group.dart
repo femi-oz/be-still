@@ -12,23 +12,6 @@ class SharePrayerToGroups extends StatefulWidget {
 class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
   List selectedGroups = [];
 
-  void _getGroup() async {
-    // UserModel _user =
-    //     Provider.of<UserProvider>(context, listen: false).currentUser;
-    // await Provider.of<GroupProvider>(context, listen: false)
-    //     .setAllGroups(_user.id);
-  }
-
-  bool _isInit = true;
-  @override
-  void didChangeDependencies() {
-    if (_isInit) {
-      _getGroup();
-      _isInit = false;
-    }
-    super.didChangeDependencies();
-  }
-
   @override
   Widget build(BuildContext context) {
     final groups = Provider.of<GroupProvider>(context).allGroups;

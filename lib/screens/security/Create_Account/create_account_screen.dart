@@ -114,14 +114,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           lastName: _lastnameController.text,
           dob: _selectedDate,
         );
-        await Provider.of<UserProvider>(context, listen: false)
-            .setCurrentUser(false);
-        final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
-        Settings.lastUser =
-            Settings.rememberMe ? jsonEncode(user.toJson2()) : '';
-        Settings.userPassword =
-            Settings.rememberMe ? _passwordController.text : '';
+
+        Settings.lastUser = '';
+        Settings.userPassword = '';
+        Settings.enableLocalAuth = false;
         BeStilDialog.hideLoading(context);
         showInfoDialog(context);
       }

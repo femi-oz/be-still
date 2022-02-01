@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -86,9 +88,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
     }
   }
 
+  closeAllStreams() {
+    Provider.of<GroupProvider>(context, listen: false).flush();
+    Provider.of<NotificationProvider>(context, listen: false).flush();
+  }
+
   _openLogoutConfirmation(BuildContext context) {
     final _authProvider =
         Provider.of<AuthenticationProvider>(context, listen: false);
+
     final dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
@@ -169,7 +177,16 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   ),
                   GestureDetector(
                     onTap: () async {
+                      final userId =
+                          Provider.of<UserProvider>(context, listen: false)
+                              .currentUser
+                              .id;
                       await _authProvider.signOut();
+                      Provider.of<NotificationProvider>(context, listen: false)
+                          .cancelLocalNotifications();
+                      Provider.of<UserProvider>(context, listen: false)
+                          .removePushToken(userId ?? '');
+                      closeAllStreams();
                       Navigator.pushReplacement(
                         context,
                         SlideRightRoute(page: LoginScreen()),

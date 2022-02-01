@@ -86,7 +86,6 @@ class _EntryScreenState extends State<EntryScreen> {
           Provider.of<UserProvider>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
-
     super.initState();
   }
 
@@ -166,8 +165,8 @@ class _EntryScreenState extends State<EntryScreen> {
           .setFollowedPrayerByUserId(userId ?? '');
 
       //set all users
-      await Provider.of<UserProvider>(context, listen: false)
-          .setAllUsers(userId ?? '');
+      // await Provider.of<UserProvider>(context, listen: false)
+      //     .setAllUsers(userId ?? '');
 
       // get all push notifications
       await Provider.of<NotificationProvider>(context, listen: false)
