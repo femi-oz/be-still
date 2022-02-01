@@ -697,7 +697,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                       .width *
                                                   0.8,
                                               child: Text(
-                                                '${notification.sender} a added new prayer to the group.',
+                                                '${notification.sender} added a new prayer to the group.',
                                                 style: AppTextStyles
                                                     .regularText16b
                                                     .copyWith(
