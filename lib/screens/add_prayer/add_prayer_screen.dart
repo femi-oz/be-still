@@ -258,7 +258,6 @@ class _AddPrayerState extends State<AddPrayer> {
               }
             }
           }
-          FocusScope.of(context).unfocus();
 
           AppController appController = Get.find();
           if ((selected?.name ?? '').isEmpty ||
@@ -760,7 +759,7 @@ class _AddPrayerState extends State<AddPrayer> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        FocusScope.of(context).requestFocus(new FocusNode());
+                        // FocusScope.of(context).requestFocus(new FocusNode());
                         Navigator.pop(context);
 
                         _save();
@@ -867,6 +866,8 @@ class _AddPrayerState extends State<AddPrayer> {
                                               .withOpacity(0.5)
                                           : Colors.blue)),
                               onTap: () {
+                                FocusScope.of(context).unfocus();
+
                                 if (isValid)
                                   (selected?.name ?? '').isEmpty ||
                                           (selected?.name) == 'My Prayers'

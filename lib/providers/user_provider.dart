@@ -75,6 +75,7 @@ class UserProvider with ChangeNotifier {
   Future updateEmail(String newEmail, String userId) async {
     try {
       await _userService.updateEmail(newEmail, userId);
+
       setCurrentUser(false);
     } catch (e) {
       rethrow;

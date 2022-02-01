@@ -41,8 +41,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  bool rememberMe = false;
-
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -51,16 +49,19 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordKey = GlobalKey();
   final _usernameKey = GlobalKey();
   final LocalAuthentication _localAuthentication = LocalAuthentication();
-  bool isBioMetricAvailable = false;
+  final _debounce = Debouncer(delay: const Duration(seconds: 1));
   List<BiometricType> listOfBiometrics = [];
+  String verificationSendMessage = 'Resend verification email';
+
+  bool rememberMe = false;
+  bool isBioMetricAvailable = false;
   bool showFingerPrint = false;
   bool showFaceId = false;
   bool showSuffix = true;
   bool _autoValidate = false;
   bool verificationSent = false;
-  String verificationSendMessage = 'Resend verification email';
+  bool isLoading = false;
   bool needsVerification = false;
-  final _debounce = Debouncer(delay: const Duration(seconds: 1));
 
   Future<void> _isBiometricAvailable() async {
     try {
@@ -364,22 +365,30 @@ class _LoginScreenState extends State<LoginScreen> {
           await Provider.of<AuthenticationProvider>(context, listen: false)
               .biometricSignin();
       BeStilDialog.showLoading(context, 'Authenticating');
+      isLoading = true;
       if (isAuth) {
         await Provider.of<UserProvider>(context, listen: false)
             .setCurrentUser(false);
         BeStilDialog.hideLoading(context);
+        isLoading = false;
 
         await setRouteDestination();
       } else {
         BeStilDialog.hideLoading(context);
+        isLoading = false;
       }
     } on HttpException catch (e, s) {
-      BeStilDialog.hideLoading(context);
-
+      if (isLoading) {
+        BeStilDialog.hideLoading(context);
+        isLoading = false;
+      }
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
     } catch (e, s) {
-      BeStilDialog.hideLoading(context);
+      if (isLoading) {
+        BeStilDialog.hideLoading(context);
+        isLoading = false;
+      }
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
 

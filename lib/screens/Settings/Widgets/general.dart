@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:be_still/enums/theme_mode.dart';
@@ -227,6 +228,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     try {
       await Provider.of<UserProvider>(context, listen: false)
           .updateEmail(_newEmail.text, user.id ?? '');
+      final newUser = user..email = _newEmail.text.trim();
+      Settings.lastUser = jsonEncode(newUser.toJson2());
       BeStilDialog.showSuccessDialog(
         context,
         'Your email has been updated successfully. Verify your new email and re-login!',

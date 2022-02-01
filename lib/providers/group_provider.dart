@@ -218,6 +218,13 @@ class GroupProvider with ChangeNotifier {
                         .contains(admin.toLowerCase()) &&
                     u.role == GroupUserRole.admin))
             .toList();
+      if (admin.trim().isEmpty &&
+          purpose.trim().isEmpty &&
+          church.trim().isEmpty &&
+          location.trim().isEmpty &&
+          _groupName.isEmpty) {
+        filteredGroups = [];
+      }
 
       _filteredAllGroups = filteredGroups;
       notifyListeners();

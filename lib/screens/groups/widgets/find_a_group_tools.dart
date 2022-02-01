@@ -30,20 +30,15 @@ class _FindGroupToolsState extends State<FindGroupTools> {
     try {
       final userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      if (_groupNameController.text.isNotEmpty ||
-          _locationController.text.isNotEmpty ||
-          _adminNameController.text.isNotEmpty ||
-          _organizationController.text.isNotEmpty ||
-          _descriptionController.text.isNotEmpty) {
-        await Provider.of<GroupProvider>(context, listen: false)
-            .advanceSearchAllGroups(
-                _groupNameController.text,
-                userId ?? '',
-                _locationController.text,
-                _organizationController.text,
-                _adminNameController.text,
-                _descriptionController.text);
-      }
+
+      await Provider.of<GroupProvider>(context, listen: false)
+          .advanceSearchAllGroups(
+              _groupNameController.text,
+              userId ?? '',
+              _locationController.text,
+              _organizationController.text,
+              _adminNameController.text,
+              _descriptionController.text);
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -77,7 +72,7 @@ class _FindGroupToolsState extends State<FindGroupTools> {
                         EdgeInsets.zero),
                   ),
                   onPressed: () => Navigator.of(context).pop(),
-                   icon: Icon(
+                  icon: Icon(
                     AppIcons.bestill_back_arrow,
                     size: 20,
                     color: AppColors.lightBlue4,
