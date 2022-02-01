@@ -72,7 +72,7 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  updateEmail(String newEmail, String userId) async {
+  Future updateEmail(String newEmail, String userId) async {
     try {
       await _userService.updateEmail(newEmail, userId);
       setCurrentUser(false);
@@ -81,10 +81,18 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  updatePassword(String newPassword) async {
+  Future updatePassword(String newPassword) async {
     try {
       await _userService.updatePassword(newPassword);
       setCurrentUser(false);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future removePushToken(String userId) async {
+    try {
+      await _userService.removePushToken(userId);
     } catch (e) {
       rethrow;
     }

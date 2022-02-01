@@ -177,7 +177,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   ),
                   GestureDetector(
                     onTap: () async {
+                      final userId =
+                          Provider.of<UserProvider>(context, listen: false)
+                              .currentUser
+                              .id;
                       await _authProvider.signOut();
+                      Provider.of<NotificationProvider>(context, listen: false)
+                          .cancelLocalNotifications();
+                      Provider.of<UserProvider>(context, listen: false)
+                          .removePushToken(userId ?? '');
                       closeAllStreams();
                       Navigator.pushReplacement(
                         context,
