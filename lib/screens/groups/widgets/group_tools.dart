@@ -103,8 +103,7 @@ class _GroupToolsState extends State<GroupTools> {
         BeStilDialog.hideLoading(context);
         AppController appController = Get.find();
         appController.setCurrentPage(3, true, 3);
-        // await Provider.of<GroupProvider>(context, listen: false)
-        //     .setUserGroups(_currentUser.id ?? '');
+
         Navigator.pop(context);
         Navigator.pop(context);
       }

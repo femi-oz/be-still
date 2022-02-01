@@ -496,7 +496,7 @@ class GroupService {
     }
   }
 
-  deleteGroup(String groupId) {
+  deleteGroup(String groupId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
@@ -508,6 +508,16 @@ class GroupService {
         for (final doc in value.docs) {
           doc.reference.delete();
         }
+      });
+      final x = await _followedPrayerCollectionReference
+          .where('GroupId', isEqualTo: groupId)
+          .get();
+      x.docs.forEach((element) {
+        final f = FollowedPrayerModel.fromData(element.data(), element.id);
+        _userPrayerCollectionReference
+            .doc(f.userPrayerId)
+            .update({'DeleteStatus': -1});
+        // element.reference.delete();
       });
       _groupPrayerCollectionReference
           .where('GroupId', isEqualTo: groupId)
