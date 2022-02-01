@@ -75,8 +75,6 @@ class _AddPrayerState extends State<AddPrayer> {
               .setSearchQuery('');
           Provider.of<PrayerProvider>(context, listen: false)
               .searchPrayers('', userId ?? '');
-          // await Provider.of<GroupProvider>(context, listen: false)
-          //     .setUserGroups(userId ?? '');
         } on HttpException catch (e, s) {
           final user =
               Provider.of<UserProvider>(context, listen: false).currentUser;

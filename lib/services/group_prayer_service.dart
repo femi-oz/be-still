@@ -451,7 +451,7 @@ class GroupPrayerService {
         _userPrayerCollectionReference
             .doc(f.userPrayerId)
             .update({'DeleteStatus': -1});
-        element.reference.delete();
+        // element.reference.delete();
       });
     } catch (e) {
       locator<LogService>().createLog(StringUtils.getErrorMessage(e),
@@ -502,7 +502,7 @@ class GroupPrayerService {
         _userPrayerCollectionReference
             .doc(f.userPrayerId)
             .update({'DeleteStatus': -1});
-        element.reference.delete();
+        // element.reference.delete();
       });
     } catch (e) {
       locator<LogService>().createLog(StringUtils.getErrorMessage(e), prayerID,

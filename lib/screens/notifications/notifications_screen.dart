@@ -635,49 +635,32 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                             .spaceBetween,
                                                     children: <Widget>[
                                                       notification.sender != ''
-                                                          ? Text(
-                                                              notification
-                                                                      .sender ??
-                                                                  '',
-                                                              style: AppTextStyles
-                                                                  .regularText15b
-                                                                  .copyWith(
-                                                                fontSize: 14,
-                                                                color: AppColors
-                                                                    .lightBlue4,
+                                                          ? SizedBox(
+                                                              width: Get.width *
+                                                                  0.3,
+                                                              child: Text(
+                                                                snapshot
+                                                                        .data
+                                                                        ?.group
+                                                                        ?.name
+                                                                        ?.sentenceCase() ??
+                                                                    '',
+                                                                style: AppTextStyles
+                                                                    .regularText15b
+                                                                    .copyWith(
+                                                                  fontSize: 14,
+                                                                  color: AppColors
+                                                                      .lightBlue4,
+                                                                ),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
                                                               ),
                                                             )
                                                           : Container(),
+                                                      Spacer(),
                                                       Row(
                                                         children: <Widget>[
-                                                          Container(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.3,
-                                                            child: Text(
-                                                              snapshot
-                                                                      .data
-                                                                      ?.group
-                                                                      ?.name ??
-                                                                  '',
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              style: TextStyle(
-                                                                  color: AppColors
-                                                                      .lightBlue4),
-                                                            ).marginOnly(
-                                                                right: 5),
-                                                          ),
-                                                          Text(
-                                                            '|',
-                                                            style: TextStyle(
-                                                                color: AppColors
-                                                                    .lightBlue4),
-                                                          ).marginOnly(
-                                                              right: 5),
                                                           Text(
                                                             DateFormat(
                                                                     'MM.dd.yyyy')
@@ -714,14 +697,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                       .width *
                                                   0.8,
                                               child: Text(
-                                                (notification.message ?? '')
-                                                            .length >
-                                                        99
-                                                    ? (notification.message ??
-                                                            '')
-                                                        .substring(0, 100)
-                                                    : notification.message ??
-                                                        '',
+                                                '${notification.sender} a added new prayer to the group.',
                                                 style: AppTextStyles
                                                     .regularText16b
                                                     .copyWith(
@@ -1161,7 +1137,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           ? Expanded(
                                                               child: Text(
                                                                 notification
-                                                                        .sender ??
+                                                                        .sender
+                                                                        ?.sentenceCase() ??
                                                                     '',
                                                                 style: AppTextStyles
                                                                     .regularText15b
