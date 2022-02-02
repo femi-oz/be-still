@@ -380,7 +380,8 @@ class NotificationProvider with ChangeNotifier {
 
       List<String> followers = [];
 
-      if (type == NotificationType.prayer) {
+      if (type == NotificationType.prayer ||
+          type == NotificationType.prayer_updates) {
         members = (Provider.of<GroupProvider>(context, listen: false)
                     .currentGroup
                     .groupUsers ??
@@ -445,6 +446,24 @@ class NotificationProvider with ChangeNotifier {
                 selectedGroupId ?? '',
                 [value]);
           }
+        } else {
+          // await Provider.of<UserProvider>(context, listen: false)
+          //     .returnUserToken(id);
+          final value = '';
+          final name = ((_user.firstName ?? '').capitalizeFirst ?? '') +
+              ' ' +
+              ((_user.lastName ?? '').capitalizeFirst ?? '');
+
+          sendPushNotification(
+              prayerDetail?.capitalizeFirst ?? '',
+              type ?? '',
+              name,
+              _user.id ?? '',
+              (id),
+              type ?? '',
+              groupPrayerId ?? '',
+              selectedGroupId ?? '',
+              [value]);
         }
       }
     } catch (e) {

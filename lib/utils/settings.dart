@@ -16,6 +16,7 @@ class Settings {
   static const String ENABLE_LOCAL_AUTH = 'enable_local_auth_';
   static const String SET_ENABLE_LOCAL_AUTH = 'set_enable_local_auth_';
   static const String CONTACT_PERMISSION = 'contact_permission';
+  static const String REMINDER_PERMISSION = 'reminder_permission';
   static const String BACKGROUND_TIME = 'background_time';
   static const String APP_INIT = 'app_init';
 
@@ -80,9 +81,16 @@ class Settings {
       sharedPrefs?.setBool(APP_INIT, isAppInit);
 
   static bool get isAppInit => sharedPrefs?.getBool(APP_INIT) ?? true;
+
   static set enabledContactPermission(bool isContactEnabled) =>
       sharedPrefs?.setBool(CONTACT_PERMISSION, isContactEnabled);
 
+  static set enabledReminderPermission(bool isReminderEnabled) =>
+      sharedPrefs?.setBool(REMINDER_PERMISSION, isReminderEnabled);
+
   static bool get enabledContactPermission =>
       sharedPrefs?.getBool(CONTACT_PERMISSION) ?? false;
+
+  static bool get enabledReminderPermission =>
+      sharedPrefs?.getBool(REMINDER_PERMISSION) ?? false;
 }

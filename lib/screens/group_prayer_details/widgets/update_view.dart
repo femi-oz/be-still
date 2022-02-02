@@ -20,7 +20,7 @@ class UpdateView extends StatefulWidget {
 
   @override
   UpdateView(this.prayerData);
-  CombineGroupPrayerStream? prayerData;
+  final CombineGroupPrayerStream? prayerData;
   @override
   _UpdateView createState() => _UpdateView();
 }

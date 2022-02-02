@@ -11,7 +11,6 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/add_update/add_update.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -228,42 +227,6 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       AppController appController = Get.find();
       appController.setCurrentPage(8, true, 8);
       Navigator.pop(context);
-    } on HttpException catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    } catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
-    }
-  }
-
-  void _deleteFollowedPrayers() async {
-    try {
-      final followedPrayers =
-          Provider.of<GroupPrayerProvider>(context, listen: false)
-              .followedPrayers;
-      if (followedPrayers.length > 0) {
-        for (final f in followedPrayers) {
-          await Provider.of<GroupPrayerProvider>(context, listen: false)
-              .removeFromMyList(f.id ?? '', f.userPrayerId ?? '');
-          final notifications =
-              Provider.of<NotificationProvider>(context, listen: false)
-                  .localNotifications
-                  .where((e) =>
-                      e.entityId == f.userPrayerId &&
-                      e.type == NotificationType.reminder)
-                  .toList();
-          notifications.forEach((e) async =>
-              await Provider.of<NotificationProvider>(context, listen: false)
-                  .deleteLocalNotification(
-                      e.id ?? '', e.localNotificationId ?? 0));
-        }
-      }
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =

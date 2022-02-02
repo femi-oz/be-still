@@ -12,7 +12,6 @@ import 'package:be_still/screens/notifications/widgets/notification_bar.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
-import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -335,9 +334,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           groupRequest.id ?? '',
           (requestor.firstName ?? '') + ' ' + (requestor.lastName ?? ''));
       await deleteNotification(notificationId);
-      final adminName = (admin.firstName?.capitalizeFirst ?? '') +
-          ' ' +
-          (admin.lastName?.capitalizeFirst ?? '');
+
       await Provider.of<NotificationProvider>(context, listen: false)
           .sendPushNotification(
               'Your request to join this group has been accepted.',
@@ -1264,7 +1261,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             },
                             child: GestureDetector(
                               onLongPressEnd: null,
-                              onTap: () {
+                              onTap: () async {
                                 gotoPrayer(notification);
                               },
                               child: Container(
@@ -1317,48 +1314,44 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                         : Container(),
                                                     Row(
                                                       children: <Widget>[
-                                                        Expanded(
-                                                          child: Column(
-                                                            children: <Widget>[
-                                                              Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                children: <
-                                                                    Widget>[
-                                                                  notification.sender !=
-                                                                          ''
-                                                                      ? Text(
-                                                                          notification.sender ??
-                                                                              '',
-                                                                          style: AppTextStyles
-                                                                              .regularText15b
-                                                                              .copyWith(
-                                                                            fontSize:
-                                                                                14,
-                                                                            color:
-                                                                                AppColors.lightBlue4,
-                                                                          ),
-                                                                        )
-                                                                      : Container(),
-                                                                  Row(
-                                                                    children: <
-                                                                        Widget>[
-                                                                      Text(
-                                                                        DateFormat('MM.dd.yyyy').format(notification.createdOn ??
-                                                                            DateTime.now()),
-                                                                        style: AppTextStyles.regularText15b.copyWith(
-                                                                            fontSize:
-                                                                                14,
-                                                                            color:
-                                                                                AppColors.lightBlue4),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ],
-                                                          ),
+                                                        Container(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.3,
+                                                          child: Text(
+                                                            snapshot.data?.group
+                                                                    ?.name ??
+                                                                '',
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            style: TextStyle(
+                                                                color: AppColors
+                                                                    .lightBlue4),
+                                                          ).marginOnly(
+                                                              right: 2),
+                                                        ),
+                                                        Text(
+                                                          '|',
+                                                          style: TextStyle(
+                                                              color: AppColors
+                                                                  .lightBlue4),
+                                                        ).marginOnly(right: 5),
+                                                        Text(
+                                                          DateFormat(
+                                                                  'MM.dd.yyyy')
+                                                              .format(notification
+                                                                      .createdOn ??
+                                                                  DateTime
+                                                                      .now()),
+                                                          style: AppTextStyles
+                                                              .regularText15b
+                                                              .copyWith(
+                                                                  fontSize: 14,
+                                                                  color: AppColors
+                                                                      .lightBlue4),
                                                         ),
                                                       ],
                                                     ),
@@ -1451,7 +1444,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             },
                             child: GestureDetector(
                               onLongPressEnd: null,
-                              onTap: () {
+                              onTap: () async {
                                 gotoPrayer(notification);
                               },
                               child: Container(
@@ -1504,48 +1497,44 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                         : Container(),
                                                     Row(
                                                       children: <Widget>[
-                                                        Expanded(
-                                                          child: Column(
-                                                            children: <Widget>[
-                                                              Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                children: <
-                                                                    Widget>[
-                                                                  notification.sender !=
-                                                                          ''
-                                                                      ? Text(
-                                                                          notification.sender ??
-                                                                              '',
-                                                                          style: AppTextStyles
-                                                                              .regularText15b
-                                                                              .copyWith(
-                                                                            fontSize:
-                                                                                14,
-                                                                            color:
-                                                                                AppColors.lightBlue4,
-                                                                          ),
-                                                                        )
-                                                                      : Container(),
-                                                                  Row(
-                                                                    children: <
-                                                                        Widget>[
-                                                                      Text(
-                                                                        DateFormat('MM.dd.yyyy').format(notification.createdOn ??
-                                                                            DateTime.now()),
-                                                                        style: AppTextStyles.regularText15b.copyWith(
-                                                                            fontSize:
-                                                                                14,
-                                                                            color:
-                                                                                AppColors.lightBlue4),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ],
-                                                          ),
+                                                        Container(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.3,
+                                                          child: Text(
+                                                            snapshot.data?.group
+                                                                    ?.name ??
+                                                                '',
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            style: TextStyle(
+                                                                color: AppColors
+                                                                    .lightBlue4),
+                                                          ).marginOnly(
+                                                              right: 2),
+                                                        ),
+                                                        Text(
+                                                          '|',
+                                                          style: TextStyle(
+                                                              color: AppColors
+                                                                  .lightBlue4),
+                                                        ).marginOnly(right: 5),
+                                                        Text(
+                                                          DateFormat(
+                                                                  'MM.dd.yyyy')
+                                                              .format(notification
+                                                                      .createdOn ??
+                                                                  DateTime
+                                                                      .now()),
+                                                          style: AppTextStyles
+                                                              .regularText15b
+                                                              .copyWith(
+                                                                  fontSize: 14,
+                                                                  color: AppColors
+                                                                      .lightBlue4),
                                                         ),
                                                       ],
                                                     ),
@@ -1639,7 +1628,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                               },
                               child: GestureDetector(
                                 onLongPressEnd: null,
-                                onTap: () {
+                                onTap: () async {
                                   gotoPrayer(notification);
                                 },
                                 child: Container(
@@ -1692,6 +1681,34 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           : Container(),
                                                       Row(
                                                         children: <Widget>[
+                                                          Container(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.3,
+                                                            child: Text(
+                                                              snapshot
+                                                                      .data
+                                                                      ?.group
+                                                                      ?.name ??
+                                                                  '',
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              style: TextStyle(
+                                                                  color: AppColors
+                                                                      .lightBlue4),
+                                                            ).marginOnly(
+                                                                right: 2),
+                                                          ),
+                                                          Text(
+                                                            '|',
+                                                            style: TextStyle(
+                                                                color: AppColors
+                                                                    .lightBlue4),
+                                                          ).marginOnly(
+                                                              right: 5),
                                                           Text(
                                                             DateFormat(
                                                                     'MM.dd.yyyy')
@@ -1849,31 +1866,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                         : Container(),
                                                     Row(
                                                       children: <Widget>[
-                                                        Container(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.3,
-                                                          child: Text(
-                                                            snapshot.data?.group
-                                                                    ?.name ??
-                                                                '',
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            style: TextStyle(
-                                                                color: AppColors
-                                                                    .lightBlue4),
-                                                          ).marginOnly(
-                                                              right: 5),
-                                                        ),
-                                                        Text(
-                                                          '|',
-                                                          style: TextStyle(
-                                                              color: AppColors
-                                                                  .lightBlue4),
-                                                        ).marginOnly(right: 5),
                                                         Text(
                                                           DateFormat(
                                                                   'MM.dd.yyyy')
@@ -2051,7 +2043,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                                   color: AppColors
                                                                       .lightBlue4),
                                                             ).marginOnly(
-                                                                right: 5),
+                                                                right: 2),
                                                           ),
                                                           Text(
                                                             '|',
