@@ -304,7 +304,7 @@ class GroupProvider with ChangeNotifier {
     }
   }
 
-  Future setCurrentGroupById(String groupId, String userId) async {
+  Future<void> setCurrentGroupById(String groupId, String userId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
