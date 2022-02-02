@@ -447,9 +447,9 @@ class NotificationProvider with ChangeNotifier {
                 [value]);
           }
         } else {
-          Provider.of<UserProvider>(context, listen: false).returnUserToken(id);
-          final value =
-              Provider.of<UserProvider>(context, listen: false).userToken;
+          // await Provider.of<UserProvider>(context, listen: false)
+          //     .returnUserToken(id);
+          final value = '';
           final name = ((_user.firstName ?? '').capitalizeFirst ?? '') +
               ' ' +
               ((_user.lastName ?? '').capitalizeFirst ?? '');
