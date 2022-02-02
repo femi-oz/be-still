@@ -75,8 +75,6 @@ class _AddPrayerState extends State<AddPrayer> {
               .setSearchQuery('');
           Provider.of<PrayerProvider>(context, listen: false)
               .searchPrayers('', userId ?? '');
-          // await Provider.of<GroupProvider>(context, listen: false)
-          //     .setUserGroups(userId ?? '');
         } on HttpException catch (e, s) {
           final user =
               Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -688,10 +686,11 @@ class _AddPrayerState extends State<AddPrayer> {
       ),
       content: Container(
         width: double.infinity,
-        height: MediaQuery.of(context).size.height * 0.33,
+        // height: MediaQuery.of(context).size.height * 0.33,
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Container(
               margin: EdgeInsets.only(bottom: 5.0),
@@ -899,6 +898,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                   ),
                                   iconEnabledColor: AppColors.lightBlue4,
                                   iconDisabledColor: AppColors.grey,
+                                  isExpanded: true,
                                   dropdownColor:
                                       AppColors.textFieldBackgroundColor,
                                   borderRadius:
@@ -916,9 +916,12 @@ class _AddPrayerState extends State<AddPrayer> {
                                     return new DropdownMenuItem<
                                         SaveOptionModel>(
                                       value: e,
-                                      child: new Text(e.name ?? '',
-                                          style: new TextStyle(
-                                              color: AppColors.lightBlue4)),
+                                      child: new Text(
+                                        e.name ?? '',
+                                        style: new TextStyle(
+                                            color: AppColors.lightBlue4),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     );
                                   }).toList()),
                             ),
