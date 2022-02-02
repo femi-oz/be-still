@@ -38,9 +38,6 @@ class PrayerService {
       _messageTemplateCollectionReference =
       FirebaseFirestore.instance.collection("MessageTemplate");
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final CollectionReference<Map<String, dynamic>>
-      _followedPrayerCollectionReference =
-      FirebaseFirestore.instance.collection("FollowedPrayer");
 
   final _notificationService = locator<NotificationService>();
   var newPrayerId;

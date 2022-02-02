@@ -1,11 +1,8 @@
-import 'dart:convert';
-
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';

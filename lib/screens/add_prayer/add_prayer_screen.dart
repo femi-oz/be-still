@@ -806,8 +806,6 @@ class _AddPrayerState extends State<AddPrayer> {
 
   @override
   Widget build(BuildContext context) {
-    PrayerModel prayerToEdit =
-        Provider.of<PrayerProvider>(context).prayerToEdit;
     final userGroups = Provider.of<GroupProvider>(context).userGroups;
     bool isValid = (!Provider.of<PrayerProvider>(context).isEdit &&
             _descriptionController.text.trim().isNotEmpty) ||

@@ -12,7 +12,6 @@ import 'package:be_still/screens/notifications/widgets/notification_bar.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
-import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -335,9 +334,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           groupRequest.id ?? '',
           (requestor.firstName ?? '') + ' ' + (requestor.lastName ?? ''));
       await deleteNotification(notificationId);
-      final adminName = (admin.firstName?.capitalizeFirst ?? '') +
-          ' ' +
-          (admin.lastName?.capitalizeFirst ?? '');
+
       await Provider.of<NotificationProvider>(context, listen: false)
           .sendPushNotification(
               'Your request to join this group has been accepted.',

@@ -229,11 +229,11 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   Future<void> _setReminderPermission() async {
     if (!Settings.enabledReminderPermission) {
       Settings.enabledReminderPermission = true;
-      Provider.of<NotificationProvider>(context, listen: false)
-          .cancelLocalNotifications();
+      LocalNotification.setNotificationsOnNewDevice(context);
     } else {
       Settings.enabledReminderPermission = false;
-      LocalNotification.setNotificationsOnNewDevice(context);
+      Provider.of<NotificationProvider>(context, listen: false)
+          .cancelLocalNotifications();
     }
     setState(() {});
   }
