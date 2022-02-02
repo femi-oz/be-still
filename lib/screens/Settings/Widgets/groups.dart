@@ -934,7 +934,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
             ),
             SizedBox(height: 30),
             CustomToggle(
-              title: 'Enable Alerts from Groups?',
+              title: 'Enable notifications from groups?',
               onChange: (bool value) async {
                 try {
                   _settingsProvider.updateGroupPrefenceSettings(
@@ -1031,43 +1031,6 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             ),
                             initiallyExpanded: false,
                             children: <Widget>[
-                              // Padding(
-                              //   padding:
-                              //       const EdgeInsets.symmetric(horizontal: 20),
-                              //   child: Row(
-                              //     mainAxisAlignment:
-                              //         MainAxisAlignment.spaceBetween,
-                              //     children: <Widget>[
-                              //       Text(
-                              //           'To submit prayers to this group via email:',
-                              //           style: AppTextStyles.regularText13
-                              //               .copyWith(
-                              //                   color: AppColors.textFieldText))
-                              //     ],
-                              //   ),
-                              // ),
-                              // SizedBox(
-                              //   height: 10,
-                              // ),
-                              // Padding(
-                              //   padding:
-                              //       const EdgeInsets.symmetric(horizontal: 30),
-                              //   child: Row(
-                              //     mainAxisAlignment:
-                              //         MainAxisAlignment.spaceBetween,
-                              //     children: <Widget>[
-                              //       Text(
-                              //         data.group.email.toString(),
-                              //         style: AppTextStyles.regularText16b
-                              //             .copyWith(
-                              //                 color: AppColors.lightBlue3),
-                              //       ),
-                              //     ],
-                              //   ),
-                              // ),
-                              // SizedBox(
-                              //   height: 30,
-                              // ),
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 20),
@@ -1277,7 +1240,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             CustomToggle(
                               disabled: false,
                               title:
-                                  'Enable alerts for new prayers for this group?',
+                                  'Enable alerts for new prayers in this group?',
                               onChange: (value) => _groupProvider
                                   .updateGroupSettings(_currentUser.id ?? '',
                                       key: 'EnableNotificationFormNewPrayers',
@@ -1291,7 +1254,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             CustomToggle(
                               disabled: false,
                               title:
-                                  'Enable alerts for prayer updates for this group?',
+                                  'Enable alerts for prayer updates in this group?',
                               onChange: (value) => _groupProvider
                                   .updateGroupSettings(_currentUser.id ?? '',
                                       key: 'EnableNotificationForUpdates',

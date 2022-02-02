@@ -12,6 +12,7 @@ import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -268,17 +269,18 @@ class _ReminderPickerState extends State<ReminderPicker> {
           entityId: widget.entityId,
           type: widget.type,
           isGroup: widget.isGroup);
-      await LocalNotification.setLocalNotification(
-        context: context,
-        title: title,
-        description: widget.type == NotificationType.prayer_time
-            ? 'It is time to pray!'
-            : description,
-        scheduledDate: scheduleDate,
-        payload: jsonEncode(payload.toJson()),
-        frequency: selectedFrequency,
-        localNotificationId: widget.reminder?.localNotificationId ?? null,
-      );
+      if (Settings.enabledReminderPermission)
+        await LocalNotification.setLocalNotification(
+          context: context,
+          title: title,
+          description: widget.type == NotificationType.prayer_time
+              ? 'It is time to pray!'
+              : description,
+          scheduledDate: scheduleDate,
+          payload: jsonEncode(payload.toJson()),
+          frequency: selectedFrequency,
+          localNotificationId: widget.reminder?.localNotificationId ?? null,
+        );
       if (widget.reminder != null)
         updatePrayerTime(
           LocalNotification.daysOfWeek[selectedDayOfWeek],

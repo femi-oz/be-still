@@ -6,8 +6,10 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
+import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_edit_field.dart';
@@ -224,6 +226,18 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     }
   }
 
+  Future<void> _setReminderPermission() async {
+    if (!Settings.enabledReminderPermission) {
+      Settings.enabledReminderPermission = true;
+      Provider.of<NotificationProvider>(context, listen: false)
+          .cancelLocalNotifications();
+    } else {
+      Settings.enabledReminderPermission = false;
+      LocalNotification.setNotificationsOnNewDevice(context);
+    }
+    setState(() {});
+  }
+
   void _updateEmail(UserModel user) async {
     try {
       await Provider.of<UserProvider>(context, listen: false)
@@ -397,8 +411,14 @@ class _GeneralSettingsState extends State<GeneralSettings> {
             SizedBox(height: 15),
             CustomToggle(
               onChange: (value) => _setPermission(),
-              title: 'Allow Be Still to access contacts?',
+              title: 'Allow Be Still to access contacts',
               value: Settings.enabledContactPermission,
+            ),
+            SizedBox(height: 15),
+            CustomToggle(
+              onChange: (value) => _setReminderPermission(),
+              title: 'Enable notifications for reminders?',
+              value: Settings.enabledReminderPermission,
             ),
             SizedBox(height: 20),
             CustomSectionHeder('App Appearance'),
