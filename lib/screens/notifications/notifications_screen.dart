@@ -632,9 +632,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                             .spaceBetween,
                                                     children: <Widget>[
                                                       notification.sender != ''
-                                                          ? SizedBox(
-                                                              width: Get.width *
-                                                                  0.3,
+                                                          ? Expanded(
                                                               child: Text(
                                                                 snapshot
                                                                         .data
@@ -655,7 +653,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                               ),
                                                             )
                                                           : Container(),
-                                                      Spacer(),
+                                                      SizedBox(width: 20),
                                                       Row(
                                                         children: <Widget>[
                                                           Text(
@@ -1299,19 +1297,22 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           .spaceBetween,
                                                   children: <Widget>[
                                                     notification.sender != ''
-                                                        ? Text(
-                                                            notification
-                                                                    .sender ??
-                                                                '',
-                                                            style: AppTextStyles
-                                                                .regularText15b
-                                                                .copyWith(
-                                                              fontSize: 14,
-                                                              color: AppColors
-                                                                  .lightBlue4,
+                                                        ? Expanded(
+                                                            child: Text(
+                                                              notification
+                                                                      .sender ??
+                                                                  '',
+                                                              style: AppTextStyles
+                                                                  .regularText15b
+                                                                  .copyWith(
+                                                                fontSize: 14,
+                                                                color: AppColors
+                                                                    .lightBlue4,
+                                                              ),
                                                             ),
                                                           )
                                                         : Container(),
+                                                    SizedBox(width: 20),
                                                     Row(
                                                       children: <Widget>[
                                                         Container(
@@ -1482,19 +1483,22 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           .spaceBetween,
                                                   children: <Widget>[
                                                     notification.sender != ''
-                                                        ? Text(
-                                                            notification
-                                                                    .sender ??
-                                                                '',
-                                                            style: AppTextStyles
-                                                                .regularText15b
-                                                                .copyWith(
-                                                              fontSize: 14,
-                                                              color: AppColors
-                                                                  .lightBlue4,
+                                                        ? Expanded(
+                                                            child: Text(
+                                                              notification
+                                                                      .sender ??
+                                                                  '',
+                                                              style: AppTextStyles
+                                                                  .regularText15b
+                                                                  .copyWith(
+                                                                fontSize: 14,
+                                                                color: AppColors
+                                                                    .lightBlue4,
+                                                              ),
                                                             ),
                                                           )
                                                         : Container(),
+                                                    SizedBox(width: 20),
                                                     Row(
                                                       children: <Widget>[
                                                         Container(
@@ -1666,19 +1670,22 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                             .spaceBetween,
                                                     children: <Widget>[
                                                       notification.sender != ''
-                                                          ? Text(
-                                                              notification
-                                                                      .sender ??
-                                                                  '',
-                                                              style: AppTextStyles
-                                                                  .regularText15b
-                                                                  .copyWith(
-                                                                fontSize: 14,
-                                                                color: AppColors
-                                                                    .lightBlue4,
+                                                          ? Expanded(
+                                                              child: Text(
+                                                                notification
+                                                                        .sender ??
+                                                                    '',
+                                                                style: AppTextStyles
+                                                                    .regularText15b
+                                                                    .copyWith(
+                                                                  fontSize: 14,
+                                                                  color: AppColors
+                                                                      .lightBlue4,
+                                                                ),
                                                               ),
                                                             )
                                                           : Container(),
+                                                      SizedBox(width: 20),
                                                       Row(
                                                         children: <Widget>[
                                                           Container(
@@ -1851,19 +1858,25 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           .spaceBetween,
                                                   children: <Widget>[
                                                     notification.sender != ''
-                                                        ? Text(
-                                                            notification
-                                                                    .sender ??
-                                                                '',
-                                                            style: AppTextStyles
-                                                                .regularText15b
-                                                                .copyWith(
-                                                              fontSize: 14,
-                                                              color: AppColors
-                                                                  .lightBlue4,
+                                                        ? Expanded(
+                                                            child: Text(
+                                                              notification
+                                                                      .sender ??
+                                                                  '',
+                                                              style: AppTextStyles
+                                                                  .regularText15b
+                                                                  .copyWith(
+                                                                fontSize: 14,
+                                                                color: AppColors
+                                                                    .lightBlue4,
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                             ),
                                                           )
                                                         : Container(),
+                                                    SizedBox(width: 20),
                                                     Row(
                                                       children: <Widget>[
                                                         Text(
@@ -2009,19 +2022,22 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                             .spaceBetween,
                                                     children: <Widget>[
                                                       notification.sender != ''
-                                                          ? Text(
-                                                              notification
-                                                                      .sender ??
-                                                                  '',
-                                                              style: AppTextStyles
-                                                                  .regularText15b
-                                                                  .copyWith(
-                                                                fontSize: 14,
-                                                                color: AppColors
-                                                                    .lightBlue4,
+                                                          ? Expanded(
+                                                              child: Text(
+                                                                notification
+                                                                        .sender ??
+                                                                    '',
+                                                                style: AppTextStyles
+                                                                    .regularText15b
+                                                                    .copyWith(
+                                                                  fontSize: 14,
+                                                                  color: AppColors
+                                                                      .lightBlue4,
+                                                                ),
                                                               ),
                                                             )
                                                           : Container(),
+                                                      SizedBox(width: 20),
                                                       Row(
                                                         children: <Widget>[
                                                           Container(
