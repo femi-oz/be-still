@@ -224,6 +224,12 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     }
   }
 
+  void _setDefaults() {
+    Settings.rememberMe = false;
+    Settings.enableLocalAuth = false;
+    Settings.setenableLocalAuth = false;
+  }
+
   void _updateEmail(UserModel user) async {
     try {
       await Provider.of<UserProvider>(context, listen: false)
@@ -235,9 +241,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
         'Your email has been updated successfully. Verify your new email and re-login!',
       );
       _newEmail.clear();
-      Future.delayed(Duration(seconds: 5), () async {
+      Future.delayed(Duration(seconds: 2), () async {
         await Provider.of<AuthenticationProvider>(context, listen: false)
             .signOut();
+        _setDefaults();
         Navigator.pushReplacement(
           context,
           SlideRightRoute(page: LoginScreen()),
@@ -272,6 +279,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
           .updatePassword(_newPassword.text);
       _newPassword.clear();
       _newConfirmPassword.clear();
+      _setDefaults();
 
       BeStilDialog.showSuccessDialog(
           context, 'Your password has been updated successfully');
