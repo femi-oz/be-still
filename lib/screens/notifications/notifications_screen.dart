@@ -485,9 +485,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                                     .ellipsis),
                                                   ),
                                                 ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
+                                                SizedBox(width: 20),
                                                 Row(
                                                   children: <Widget>[
                                                     Text(
@@ -647,9 +645,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                                           .ellipsis),
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                        width: 10,
-                                                      ),
+                                                      SizedBox(width: 20),
                                                       Row(
                                                         children: <Widget>[
                                                           Text(
@@ -814,9 +810,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                                           .ellipsis),
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                        width: 10,
-                                                      ),
+                                                      SizedBox(width: 20),
                                                       Row(
                                                         children: <Widget>[
                                                           Text(
@@ -982,8 +976,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                                             TextOverflow.ellipsis),
                                                               ),
                                                             )
-                                                          : Container(),
-                                                      SizedBox(width: 10),
+                                                          : SizedBox(),
+                                                      SizedBox(width: 20),
                                                       Row(
                                                         children: <Widget>[
                                                           Text(
@@ -1128,24 +1122,24 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           .spaceBetween,
                                                   children: <Widget>[
                                                     notification.sender != ''
-                                                        ? Text(
-                                                            notification
-                                                                    .sender ??
-                                                                '',
-                                                            style: AppTextStyles
-                                                                .regularText15b
-                                                                .copyWith(
-                                                              fontSize: 14,
-                                                              color: AppColors
-                                                                  .lightBlue4,
-                                                            ),
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis)
+                                                        ? Expanded(
+                                                            child: Text(
+                                                                notification
+                                                                        .sender ??
+                                                                    '',
+                                                                style: AppTextStyles
+                                                                    .regularText15b
+                                                                    .copyWith(
+                                                                  fontSize: 14,
+                                                                  color: AppColors
+                                                                      .lightBlue4,
+                                                                ),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis),
+                                                          )
                                                         : SizedBox.shrink(),
-                                                    SizedBox(
-                                                      width: 10,
-                                                    ),
+                                                    SizedBox(width: 20),
                                                     Row(
                                                       children: <Widget>[
                                                         Text(
@@ -1291,9 +1285,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                             .spaceBetween,
                                                     children: <Widget>[
                                                       notification.sender != ''
-                                                          ? SizedBox(
-                                                              width: Get.width *
-                                                                  0.3,
+                                                          ? Expanded(
                                                               child: Text(
                                                                 snapshot
                                                                         .data
@@ -1314,7 +1306,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                               ),
                                                             )
                                                           : SizedBox.shrink(),
-                                                      Spacer(),
+                                                      SizedBox(width: 20),
                                                       Row(
                                                         children: <Widget>[
                                                           Text(
@@ -1455,9 +1447,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           .spaceBetween,
                                                   children: <Widget>[
                                                     notification.sender != ''
-                                                        ? SizedBox(
-                                                            width:
-                                                                Get.width * 0.3,
+                                                        ? Expanded(
                                                             child: Text(
                                                               notification
                                                                       .sender ??
@@ -1475,7 +1465,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                             ),
                                                           )
                                                         : SizedBox.shrink(),
-                                                    Spacer(),
+                                                    SizedBox(width: 20),
                                                     Row(
                                                       children: <Widget>[
                                                         Container(
@@ -1646,9 +1636,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           .spaceBetween,
                                                   children: <Widget>[
                                                     notification.sender != ''
-                                                        ? SizedBox(
-                                                            width:
-                                                                Get.width * 0.3,
+                                                        ? Expanded(
                                                             child: Text(
                                                               notification
                                                                       .sender ??
@@ -1666,7 +1654,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                             ),
                                                           )
                                                         : SizedBox.shrink(),
-                                                    Spacer(),
+                                                    SizedBox(width: 20),
                                                     Row(
                                                       children: <Widget>[
                                                         Container(
@@ -1838,9 +1826,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                             .spaceBetween,
                                                     children: <Widget>[
                                                       notification.sender != ''
-                                                          ? SizedBox(
-                                                              width: Get.width *
-                                                                  0.3,
+                                                          ? Expanded(
                                                               child: Text(
                                                                 notification
                                                                         .sender ??
@@ -1858,7 +1844,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                               ),
                                                             )
                                                           : SizedBox.shrink(),
-                                                      Spacer(),
+                                                      SizedBox(width: 20),
                                                       Row(
                                                         children: <Widget>[
                                                           Container(
@@ -2036,9 +2022,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                             .spaceBetween,
                                                     children: <Widget>[
                                                       notification.sender != ''
-                                                          ? SizedBox(
-                                                              width: Get.width *
-                                                                  0.3,
+                                                          ? Expanded(
                                                               child: Text(
                                                                 notification
                                                                         .sender ??
@@ -2056,7 +2040,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                               ),
                                                             )
                                                           : SizedBox.shrink(),
-                                                      Spacer(),
+                                                      SizedBox(width: 20),
                                                       Row(
                                                         children: <Widget>[
                                                           Container(
