@@ -400,6 +400,26 @@ class NotificationService {
     }
   }
 
+  Future<List<PushNotificationModel>> getNotificationsToDelete(
+      String userId, String groupId) async {
+    try {
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
+      return _pushNotificationCollectionReference
+          .where('Status', isEqualTo: Status.active)
+          .where('RecieverId', isEqualTo: userId)
+          .where('GroupId', isEqualTo: groupId)
+          .get()
+          .then((e) => e.docs
+              .map((doc) => PushNotificationModel.fromData(doc.data(), doc.id))
+              .toList());
+    } catch (e) {
+      locator<LogService>().createLog(StringUtils.getErrorMessage(e), '',
+          'NOTIFICATION/service/getotifications');
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
   Future clearNotification(List<String> ids) async {
     try {
       if (_firebaseAuth.currentUser == null)

@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -91,6 +93,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
   closeAllStreams() {
     Provider.of<GroupProvider>(context, listen: false).flush();
     Provider.of<NotificationProvider>(context, listen: false).flush();
+    Provider.of<PrayerProvider>(context, listen: false).flush();
+    Provider.of<GroupPrayerProvider>(context, listen: false).flush();
   }
 
   _openLogoutConfirmation(BuildContext context) {

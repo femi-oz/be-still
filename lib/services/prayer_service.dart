@@ -196,8 +196,6 @@ class PrayerService {
         return Future.error(StringUtils.unathorized);
       //store prayer Tag
       for (var i = 0; i < contactData.length; i++) {
-        ///b70b8540-9860-11eb-8da1-dfaaff472e96
-
         final _prayerTagID = Uuid().v1();
         // if (contactData[i] != null) {
         _prayerTagCollectionReference.doc(_prayerTagID).set(populatePrayerTag(
