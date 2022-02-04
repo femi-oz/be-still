@@ -46,6 +46,8 @@ class StringUtils {
       " to begin the tour, or close this window to begin using Be Still right away.";
   static String quickTipList =
       " at any time to view all the prayers in your current prayer list.";
+  static String groupTipList =
+      " to create or find a Prayer Group in which you can share prayers with other people.";
   static String quickTipQuickAccess =
       "You can swipe right or left on any prayer in your prayer list to display common actions.";
   static String quickTipFilters =

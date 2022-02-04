@@ -27,6 +27,7 @@ class CustomDrawer extends StatefulWidget {
   final GlobalKey keyButton3;
   final GlobalKey keyButton4;
   final GlobalKey keyButton5;
+  final GlobalKey keyButton6;
   final scaffoldKey;
   CustomDrawer(
     this.setCurrentIndex,
@@ -35,6 +36,7 @@ class CustomDrawer extends StatefulWidget {
     this.keyButton3,
     this.keyButton4,
     this.keyButton5,
+    this.keyButton6,
     this.scaffoldKey,
   );
 
@@ -355,13 +357,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
                               appController.setCurrentPage(0, true, 0);
                               Navigator.pop(context);
-                              TutorialTarget.showTutorial(
+                              TutorialTarget().showTutorial(
                                 context,
                                 widget.keyButton,
                                 widget.keyButton2,
                                 widget.keyButton3,
                                 widget.keyButton4,
                                 widget.keyButton5,
+                                widget.keyButton6,
                               );
                             },
                             child: Text("QUICK TIPS",
