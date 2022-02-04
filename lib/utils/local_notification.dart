@@ -81,7 +81,6 @@ class LocalNotification {
           ? allIds.reduce((a, b) => (a ?? 0) > (b ?? 0) ? a : b) ?? 0
           : 0;
       localNotificationID += 1;
-      print('==================> $localNotificationId');
     }
     await _flutterLocalNotificationsPlugin
         .zonedSchedule(
