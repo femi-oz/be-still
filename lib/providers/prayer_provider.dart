@@ -51,10 +51,13 @@ class PrayerProvider with ChangeNotifier {
   List<PrayerTagModel> _prayerToEditTags = [];
   List<PrayerTagModel> get prayerToEditTags => _prayerToEditTags;
 
+  late StreamSubscription<List<CombinePrayerStream>> prayerStream;
+
   Future<void> setPrayers(String userId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      _prayerService.getPrayers(userId).asBroadcastStream().listen(
+      prayerStream =
+          _prayerService.getPrayers(userId).asBroadcastStream().listen(
         (data) {
           _prayers = data;
 
@@ -97,7 +100,8 @@ class PrayerProvider with ChangeNotifier {
 
   Future<void> setPrayerTimePrayers(String userId) async {
     try {
-      _prayerService.getPrayers(userId).asBroadcastStream().listen(
+      prayerStream =
+          _prayerService.getPrayers(userId).asBroadcastStream().listen(
         (data) {
           _prayers = [...data];
           _prayers.sort((a, b) => (b.prayer?.modifiedOn ?? DateTime.now())
@@ -518,5 +522,9 @@ class PrayerProvider with ChangeNotifier {
     } catch (e) {
       rethrow;
     }
+  }
+
+  void flush() {
+    prayerStream.cancel();
   }
 }

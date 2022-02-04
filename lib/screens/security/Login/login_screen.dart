@@ -326,15 +326,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
       Settings.lastUser = jsonEncode(user.toJson2());
       Settings.userPassword = _passwordController.text;
-
-      LocalNotification.setNotificationsOnNewDevice(context);
+      if (Settings.enabledReminderPermission)
+        LocalNotification.setNotificationsOnNewDevice(context);
 
       BeStilDialog.hideLoading(context);
       await setRouteDestination();
     } on HttpException catch (e, s) {
       needsVerification =
-          Provider.of<AuthenticationProvider>(context, listen: false)
-              .needsVerification;
+          e.message == StringUtils.generateExceptionMessage('not-verified');
 
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(
@@ -399,19 +398,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
   _toggleBiometrics() {
     if (Settings.enableLocalAuth) {
-      setState(() {
-        Settings.enableLocalAuth = false;
-        Settings.setenableLocalAuth = false;
-        showSuffix = true;
-      });
+      Settings.enableLocalAuth = false;
+      Settings.setenableLocalAuth = false;
+      showSuffix = true;
     } else {
-      _openLogoutConfirmation(context);
+      _openBioConfirmation(context);
       Settings.setenableLocalAuth = true;
       showSuffix = false;
     }
+    setState(() {});
   }
 
-  _openLogoutConfirmation(BuildContext context) {
+  _openBioConfirmation(BuildContext context) {
     AlertDialog dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
@@ -606,7 +604,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _setDefaults() {
     Settings.rememberMe = false;
-    setState(() => Settings.enableLocalAuth = false);
+    Settings.enableLocalAuth = false;
+    Settings.setenableLocalAuth = false;
   }
 
   Widget _buildForm() {
@@ -629,13 +628,14 @@ class _LoginScreenState extends State<LoginScreen> {
             isEmail: true,
             isSearch: false,
             onTextchanged: (i) {
-              setState(() => isFormValid =
-                  _usernameController.text.isNotEmpty &&
-                      _passwordController.text.isNotEmpty);
+              isFormValid = _usernameController.text.isNotEmpty &&
+                  _passwordController.text.isNotEmpty;
+              print(Settings.lastUser);
               if (Settings.lastUser.isNotEmpty) {
                 if (_usernameController.text !=
                     jsonDecode(Settings.lastUser)['email']) _setDefaults();
               }
+              setState(() {});
             },
           ),
           SizedBox(height: 15.0),

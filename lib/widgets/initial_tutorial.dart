@@ -6,9 +6,10 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class TutorialTarget {
   static TutorialCoachMark? tutorialCoachMark;
-  static void showTutorial(
-      context, _keyButton, _keyButton2, _keyButton3, _keyButton4, _keyButton5) {
-    List<TargetFocus> targets = [];
+  List<TargetFocus> targets = [];
+
+  void showTutorial(context, _keyButton, _keyButton2, _keyButton3, _keyButton4,
+      _keyButton5, _keyButton6) {
     targets.add(TargetFocus(
         identify: "welcome",
         targetPosition: TargetPosition(Size.zero, Offset.zero),
@@ -116,6 +117,23 @@ class TutorialTarget {
           child: _buildBody(context, 'MORE', 7, '', ' More', 'Tap the',
               StringUtils.quickTipMore))
     ]));
+    targets
+        .add(TargetFocus(identify: "groups", keyTarget: _keyButton6, contents: [
+      TargetContent(
+          align: ContentAlign.custom,
+          customPosition: CustomTargetContentPosition(
+            bottom: 100,
+          ),
+          child: _buildBody(
+            context,
+            'GROUPS',
+            8,
+            '',
+            " Groups",
+            "Tap",
+            StringUtils.groupTipList,
+          ))
+    ]));
 
     tutorialCoachMark = TutorialCoachMark(
       context,
@@ -140,15 +158,15 @@ class TutorialTarget {
     )..show();
   }
 
-  static Widget _buildBody(BuildContext context, String title, int id,
-      String image, String boldText, String suffix, String prefix) {
+  Widget _buildBody(BuildContext context, String title, int id, String image,
+      String boldText, String suffix, String prefix) {
     return GestureDetector(
       onHorizontalDragUpdate: (details) {
         int sensitivity = 8;
         if (details.delta.dx > sensitivity) {
           if (id > 1) tutorialCoachMark?.previous();
         } else if (details.delta.dx < -sensitivity) {
-          if (id < 7) tutorialCoachMark?.next();
+          if (id < 8) tutorialCoachMark?.next();
         }
       },
       child: Container(
@@ -220,7 +238,7 @@ class TutorialTarget {
               Container(
                 width: double.infinity,
                 child: InkWell(
-                  onTap: () => id == 7
+                  onTap: () => id == 8
                       ? tutorialCoachMark?.skip()
                       : tutorialCoachMark?.next(),
                   child: Container(
@@ -238,7 +256,7 @@ class TutorialTarget {
                     child: Column(
                       children: <Widget>[
                         Text(
-                          id == 7 ? 'LET\'S GO' : 'NEXT TIP',
+                          id == 8 ? 'LET\'S GO' : 'NEXT TIP',
                           style: AppTextStyles.boldText24
                               .copyWith(color: Colors.white),
                           textAlign: TextAlign.center,
@@ -251,7 +269,7 @@ class TutorialTarget {
               Padding(
                 padding: EdgeInsets.all(5.0),
                 child: Text(
-                  '$id/7',
+                  '$id/8',
                   style: AppTextStyles.regularText12.copyWith(
                       color: AppColors.darkBlue, height: 1, fontSize: 10),
                 ),

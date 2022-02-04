@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/bible.model.dart';
 import 'package:be_still/models/devotionals.model.dart';
@@ -12,6 +14,7 @@ class DevotionalProvider with ChangeNotifier {
   List<DevotionalModel> _devotionals = [];
   List<BibleModel> get bibles => _bibles;
   List<DevotionalModel> get devotionals => _devotionals;
+  late StreamSubscription<List<DevotionalModel>> devotionalStream;
 
   Future<void> getBibles() async {
     try {
@@ -29,7 +32,7 @@ class DevotionalProvider with ChangeNotifier {
   Future<void> getDevotionals() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      _devotionalService
+      devotionalStream = _devotionalService
           .getDevotionals()
           .asBroadcastStream()
           .listen((devotionals) {
@@ -39,5 +42,9 @@ class DevotionalProvider with ChangeNotifier {
     } catch (e) {
       rethrow;
     }
+  }
+
+  void flush() {
+    devotionalStream.cancel();
   }
 }

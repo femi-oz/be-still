@@ -42,6 +42,7 @@ class GroupPrayerProvider with ChangeNotifier {
   CombineGroupPrayerStream _prayerToEdit =
       CombineGroupPrayerStream.defaultValue();
   CombineGroupPrayerStream get prayerToEdit => _prayerToEdit;
+  late StreamSubscription<List<FollowedPrayerModel>> groupPrayerStream;
 
   String _filterOption = Status.active;
   String get filterOption => _filterOption;
@@ -111,7 +112,7 @@ class GroupPrayerProvider with ChangeNotifier {
 
   Future<void> setFollowedPrayerByUserId(String? id) async {
     try {
-      _prayerService
+      groupPrayerStream = _prayerService
           .getFollowedPrayersByUserId(id ?? '')
           .asBroadcastStream()
           .listen((prayer) {
@@ -481,5 +482,9 @@ class GroupPrayerProvider with ChangeNotifier {
     } catch (e) {
       rethrow;
     }
+  }
+
+  void flush() {
+    groupPrayerStream.cancel();
   }
 }
