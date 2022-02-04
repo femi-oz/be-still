@@ -134,6 +134,20 @@ class NotificationProvider with ChangeNotifier {
     }
   }
 
+  Future<List<PushNotificationModel>?> getNotificationsToDelete(
+      String userId, String groupId) async {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      return _notificationService
+          .getNotificationsToDelete(userId, groupId)
+          .then((notifications) {
+        return notifications;
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future setUserNotifications(String userId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;

@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -25,6 +27,7 @@ class CustomDrawer extends StatefulWidget {
   final GlobalKey keyButton3;
   final GlobalKey keyButton4;
   final GlobalKey keyButton5;
+  final GlobalKey keyButton6;
   final scaffoldKey;
   CustomDrawer(
     this.setCurrentIndex,
@@ -33,6 +36,7 @@ class CustomDrawer extends StatefulWidget {
     this.keyButton3,
     this.keyButton4,
     this.keyButton5,
+    this.keyButton6,
     this.scaffoldKey,
   );
 
@@ -91,6 +95,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
   closeAllStreams() {
     Provider.of<GroupProvider>(context, listen: false).flush();
     Provider.of<NotificationProvider>(context, listen: false).flush();
+    Provider.of<PrayerProvider>(context, listen: false).flush();
+    Provider.of<GroupPrayerProvider>(context, listen: false).flush();
   }
 
   _openLogoutConfirmation(BuildContext context) {
@@ -351,13 +357,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
                               appController.setCurrentPage(0, true, 0);
                               Navigator.pop(context);
-                              TutorialTarget.showTutorial(
+                              TutorialTarget().showTutorial(
                                 context,
                                 widget.keyButton,
                                 widget.keyButton2,
                                 widget.keyButton3,
                                 widget.keyButton4,
                                 widget.keyButton5,
+                                widget.keyButton6,
                               );
                             },
                             child: Text("QUICK TIPS",

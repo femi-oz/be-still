@@ -300,6 +300,7 @@ class _EntryScreenState extends State<EntryScreen> {
   GlobalKey _keyButton3 = GlobalKey();
   GlobalKey _keyButton4 = GlobalKey();
   GlobalKey _keyButton5 = GlobalKey();
+  GlobalKey _keyButton6 = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -341,6 +342,7 @@ class _EntryScreenState extends State<EntryScreen> {
         _keyButton3,
         _keyButton4,
         _keyButton5,
+        _keyButton6,
         _scaffoldKey,
       ),
       endDrawerEnableOpenDragGesture: false,
@@ -453,6 +455,7 @@ class _EntryScreenState extends State<EntryScreen> {
             _keyButton3,
             _keyButton4,
             _keyButton5,
+            _keyButton6,
             _isSearchMode,
             _switchSearchMode, //0
           ),
@@ -495,7 +498,8 @@ class _EntryScreenState extends State<EntryScreen> {
               color: AppColors.bottomNavIconColor,
             ),
             title: "Groups",
-            padding: 6),
+            padding: 6,
+            key: _keyButton6),
         TabNavigationItem(
           page: SettingsScreen(_setDefaultSnooze), //4
           icon: Icon(
