@@ -78,27 +78,32 @@ class LocalNotification {
       final allIds = localNots.map((e) => e.localNotificationId).toList();
 
       localNotificationID = allIds.length > 0
-          ? allIds.reduce((a, b) => (a ?? 0) > (b ?? 0) ? a : b) ?? 0 + 1
+          ? allIds.reduce((a, b) => (a ?? 0) > (b ?? 0) ? a : b) ?? 0
           : 0;
+      localNotificationID += 1;
     }
-    await _flutterLocalNotificationsPlugin.zonedSchedule(
-      localNotificationID,
-      title,
-      description,
-      scheduledDate,
-      const NotificationDetails(
-          android: AndroidNotificationDetails('your channel id',
-              'your channel name', 'your channel description'),
-          iOS: IOSNotificationDetails()),
-      payload: payload,
-      androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents:
-          frequency.toString().toLowerCase() == Frequency.daily.toLowerCase()
+    await _flutterLocalNotificationsPlugin
+        .zonedSchedule(
+          localNotificationID,
+          title,
+          description,
+          scheduledDate,
+          const NotificationDetails(
+              android: AndroidNotificationDetails('your channel id',
+                  'your channel name', 'your channel description'),
+              iOS: IOSNotificationDetails()),
+          payload: payload,
+          androidAllowWhileIdle: true,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
+          matchDateTimeComponents: frequency.toString().toLowerCase() ==
+                  Frequency.daily.toLowerCase()
               ? DateTimeComponents.time
               : DateTimeComponents.dayOfWeekAndTime,
-    );
+        )
+        .whenComplete(() => print('whenComplete'))
+        .then((value) => print('then'))
+        .onError((error, stackTrace) => print(error));
   }
 
   static int _getExactDy(day) {
