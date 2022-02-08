@@ -539,6 +539,8 @@ class GroupService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
+      final batch = _databaseReference.batch();
+
       _userGroupCollectionReference
           .where('UserId', isEqualTo: userId)
           .where('GroupId', isEqualTo: groupId)
@@ -546,7 +548,7 @@ class GroupService {
           .then((value) => {
                 value.docs.forEach((element) {
                   var id = element.reference.id;
-                  _userGroupCollectionReference.doc(id).delete();
+                  batch.delete(_userGroupCollectionReference.doc(id));
                 })
               });
 
@@ -559,11 +561,13 @@ class GroupService {
             .toList();
         prayers.forEach((element) {
           if (element.groupId == groupId) {
-            _followedPrayerCollectionReference.doc(element.id).delete();
-            _userPrayerCollectionReference.doc(element.userPrayerId).delete();
+            batch.delete(_followedPrayerCollectionReference.doc(element.id));
+            batch.delete(
+                _userPrayerCollectionReference.doc(element.userPrayerId));
           }
         });
       });
+      batch.commit();
     } catch (e) {
       locator<LogService>().createLog(StringUtils.getErrorMessage(e), userId,
           'GROUP/service/removeFromGroup');
