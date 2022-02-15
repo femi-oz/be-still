@@ -1105,11 +1105,11 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   children: <Widget>[
                                     Text(
                                       ((data.group ?? GroupModel.defaultValue())
-                                                      .description ??
+                                                      .organization ??
                                                   '')
                                               .isEmpty
                                           ? "-"
-                                          : data.group?.description ?? '',
+                                          : data.group?.organization ?? '',
                                       style: AppTextStyles.regularText16b
                                           .copyWith(
                                               color: AppColors.textFieldText),

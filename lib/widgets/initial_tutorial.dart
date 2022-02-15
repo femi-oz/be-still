@@ -134,6 +134,23 @@ class TutorialTarget {
             StringUtils.groupTipList,
           ))
     ]));
+    targets
+        .add(TargetFocus(identify: "groups", keyTarget: _keyButton6, contents: [
+      TargetContent(
+          align: ContentAlign.custom,
+          customPosition: CustomTargetContentPosition(
+            bottom: 100,
+          ),
+          child: _buildBody(
+            context,
+            'GROUPS',
+            9,
+            '',
+            "",
+            "",
+            StringUtils.groupTipList2,
+          ))
+    ]));
 
     tutorialCoachMark = TutorialCoachMark(
       context,
@@ -166,7 +183,7 @@ class TutorialTarget {
         if (details.delta.dx > sensitivity) {
           if (id > 1) tutorialCoachMark?.previous();
         } else if (details.delta.dx < -sensitivity) {
-          if (id < 8) tutorialCoachMark?.next();
+          if (id < 9) tutorialCoachMark?.next();
         }
       },
       child: Container(
@@ -238,7 +255,7 @@ class TutorialTarget {
               Container(
                 width: double.infinity,
                 child: InkWell(
-                  onTap: () => id == 8
+                  onTap: () => id == 9
                       ? tutorialCoachMark?.skip()
                       : tutorialCoachMark?.next(),
                   child: Container(
@@ -256,7 +273,7 @@ class TutorialTarget {
                     child: Column(
                       children: <Widget>[
                         Text(
-                          id == 8 ? 'LET\'S GO' : 'NEXT TIP',
+                          id == 9 ? 'LET\'S GO' : 'NEXT TIP',
                           style: AppTextStyles.boldText24
                               .copyWith(color: Colors.white),
                           textAlign: TextAlign.center,
@@ -269,7 +286,7 @@ class TutorialTarget {
               Padding(
                 padding: EdgeInsets.all(5.0),
                 child: Text(
-                  '$id/8',
+                  '$id/9',
                   style: AppTextStyles.regularText12.copyWith(
                       color: AppColors.darkBlue, height: 1, fontSize: 10),
                 ),
