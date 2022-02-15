@@ -17,6 +17,8 @@ import 'package:uuid/uuid.dart';
 import 'package:rxdart/rxdart.dart';
 
 class PrayerService {
+  final _databaseReference = FirebaseFirestore.instance;
+
   final CollectionReference<Map<String, dynamic>> _prayerCollectionReference =
       FirebaseFirestore.instance.collection("Prayer");
   final CollectionReference<Map<String, dynamic>>
@@ -173,15 +175,15 @@ class PrayerService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      // store prayer
-      _prayerCollectionReference.doc(newPrayerId).set(populatePrayer(
-              userId, prayerDesc, creatorName, prayerDescBackup, newPrayerId)
-          .toJson());
-
-      //store user prayer
-      _userPrayerCollectionReference
-          .doc(userPrayerID)
-          .set(populateUserPrayer(userId, newPrayerId, userPrayerID).toJson());
+      final batch = _databaseReference.batch();
+      batch.set(
+          _prayerCollectionReference.doc(newPrayerId),
+          populatePrayer(userId, prayerDesc, creatorName, prayerDescBackup,
+                  newPrayerId)
+              .toJson());
+      batch.set(_userPrayerCollectionReference.doc(userPrayerID),
+          populateUserPrayer(userId, newPrayerId, userPrayerID).toJson());
+      await batch.commit();
     } catch (e) {
       await locator<LogService>().createLog(
           StringUtils.getErrorMessage(e), userId, 'PRAYER/service/addPrayer');
@@ -304,14 +306,14 @@ class PrayerService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
+      final batch = _databaseReference.batch();
 
       prayerId = prayerId;
-      await _prayerCollectionReference
-          .doc(prayerId)
-          .update({'ModifiedOn': DateTime.now()});
-      _prayerUpdateCollectionReference.doc(updateId).set(
-            prayerUpdate.toJson(),
-          );
+      batch.update(_prayerCollectionReference.doc(prayerId),
+          {'ModifiedOn': DateTime.now()});
+      batch.set(_prayerUpdateCollectionReference.doc(updateId),
+          prayerUpdate.toJson());
+      await batch.commit();
     } catch (e) {
       locator<LogService>().createLog(StringUtils.getErrorMessage(e),
           prayerUpdate.userId ?? '', 'PRAYER/service/addPrayerUpdate');
@@ -405,14 +407,15 @@ class PrayerService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      _prayerCollectionReference.doc(prayerID).update(
-        {'IsAnswer': false},
-      );
-      _userPrayerCollectionReference.doc(userPrayerId).update({
+      final batch = _databaseReference.batch();
+      batch.update(
+          _prayerCollectionReference.doc(prayerID), {'IsAnswer': false});
+      batch.update(_userPrayerCollectionReference.doc(userPrayerId), {
         'IsArchived': false,
         'Status': Status.active,
         'ArchivedDate': null,
       });
+      await batch.commit();
     } catch (e) {
       locator<LogService>().createLog(StringUtils.getErrorMessage(e),
           userPrayerId, 'PRAYER/service/unArchivePrayer');
@@ -424,9 +427,9 @@ class PrayerService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      _prayerCollectionReference.doc(prayerID).update(
-        {'IsAnswer': true},
-      );
+      final batch = _databaseReference.batch();
+      batch
+          .update(_prayerCollectionReference.doc(prayerID), {'IsAnswer': true});
       final data = {
         'IsArchived': true,
         'Status': Status.inactive,
@@ -434,7 +437,8 @@ class PrayerService {
         'ArchivedDate': DateTime.now(),
         'IsSnoozed': false
       };
-      _userPrayerCollectionReference.doc(userPrayerId).update(data);
+      batch.update(_userPrayerCollectionReference.doc(userPrayerId), data);
+      await batch.commit();
     } catch (e) {
       locator<LogService>().createLog(StringUtils.getErrorMessage(e), prayerID,
           'PRAYER/service/markPrayerAsAnswered');
@@ -554,7 +558,7 @@ class PrayerService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      var batch = FirebaseFirestore.instance.batch();
+      final batch = _databaseReference.batch();
       // store prayer
       batch.set(_prayerCollectionReference.doc(_prayerID), prayerData.toJson());
 
@@ -585,7 +589,7 @@ class PrayerService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      var batch = FirebaseFirestore.instance.batch();
+      final batch = _databaseReference.batch();
       batch.set(_prayerCollectionReference.doc(_prayerID), prayerData.toJson());
 
       //store group prayer
@@ -609,7 +613,7 @@ class PrayerService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      var batch = FirebaseFirestore.instance.batch();
+      final batch = _databaseReference.batch();
       // store prayer
       batch.set(_prayerCollectionReference.doc(_prayerID), prayerData.toJson());
 

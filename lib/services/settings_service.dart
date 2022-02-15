@@ -17,6 +17,7 @@ import 'package:uuid/uuid.dart';
 import '../utils/string_utils.dart';
 
 class SettingsService {
+  final _databaseReference = FirebaseFirestore.instance;
   final CollectionReference<Map<String, dynamic>> _settingsCollectionReference =
       FirebaseFirestore.instance.collection("Setting");
   final CollectionReference<Map<String, dynamic>>
@@ -114,22 +115,32 @@ class SettingsService {
     final settingsId = Uuid().v1();
     final sharingSettingsId = Uuid().v1();
     final prayerSettingsId = Uuid().v1();
+    final groupPreferenceSettingsId = Uuid().v1();
 
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
+      final batch = _databaseReference.batch();
       // store settings
-      await _settingsCollectionReference
-          .doc(settingsId)
-          .set(populateSettings(deviceId, userId, email, settingsId).toJson());
+      batch.set(_settingsCollectionReference.doc(settingsId),
+          populateSettings(deviceId, userId, email, settingsId).toJson());
 
       //store sharing settings
-      await _sharingSettingsCollectionReference.doc(sharingSettingsId).set(
+      batch.set(_sharingSettingsCollectionReference.doc(sharingSettingsId),
           populateSharingSettings(userId, email, sharingSettingsId).toJson());
 
       //store prayer settings
-      await _prayerSettingsCollectionReference.doc(prayerSettingsId).set(
+      batch.set(_prayerSettingsCollectionReference.doc(prayerSettingsId),
           populatePrayerSettings(userId, email, prayerSettingsId).toJson());
+
+      //store group prefference
+      batch.set(
+          _groupPrefernceSettingsCollectionReference
+              .doc(groupPreferenceSettingsId),
+          populateGroupPreferenceSettings(userId, groupPreferenceSettingsId)
+              .toJson());
+
+      await batch.commit();
     } catch (e) {
       locator<LogService>().createLog(StringUtils.getErrorMessage(e), userId,
           'SETTINGS/service/addSettings');
