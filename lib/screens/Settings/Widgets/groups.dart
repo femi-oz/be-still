@@ -1103,6 +1103,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
+                                    //comment
                                     Text(
                                       ((data.group ?? GroupModel.defaultValue())
                                                       .organization ??
