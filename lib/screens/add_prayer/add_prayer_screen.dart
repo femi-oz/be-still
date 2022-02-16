@@ -865,11 +865,20 @@ class _AddPrayerState extends State<AddPrayer> {
                               onTap: () {
                                 FocusScope.of(context).unfocus();
 
-                                if (isValid)
-                                  (selected?.name ?? '').isEmpty ||
-                                          (selected?.name) == 'My Prayers'
-                                      ? _save()
-                                      : _onGroupPrayerSave();
+                                if (isValid) {
+                                  if ((selected?.name ?? '').isEmpty ||
+                                      (selected?.name) == 'My Prayers') {
+                                    _save();
+                                  } else {
+                                    if (!Provider.of<PrayerProvider>(context,
+                                            listen: false)
+                                        .isEdit) {
+                                      _onGroupPrayerSave();
+                                    } else {
+                                      _save();
+                                    }
+                                  }
+                                }
                               }),
                         ])),
                 showDropdown && userGroups.length > 0

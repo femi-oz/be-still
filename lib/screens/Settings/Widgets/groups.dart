@@ -888,6 +888,20 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     }
   }
 
+  List<GroupUserModel> sortedGroupMembers(List<GroupUserModel> groupMembers) {
+    final adminName = groupMembers
+        .where((element) => element.role == GroupUserRole.admin)
+        .toList();
+    final memberNames = groupMembers
+        .where((element) => element.role == GroupUserRole.member)
+        .toList();
+    memberNames.sort((a, b) => (a.fullName ?? '')
+        .toLowerCase()
+        .compareTo((b.fullName ?? '').toLowerCase()));
+    final groupUsers = [...adminName, ...memberNames];
+    return groupUsers;
+  }
+
   @override
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
@@ -991,6 +1005,9 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                           .firstWhere((g) => g.userId == _currentUser.id)
                           .role ==
                       GroupUserRole.member;
+
+                  final groupUsers = sortedGroupMembers(data.groupUsers ?? []);
+
                   return Container(
                     margin: EdgeInsets.symmetric(vertical: 10.0),
                     child: custom.ExpansionTile(
@@ -1265,166 +1282,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       .enableNotificationForUpdates ??
                                   false,
                             ),
-                            // if (isMember)
-                            //   CustomToggle(
-                            //     disabled: true,
-                            //     title:
-                            //         'Notify me when new members joins this group',
-                            //     onChange: (value) => _groupProvider
-                            //         .updateGroupSettings(_currentUser.id ?? '',
-                            //             key: 'NotifyWhenNewMemberJoins',
-                            //             value: value,
-                            //             settingsId:
-                            //                 data.groupSettings?.id ?? ''),
-                            //     value: (data.groupSettings ??
-                            //                 GroupSettings.defaultValue())
-                            //             .notifyWhenNewMemberJoins ??
-                            //         false,
-                            //   ),
-                            // if (isAdmin || isModerator)
-                            //   CustomToggle(
-                            //     disabled: true,
-                            //     title: 'Notify me of membership requests',
-                            //     onChange: (value) => _groupProvider
-                            //         .updateGroupSettings(_currentUser.id ?? '',
-                            //             key: 'NotifyOfMembershipRequest',
-                            //             value: value,
-                            //             settingsId:
-                            //                 data.groupSettings?.id ?? ''),
-                            //     value: (data.groupSettings ??
-                            //                 GroupSettings.defaultValue())
-                            //             .notifyOfMembershipRequest ??
-                            //         false,
-                            //   ),
-                            // if (isAdmin || isModerator)
-                            //   CustomToggle(
-                            //     disabled: true,
-                            //     title: 'Notify me of flagged prayers',
-                            //     onChange: (value) => _groupProvider
-                            //         .updateGroupSettings(_currentUser.id ?? '',
-                            //             key: 'NotifyMeofFlaggedPrayers',
-                            //             value: value,
-                            //             settingsId:
-                            //                 data.groupSettings?.id ?? ''),
-                            //     value: (data.groupSettings ??
-                            //                 GroupSettings.defaultValue())
-                            //             .notifyMeofFlaggedPrayers ??
-                            //         false,
-                            //   ),
                           ],
                         ),
-                        // (isAdmin || isModerator)
-                        //     ? Column(
-                        //         children: [
-                        //           Padding(
-                        //             padding: const EdgeInsets.symmetric(
-                        //                 horizontal: 20.0, vertical: 10.0),
-                        //             child: Row(
-                        //               children: <Widget>[
-                        //                 Text('Invite',
-                        //                     style: AppTextStyles.regularText11),
-                        //                 SizedBox(width: 10),
-                        //                 Expanded(
-                        //                   child: Divider(
-                        //                     color: AppColors.darkBlue,
-                        //                     thickness: 1,
-                        //                   ),
-                        //                 ),
-                        //               ],
-                        //             ),
-                        //           ),
-                        //           Column(
-                        //             children: [
-                        //               Container(
-                        //                 padding: const EdgeInsets.symmetric(
-                        //                     horizontal: 20.0),
-                        //                 child: GestureDetector(
-                        //                   onTap: () => setState(
-                        //                       () => _inviteMode = true),
-                        //                   child: Text(
-                        //                     'Send an invite to join group',
-                        //                     style: AppTextStyles.regularText16b
-                        //                         .copyWith(
-                        //                             color:
-                        //                                 AppColors.lightBlue3),
-                        //                   ),
-                        //                 ),
-                        //               ),
-                        //               _inviteMode
-                        //                   ? Padding(
-                        //                       padding:
-                        //                           const EdgeInsets.symmetric(
-                        //                               vertical: 15.0,
-                        //                               horizontal: 20.0),
-                        //                       child: Column(
-                        //                         children: [
-                        //                           CustomInput(
-                        //                             textkey: GlobalKey<
-                        //                                 FormFieldState>(),
-                        //                             label: 'Email Address',
-                        //                             controller:
-                        //                                 _emailController,
-                        //                             isEmail: true,
-                        //                             keyboardType: TextInputType
-                        //                                 .emailAddress,
-                        //                           ),
-                        //                           Row(
-                        //                             mainAxisAlignment:
-                        //                                 MainAxisAlignment.end,
-                        //                             children: [
-                        //                               TextButton(
-                        //                                   style: ButtonStyle(
-                        //                                       textStyle: MaterialStateProperty.all<TextStyle>(
-                        //                                           AppTextStyles
-                        //                                               .boldText16
-                        //                                               .copyWith(
-                        //                                                   color: Colors
-                        //                                                       .white)),
-                        //                                       backgroundColor:
-                        //                                           MaterialStateProperty.all<Color>(
-                        //                                               Colors.grey[
-                        //                                                   700])),
-                        //                                   onPressed: () => setState(
-                        //                                       () => _inviteMode = false),
-                        //                                   child: Text('Cancel', style: AppTextStyles.regularText14)),
-                        //                               SizedBox(width: 15),
-                        //                               TextButton(
-                        //                                   style: ButtonStyle(
-                        //                                     textStyle: MaterialStateProperty.all<
-                        //                                             TextStyle>(
-                        //                                         AppTextStyles
-                        //                                             .boldText16
-                        //                                             .copyWith(
-                        //                                                 color: Colors
-                        //                                                     .white)),
-                        //                                     backgroundColor:
-                        //                                         MaterialStateProperty.all<
-                        //                                                 Color>(
-                        //                                             AppColors
-                        //                                                 .dimBlue),
-                        //                                   ),
-                        //                                   onPressed: () =>
-                        //                                       _sendInvite(
-                        //                                           data.group
-                        //                                               .name,
-                        //                                           data.group
-                        //                                               .id),
-                        //                                   child: Text(
-                        //                                     'Send Invite',
-                        //                                     style: AppTextStyles
-                        //                                         .regularText14,
-                        //                                   )),
-                        //                             ],
-                        //                           )
-                        //                         ],
-                        //                       ),
-                        //                     )
-                        //                   : Container()
-                        //             ],
-                        //           )
-                        //         ],
-                        //       )
-                        //     : Container(),
                         (isAdmin || isModerator)
                             ? custom.ExpansionTile(
                                 iconColor: AppColors.lightBlue4,
@@ -1462,7 +1321,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                     padding: const EdgeInsets.only(left: 20.0),
                                     child: Column(
                                       children: <Widget>[
-                                        ...?data.groupUsers?.map(
+                                        ...groupUsers.map(
                                           (user) {
                                             return GestureDetector(
                                               onTap: () async {

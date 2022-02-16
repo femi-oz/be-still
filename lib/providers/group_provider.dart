@@ -22,10 +22,12 @@ class GroupProvider with ChangeNotifier {
   late StreamSubscription<List<CombineGroupUserStream>> allGroupsStream;
 
   List<CombineGroupUserStream> _userGroups = [];
+  List<CombineGroupUserStream> _sortedMemberGroups = [];
   List<CombineGroupUserStream> _allGroups = [];
   List<CombineGroupUserStream> _filteredAllGroups = [];
   CombineGroupUserStream _currentGroup = CombineGroupUserStream.defaultValue();
   List<CombineGroupUserStream> get userGroups => _userGroups;
+  List<CombineGroupUserStream> get sortedMemberGroups => _sortedMemberGroups;
   List<CombineGroupUserStream> get allGroups => _allGroups;
   List<CombineGroupUserStream> get filteredAllGroups => _filteredAllGroups;
   CombineGroupUserStream get currentGroup => _currentGroup;
@@ -80,6 +82,7 @@ class GroupProvider with ChangeNotifier {
                 element.role == GroupUserRole.admin &&
                 element.userId == userId))
             .toList();
+
         isAdminGroups.sort((a, b) => (a.group?.name ?? '')
             .toLowerCase()
             .compareTo((b.group?.name ?? '').toLowerCase()));
@@ -95,6 +98,7 @@ class GroupProvider with ChangeNotifier {
             .compareTo((b.group?.name ?? '').toLowerCase()));
 
         _userGroups = [...isAdminGroups, ...isNotAdminGroups];
+
         notifyListeners();
       });
     } catch (e) {
