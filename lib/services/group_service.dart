@@ -343,7 +343,7 @@ class GroupService {
         return Future.error(StringUtils.unathorized);
       final groupSettingsId = Uuid().v1();
 
-      final batch = _databaseReference.batch();
+      var batch = _databaseReference.batch();
       batch.set(_groupCollectionReference.doc(groupData.id),
           populateGroup(groupData, groupData.id ?? '').toJson());
       batch.set(
@@ -371,9 +371,7 @@ class GroupService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      final batch = _databaseReference.batch();
-      batch.update(
-        _groupCollectionReference.doc(groupID),
+      _groupCollectionReference.doc(groupID).update(
         {
           "Name": groupData.name,
           "Description": groupData.description,
@@ -386,9 +384,10 @@ class GroupService {
         },
       );
 
-      batch.update(_groupSettingsCollectionReference.doc(groupSettingsId),
-          {SettingsKey.requireAdminApproval: requireAdminApproval});
-      await batch.commit();
+      updateGroupSettings(
+          key: SettingsKey.requireAdminApproval,
+          value: requireAdminApproval,
+          groupSettingsId: groupSettingsId);
       return true;
     } catch (e) {
       locator<LogService>().createLog(
@@ -435,15 +434,16 @@ class GroupService {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       final _userGroupId = Uuid().v1();
-      final batch = _databaseReference.batch();
-      batch.set(
-          _userGroupCollectionReference.doc(_userGroupId),
-          populateGroupUser(userId, groupId, GroupUserRole.member, userId,
-                  fullName, _userGroupId)
-              .toJson());
-
-      batch.delete(_groupRequestCollectionReference.doc(requestId));
-      await batch.commit();
+      _userGroupCollectionReference.doc(_userGroupId).set(populateGroupUser(
+              userId,
+              groupId,
+              GroupUserRole.member,
+              userId,
+              fullName,
+              _userGroupId)
+          .toJson());
+      _groupRequestCollectionReference.doc(requestId).delete();
+      // .update({"Status": StringUtils.joinRequestStatusApproved});
     } catch (e) {
       locator<LogService>().createLog(StringUtils.getErrorMessage(e), userId,
           'GROUP/service/acceptRequest');
@@ -500,15 +500,13 @@ class GroupService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      final batch = _databaseReference.batch();
-      batch.delete(_groupCollectionReference.doc(groupId));
-
+      _groupCollectionReference.doc(groupId).delete();
       _userGroupCollectionReference
           .where('GroupId', isEqualTo: groupId)
           .get()
           .then((value) {
         for (final doc in value.docs) {
-          batch.delete(doc.reference);
+          doc.reference.delete();
         }
       });
       final x = await _followedPrayerCollectionReference
@@ -516,18 +514,19 @@ class GroupService {
           .get();
       x.docs.forEach((element) {
         final f = FollowedPrayerModel.fromData(element.data(), element.id);
-        batch.update(_userPrayerCollectionReference.doc(f.userPrayerId),
-            {'DeleteStatus': -1});
+        _userPrayerCollectionReference
+            .doc(f.userPrayerId)
+            .update({'DeleteStatus': -1});
+        // element.reference.delete();
       });
       _groupPrayerCollectionReference
           .where('GroupId', isEqualTo: groupId)
           .get()
           .then((value) {
         for (final doc in value.docs) {
-          batch.delete(doc.reference);
+          doc.reference.delete();
         }
       });
-      await batch.commit();
     } catch (e) {
       locator<LogService>().createLog(
           StringUtils.getErrorMessage(e), groupId, 'GROUP/service/deleteGroup');
@@ -539,8 +538,6 @@ class GroupService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      final batch = _databaseReference.batch();
-
       _userGroupCollectionReference
           .where('UserId', isEqualTo: userId)
           .where('GroupId', isEqualTo: groupId)
@@ -548,10 +545,9 @@ class GroupService {
           .then((value) => {
                 value.docs.forEach((element) {
                   var id = element.reference.id;
-                  batch.delete(_userGroupCollectionReference.doc(id));
+                  _userGroupCollectionReference.doc(id).delete();
                 })
               });
-      // commit
 
       final userPrayers = _followedPrayerCollectionReference
           .where('UserId', isEqualTo: userId)
@@ -562,13 +558,11 @@ class GroupService {
             .toList();
         prayers.forEach((element) {
           if (element.groupId == groupId) {
-            batch.delete(_followedPrayerCollectionReference.doc(element.id));
-            batch.delete(
-                _userPrayerCollectionReference.doc(element.userPrayerId));
+            _followedPrayerCollectionReference.doc(element.id).delete();
+            _userPrayerCollectionReference.doc(element.userPrayerId).delete();
           }
         });
       });
-      batch.commit();
     } catch (e) {
       locator<LogService>().createLog(StringUtils.getErrorMessage(e), userId,
           'GROUP/service/removeFromGroup');

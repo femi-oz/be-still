@@ -18,8 +18,6 @@ import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 
 class GroupPrayerService {
-  final _databaseReference = FirebaseFirestore.instance;
-
   final CollectionReference<Map<String, dynamic>> _prayerCollectionReference =
       FirebaseFirestore.instance.collection("Prayer");
   final CollectionReference<Map<String, dynamic>>
@@ -220,20 +218,15 @@ class GroupPrayerService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Stream.error(StringUtils.unathorized);
-      final batch = _databaseReference.batch();
       // store prayer
-      batch.set(
-          _prayerCollectionReference.doc(newPrayerId),
-          populatePrayer(userId, prayerDesc, creatorName, prayerDescBackup,
-                  newPrayerId)
-              .toJson());
+      _prayerCollectionReference.doc(newPrayerId).set(populatePrayer(
+              userId, prayerDesc, creatorName, prayerDescBackup, newPrayerId)
+          .toJson());
 
       //store user prayer
-      batch.set(
-          _groupPrayerCollectionReference.doc(userPrayerID),
+      _groupPrayerCollectionReference.doc(userPrayerID).set(
           populateGroupPrayer(groupId, newPrayerId, groupId, userPrayerID)
               .toJson());
-      await batch.commit();
       return userPrayerID;
     } catch (e) {
       await locator<LogService>().createLog(
@@ -307,6 +300,72 @@ class GroupPrayerService {
     }
   }
 
+  // Future editPrayer(
+  //   String description,
+  //   String prayerID,
+  // ) async {
+  //   try {
+  //     if (_firebaseAuth.currentUser == null)
+  //       return Stream.error(StringUtils.unathorized);
+  //     newPrayerId = prayerID;
+  //     _prayerCollectionReference.doc(prayerID).update(
+  //       {"Description": description, "ModifiedOn": DateTime.now()},
+  //     );
+  //   } catch (e) {
+  //     locator<LogService>().createLog(StringUtils.getErrorMessage(e), prayerID,
+  //         'PRAYER/service/editPrayer');
+  //     throw HttpException(StringUtils.getErrorMessage(e));
+  //   }
+  // }
+
+  // Future editUpdate(String description, String prayerID) async {
+  //   try {
+  //     if (_firebaseAuth.currentUser == null)
+  //       return Stream.error(StringUtils.unathorized);
+  //     _prayerUpdateCollectionReference.doc(prayerID).update(
+  //       {"Description": description, "ModifiedOn": DateTime.now()},
+  //     );
+  //   } catch (e) {
+  //     locator<LogService>().createLog(StringUtils.getErrorMessage(e), prayerID,
+  //         'PRAYER/service/editPrayerUpdate');
+  //     throw HttpException(StringUtils.getErrorMessage(e));
+  //   }
+  // }
+
+  // Future addPrayerUpdate(String userId, String prayer, String prayerId) async {
+  //   final updateId = Uuid().v1();
+  //   final prayerUpdate = PrayerUpdateModel(
+  //     id: updateId,
+  //     prayerId: prayerId,
+  //     deleteStatus: 0,
+  //     userId: userId,
+  //     title: '',
+  //     description: prayer,
+  //     modifiedBy: userId,
+  //     modifiedOn: DateTime.now(),
+  //     createdBy: userId,
+  //     createdOn: DateTime.now(),
+  //     descriptionBackup: '',
+  //   );
+  //   try {
+  //     if (_firebaseAuth.currentUser == null)
+  //       return Stream.error(StringUtils.unathorized);
+
+  //     prayerId = prayerId;
+  //     await _prayerCollectionReference
+  //         .doc(prayerId)
+  //         .update({'ModifiedOn': DateTime.now()});
+
+  //     _prayerUpdateCollectionReference.doc(updateId).set(
+  //           prayerUpdate.toJson(),
+  //         );
+  //   } catch (e) {
+  //     locator<LogService>().createLog(StringUtils.getErrorMessage(e),
+  //         prayerUpdate.userId ?? '', 'PRAYER/service/addPrayerUpdate');
+  //     throw HttpException(StringUtils.getErrorMessage(e));
+  //   }
+  // }
+
   Stream<List<PrayerUpdateModel>> getPrayerUpdates(
     String prayerId,
   ) {
@@ -330,7 +389,7 @@ class GroupPrayerService {
       String frequency) async {
     try {
       if (_firebaseAuth.currentUser == null)
-        return Future.error(StringUtils.unathorized);
+        return Stream.error(StringUtils.unathorized);
       _groupPrayerCollectionReference.doc(userPrayerID).update(
         {
           'IsFavourite': false,
@@ -375,24 +434,25 @@ class GroupPrayerService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Stream.error(StringUtils.unathorized);
-      final batch = _databaseReference.batch();
-      batch.update(_groupPrayerCollectionReference.doc(groupPrayerId), {
-        'IsArchived': true,
-        'Status': Status.inactive,
-        'IsFavourite': false,
-        'ArchivedDate': DateTime.now(),
-        'IsSnoozed': false
-      });
-
+      _groupPrayerCollectionReference.doc(groupPrayerId).update(
+        {
+          'IsArchived': true,
+          'Status': Status.inactive,
+          'IsFavourite': false,
+          'ArchivedDate': DateTime.now(),
+          'IsSnoozed': false
+        },
+      );
       final x = await _followedPrayerCollectionReference
           .where('PrayerId', isEqualTo: prayerId)
           .get();
       x.docs.forEach((element) {
         final f = FollowedPrayerModel.fromData(element.data(), element.id);
-        batch.update(_userPrayerCollectionReference.doc(f.userPrayerId),
-            {'DeleteStatus': -1});
+        _userPrayerCollectionReference
+            .doc(f.userPrayerId)
+            .update({'DeleteStatus': -1});
+        // element.reference.delete();
       });
-      await batch.commit();
     } catch (e) {
       locator<LogService>().createLog(StringUtils.getErrorMessage(e),
           groupPrayerId, 'PRAYER/service/archivePrayer');
@@ -404,16 +464,14 @@ class GroupPrayerService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Stream.error(StringUtils.unathorized);
-      final batch = _databaseReference.batch();
-      batch.update(
-          _prayerCollectionReference.doc(prayerID), {'IsAnswer': false});
-
-      batch.update(_groupPrayerCollectionReference.doc(userPrayerId), {
+      _prayerCollectionReference.doc(prayerID).update(
+        {'IsAnswer': false},
+      );
+      _groupPrayerCollectionReference.doc(userPrayerId).update({
         'IsArchived': false,
         'Status': Status.active,
         'ArchivedDate': null,
       });
-      await batch.commit();
     } catch (e) {
       locator<LogService>().createLog(StringUtils.getErrorMessage(e),
           userPrayerId, 'PRAYER/service/unArchivePrayer');
@@ -425,10 +483,9 @@ class GroupPrayerService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Stream.error(StringUtils.unathorized);
-      final batch = _databaseReference.batch();
-      batch
-          .update(_prayerCollectionReference.doc(prayerID), {'IsAnswer': true});
-
+      _prayerCollectionReference.doc(prayerID).update(
+        {'IsAnswer': true},
+      );
       final data = {
         'IsArchived': true,
         'Status': Status.inactive,
@@ -436,16 +493,17 @@ class GroupPrayerService {
         'ArchivedDate': DateTime.now(),
         'IsSnoozed': false
       };
-      batch.update(_groupPrayerCollectionReference.doc(groupPrayerId), data);
+      _groupPrayerCollectionReference.doc(groupPrayerId).update(data);
       final x = await _followedPrayerCollectionReference
           .where('PrayerId', isEqualTo: prayerID)
           .get();
       x.docs.forEach((element) {
         final f = FollowedPrayerModel.fromData(element.data(), element.id);
-        batch.update(_userPrayerCollectionReference.doc(f.userPrayerId),
-            {'DeleteStatus': -1});
+        _userPrayerCollectionReference
+            .doc(f.userPrayerId)
+            .update({'DeleteStatus': -1});
+        // element.reference.delete();
       });
-      await batch.commit();
     } catch (e) {
       locator<LogService>().createLog(StringUtils.getErrorMessage(e), prayerID,
           'PRAYER/service/markPrayerAsAnswered');
@@ -503,18 +561,17 @@ class GroupPrayerService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Stream.error(StringUtils.unathorized);
-      final batch = _databaseReference.batch();
-      batch.update(_groupPrayerCollectionReference.doc(userPrayeId),
-          {'DeleteStatus': -1});
+      _groupPrayerCollectionReference
+          .doc(userPrayeId)
+          .update({'DeleteStatus': -1});
       _userPrayerCollectionReference
           .where('PrayerId', isEqualTo: prayerId)
           .get()
           .then((userPrayers) {
         userPrayers.docs.forEach((element) {
-          batch.update(element.reference, {'DeleteStatus': -1});
+          element.reference.update({'DeleteStatus': -1});
         });
       });
-      await batch.commit();
     } catch (e) {
       locator<LogService>().createLog(StringUtils.getErrorMessage(e),
           userPrayeId, 'PRAYER/service/deletePrayer');
@@ -574,7 +631,7 @@ class GroupPrayerService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Stream.error(StringUtils.unathorized);
-      var batch = _databaseReference.batch();
+      var batch = FirebaseFirestore.instance.batch();
       // store prayer
       batch.set(_prayerCollectionReference.doc(_prayerID), prayerData.toJson());
 
@@ -600,6 +657,58 @@ class GroupPrayerService {
     }
   }
 
+  // Stream<List<CombineGroupPrayerStream>> getGroupPrayers(String groupId) {
+  //   try {
+  //     if (_firebaseAuth.currentUser == null)
+  //       return Stream.error(StringUtils.unathorized);
+  //     return _groupPrayerCollectionReference
+  //         .where('GroupId', isEqualTo: groupId)
+  //         .snapshots()
+  //         .map((convert) {
+  //       return convert.docs.map((f) {
+  //         Stream<GroupPrayerModel> groupPrayer = Stream.value(f)
+  //             .map<GroupPrayerModel>(
+  //                 (doc) => GroupPrayerModel.fromData(doc.data(), doc.id));
+
+  //         Stream<PrayerModel> prayer = _prayerCollectionReference
+  //             .doc(f['PrayerId'])
+  //             .snapshots()
+  //             .map<PrayerModel>(
+  //                 (doc) => PrayerModel.fromData(doc.data()!, doc.id));
+  //         Stream<List<PrayerUpdateModel>> updates =
+  //             _prayerUpdateCollectionReference
+  //                 .where('PrayerId', isEqualTo: f['PrayerId'])
+  //                 .snapshots()
+  //                 .map<List<PrayerUpdateModel>>((list) => list.docs
+  //                     .map((e) => PrayerUpdateModel.fromData(e.data(), e.id))
+  //                     .toList());
+
+  //         return Rx.combineLatest3(
+  //           groupPrayer,
+  //           prayer,
+  //           updates,
+  //           (GroupPrayerModel groupPrayer, PrayerModel prayer,
+  //                   List<PrayerUpdateModel> updates) =>
+  //               CombineGroupPrayerStream(
+  //             tags: [],
+  //             groupPrayer: groupPrayer,
+  //             prayer: prayer,
+  //             updates: updates,
+  //           ),
+  //         );
+  //       });
+  //     }).switchMap((observables) {
+  //       return observables.length > 0
+  //           ? Rx.combineLatestList(observables)
+  //           : Stream.value([]);
+  //     });
+  //   } catch (e) {
+  //     locator<LogService>().createLog(StringUtils.getErrorMessage(e), groupId,
+  //         'PRAYER/service/getGroupPrayers');
+  //     throw HttpException(StringUtils.getErrorMessage(e));
+  //   }
+  // }
+
   Stream<List<HiddenPrayerModel>> getHiddenPrayers(
     String userId,
   ) {
@@ -618,6 +727,41 @@ class GroupPrayerService {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
+
+  // Future<List<FollowedPrayerModel>> getFollowedPrayers(String prayerId) {
+  //   try {
+  //     if (_firebaseAuth.currentUser == null)
+  //       return Future.error(StringUtils.unathorized);
+  //     return _followedPrayerCollectionReference
+  //         .where('PrayerId', isEqualTo: prayerId)
+  //         .get()
+  //         .then((event) => event.docs
+  //             .map((e) => FollowedPrayerModel.fromData(e.data(), e.id))
+  //             .toList());
+  //   } catch (e) {
+  //     locator<LogService>().createLog(StringUtils.getErrorMessage(e), prayerId,
+  //         'PRAYER/service/getFollowedPrayers');
+  //     throw HttpException(StringUtils.getErrorMessage(e));
+  //   }
+  // }
+
+  // Future<List<FollowedPrayerModel>> getFollowedPrayersByGroupId(
+  //     String groupId) {
+  //   try {
+  //     if (_firebaseAuth.currentUser == null)
+  //       return Future.error(StringUtils.unathorized);
+  //     return _followedPrayerCollectionReference
+  //         .where('GroupId', isEqualTo: groupId)
+  //         .get()
+  //         .then((event) => event.docs
+  //             .map((e) => FollowedPrayerModel.fromData(e.data(), e.id))
+  //             .toList());
+  //   } catch (e) {
+  //     locator<LogService>().createLog(StringUtils.getErrorMessage(e), groupId,
+  //         'PRAYER/service/getFollowedPrayersByGroupId');
+  //     throw HttpException(StringUtils.getErrorMessage(e));
+  //   }
+  // }
 
   Stream<List<FollowedPrayerModel>> getFollowedPrayersByUserId(String userId) {
     try {
@@ -711,16 +855,14 @@ class GroupPrayerService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      final batch = _databaseReference.batch();
       //store user prayer
-      batch.set(_userPrayerCollectionReference.doc(userPrayerID),
-          populateUserPrayer(userId, prayerId, userPrayerID).toJson());
-      batch.set(
-          _followedPrayerCollectionReference.doc(followedPrayerID),
+      _userPrayerCollectionReference
+          .doc(userPrayerID)
+          .set(populateUserPrayer(userId, prayerId, userPrayerID).toJson());
+      _followedPrayerCollectionReference.doc(followedPrayerID).set(
           populateFollowedPrayer(userId, prayerId, userPrayerID, groupId,
                   isFollowedByAdmin, followedPrayerID)
               .toJson());
-      await batch.commit();
     } catch (e) {
       await locator<LogService>().createLog(
           StringUtils.getErrorMessage(e), userId, 'PRAYER/service/addPrayer');
@@ -732,10 +874,8 @@ class GroupPrayerService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      final batch = _databaseReference.batch();
-      batch.delete(_followedPrayerCollectionReference.doc(followedPrayerId));
-      batch.delete(_userPrayerCollectionReference.doc(userPrayerId));
-      await batch.commit();
+      _followedPrayerCollectionReference.doc(followedPrayerId).delete();
+      _userPrayerCollectionReference.doc(userPrayerId).delete();
     } catch (e) {
       locator<LogService>().createLog(StringUtils.getErrorMessage(e),
           followedPrayerId, 'PRAYER/service/removeFromMyList');

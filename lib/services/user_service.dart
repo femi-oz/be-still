@@ -59,7 +59,7 @@ class UserService {
 
       // store default settings
       await locator<SettingsService>().addSettings('', userId, email);
-      // await locator<SettingsService>().addGroupPreferenceSettings(userId);
+      await locator<SettingsService>().addGroupPreferenceSettings(userId);
     } catch (e) {
       locator<LogService>().createLog(
           StringUtils.getErrorMessage(e), userId, 'USER/service/addUserData');
