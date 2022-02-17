@@ -548,6 +548,7 @@ class GroupService {
                   _userGroupCollectionReference.doc(id).delete();
                 })
               });
+      // commit
 
       final userPrayers = _followedPrayerCollectionReference
           .where('UserId', isEqualTo: userId)
