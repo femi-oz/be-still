@@ -48,6 +48,8 @@ class StringUtils {
       " at any time to view all the prayers in your current prayer list.";
   static String groupTipList =
       " to create or find a Prayer Group in which you can share prayers with other people.";
+  static String groupTipList2 =
+      " After you create, or find and join a group, tap the group name to view the shared prayers in the group prayer list. You can follow prayers in the group, which adds them to your current prayer list and includes them in your personal prayer time.";
   static String quickTipQuickAccess =
       "You can swipe right or left on any prayer in your prayer list to display common actions.";
   static String quickTipFilters =

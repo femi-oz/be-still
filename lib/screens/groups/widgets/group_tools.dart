@@ -60,11 +60,6 @@ class _GroupToolsState extends State<GroupTools> {
               orElse: () => GroupUserModel.defaultValue())
           .id;
 
-      final notifications =
-          await Provider.of<NotificationProvider>(context, listen: false)
-              .getNotificationsToDelete(
-                  _currentUser.id ?? '', data.group?.id ?? '');
-
       if ((id ?? '').isNotEmpty) {
         var admin = (data.groupUsers ?? []).firstWhere(
             (element) => element.role == GroupUserRole.admin,

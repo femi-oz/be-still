@@ -316,26 +316,6 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             fontWeight: FontWeight.w500,
                             height: 1.5),
                       ),
-                      // Padding(
-                      //   padding: const EdgeInsets.only(top: 10.0),
-                      //   child: Text(
-                      //     user.email ?? '',
-                      //     style: TextStyle(
-                      //         color: AppColors.textFieldText,
-                      //         fontSize: 12,
-                      //         fontWeight: FontWeight.w300,
-                      //         height: 1.5),
-                      //     overflow: TextOverflow.ellipsis,
-                      //   ),
-                      // ),
-                      // Text(
-                      //   'might be from Houston, TX',
-                      //   style: TextStyle(
-                      //       color: AppColors.textFieldText,
-                      //       fontSize: 12,
-                      //       fontWeight: FontWeight.w300,
-                      //       height: 1.5),
-                      // ),
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0, bottom: 20.0),
                         child: Text(
@@ -348,204 +328,12 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      // Container(
-                      //   margin: const EdgeInsets.symmetric(
-                      //       horizontal: 20.0, vertical: 40.0),
-                      //   height: 30,
-                      //   width: MediaQuery.of(context).size.width * 0.4,
-                      //   decoration: BoxDecoration(
-                      //     // color: sortBy == 'date'
-                      //     //     ? context.toolsActiveBtn.withOpacity(0.3)
-                      //     //     :
-                      //     color: Colors.transparent,
-                      //     border: Border.all(
-                      //       color: AppColors.darkBlue,
-                      //       width: 1,
-                      //     ),
-                      //     borderRadius: BorderRadius.circular(5),
-                      //   ),
-                      //   child: OutlinedButton(
-                      //     style: ButtonStyle(
-                      //       side: MaterialStateProperty.all<BorderSide>(
-                      //           BorderSide(color: Colors.transparent)),
-                      //     ),
-                      //     child: Container(
-                      //       child: Text(
-                      //         'MESSAGE',
-                      //         style: TextStyle(
-                      //             color: AppColors.lightBlue3,
-                      //             fontSize: 14,
-                      //             fontWeight: FontWeight.w500),
-                      //       ),
-                      //     ),
-                      //     onPressed: () {
-                      //       setState(() {
-                      //         // sortBy = 'date';
-                      //       });
-                      //     },
-                      //   ),
-                      // ),
-                      // Padding(
-                      //   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      //   child: Column(
-                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //     children: <Widget>[
-                      //       Container(
-                      //         margin: EdgeInsets.symmetric(vertical: 5),
-                      //         height: 30,
-                      //         width: MediaQuery.of(context).size.width * 0.4,
-                      //         decoration: BoxDecoration(
-                      //           color: user.role == GroupUserRole.admin
-                      //               ? AppColors.activeButton.withOpacity(0.3)
-                      //               : Colors.transparent,
-                      //           border: Border.all(
-                      //             color: AppColors.darkBlue,
-                      //             width: 1,
-                      //           ),
-                      //           borderRadius: BorderRadius.circular(5),
-                      //         ),
-                      //         child: FittedBox(
-                      //           child: OutlinedButton(
-                      //             style: ButtonStyle(
-                      //               side: MaterialStateProperty.all<BorderSide>(
-                      //                   BorderSide(color: Colors.transparent)),
-                      //             ),
-                      //             child: Container(
-                      //               child: Text(
-                      //                 'ADMIN',
-                      //                 style: TextStyle(
-                      //                     color: AppColors.lightBlue3,
-                      //                     fontSize: 20,
-                      //                     fontWeight: FontWeight.w500),
-                      //               ),
-                      //             ),
-                      //             onPressed: () {
-                      //               showModalBottomSheet(
-                      //                 context: context,
-                      //                 barrierColor: AppColors
-                      //                     .detailBackgroundColor[1]
-                      //                     .withOpacity(0.5),
-                      //                 backgroundColor: AppColors
-                      //                     .detailBackgroundColor[1]
-                      //                     .withOpacity(0.9),
-                      //                 isScrollControlled: true,
-                      //                 builder: (BuildContext context) {
-                      //                   return GroupPrivilegeSettings(
-                      //                       'admin', user);
-                      //                 },
-                      //               );
-                      //             },
-                      //           ),
-                      //         ),
-                      //       ),
-                      //       Container(
-                      //         height: 30,
-                      //         margin: EdgeInsets.symmetric(vertical: 5),
-                      //         width: MediaQuery.of(context).size.width * 0.4,
-                      //         decoration: BoxDecoration(
-                      //           color: user.role == GroupUserRole.moderator
-                      //               ? AppColors.activeButton.withOpacity(0.3)
-                      //               : Colors.transparent,
-                      //           border: Border.all(
-                      //             color: AppColors.darkBlue,
-                      //             width: 1,
-                      //           ),
-                      //           borderRadius: BorderRadius.circular(5),
-                      //         ),
-                      //         child: FittedBox(
-                      //           child: OutlinedButton(
-                      //             style: ButtonStyle(
-                      //               side: MaterialStateProperty.all<BorderSide>(
-                      //                   BorderSide(color: Colors.transparent)),
-                      //             ),
-                      //             child: Container(
-                      //               child: Text(
-                      //                 'MODERATOR',
-                      //                 style: TextStyle(
-                      //                     color: AppColors.lightBlue3,
-                      //                     fontSize: 20,
-                      //                     fontWeight: FontWeight.w500),
-                      //               ),
-                      //             ),
-                      //             onPressed: () {
-                      //               showModalBottomSheet(
-                      //                 context: context,
-                      //                 barrierColor: AppColors
-                      //                     .detailBackgroundColor[1]
-                      //                     .withOpacity(0.5),
-                      //                 backgroundColor: AppColors
-                      //                     .detailBackgroundColor[1]
-                      //                     .withOpacity(0.9),
-                      //                 isScrollControlled: true,
-                      //                 builder: (BuildContext context) {
-                      //                   return GroupPrivilegeSettings(
-                      //                       'moderator', user);
-                      //                 },
-                      //               );
-                      //             },
-                      //           ),
-                      //         ),
-                      //       ),
-                      //       Container(
-                      //         height: 30,
-                      //         margin: EdgeInsets.symmetric(vertical: 5),
-                      //         width: MediaQuery.of(context).size.width * 0.4,
-                      //         decoration: BoxDecoration(
-                      //           color: user.role == GroupUserRole.member
-                      //               ? AppColors.activeButton.withOpacity(0.3)
-                      //               : Colors.transparent,
-                      //           border: Border.all(
-                      //             color: AppColors.darkBlue,
-                      //             width: 1,
-                      //           ),
-                      //           borderRadius: BorderRadius.circular(5),
-                      //         ),
-                      //         child: FittedBox(
-                      //           child: OutlinedButton(
-                      //             style: ButtonStyle(
-                      //               side: MaterialStateProperty.all<BorderSide>(
-                      //                   BorderSide(color: Colors.transparent)),
-                      //             ),
-                      //             child: Container(
-                      //               child: Text(
-                      //                 'MEMBER',
-                      //                 style: TextStyle(
-                      //                     color: AppColors.lightBlue3,
-                      //                     fontSize: 20,
-                      //                     fontWeight: FontWeight.w500),
-                      //               ),
-                      //             ),
-                      //             onPressed: () {
-                      //               showModalBottomSheet(
-                      //                 context: context,
-                      //                 barrierColor: AppColors
-                      //                     .detailBackgroundColor[1]
-                      //                     .withOpacity(0.5),
-                      //                 backgroundColor: AppColors
-                      //                     .detailBackgroundColor[1]
-                      //                     .withOpacity(0.9),
-                      //                 isScrollControlled: true,
-                      //                 builder: (BuildContext context) {
-                      //                   return GroupPrivilegeSettings(
-                      //                       'member', user);
-                      //                 },
-                      //               );
-                      //             },
-                      //           ),
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
                       !userIsAdmin
                           ? Container(
                               height: 30,
                               margin: EdgeInsets.only(top: 20, bottom: 0),
                               width: MediaQuery.of(context).size.width * 0.4,
                               decoration: BoxDecoration(
-                                // color: sortBy == 'date'
-                                //     ? context.toolsActiveBtn.withOpacity(0.3)
-                                //     :
                                 color: Colors.transparent,
                                 border: Border.all(
                                   color: AppColors.red,
@@ -888,6 +676,20 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     }
   }
 
+  List<GroupUserModel> sortedGroupMembers(List<GroupUserModel> groupMembers) {
+    final adminName = groupMembers
+        .where((element) => element.role == GroupUserRole.admin)
+        .toList();
+    final memberNames = groupMembers
+        .where((element) => element.role == GroupUserRole.member)
+        .toList();
+    memberNames.sort((a, b) => (a.fullName ?? '')
+        .toLowerCase()
+        .compareTo((b.fullName ?? '').toLowerCase()));
+    final groupUsers = [...adminName, ...memberNames];
+    return groupUsers;
+  }
+
   @override
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserProvider>(context).currentUser;
@@ -991,6 +793,9 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                           .firstWhere((g) => g.userId == _currentUser.id)
                           .role ==
                       GroupUserRole.member;
+
+                  final groupUsers = sortedGroupMembers(data.groupUsers ?? []);
+
                   return Container(
                     margin: EdgeInsets.symmetric(vertical: 10.0),
                     child: custom.ExpansionTile(
@@ -1105,11 +910,11 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   children: <Widget>[
                                     Text(
                                       ((data.group ?? GroupModel.defaultValue())
-                                                      .description ??
+                                                      .organization ??
                                                   '')
                                               .isEmpty
                                           ? "-"
-                                          : data.group?.description ?? '',
+                                          : data.group?.organization ?? '',
                                       style: AppTextStyles.regularText16b
                                           .copyWith(
                                               color: AppColors.textFieldText),
@@ -1254,166 +1059,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       .enableNotificationForUpdates ??
                                   false,
                             ),
-                            // if (isMember)
-                            //   CustomToggle(
-                            //     disabled: true,
-                            //     title:
-                            //         'Notify me when new members joins this group',
-                            //     onChange: (value) => _groupProvider
-                            //         .updateGroupSettings(_currentUser.id ?? '',
-                            //             key: 'NotifyWhenNewMemberJoins',
-                            //             value: value,
-                            //             settingsId:
-                            //                 data.groupSettings?.id ?? ''),
-                            //     value: (data.groupSettings ??
-                            //                 GroupSettings.defaultValue())
-                            //             .notifyWhenNewMemberJoins ??
-                            //         false,
-                            //   ),
-                            // if (isAdmin || isModerator)
-                            //   CustomToggle(
-                            //     disabled: true,
-                            //     title: 'Notify me of membership requests',
-                            //     onChange: (value) => _groupProvider
-                            //         .updateGroupSettings(_currentUser.id ?? '',
-                            //             key: 'NotifyOfMembershipRequest',
-                            //             value: value,
-                            //             settingsId:
-                            //                 data.groupSettings?.id ?? ''),
-                            //     value: (data.groupSettings ??
-                            //                 GroupSettings.defaultValue())
-                            //             .notifyOfMembershipRequest ??
-                            //         false,
-                            //   ),
-                            // if (isAdmin || isModerator)
-                            //   CustomToggle(
-                            //     disabled: true,
-                            //     title: 'Notify me of flagged prayers',
-                            //     onChange: (value) => _groupProvider
-                            //         .updateGroupSettings(_currentUser.id ?? '',
-                            //             key: 'NotifyMeofFlaggedPrayers',
-                            //             value: value,
-                            //             settingsId:
-                            //                 data.groupSettings?.id ?? ''),
-                            //     value: (data.groupSettings ??
-                            //                 GroupSettings.defaultValue())
-                            //             .notifyMeofFlaggedPrayers ??
-                            //         false,
-                            //   ),
                           ],
                         ),
-                        // (isAdmin || isModerator)
-                        //     ? Column(
-                        //         children: [
-                        //           Padding(
-                        //             padding: const EdgeInsets.symmetric(
-                        //                 horizontal: 20.0, vertical: 10.0),
-                        //             child: Row(
-                        //               children: <Widget>[
-                        //                 Text('Invite',
-                        //                     style: AppTextStyles.regularText11),
-                        //                 SizedBox(width: 10),
-                        //                 Expanded(
-                        //                   child: Divider(
-                        //                     color: AppColors.darkBlue,
-                        //                     thickness: 1,
-                        //                   ),
-                        //                 ),
-                        //               ],
-                        //             ),
-                        //           ),
-                        //           Column(
-                        //             children: [
-                        //               Container(
-                        //                 padding: const EdgeInsets.symmetric(
-                        //                     horizontal: 20.0),
-                        //                 child: GestureDetector(
-                        //                   onTap: () => setState(
-                        //                       () => _inviteMode = true),
-                        //                   child: Text(
-                        //                     'Send an invite to join group',
-                        //                     style: AppTextStyles.regularText16b
-                        //                         .copyWith(
-                        //                             color:
-                        //                                 AppColors.lightBlue3),
-                        //                   ),
-                        //                 ),
-                        //               ),
-                        //               _inviteMode
-                        //                   ? Padding(
-                        //                       padding:
-                        //                           const EdgeInsets.symmetric(
-                        //                               vertical: 15.0,
-                        //                               horizontal: 20.0),
-                        //                       child: Column(
-                        //                         children: [
-                        //                           CustomInput(
-                        //                             textkey: GlobalKey<
-                        //                                 FormFieldState>(),
-                        //                             label: 'Email Address',
-                        //                             controller:
-                        //                                 _emailController,
-                        //                             isEmail: true,
-                        //                             keyboardType: TextInputType
-                        //                                 .emailAddress,
-                        //                           ),
-                        //                           Row(
-                        //                             mainAxisAlignment:
-                        //                                 MainAxisAlignment.end,
-                        //                             children: [
-                        //                               TextButton(
-                        //                                   style: ButtonStyle(
-                        //                                       textStyle: MaterialStateProperty.all<TextStyle>(
-                        //                                           AppTextStyles
-                        //                                               .boldText16
-                        //                                               .copyWith(
-                        //                                                   color: Colors
-                        //                                                       .white)),
-                        //                                       backgroundColor:
-                        //                                           MaterialStateProperty.all<Color>(
-                        //                                               Colors.grey[
-                        //                                                   700])),
-                        //                                   onPressed: () => setState(
-                        //                                       () => _inviteMode = false),
-                        //                                   child: Text('Cancel', style: AppTextStyles.regularText14)),
-                        //                               SizedBox(width: 15),
-                        //                               TextButton(
-                        //                                   style: ButtonStyle(
-                        //                                     textStyle: MaterialStateProperty.all<
-                        //                                             TextStyle>(
-                        //                                         AppTextStyles
-                        //                                             .boldText16
-                        //                                             .copyWith(
-                        //                                                 color: Colors
-                        //                                                     .white)),
-                        //                                     backgroundColor:
-                        //                                         MaterialStateProperty.all<
-                        //                                                 Color>(
-                        //                                             AppColors
-                        //                                                 .dimBlue),
-                        //                                   ),
-                        //                                   onPressed: () =>
-                        //                                       _sendInvite(
-                        //                                           data.group
-                        //                                               .name,
-                        //                                           data.group
-                        //                                               .id),
-                        //                                   child: Text(
-                        //                                     'Send Invite',
-                        //                                     style: AppTextStyles
-                        //                                         .regularText14,
-                        //                                   )),
-                        //                             ],
-                        //                           )
-                        //                         ],
-                        //                       ),
-                        //                     )
-                        //                   : Container()
-                        //             ],
-                        //           )
-                        //         ],
-                        //       )
-                        //     : Container(),
                         (isAdmin || isModerator)
                             ? custom.ExpansionTile(
                                 iconColor: AppColors.lightBlue4,
@@ -1451,7 +1098,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                     padding: const EdgeInsets.only(left: 20.0),
                                     child: Column(
                                       children: <Widget>[
-                                        ...?data.groupUsers?.map(
+                                        ...groupUsers.map(
                                           (user) {
                                             return GestureDetector(
                                               onTap: () async {
