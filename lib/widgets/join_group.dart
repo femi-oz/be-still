@@ -7,6 +7,7 @@ import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/string_extensions.dart';
 import 'package:provider/provider.dart';
 
 class JoinGroup {
@@ -212,7 +213,7 @@ class JoinGroup {
                                           .id ??
                                       '',
                                   // StringUtils.joinRequestStatusPending,
-                                  '${Provider.of<UserProvider>(context, listen: false).currentUser.firstName ?? '' + ' ' + (Provider.of<UserProvider>(context, listen: false).currentUser.lastName ?? '')}',
+                                  '${Provider.of<UserProvider>(context, listen: false).currentUser.firstName?.capitalizeFirst ?? '' + ' ' + (Provider.of<UserProvider>(context, listen: false).currentUser.lastName?.capitalizeFirst ?? '')}',
                                   adminData.id ?? '',
                                   context);
                             }),

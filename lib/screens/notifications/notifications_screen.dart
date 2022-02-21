@@ -79,7 +79,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text(message.capitalizeFirst ?? '',
+                    Text(message,
                         textAlign: TextAlign.center,
                         style: AppTextStyles.regularText16b.copyWith(
                             color: AppColors.lightBlue4,
@@ -2190,7 +2190,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   child: Opacity(
                     opacity: 0.3,
                     child: Text(
-                      'You do not have any notifications',
+                      'You do not have any alerts',
                       style: AppTextStyles.demiboldText34,
                       textAlign: TextAlign.center,
                     ),
