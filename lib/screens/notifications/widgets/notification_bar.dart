@@ -70,7 +70,7 @@ class NotificationBarState extends State<NotificationBar> {
                     .copyWith(color: AppColors.bottomNavIconColor),
               ),
             )
-          : Text('Notifications',
+          : Text('Alerts',
               style: AppTextStyles.boldText16
                   .copyWith(color: AppColors.bottomNavIconColor)),
       leading: IconButton(
