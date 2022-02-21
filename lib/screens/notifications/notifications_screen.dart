@@ -2190,7 +2190,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   child: Opacity(
                     opacity: 0.3,
                     child: Text(
-                      'You do not have any notifications',
+                      'You do not have any alerts',
                       style: AppTextStyles.demiboldText34,
                       textAlign: TextAlign.center,
                     ),

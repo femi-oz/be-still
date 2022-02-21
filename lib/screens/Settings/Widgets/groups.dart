@@ -964,9 +964,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                 ),
                               ),
                             ]),
-                        SizedBox(
-                          height: 30,
-                        ),
+                        SizedBox(height: 30),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: Row(
@@ -989,58 +987,49 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                             ],
                           ),
                         ),
+                        SizedBox(height: 15),
+                        if (isAdmin || isModerator)
+                          CustomToggle(
+                            title: 'Require admin approval to join group?',
+                            onChange: (value) {
+                              if (!value) {
+                                final activeRequests =
+                                    (data.groupRequests ?? [])
+                                        .where((e) => e.status == '0')
+                                        .toList();
+                                for (final req in activeRequests) {
+                                  acceptRequest(req,
+                                      data.group ?? GroupModel.defaultValue());
+                                }
+                                // add each to group
+                                // send notification that they joined
+                              }
+                              _groupProvider.updateGroupSettings(
+                                  _currentUser.id ?? '',
+                                  key: SettingsKey.requireAdminApproval,
+                                  value: value,
+                                  settingsId: data.groupSettings?.id ?? '');
+                            },
+                            value: data.groupSettings?.requireAdminApproval ??
+                                false,
+                          ),
                         SizedBox(height: 25),
                         Column(
                           children: [
                             Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20.0),
-                              child: Row(
-                                children: <Widget>[
-                                  Text(
-                                    'My Notifications',
-                                    style: AppTextStyles.regularText11
-                                        .copyWith(color: AppColors.lightBlue1),
-                                  ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20.0),
+                                child: Row(children: <Widget>[
+                                  Text('My Alerts',
+                                      style: AppTextStyles.regularText11
+                                          .copyWith(
+                                              color: AppColors.lightBlue1)),
                                   SizedBox(width: 10),
                                   Expanded(
-                                    child: Divider(
-                                      color: AppColors.darkBlue,
-                                      thickness: 1,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 15),
-                            if (isAdmin || isModerator)
-                              CustomToggle(
-                                title: 'Require admin approval to join group?',
-                                onChange: (value) {
-                                  if (!value) {
-                                    final activeRequests =
-                                        (data.groupRequests ?? [])
-                                            .where((e) => e.status == '0')
-                                            .toList();
-                                    for (final req in activeRequests) {
-                                      acceptRequest(
-                                          req,
-                                          data.group ??
-                                              GroupModel.defaultValue());
-                                    }
-                                    // add each to group
-                                    // send notification that they joined
-                                  }
-                                  _groupProvider.updateGroupSettings(
-                                      _currentUser.id ?? '',
-                                      key: SettingsKey.requireAdminApproval,
-                                      value: value,
-                                      settingsId: data.groupSettings?.id ?? '');
-                                },
-                                value:
-                                    data.groupSettings?.requireAdminApproval ??
-                                        false,
-                              ),
+                                      child: Divider(
+                                          color: AppColors.darkBlue,
+                                          thickness: 1))
+                                ])),
                             SizedBox(height: 15),
                             CustomToggle(
                               disabled: false,
