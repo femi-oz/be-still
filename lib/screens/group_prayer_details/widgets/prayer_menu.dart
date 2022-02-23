@@ -65,7 +65,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     await Provider.of<MiscProvider>(context, listen: false)
         .setSearchMode(false);
     await Provider.of<MiscProvider>(context, listen: false).setSearchQuery('');
-    await Provider.of<PrayerProvider>(context, listen: false)
+    await Provider.of<GroupPrayerProvider>(context, listen: false)
         .searchPrayers('', userId ?? '');
   }
 
