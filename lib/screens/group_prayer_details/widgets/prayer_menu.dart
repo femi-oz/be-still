@@ -7,6 +7,7 @@ import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
@@ -58,6 +59,16 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     super.didChangeDependencies();
   }
 
+  void clearSearch() async {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    await Provider.of<MiscProvider>(context, listen: false)
+        .setSearchMode(false);
+    await Provider.of<MiscProvider>(context, listen: false).setSearchQuery('');
+    await Provider.of<GroupPrayerProvider>(context, listen: false)
+        .searchPrayers('', userId ?? '');
+  }
+
   void _followPrayer() async {
     BeStilDialog.showLoading(context);
     final user = Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -73,7 +84,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
         currentGroup.group?.id ?? '',
         isFollowedByAdmin,
       );
-
+      clearSearch();
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppController appController = Get.find();
@@ -108,6 +119,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .removeFromMyList(
               followedPrayer.id ?? '', followedPrayer.userPrayerId ?? '');
+      clearSearch();
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
@@ -175,6 +187,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
           Provider.of<UserProvider>(context, listen: false).selectedUser;
       _sendNotification(group.group?.id ?? '', [adminData.pushToken ?? ''],
           adminData.id ?? '', group.group?.name ?? '');
+      clearSearch();
+
       BeStilDialog.hideLoading(context);
       AppController appController = Get.find();
       appController.setCurrentPage(8, true, 8);
@@ -221,6 +235,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .deletePrayer(widget.prayerData?.groupPrayer?.id ?? '',
               widget.prayerData?.prayer?.id ?? '');
+      clearSearch();
+
       // _deleteFollowedPrayers();
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
@@ -271,6 +287,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
           .markPrayerAsAnswered(widget.prayerData?.prayer?.id ?? '',
               widget.prayerData?.groupPrayer?.id ?? '');
       // _deleteFollowedPrayers();
+      clearSearch();
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
@@ -294,6 +311,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .unMarkPrayerAsAnswered(widget.prayerData?.prayer?.id ?? '',
               widget.prayerData?.groupPrayer?.id ?? '');
+      clearSearch();
+
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
     } on HttpException catch (e, s) {
@@ -440,6 +459,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .unArchivePrayer(
               prayerData?.groupPrayer?.id ?? '', prayerData?.prayer?.id ?? '');
+      clearSearch();
+
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pushNamedAndRemoveUntil(
           EntryScreen.routeName, (Route<dynamic> route) => false);
@@ -481,6 +502,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
         widget.prayerData?.groupPrayer?.id ?? '',
         widget.prayerData?.prayer?.id ?? '',
       );
+      clearSearch();
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);

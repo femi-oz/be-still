@@ -156,6 +156,8 @@ class _PrayerListState extends State<PrayerList> {
       return 'You do not have any archived prayers.';
     } else if (filterOption.toLowerCase() == Status.snoozed.toLowerCase()) {
       return 'You do not have any snoozed prayers.';
+    } else if (filterOption.toLowerCase() == Status.following.toLowerCase()) {
+      return 'You do not have any followed prayers.';
     } else {
       return 'You do not have any active prayers.';
     }

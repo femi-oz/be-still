@@ -5,6 +5,7 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
@@ -13,6 +14,7 @@ import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/share_prayer.dart';
@@ -114,14 +116,24 @@ class _PrayerMenuState extends State<PrayerMenu> {
   //   }
   // }
 
+  void clearSearch() async {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    await Provider.of<MiscProvider>(context, listen: false)
+        .setSearchMode(false);
+    await Provider.of<MiscProvider>(context, listen: false).setSearchQuery('');
+    await Provider.of<PrayerProvider>(context, listen: false)
+        .searchPrayers('', userId ?? '');
+  }
+
   void _markPrayerAsFavorite(CombinePrayerStream? prayerData) async {
     BeStilDialog.showLoading(context);
     try {
       await Provider.of<PrayerProvider>(context, listen: false)
           .favoritePrayer(prayerData?.userPrayer?.id ?? '');
+      clearSearch();
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
-
       AppController appController = Get.find();
       appController.setCurrentPage(0, true, 0);
     } on HttpException catch (e, s) {
@@ -155,6 +167,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Provider.of<GroupPrayerProvider>(context, listen: false)
           .removeFromMyList(
               followedPrayer.id ?? '', widget.prayerData?.userPrayer?.id ?? '');
+      clearSearch();
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
@@ -181,6 +194,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
     try {
       await Provider.of<PrayerProvider>(context, listen: false)
           .unfavoritePrayer(prayerData?.userPrayer?.id ?? '');
+      clearSearch();
+
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppController appController = Get.find();
@@ -214,6 +229,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       await Provider.of<PrayerProvider>(context, listen: false)
           .deletePrayer(widget.prayerData?.userPrayer?.id ?? '');
+      clearSearch();
+
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 
@@ -381,6 +398,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Provider.of<PrayerProvider>(context, listen: false)
           .markPrayerAsAnswered(
               prayerData?.prayer?.id ?? '', prayerData?.userPrayer?.id ?? '');
+      clearSearch();
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
@@ -407,6 +425,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
       await Provider.of<PrayerProvider>(context, listen: false)
           .unMarkPrayerAsAnswered(
               prayerData?.prayer?.id ?? '', prayerData?.userPrayer?.id ?? '');
+      clearSearch();
+
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 
@@ -430,6 +450,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
     try {
       await Provider.of<PrayerProvider>(context, listen: false).unArchivePrayer(
           prayerData?.userPrayer?.id ?? '', prayerData?.prayer?.id ?? '');
+      clearSearch();
+
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 
@@ -460,6 +482,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
       await Provider.of<PrayerProvider>(context, listen: false)
           .archivePrayer(widget.prayerData?.userPrayer?.id ?? '');
+      clearSearch();
+
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 
@@ -509,6 +533,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
           prayerData?.prayer?.id ?? '',
           DateTime.now(),
           prayerData?.userPrayer?.id ?? '');
+      clearSearch();
+
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 

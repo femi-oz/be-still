@@ -79,7 +79,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text(message.capitalizeFirst ?? '',
+                    Text(message,
                         textAlign: TextAlign.center,
                         style: AppTextStyles.regularText16b.copyWith(
                             color: AppColors.lightBlue4,
