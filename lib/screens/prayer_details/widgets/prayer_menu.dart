@@ -523,6 +523,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
             reminder: widget.reminder,
           );
         });
+
+    clearSearch();
   }
 
   void _unSnoozePrayer(CombinePrayerStream? prayerData) async {

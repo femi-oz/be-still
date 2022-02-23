@@ -6,7 +6,10 @@ import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -88,6 +91,18 @@ class _ReminderPickerState extends State<ReminderPicker> {
       selectedDayOfMonth = DateTime.now().day;
     }
     super.initState();
+  }
+
+  void clearSearch() async {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    await Provider.of<MiscProvider>(context, listen: false)
+        .setSearchMode(false);
+    await Provider.of<MiscProvider>(context, listen: false).setSearchQuery('');
+    await Provider.of<PrayerProvider>(context, listen: false)
+        .searchPrayers('', userId ?? '');
+    await Provider.of<GroupPrayerProvider>(context, listen: false)
+        .searchPrayers('', userId ?? '');
   }
 
   storeNotification(
@@ -307,6 +322,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
           _selectedMinuteString,
           selectedYear.toString(),
         );
+      clearSearch();
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
