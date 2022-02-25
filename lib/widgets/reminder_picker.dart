@@ -93,6 +93,18 @@ class _ReminderPickerState extends State<ReminderPicker> {
     super.initState();
   }
 
+  void clearSearch() async {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    await Provider.of<MiscProvider>(context, listen: false)
+        .setSearchMode(false);
+    await Provider.of<MiscProvider>(context, listen: false).setSearchQuery('');
+    await Provider.of<PrayerProvider>(context, listen: false)
+        .searchPrayers('', userId ?? '');
+    await Provider.of<GroupPrayerProvider>(context, listen: false)
+        .searchPrayers('', userId ?? '');
+  }
+
   storeNotification({
     required String notificationText,
     required String userId,
