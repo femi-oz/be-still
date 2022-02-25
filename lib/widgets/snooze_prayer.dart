@@ -1,6 +1,7 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
@@ -52,8 +53,20 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
     super.initState();
   }
 
+  void clearSearch() async {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    await Provider.of<MiscProvider>(context, listen: false)
+        .setSearchMode(false);
+    await Provider.of<MiscProvider>(context, listen: false).setSearchQuery('');
+    await Provider.of<PrayerProvider>(context, listen: false)
+        .searchPrayers('', userId ?? '');
+  }
+
   void _snoozePrayer() async {
     BeStilDialog.showLoading(context);
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
 
     var minutes = 0;
     switch (selectedInterval) {
@@ -85,11 +98,14 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
           await Provider.of<NotificationProvider>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       await Provider.of<PrayerProvider>(context, listen: false).snoozePrayer(
+          userId ?? '',
           widget.prayerData?.prayer?.id ?? '',
           _snoozeEndDate,
           widget.prayerData?.userPrayer?.id ?? '',
           selectedDuration,
           selectedInterval);
+      clearSearch();
+
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 

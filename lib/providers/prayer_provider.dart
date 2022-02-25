@@ -60,7 +60,6 @@ class PrayerProvider with ChangeNotifier {
           _prayerService.getPrayers(userId).asBroadcastStream().listen(
         (data) {
           _prayers = data;
-
           filterPrayers();
           notifyListeners();
         },
@@ -91,6 +90,7 @@ class PrayerProvider with ChangeNotifier {
       if (prayers.length > 0) {
         await _autoDeleteArchivePrayers(userId);
         await _unSnoozePrayerPast(userId);
+        await setPrayers(userId);
       }
     } catch (e) {
       rethrow;
@@ -358,12 +358,22 @@ class PrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> snoozePrayer(String prayerID, DateTime snoozeEndDate,
-      String userPrayerID, int duration, String frequency) async {
+  Future<void> snoozePrayer(
+      String userId,
+      String prayerID,
+      DateTime snoozeEndDate,
+      String userPrayerID,
+      int duration,
+      String frequency) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       await _prayerService.snoozePrayer(
           snoozeEndDate, userPrayerID, duration, frequency);
+
+      Future.delayed(Duration(minutes: duration), () async {
+        await _unSnoozePrayerPast(prayers);
+        await setPrayers(userId);
+      });
     } catch (e) {
       rethrow;
     }

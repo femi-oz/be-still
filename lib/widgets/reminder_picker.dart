@@ -6,7 +6,10 @@ import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -309,6 +312,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
           selectedMinute: _selectedMinuteString,
           selectedYear: selectedYear.toString(),
         );
+      clearSearch();
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
