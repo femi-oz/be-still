@@ -72,14 +72,6 @@ class _PrayerListState extends State<PrayerList> {
               widget.keyButton6,
             );
           Settings.isAppInit = false;
-          final user =
-              Provider.of<UserProvider>(context, listen: false).currentUser;
-          final notifications =
-              Provider.of<NotificationProvider>(context, listen: false)
-                  .localNotifications;
-
-          Provider.of<PrayerProvider>(context, listen: false)
-              .checkPrayerValidity(user.id ?? '', notifications);
         } catch (e, s) {
           BeStilDialog.hideLoading(context);
           final user =

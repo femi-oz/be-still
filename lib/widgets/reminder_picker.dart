@@ -90,20 +90,20 @@ class _ReminderPickerState extends State<ReminderPicker> {
     super.initState();
   }
 
-  storeNotification(
-    String notificationText,
-    String userId,
-    String title,
-    String description,
-    String frequency,
-    tz.TZDateTime scheduledDate,
-    String prayerid,
-    String selectedDay,
-    String period,
-    String selectedHour,
-    String selectedMinute,
-    String selectedYear,
-  ) async {
+  storeNotification({
+    required String notificationText,
+    required String userId,
+    required String title,
+    required String description,
+    required String frequency,
+    required tz.TZDateTime scheduledDate,
+    required String prayerid,
+    required String selectedDay,
+    required String period,
+    required String selectedHour,
+    required String selectedMinute,
+    required String selectedYear,
+  }) async {
     await Provider.of<NotificationProvider>(context, listen: false)
         .addLocalNotification(
       LocalNotification.localNotificationID,
@@ -294,18 +294,20 @@ class _ReminderPickerState extends State<ReminderPicker> {
         );
       else
         await storeNotification(
-          notificationText,
-          userId ?? '',
-          title,
-          description,
-          selectedFrequency,
-          scheduleDate,
-          widget.type == NotificationType.prayer_time ? '' : widget.entityId,
-          LocalNotification.daysOfWeek[selectedDayOfWeek],
-          selectedPeriod,
-          _selectedHourString,
-          _selectedMinuteString,
-          selectedYear.toString(),
+          notificationText: notificationText,
+          userId: userId ?? '',
+          title: title,
+          description: description,
+          frequency: selectedFrequency,
+          scheduledDate: scheduleDate,
+          prayerid: widget.type == NotificationType.prayer_time
+              ? ''
+              : widget.entityId,
+          selectedDay: LocalNotification.daysOfWeek[selectedDayOfWeek],
+          period: selectedPeriod,
+          selectedHour: _selectedHourString,
+          selectedMinute: _selectedMinuteString,
+          selectedYear: selectedYear.toString(),
         );
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);

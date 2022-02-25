@@ -85,13 +85,12 @@ class PrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> checkPrayerValidity(
-      String userId, List<LocalNotificationModel> notifications) async {
+  Future<void> checkPrayerValidity(String userId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       if (prayers.length > 0) {
-        await _autoDeleteArchivePrayers(userId, prayers, notifications);
-        await _unSnoozePrayerPast(prayers);
+        await _autoDeleteArchivePrayers(userId);
+        await _unSnoozePrayerPast(userId);
       }
     } catch (e) {
       rethrow;
@@ -240,10 +239,12 @@ class PrayerProvider with ChangeNotifier {
       }
       if (_filterOption == Status.snoozed) {
         snoozedPrayers = prayers
-            .where((CombinePrayerStream data) =>
-                data.userPrayer?.isSnoozed == true &&
-                (data.userPrayer?.snoozeEndDate ?? DateTime.now())
-                    .isAfter(DateTime.now()))
+            .where(
+                (CombinePrayerStream data) => data.userPrayer?.isSnoozed == true
+                //&&
+                // (data.userPrayer?.snoozeEndDate ?? DateTime.now())
+                //     .isAfter(DateTime.now())
+                )
             .toList();
       }
       if (_filterOption == Status.following) {
@@ -276,20 +277,10 @@ class PrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> _unSnoozePrayerPast(List<CombinePrayerStream> data) async {
+  Future<void> _unSnoozePrayerPast(String userId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      var prayersToUnsnooze = data
-          .where((e) =>
-              (e.userPrayer?.snoozeEndDate ?? DateTime.now())
-                  .isBefore(DateTime.now()) &&
-              e.userPrayer?.isSnoozed == true)
-          .toList();
-
-      for (int i = 0; i < prayersToUnsnooze.length; i++) {
-        await locator<PrayerService>().unSnoozePrayer(
-            DateTime.now(), prayersToUnsnooze[i].userPrayer?.id ?? '');
-      }
+      await locator<PrayerService>().unSnoozePrayerPast(userId);
     } catch (e) {
       rethrow;
     }
@@ -387,48 +378,12 @@ class PrayerProvider with ChangeNotifier {
     }
   }
 
-  Future<void> _autoDeleteArchivePrayers(
-      String userId,
-      List<CombinePrayerStream> data,
-      List<LocalNotificationModel> notifications) async {
+  Future<void> _autoDeleteArchivePrayers(String userId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       final settings = await locator<SettingsService>().getSettings(userId);
-      final autoDeleteAnswered = settings.includeAnsweredPrayerAutoDelete;
-      final autoDeleteDuration = settings.archiveAutoDeleteMins;
-      if ((autoDeleteDuration ?? 0) > 0) {
-        final archivedPrayers = data
-            .where((CombinePrayerStream data) =>
-                data.userPrayer?.isArchived == true)
-            .toList();
-        List<CombinePrayerStream> toDelete = archivedPrayers;
-        if (!(autoDeleteAnswered ?? false)) {
-          toDelete = toDelete
-              .where((CombinePrayerStream e) => e.prayer?.isAnswer == false)
-              .toList();
-        }
-
-        for (int i = 0; i < toDelete.length; i++) {
-          if ((toDelete[i].userPrayer?.archivedDate ?? DateTime.now())
-                  .add(Duration(minutes: autoDeleteDuration ?? 0))
-                  .isBefore(DateTime.now()) &&
-              autoDeleteDuration != 0) {
-            final _notifications = notifications
-                .where((e) => e.entityId == toDelete[i].userPrayer?.id)
-                .toList();
-
-            _notifications.forEach((e) async {
-              final notification =
-                  _notifications.firstWhere((e) => e.id == e.id);
-              await LocalNotification.unschedule(
-                  notification.localNotificationId);
-              await locator<NotificationService>()
-                  .removeLocalNotification(e.id ?? '');
-            });
-            deletePrayer(toDelete[i].userPrayer?.id ?? '');
-          }
-        }
-      }
+      _prayerService.autoDeleteArchivePrayers(
+          userId, settings.archiveAutoDeleteMins ?? 0);
     } catch (e) {
       rethrow;
     }
