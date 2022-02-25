@@ -142,6 +142,9 @@ class _EntryScreenState extends State<EntryScreen> {
       final userId =
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
 
+      if ((userId ?? '').isNotEmpty)
+        Provider.of<PrayerProvider>(context, listen: false)
+            .checkPrayerValidity(userId ?? '');
       await _getPrayers();
       await _getActivePrayers();
       await _getDevotionals();

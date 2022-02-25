@@ -72,14 +72,6 @@ class _PrayerListState extends State<PrayerList> {
               widget.keyButton6,
             );
           Settings.isAppInit = false;
-          final user =
-              Provider.of<UserProvider>(context, listen: false).currentUser;
-          final notifications =
-              Provider.of<NotificationProvider>(context, listen: false)
-                  .localNotifications;
-
-          Provider.of<PrayerProvider>(context, listen: false)
-              .checkPrayerValidity(user.id ?? '', notifications);
         } catch (e, s) {
           BeStilDialog.hideLoading(context);
           final user =
@@ -156,6 +148,8 @@ class _PrayerListState extends State<PrayerList> {
       return 'You do not have any archived prayers.';
     } else if (filterOption.toLowerCase() == Status.snoozed.toLowerCase()) {
       return 'You do not have any snoozed prayers.';
+    } else if (filterOption.toLowerCase() == Status.following.toLowerCase()) {
+      return 'You do not have any followed prayers.';
     } else {
       return 'You do not have any active prayers.';
     }

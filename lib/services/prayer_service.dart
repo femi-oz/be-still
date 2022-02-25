@@ -37,6 +37,9 @@ class PrayerService {
   final CollectionReference<Map<String, dynamic>>
       _messageTemplateCollectionReference =
       FirebaseFirestore.instance.collection("MessageTemplate");
+  final CollectionReference<Map<String, dynamic>>
+      _localNotificationCollectionReference =
+      FirebaseFirestore.instance.collection("LocalNotification");
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   final _notificationService = locator<NotificationService>();
@@ -367,7 +370,7 @@ class PrayerService {
         {
           'IsSnoozed': false,
           'Status': Status.active,
-          'SnoozeEndDate': endDate,
+          'SnoozeEndDate': null,
           'SnoozeDuration': 0,
           'SnoozeFrequency': '',
         },
@@ -377,6 +380,53 @@ class PrayerService {
           userPrayerID, 'PRAYER/service/unSnoozePrayer');
       throw HttpException(StringUtils.getErrorMessage(e));
     }
+  }
+
+  Future<void> unSnoozePrayerPast(String userId) async {
+    final snoozedPrayers = await _userPrayerCollectionReference
+        .where('UserId', isEqualTo: userId)
+        .where('SnoozeEndDate', isLessThan: Timestamp.now())
+        .where('IsSnoozed', isEqualTo: true)
+        .get();
+
+    snoozedPrayers.docs.forEach((element) {
+      element.reference.update({
+        'IsSnoozed': false,
+        'Status': Status.active,
+        'SnoozeEndDate': null,
+        'SnoozeDuration': 0,
+        'SnoozeFrequency': '',
+      });
+    });
+  }
+
+  Future<void> autoDeleteArchivePrayers(
+      String userId, int autoDeletePeriod) async {
+    final archivedPrayers = await _userPrayerCollectionReference
+        .where('UserId', isEqualTo: userId)
+        .where('IsArchived', isEqualTo: true)
+        .get();
+    final mappedPrayers = archivedPrayers.docs
+        .map((e) => UserPrayerModel.fromData(e.data(), e.id))
+        .toList();
+    final filteredPrayers = mappedPrayers.where((prayer) =>
+        (prayer.archivedDate ?? DateTime.now())
+            .add(Duration(minutes: autoDeletePeriod))
+            .isBefore(DateTime.now()));
+    filteredPrayers.forEach((userPrayer) async {
+      _prayerCollectionReference.doc(userPrayer.prayerId).update(
+        {'IsAnswer': false},
+      );
+      _userPrayerCollectionReference.doc(userPrayer.id).update({
+        'IsArchived': false,
+        'Status': Status.active,
+        'ArchivedDate': null,
+      });
+      final notifications = await _localNotificationCollectionReference
+          .where('EntityId', isEqualTo: userPrayer.id)
+          .get();
+      notifications.docs.forEach((element) => element.reference.delete());
+    });
   }
 
   Future archivePrayer(

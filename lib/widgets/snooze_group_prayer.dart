@@ -1,5 +1,7 @@
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/group.model.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
@@ -58,8 +60,20 @@ class _SnoozeGroupPrayerState extends State<SnoozeGroupPrayer> {
     super.initState();
   }
 
+  void clearSearch() async {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    await Provider.of<MiscProvider>(context, listen: false)
+        .setSearchMode(false);
+    await Provider.of<MiscProvider>(context, listen: false).setSearchQuery('');
+    await Provider.of<GroupPrayerProvider>(context, listen: false)
+        .searchPrayers('', userId ?? '');
+  }
+
   void _snoozePrayer() async {
     BeStilDialog.showLoading(context);
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
 
     var minutes = 0;
     switch (selectedInterval) {
@@ -91,11 +105,13 @@ class _SnoozeGroupPrayerState extends State<SnoozeGroupPrayer> {
           await Provider.of<NotificationProvider>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       await Provider.of<PrayerProvider>(context, listen: false).snoozePrayer(
+          userId ?? '',
           widget.prayerData.prayer?.id ?? '',
           _snoozeEndDate,
           widget.prayerData.groupPrayer?.id ?? '',
           selectedDuration,
           selectedInterval);
+      clearSearch();
 
       await Future.delayed(Duration(milliseconds: 300),
           () => {BeStilDialog.hideLoading(context)});

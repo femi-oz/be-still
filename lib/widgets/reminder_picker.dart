@@ -6,7 +6,10 @@ import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -90,20 +93,32 @@ class _ReminderPickerState extends State<ReminderPicker> {
     super.initState();
   }
 
-  storeNotification(
-    String notificationText,
-    String userId,
-    String title,
-    String description,
-    String frequency,
-    tz.TZDateTime scheduledDate,
-    String prayerid,
-    String selectedDay,
-    String period,
-    String selectedHour,
-    String selectedMinute,
-    String selectedYear,
-  ) async {
+  void clearSearch() async {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    await Provider.of<MiscProvider>(context, listen: false)
+        .setSearchMode(false);
+    await Provider.of<MiscProvider>(context, listen: false).setSearchQuery('');
+    await Provider.of<PrayerProvider>(context, listen: false)
+        .searchPrayers('', userId ?? '');
+    await Provider.of<GroupPrayerProvider>(context, listen: false)
+        .searchPrayers('', userId ?? '');
+  }
+
+  storeNotification({
+    required String notificationText,
+    required String userId,
+    required String title,
+    required String description,
+    required String frequency,
+    required tz.TZDateTime scheduledDate,
+    required String prayerid,
+    required String selectedDay,
+    required String period,
+    required String selectedHour,
+    required String selectedMinute,
+    required String selectedYear,
+  }) async {
     await Provider.of<NotificationProvider>(context, listen: false)
         .addLocalNotification(
       LocalNotification.localNotificationID,
@@ -294,19 +309,22 @@ class _ReminderPickerState extends State<ReminderPicker> {
         );
       else
         await storeNotification(
-          notificationText,
-          userId ?? '',
-          title,
-          description,
-          selectedFrequency,
-          scheduleDate,
-          widget.type == NotificationType.prayer_time ? '' : widget.entityId,
-          LocalNotification.daysOfWeek[selectedDayOfWeek],
-          selectedPeriod,
-          _selectedHourString,
-          _selectedMinuteString,
-          selectedYear.toString(),
+          notificationText: notificationText,
+          userId: userId ?? '',
+          title: title,
+          description: description,
+          frequency: selectedFrequency,
+          scheduledDate: scheduleDate,
+          prayerid: widget.type == NotificationType.prayer_time
+              ? ''
+              : widget.entityId,
+          selectedDay: LocalNotification.daysOfWeek[selectedDayOfWeek],
+          period: selectedPeriod,
+          selectedHour: _selectedHourString,
+          selectedMinute: _selectedMinuteString,
+          selectedYear: selectedYear.toString(),
         );
+      clearSearch();
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
