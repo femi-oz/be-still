@@ -52,45 +52,45 @@ class _PrayerListState extends State<PrayerList> {
 
   @override
   void didChangeDependencies() {
-    // if (_isInit) {
-    WidgetsBinding.instance?.addPostFrameCallback((_) async {
-      try {
-        var status =
-            Provider.of<PrayerProvider>(context, listen: false).filterOption;
-        String heading =
-            '${status == Status.active ? 'MY PRAYERS' : status.toUpperCase()}';
-        await Provider.of<MiscProvider>(context, listen: false)
-            .setPageTitle(heading);
-        if (Settings.isAppInit)
-          TutorialTarget().showTutorial(
-            context,
-            widget.keyButton,
-            widget.keyButton2,
-            widget.keyButton3,
-            widget.keyButton4,
-            widget.keyButton5,
-            widget.keyButton6,
-          );
-        Settings.isAppInit = false;
-        final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
-        final notifications =
-            Provider.of<NotificationProvider>(context, listen: false)
-                .localNotifications;
+    if (_isInit) {
+      WidgetsBinding.instance?.addPostFrameCallback((_) async {
+        try {
+          var status =
+              Provider.of<PrayerProvider>(context, listen: false).filterOption;
+          String heading =
+              '${status == Status.active ? 'MY PRAYERS' : status.toUpperCase()}';
+          await Provider.of<MiscProvider>(context, listen: false)
+              .setPageTitle(heading);
+          if (Settings.isAppInit)
+            TutorialTarget().showTutorial(
+              context,
+              widget.keyButton,
+              widget.keyButton2,
+              widget.keyButton3,
+              widget.keyButton4,
+              widget.keyButton5,
+              widget.keyButton6,
+            );
+          Settings.isAppInit = false;
+          final user =
+              Provider.of<UserProvider>(context, listen: false).currentUser;
+          final notifications =
+              Provider.of<NotificationProvider>(context, listen: false)
+                  .localNotifications;
 
-        Provider.of<PrayerProvider>(context, listen: false)
-            .checkPrayerValidity(user.id ?? '', notifications);
-      } catch (e, s) {
-        BeStilDialog.hideLoading(context);
-        final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
-        BeStilDialog.showErrorDialog(
-            context, StringUtils.errorOccured, user, s);
-      }
+          await Provider.of<PrayerProvider>(context, listen: false)
+              .checkPrayerValidity(user.id ?? '', notifications);
+        } catch (e, s) {
+          BeStilDialog.hideLoading(context);
+          final user =
+              Provider.of<UserProvider>(context, listen: false).currentUser;
+          BeStilDialog.showErrorDialog(
+              context, StringUtils.errorOccured, user, s);
+        }
 
-      setState(() => _isInit = false);
-    });
-    // }
+        setState(() => _isInit = false);
+      });
+    }
     super.didChangeDependencies();
   }
 

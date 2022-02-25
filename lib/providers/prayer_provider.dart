@@ -380,7 +380,8 @@ class PrayerProvider with ChangeNotifier {
           snoozeEndDate, userPrayerID, duration, frequency);
 
       Future.delayed(Duration(minutes: duration), () async {
-        setPrayers(userId);
+        await _unSnoozePrayerPast(prayers);
+        await setPrayers(userId);
       });
     } catch (e) {
       rethrow;

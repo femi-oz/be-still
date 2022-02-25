@@ -119,11 +119,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
   void clearSearch() async {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    await Provider.of<MiscProvider>(context, listen: false)
-        .setSearchMode(false);
-    await Provider.of<MiscProvider>(context, listen: false).setSearchQuery('');
-    await Provider.of<PrayerProvider>(context, listen: false)
-        .searchPrayers('', userId ?? '');
+    if (Provider.of<MiscProvider>(context, listen: false).search) {
+      await Provider.of<MiscProvider>(context, listen: false)
+          .setSearchMode(false);
+      await Provider.of<MiscProvider>(context, listen: false)
+          .setSearchQuery('');
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .searchPrayers('', userId ?? '');
+    }
   }
 
   void _markPrayerAsFavorite(CombinePrayerStream? prayerData) async {
