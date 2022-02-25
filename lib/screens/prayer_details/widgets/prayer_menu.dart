@@ -116,7 +116,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
   //   }
   // }
 
-  void clearSearch() async {
+  clearSearch() async {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     if (Provider.of<MiscProvider>(context, listen: false).search) {
@@ -134,7 +134,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
     try {
       await Provider.of<PrayerProvider>(context, listen: false)
           .favoritePrayer(prayerData?.userPrayer?.id ?? '');
-      clearSearch();
+      await clearSearch();
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppController appController = Get.find();
@@ -453,7 +453,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
     try {
       await Provider.of<PrayerProvider>(context, listen: false).unArchivePrayer(
           prayerData?.userPrayer?.id ?? '', prayerData?.prayer?.id ?? '');
-      clearSearch();
+      await clearSearch();
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
