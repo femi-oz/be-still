@@ -652,8 +652,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                 : AppColors.white,
                             icon: AppIcons.bestill_share,
                             text: 'Share',
-                            isDisabled: isAnswered || isSnoozed || isArchived,
-                            onPress: () => isAnswered || isSnoozed || isArchived
+                            isDisabled: !isOwner ||
+                                isAnswered ||
+                                isSnoozed ||
+                                isArchived,
+                            onPress: () => !isOwner ||
+                                    isAnswered ||
+                                    isSnoozed ||
+                                    isArchived
                                 ? () {}
                                 : _share()),
                         LongButton(
@@ -665,8 +671,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               : AppColors.white,
                           icon: AppIcons.bestill_edit,
                           isDisabled:
-                              !isOwner | isAnswered || isSnoozed || isArchived,
-                          onPress: !isOwner | isAnswered ||
+                              !isOwner || isAnswered || isSnoozed || isArchived,
+                          onPress: !isOwner ||
+                                  isAnswered ||
                                   isSnoozed ||
                                   isArchived
                               ? () {}
@@ -724,8 +731,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               : AppColors.white,
                           icon: AppIcons.bestill_update,
                           isDisabled:
-                              !isOwner | isAnswered || isSnoozed || isArchived,
-                          onPress: !isOwner | isAnswered ||
+                              !isOwner || isAnswered || isSnoozed || isArchived,
+                          onPress: !isOwner ||
+                                  isAnswered ||
                                   isSnoozed ||
                                   isArchived
                               ? () {}
@@ -754,8 +762,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                           icon: AppIcons.bestill_reminder,
-                          isDisabled:
-                              !isOwner | isAnswered || isSnoozed || isArchived,
+                          isDisabled: isAnswered || isSnoozed || isArchived,
                           suffix: widget.hasReminder &&
                                   widget.reminder.frequency ==
                                       Frequency.one_time
@@ -767,9 +774,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                           Frequency.one_time
                                   ? widget.reminder.frequency
                                   : '',
-                          onPress: () => !isOwner | isAnswered ||
-                                  isSnoozed ||
-                                  isArchived
+                          onPress: () => isAnswered || isSnoozed || isArchived
                               ? () {}
                               : showDialog(
                                   context: context,
@@ -824,8 +829,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                           icon: AppIcons.bestill_snooze,
-                          isDisabled: !isOwner | isAnswered || isArchived,
-                          onPress: () => !isOwner | isAnswered || isArchived
+                          isDisabled: !isOwner || isAnswered || isArchived,
+                          onPress: () => !isOwner || isAnswered || isArchived
                               ? () {}
                               : widget.prayerData?.userPrayer?.isSnoozed ??
                                       false
