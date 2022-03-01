@@ -1,5 +1,6 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -536,9 +537,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                 .role ==
             GroupUserRole.admin;
     bool isOwner = widget.prayerData?.prayer?.createdBy == _currentUser.id;
-    final isActivePrayer =
-        Provider.of<GroupPrayerProvider>(context).filterOption.toLowerCase() ==
-            'active';
+
     return Container(
       padding: EdgeInsets.only(top: 50),
       width: MediaQuery.of(context).size.width,
@@ -832,9 +831,12 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                 : AppColors.white,
                         icon: Icons.star_border,
                         text: isFollowing ? 'Unfollow' : 'Follow',
-                        isDisabled:
-                            isOwner || !isActivePrayer, //enabled only if active
-                        onPress: () => isOwner || !isActivePrayer
+                        isDisabled: isOwner ||
+                            widget.prayerData?.groupPrayer?.status !=
+                                Status.active, //disabled only for owner
+                        onPress: () => isOwner ||
+                                widget.prayerData?.groupPrayer?.status !=
+                                    Status.active
                             ? () {}
                             : isFollowing
                                 ? _unFollowPrayer()

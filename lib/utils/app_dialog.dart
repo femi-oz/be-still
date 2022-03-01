@@ -8,7 +8,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'essentials.dart';
 
 class BeStilDialog {
-  static Widget getLoading(context, [String message = '']) {
+  static Widget getLoading(context, bool showBackground,
+      [String message = '']) {
     precacheImage(AssetImage(StringUtils.backgroundImage), context);
     return Scaffold(
       // appBar: CustomAppBar(switchSearchMode: () {}, globalKey: GlobalKey()),
@@ -19,10 +20,12 @@ class BeStilDialog {
             end: Alignment.bottomCenter,
             colors: AppColors.backgroundColor,
           ),
-          image: DecorationImage(
-            image: AssetImage(StringUtils.backgroundImage),
-            alignment: Alignment.bottomCenter,
-          ),
+          image: showBackground
+              ? DecorationImage(
+                  image: AssetImage(StringUtils.backgroundImage),
+                  alignment: Alignment.bottomCenter,
+                )
+              : null,
         ),
         child: Center(
           child: Column(

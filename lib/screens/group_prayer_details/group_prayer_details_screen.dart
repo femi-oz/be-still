@@ -141,7 +141,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
             stream: Provider.of<GroupPrayerProvider>(context).getPrayer(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting)
-                return BeStilDialog.getLoading(context);
+                return BeStilDialog.getLoading(context, false);
               if (snapshot.hasData &&
                   (snapshot.data?.groupPrayer?.deleteStatus ?? 0) == 0) {
                 final _reminder = reminders.firstWhere(

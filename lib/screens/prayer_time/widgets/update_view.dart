@@ -248,11 +248,9 @@ class _UpdateViewState extends State<UpdateView> {
                       margin: EdgeInsets.only(bottom: 20),
                       child: Text(
                         widget.data.prayer?.creatorName ?? '',
-                        style: AppTextStyles.boldText20.copyWith(
-                            color: Settings.isDarkMode
-                                ? Color(0xFF009FD0)
-                                : Color(0xFF003B87)),
-                        textAlign: TextAlign.center,
+                        style: AppTextStyles.regularText18b.copyWith(
+                            color: AppColors.lightBlue4,
+                            fontWeight: FontWeight.w500),
                       ),
                     )
                   : Container(),

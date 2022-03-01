@@ -322,7 +322,7 @@ class _EntryScreenState extends State<EntryScreen> {
           ),
         ),
         child: miscProvider.initialLoad
-            ? BeStilDialog.getLoading(context)
+            ? BeStilDialog.getLoading(context, true)
             : new TabBarView(
                 physics: NeverScrollableScrollPhysics(),
                 controller: appController.tabController,

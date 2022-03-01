@@ -235,6 +235,7 @@ class _NoUpdateViewState extends State<NoUpdateView> {
       child: SingleChildScrollView(
         child: Container(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               widget.data.prayer?.userId != _currentUser.id

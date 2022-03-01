@@ -163,7 +163,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
           stream: Provider.of<PrayerProvider>(context).getPrayer(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting)
-              return BeStilDialog.getLoading(context);
+              return BeStilDialog.getLoading(context, false);
             if (snapshot.hasData &&
                 (snapshot.data?.userPrayer?.deleteStatus ?? 0) == 0) {
               return Container(

@@ -977,7 +977,9 @@ class _AddPrayerState extends State<AddPrayer> {
                                   ),
                                 ),
                               ),
-                              if (showContactList) contactDropdown()
+                              if (showContactList &&
+                                  Settings.enabledContactPermission)
+                                contactDropdown()
                             ],
                           ),
                           if (((Provider.of<PrayerProvider>(context,
@@ -1057,8 +1059,9 @@ class _AddPrayerState extends State<AddPrayer> {
                                       ),
                                     ),
                                     if (updateTextControllers[
-                                            updates.indexOf(e)]
-                                        .showContactDropDown)
+                                                updates.indexOf(e)]
+                                            .showContactDropDown &&
+                                        Settings.enabledContactPermission)
                                       contactDropdown(
                                           backup: updateTextControllers[
                                               updates.indexOf(e)])
