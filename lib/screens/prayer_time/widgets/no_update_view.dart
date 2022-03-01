@@ -240,7 +240,6 @@ class _NoUpdateViewState extends State<NoUpdateView> {
             children: <Widget>[
               widget.data.prayer?.userId != _currentUser.id
                   ? Container(
-                      padding: EdgeInsets.all(20),
                       margin: EdgeInsets.only(bottom: 20),
                       child: Text(
                         widget.data.prayer?.creatorName ?? '',
