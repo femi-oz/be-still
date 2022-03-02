@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/group.model.dart';
@@ -28,14 +30,38 @@ class NotificationsScreen extends StatefulWidget {
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
   final SlidableController slidableController = SlidableController();
+  final refreshKey = new GlobalKey<RefreshIndicatorState>();
 
   @override
   void dispose() async {
     super.dispose();
   }
 
+  Future getNotifications(String? userId) async {
+    try {
+      BeStilDialog.showLoading(context, '');
+
+      await Provider.of<NotificationProvider>(context, listen: false)
+          .setUserNotifications(userId ?? '');
+      BeStilDialog.hideLoading(context);
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.hideLoading(context);
+
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.hideLoading(context);
+
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
+  }
+
   void _showAlert(String groupId, String message, String senderId,
-      String notificationId, String receiverId, GroupModel group) {
+      String notificationId, String receiverId, String? groupName) {
     FocusScope.of(context).unfocus();
     AlertDialog dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
@@ -84,7 +110,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         style: AppTextStyles.regularText16b.copyWith(
                             color: AppColors.lightBlue4,
                             fontWeight: FontWeight.w500)),
-                    Text(group.name ?? '',
+                    Text((groupName ?? '').sentenceCase(),
                         textAlign: TextAlign.center,
                         style: AppTextStyles.regularText16b.copyWith(
                             color: AppColors.lightBlue4,
@@ -365,6 +391,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserProvider>(context, listen: false).currentUser;
     return SafeArea(
       child: Scaffold(
         appBar: NotificationBar(),
@@ -382,12 +409,26 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               fit: BoxFit.cover,
             ),
           ),
-          child: SingleChildScrollView(
-            child: _buildPanel(),
+          child: RefreshIndicator(
+            key: refreshKey,
+            onRefresh: () => getNotifications(user.id ?? ''),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: _buildPanel(),
+            ),
           ),
         ),
       ),
     );
+  }
+
+  String? groupName(String id) {
+    final allGroups = Provider.of<GroupProvider>(context).allGroups;
+    final groupName =
+        (allGroups.firstWhere((element) => element.group?.id == id).group ??
+                GroupModel.defaultValue())
+            .name;
+    return groupName;
   }
 
   Widget _buildRequestPanel(List<PushNotificationModel> requests) {
@@ -413,137 +454,119 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         children: <Widget>[
           ...requests.map((PushNotificationModel notification) {
             final userId = Provider.of<UserProvider>(context).currentUser.id;
-            return FutureBuilder<CombineGroupUserStream>(
-                future: Provider.of<GroupProvider>(context)
-                    .getGroupFuture(notification.groupId, userId ?? ""),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData || snapshot.hasError)
-                    return SizedBox.shrink();
-                  else
-                    return Column(
-                      children: [
-                        SizedBox(height: 10),
-                        GestureDetector(
-                          onLongPressEnd: null,
-                          onTap: () => _showAlert(
-                              notification.groupId ?? '',
-                              notification.message ?? '',
-                              notification.createdBy ?? '',
-                              notification.id ?? '',
-                              notification.createdBy ?? '',
-                              (snapshot.data ??
-                                          CombineGroupUserStream.defaultValue())
-                                      .group ??
-                                  GroupModel.defaultValue()),
-                          child: Container(
-                            margin: EdgeInsets.only(left: 20.0),
-                            decoration: BoxDecoration(
-                              color: AppColors.cardBorder,
-                              borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(10),
-                                topLeft: Radius.circular(10),
-                              ),
-                            ),
-                            child: Container(
-                              margin: EdgeInsetsDirectional.only(
-                                  start: 1, bottom: 1, top: 1),
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 20),
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: AppColors.prayerCardBgColor,
-                                borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(9),
-                                  topLeft: Radius.circular(9),
-                                ),
-                              ),
-                              child: Column(
-                                children: <Widget>[
-                                  Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: Column(
+
+            return Column(
+              children: [
+                SizedBox(height: 10),
+                GestureDetector(
+                  onLongPressEnd: null,
+                  onTap: () => _showAlert(
+                      notification.groupId ?? '',
+                      notification.message ?? '',
+                      notification.createdBy ?? '',
+                      notification.id ?? '',
+                      notification.createdBy ?? '',
+                      groupName(
+                          notification.groupId ?? '')), // todo: pass group name
+                  child: Container(
+                    margin: EdgeInsets.only(left: 20.0),
+                    decoration: BoxDecoration(
+                      color: AppColors.cardBorder,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(10),
+                        topLeft: Radius.circular(10),
+                      ),
+                    ),
+                    child: Container(
+                      margin: EdgeInsetsDirectional.only(
+                          start: 1, bottom: 1, top: 1),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: AppColors.prayerCardBgColor,
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(9),
+                          topLeft: Radius.circular(9),
+                        ),
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Column(
+                                  children: <Widget>[
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: Text(
+                                            (groupName(notification.groupId ??
+                                                        '') ??
+                                                    '')
+                                                .sentenceCase(),
+                                            style: AppTextStyles.regularText15b
+                                                .copyWith(
+                                                    fontSize: 14,
+                                                    color: AppColors.lightBlue4,
+                                                    overflow:
+                                                        TextOverflow.ellipsis),
+                                          ),
+                                        ),
+                                        SizedBox(width: 20),
+                                        Row(
                                           children: <Widget>[
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: <Widget>[
-                                                Expanded(
-                                                  child: Text(
-                                                    snapshot.data?.group?.name
-                                                            ?.sentenceCase() ??
-                                                        '',
-                                                    style: AppTextStyles
-                                                        .regularText15b
-                                                        .copyWith(
-                                                            fontSize: 14,
-                                                            color: AppColors
-                                                                .lightBlue4,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis),
-                                                  ),
-                                                ),
-                                                SizedBox(width: 20),
-                                                Row(
-                                                  children: <Widget>[
-                                                    Text(
-                                                      DateFormat('MM.dd.yyyy')
-                                                          .format(notification
-                                                                  .createdOn ??
-                                                              DateTime.now()),
-                                                      style: AppTextStyles
-                                                          .regularText15b
-                                                          .copyWith(
-                                                              fontSize: 14,
-                                                              color: AppColors
-                                                                  .lightBlue4),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
+                                            Text(
+                                              DateFormat('MM.dd.yyyy').format(
+                                                  notification.createdOn ??
+                                                      DateTime.now()),
+                                              style: AppTextStyles
+                                                  .regularText15b
+                                                  .copyWith(
+                                                      fontSize: 14,
+                                                      color:
+                                                          AppColors.lightBlue4),
                                             ),
                                           ],
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  Divider(
-                                    color: AppColors.divider,
-                                    thickness: 0.5,
-                                  ),
-                                  Row(
-                                    children: <Widget>[
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.8,
-                                        child: Text(
-                                          (notification.message ??
-                                                  ''.capitalizeFirst ??
-                                                  '')
-                                              .substring(
-                                                  0,
-                                                  (notification.message ?? '')
-                                                      .length),
-                                          style: AppTextStyles.regularText16b
-                                              .copyWith(
-                                            color: AppColors.lightBlue4,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        ),
-                        SizedBox(height: 10),
-                      ],
-                    );
-                });
+                          Divider(
+                            color: AppColors.divider,
+                            thickness: 0.5,
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.8,
+                                child: Text(
+                                  (notification.message ??
+                                          ''.capitalizeFirst ??
+                                          '')
+                                      .substring(0,
+                                          (notification.message ?? '').length),
+                                  style: AppTextStyles.regularText16b.copyWith(
+                                    color: AppColors.lightBlue4,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+              ],
+            );
           }).toList(),
         ],
       ),
@@ -573,144 +596,125 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             initiallyExpanded: true,
             children: <Widget>[
               ...leftGroup.map((notification) {
-                return FutureBuilder<CombineGroupUserStream>(
-                    future: Provider.of<GroupProvider>(context)
-                        .getGroupFuture(notification.groupId, userId ?? ''),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData || snapshot.hasError)
-                        return SizedBox.shrink();
-                      else
-                        return Column(
-                          children: [
-                            SizedBox(height: 10),
-                            Dismissible(
-                              key: Key(notification.id ?? ''),
-                              direction: DismissDirection.horizontal,
-                              onDismissed: (direction) {
-                                deleteNotification(notification.id ?? '');
-                              },
-                              child: GestureDetector(
-                                onLongPressEnd: null,
-                                onTap: () async {
-                                  deleteNotification(notification.id ?? '');
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.only(left: 20.0),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.cardBorder,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(10),
-                                      topLeft: Radius.circular(10),
-                                    ),
-                                  ),
-                                  child: Container(
-                                    margin: EdgeInsetsDirectional.only(
-                                        start: 1, bottom: 1, top: 1),
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 20),
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.prayerCardBgColor,
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(9),
-                                        topLeft: Radius.circular(9),
-                                      ),
-                                    ),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Row(
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: Column(
+                return Column(
+                  children: [
+                    SizedBox(height: 10),
+                    Dismissible(
+                      key: Key(notification.id ?? ''),
+                      direction: DismissDirection.horizontal,
+                      onDismissed: (direction) {
+                        deleteNotification(notification.id ?? '');
+                      },
+                      child: GestureDetector(
+                        onLongPressEnd: null,
+                        onTap: () async {
+                          deleteNotification(notification.id ?? '');
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(left: 20.0),
+                          decoration: BoxDecoration(
+                            color: AppColors.cardBorder,
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(10),
+                              topLeft: Radius.circular(10),
+                            ),
+                          ),
+                          child: Container(
+                            margin: EdgeInsetsDirectional.only(
+                                start: 1, bottom: 1, top: 1),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: AppColors.prayerCardBgColor,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(9),
+                                topLeft: Radius.circular(9),
+                              ),
+                            ),
+                            child: Column(
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Column(
+                                        children: <Widget>[
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Text(
+                                                  (groupName(notification
+                                                                  .groupId ??
+                                                              '') ??
+                                                          '')
+                                                      .sentenceCase(),
+                                                  style: AppTextStyles
+                                                      .regularText15b
+                                                      .copyWith(
+                                                          fontSize: 14,
+                                                          color: AppColors
+                                                              .lightBlue4,
+                                                          overflow: TextOverflow
+                                                              .ellipsis),
+                                                ),
+                                              ),
+                                              SizedBox(width: 20),
+                                              Row(
                                                 children: <Widget>[
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: <Widget>[
-                                                      Expanded(
-                                                        child: Text(
-                                                          snapshot.data?.group
-                                                                  ?.name
-                                                                  ?.sentenceCase() ??
-                                                              '',
-                                                          style: AppTextStyles
-                                                              .regularText15b
-                                                              .copyWith(
-                                                                  fontSize: 14,
-                                                                  color: AppColors
-                                                                      .lightBlue4,
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis),
-                                                        ),
-                                                      ),
-                                                      SizedBox(width: 20),
-                                                      Row(
-                                                        children: <Widget>[
-                                                          Text(
-                                                            DateFormat(
-                                                                    'MM.dd.yyyy')
-                                                                .format(notification
-                                                                        .createdOn ??
-                                                                    DateTime
-                                                                        .now()),
-                                                            style: AppTextStyles
-                                                                .regularText15b
-                                                                .copyWith(
-                                                                    fontSize:
-                                                                        14,
-                                                                    color: AppColors
-                                                                        .lightBlue4),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
+                                                  Text(
+                                                    DateFormat('MM.dd.yyyy')
+                                                        .format(notification
+                                                                .createdOn ??
+                                                            DateTime.now()),
+                                                    style: AppTextStyles
+                                                        .regularText15b
+                                                        .copyWith(
+                                                            fontSize: 14,
+                                                            color: AppColors
+                                                                .lightBlue4),
                                                   ),
                                                 ],
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        Divider(
-                                          color: AppColors.divider,
-                                          thickness: 0.5,
-                                        ),
-                                        Row(
-                                          children: <Widget>[
-                                            Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.8,
-                                              child: Text(
-                                                (notification.message ?? '')
-                                                            .length >
-                                                        99
-                                                    ? (notification.message ??
-                                                            '')
-                                                        .substring(0, 100)
-                                                    : notification.message ??
-                                                        '',
-                                                style: AppTextStyles
-                                                    .regularText16b
-                                                    .copyWith(
-                                                  color: AppColors.lightBlue4,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ),
+                                Divider(
+                                  color: AppColors.divider,
+                                  thickness: 0.5,
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.8,
+                                      child: Text(
+                                        (notification.message ?? '').length > 99
+                                            ? (notification.message ?? '')
+                                                .substring(0, 100)
+                                            : notification.message ?? '',
+                                        style: AppTextStyles.regularText16b
+                                            .copyWith(
+                                          color: AppColors.lightBlue4,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                            SizedBox(height: 10),
-                          ],
-                        );
-                    });
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                  ],
+                );
               }).toList(),
             ]));
   }
@@ -738,144 +742,125 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             initiallyExpanded: true,
             children: <Widget>[
               ...joinGroup.map((notification) {
-                return FutureBuilder<CombineGroupUserStream>(
-                    future: Provider.of<GroupProvider>(context)
-                        .getGroupFuture(notification.groupId, userId ?? ''),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData || snapshot.hasError)
-                        return SizedBox.shrink();
-                      else
-                        return Column(
-                          children: [
-                            SizedBox(height: 10),
-                            Dismissible(
-                              key: Key(notification.id ?? ''),
-                              direction: DismissDirection.horizontal,
-                              onDismissed: (direction) {
-                                deleteNotification(notification.id ?? '');
-                              },
-                              child: GestureDetector(
-                                onLongPressEnd: null,
-                                onTap: () async {
-                                  deleteNotification(notification.id ?? '');
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.only(left: 20.0),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.cardBorder,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(10),
-                                      topLeft: Radius.circular(10),
-                                    ),
-                                  ),
-                                  child: Container(
-                                    margin: EdgeInsetsDirectional.only(
-                                        start: 1, bottom: 1, top: 1),
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 20),
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.prayerCardBgColor,
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(9),
-                                        topLeft: Radius.circular(9),
-                                      ),
-                                    ),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Row(
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: Column(
+                return Column(
+                  children: [
+                    SizedBox(height: 10),
+                    Dismissible(
+                      key: Key(notification.id ?? ''),
+                      direction: DismissDirection.horizontal,
+                      onDismissed: (direction) {
+                        deleteNotification(notification.id ?? '');
+                      },
+                      child: GestureDetector(
+                        onLongPressEnd: null,
+                        onTap: () async {
+                          deleteNotification(notification.id ?? '');
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(left: 20.0),
+                          decoration: BoxDecoration(
+                            color: AppColors.cardBorder,
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(10),
+                              topLeft: Radius.circular(10),
+                            ),
+                          ),
+                          child: Container(
+                            margin: EdgeInsetsDirectional.only(
+                                start: 1, bottom: 1, top: 1),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: AppColors.prayerCardBgColor,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(9),
+                                topLeft: Radius.circular(9),
+                              ),
+                            ),
+                            child: Column(
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Column(
+                                        children: <Widget>[
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Text(
+                                                  (groupName(notification
+                                                                  .groupId ??
+                                                              '') ??
+                                                          '')
+                                                      .sentenceCase(),
+                                                  style: AppTextStyles
+                                                      .regularText15b
+                                                      .copyWith(
+                                                          fontSize: 14,
+                                                          color: AppColors
+                                                              .lightBlue4,
+                                                          overflow: TextOverflow
+                                                              .ellipsis),
+                                                ),
+                                              ),
+                                              SizedBox(width: 20),
+                                              Row(
                                                 children: <Widget>[
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: <Widget>[
-                                                      Expanded(
-                                                        child: Text(
-                                                          snapshot.data?.group
-                                                                  ?.name
-                                                                  ?.sentenceCase() ??
-                                                              '',
-                                                          style: AppTextStyles
-                                                              .regularText15b
-                                                              .copyWith(
-                                                                  fontSize: 14,
-                                                                  color: AppColors
-                                                                      .lightBlue4,
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis),
-                                                        ),
-                                                      ),
-                                                      SizedBox(width: 20),
-                                                      Row(
-                                                        children: <Widget>[
-                                                          Text(
-                                                            DateFormat(
-                                                                    'MM.dd.yyyy')
-                                                                .format(notification
-                                                                        .createdOn ??
-                                                                    DateTime
-                                                                        .now()),
-                                                            style: AppTextStyles
-                                                                .regularText15b
-                                                                .copyWith(
-                                                                    fontSize:
-                                                                        14,
-                                                                    color: AppColors
-                                                                        .lightBlue4),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
+                                                  Text(
+                                                    DateFormat('MM.dd.yyyy')
+                                                        .format(notification
+                                                                .createdOn ??
+                                                            DateTime.now()),
+                                                    style: AppTextStyles
+                                                        .regularText15b
+                                                        .copyWith(
+                                                            fontSize: 14,
+                                                            color: AppColors
+                                                                .lightBlue4),
                                                   ),
                                                 ],
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        Divider(
-                                          color: AppColors.divider,
-                                          thickness: 0.5,
-                                        ),
-                                        Row(
-                                          children: <Widget>[
-                                            Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.8,
-                                              child: Text(
-                                                (notification.message ?? '')
-                                                            .length >
-                                                        99
-                                                    ? (notification.message ??
-                                                            '')
-                                                        .substring(0, 100)
-                                                    : notification.message ??
-                                                        '',
-                                                style: AppTextStyles
-                                                    .regularText16b
-                                                    .copyWith(
-                                                  color: AppColors.lightBlue4,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ),
+                                Divider(
+                                  color: AppColors.divider,
+                                  thickness: 0.5,
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.8,
+                                      child: Text(
+                                        (notification.message ?? '').length > 99
+                                            ? (notification.message ?? '')
+                                                .substring(0, 100)
+                                            : notification.message ?? '',
+                                        style: AppTextStyles.regularText16b
+                                            .copyWith(
+                                          color: AppColors.lightBlue4,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                            SizedBox(height: 10),
-                          ],
-                        );
-                    });
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                  ],
+                );
               }).toList(),
             ]));
   }
@@ -905,144 +890,124 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               ...requestAccepted.map((PushNotificationModel notification) {
                 final userId =
                     Provider.of<UserProvider>(context).currentUser.id;
-                return FutureBuilder<CombineGroupUserStream>(
-                    future: Provider.of<GroupProvider>(context)
-                        .getGroupFuture(notification.groupId, userId ?? ''),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData || snapshot.hasError)
-                        return SizedBox.shrink();
-                      else
-                        return Column(
-                          children: [
-                            SizedBox(height: 10),
-                            Dismissible(
-                              key: Key(notification.id ?? ''),
-                              direction: DismissDirection.horizontal,
-                              onDismissed: (direction) {
-                                deleteNotification(notification.id ?? '');
-                              },
-                              child: GestureDetector(
-                                onLongPressEnd: null,
-                                onTap: () => gotoGroup(notification),
-                                child: Container(
-                                  margin: EdgeInsets.only(left: 20.0),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.cardBorder,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(10),
-                                      topLeft: Radius.circular(10),
-                                    ),
-                                  ),
-                                  child: Container(
-                                    margin: EdgeInsetsDirectional.only(
-                                        start: 1, bottom: 1, top: 1),
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 20),
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.prayerCardBgColor,
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(9),
-                                        topLeft: Radius.circular(9),
-                                      ),
-                                    ),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Row(
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: Column(
-                                                children: <Widget>[
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: <Widget>[
-                                                      notification.sender != ''
-                                                          ? Expanded(
-                                                              child: Text(
-                                                                notification
-                                                                        .sender
-                                                                        ?.sentenceCase() ??
-                                                                    '',
-                                                                style: AppTextStyles
-                                                                    .regularText15b
-                                                                    .copyWith(
-                                                                        fontSize:
-                                                                            14,
-                                                                        color: AppColors
-                                                                            .lightBlue4,
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis),
-                                                              ),
-                                                            )
-                                                          : SizedBox(),
-                                                      SizedBox(width: 20),
-                                                      Row(
-                                                        children: <Widget>[
-                                                          Text(
-                                                            DateFormat(
-                                                                    'MM.dd.yyyy')
-                                                                .format(notification
-                                                                        .createdOn ??
-                                                                    DateTime
-                                                                        .now()),
-                                                            style: AppTextStyles
-                                                                .regularText15b
-                                                                .copyWith(
-                                                                    fontSize:
-                                                                        14,
-                                                                    color: AppColors
-                                                                        .lightBlue4),
-                                                          ),
-                                                        ],
+                return Column(
+                  children: [
+                    SizedBox(height: 10),
+                    Dismissible(
+                      key: Key(notification.id ?? ''),
+                      direction: DismissDirection.horizontal,
+                      onDismissed: (direction) {
+                        deleteNotification(notification.id ?? '');
+                      },
+                      child: GestureDetector(
+                        onLongPressEnd: null,
+                        onTap: () => gotoGroup(notification),
+                        child: Container(
+                          margin: EdgeInsets.only(left: 20.0),
+                          decoration: BoxDecoration(
+                            color: AppColors.cardBorder,
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(10),
+                              topLeft: Radius.circular(10),
+                            ),
+                          ),
+                          child: Container(
+                            margin: EdgeInsetsDirectional.only(
+                                start: 1, bottom: 1, top: 1),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: AppColors.prayerCardBgColor,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(9),
+                                topLeft: Radius.circular(9),
+                              ),
+                            ),
+                            child: Column(
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Column(
+                                        children: <Widget>[
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              notification.sender != ''
+                                                  ? Expanded(
+                                                      child: Text(
+                                                        notification.sender
+                                                                ?.sentenceCase() ??
+                                                            '',
+                                                        style: AppTextStyles
+                                                            .regularText15b
+                                                            .copyWith(
+                                                                fontSize: 14,
+                                                                color: AppColors
+                                                                    .lightBlue4,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis),
                                                       ),
-                                                    ],
+                                                    )
+                                                  : SizedBox(),
+                                              SizedBox(width: 20),
+                                              Row(
+                                                children: <Widget>[
+                                                  Text(
+                                                    DateFormat('MM.dd.yyyy')
+                                                        .format(notification
+                                                                .createdOn ??
+                                                            DateTime.now()),
+                                                    style: AppTextStyles
+                                                        .regularText15b
+                                                        .copyWith(
+                                                            fontSize: 14,
+                                                            color: AppColors
+                                                                .lightBlue4),
                                                   ),
                                                 ],
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        Divider(
-                                          color: AppColors.divider,
-                                          thickness: 0.5,
-                                        ),
-                                        Row(
-                                          children: <Widget>[
-                                            Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.8,
-                                              child: Text(
-                                                (notification.message ?? '')
-                                                            .length >
-                                                        99
-                                                    ? (notification.message ??
-                                                            '')
-                                                        .substring(0, 100)
-                                                    : notification.message ??
-                                                        '',
-                                                style: AppTextStyles
-                                                    .regularText16b
-                                                    .copyWith(
-                                                  color: AppColors.lightBlue4,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ),
+                                Divider(
+                                  color: AppColors.divider,
+                                  thickness: 0.5,
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.8,
+                                      child: Text(
+                                        (notification.message ?? '').length > 99
+                                            ? (notification.message ?? '')
+                                                .substring(0, 100)
+                                            : notification.message ?? '',
+                                        style: AppTextStyles.regularText16b
+                                            .copyWith(
+                                          color: AppColors.lightBlue4,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                            SizedBox(height: 10),
-                          ],
-                        );
-                    });
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                  ],
+                );
               }).toList(),
             ]));
   }
@@ -1072,135 +1037,117 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               ...inappropriateContent.map((PushNotificationModel notification) {
                 final userId =
                     Provider.of<UserProvider>(context).currentUser.id;
-                return FutureBuilder<CombineGroupUserStream>(
-                    future: Provider.of<GroupProvider>(context)
-                        .getGroupFuture(notification.groupId, userId ?? ''),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData || snapshot.hasError)
-                        return SizedBox.shrink();
-                      else
-                        return Column(
-                          children: [
-                            SizedBox(height: 10),
-                            GestureDetector(
-                              onLongPressEnd: null,
-                              onTap: () {
-                                gotoPrayer(notification);
-                              },
-                              child: Container(
-                                margin: EdgeInsets.only(left: 20.0),
-                                decoration: BoxDecoration(
-                                  color: AppColors.cardBorder,
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(10),
-                                    topLeft: Radius.circular(10),
-                                  ),
-                                ),
-                                child: Container(
-                                  margin: EdgeInsetsDirectional.only(
-                                      start: 1, bottom: 1, top: 1),
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 20),
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.prayerCardBgColor,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(9),
-                                      topLeft: Radius.circular(9),
-                                    ),
-                                  ),
-                                  child: Column(
-                                    children: <Widget>[
-                                      Row(
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: Column(
-                                              children: <Widget>[
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: <Widget>[
-                                                    notification.sender != ''
-                                                        ? Expanded(
-                                                            child: Text(
-                                                                notification
-                                                                        .sender ??
-                                                                    '',
-                                                                style: AppTextStyles
-                                                                    .regularText15b
-                                                                    .copyWith(
-                                                                  fontSize: 14,
-                                                                  color: AppColors
-                                                                      .lightBlue4,
-                                                                ),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis),
-                                                          )
-                                                        : SizedBox.shrink(),
-                                                    SizedBox(width: 20),
-                                                    Row(
-                                                      children: <Widget>[
-                                                        Text(
-                                                          DateFormat(
-                                                                  'MM.dd.yyyy')
-                                                              .format(notification
-                                                                      .createdOn ??
-                                                                  DateTime
-                                                                      .now()),
-                                                          style: AppTextStyles
-                                                              .regularText15b
-                                                              .copyWith(
-                                                                  fontSize: 14,
-                                                                  color: AppColors
-                                                                      .lightBlue4),
+                return Column(
+                  children: [
+                    SizedBox(height: 10),
+                    GestureDetector(
+                      onLongPressEnd: null,
+                      onTap: () {
+                        gotoPrayer(notification);
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(left: 20.0),
+                        decoration: BoxDecoration(
+                          color: AppColors.cardBorder,
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(10),
+                            topLeft: Radius.circular(10),
+                          ),
+                        ),
+                        child: Container(
+                          margin: EdgeInsetsDirectional.only(
+                              start: 1, bottom: 1, top: 1),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 20),
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: AppColors.prayerCardBgColor,
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(9),
+                              topLeft: Radius.circular(9),
+                            ),
+                          ),
+                          child: Column(
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Column(
+                                      children: <Widget>[
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: <Widget>[
+                                            notification.sender != ''
+                                                ? Expanded(
+                                                    child: Text(
+                                                        notification.sender ??
+                                                            '',
+                                                        style: AppTextStyles
+                                                            .regularText15b
+                                                            .copyWith(
+                                                          fontSize: 14,
+                                                          color: AppColors
+                                                              .lightBlue4,
                                                         ),
-                                                      ],
-                                                    ),
-                                                  ],
+                                                        overflow: TextOverflow
+                                                            .ellipsis),
+                                                  )
+                                                : SizedBox.shrink(),
+                                            SizedBox(width: 20),
+                                            Row(
+                                              children: <Widget>[
+                                                Text(
+                                                  DateFormat('MM.dd.yyyy')
+                                                      .format(notification
+                                                              .createdOn ??
+                                                          DateTime.now()),
+                                                  style: AppTextStyles
+                                                      .regularText15b
+                                                      .copyWith(
+                                                          fontSize: 14,
+                                                          color: AppColors
+                                                              .lightBlue4),
                                                 ),
                                               ],
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      Divider(
-                                        color: AppColors.divider,
-                                        thickness: 0.5,
-                                      ),
-                                      Row(
-                                        children: <Widget>[
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.8,
-                                            child: Text(
-                                              (notification.message ?? '')
-                                                          .length >
-                                                      99
-                                                  ? (notification.message ?? '')
-                                                      .substring(0, 100)
-                                                  : notification.message ?? '',
-                                              style: AppTextStyles
-                                                  .regularText16b
-                                                  .copyWith(
-                                                color: AppColors.lightBlue4,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
+                                ],
                               ),
-                            ),
-                            SizedBox(height: 10),
-                          ],
-                        );
-                    });
+                              Divider(
+                                color: AppColors.divider,
+                                thickness: 0.5,
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.8,
+                                    child: Text(
+                                      (notification.message ?? '').length > 99
+                                          ? (notification.message ?? '')
+                                              .substring(0, 100)
+                                          : notification.message ?? '',
+                                      style:
+                                          AppTextStyles.regularText16b.copyWith(
+                                        color: AppColors.lightBlue4,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                  ],
+                );
               }).toList(),
             ]));
   }
@@ -1229,142 +1176,125 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               ...newPrayers.map((PushNotificationModel notification) {
                 final userId =
                     Provider.of<UserProvider>(context).currentUser.id;
-                return FutureBuilder<CombineGroupUserStream>(
-                    future: Provider.of<GroupProvider>(context)
-                        .getGroupFuture(notification.groupId, userId ?? ''),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData || snapshot.hasError)
-                        return SizedBox.shrink();
-                      else
-                        return Column(
-                          children: [
-                            SizedBox(height: 10),
-                            Dismissible(
-                              key: Key(notification.id ?? ''),
-                              direction: DismissDirection.horizontal,
-                              onDismissed: (direction) {
-                                deleteNotification(notification.id ?? '');
-                              },
-                              child: GestureDetector(
-                                onLongPressEnd: null,
-                                onTap: () async {
-                                  gotoPrayer(notification);
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.only(left: 20.0),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.cardBorder,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(10),
-                                      topLeft: Radius.circular(10),
-                                    ),
-                                  ),
-                                  child: Container(
-                                    margin: EdgeInsetsDirectional.only(
-                                        start: 1, bottom: 1, top: 1),
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 20),
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.prayerCardBgColor,
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(9),
-                                        topLeft: Radius.circular(9),
-                                      ),
-                                    ),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Row(
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: Column(
-                                                children: <Widget>[
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: <Widget>[
-                                                      notification.sender != ''
-                                                          ? Expanded(
-                                                              child: Text(
-                                                                snapshot
-                                                                        .data
-                                                                        ?.group
-                                                                        ?.name
-                                                                        ?.sentenceCase() ??
-                                                                    '',
-                                                                style: AppTextStyles
-                                                                    .regularText15b
-                                                                    .copyWith(
-                                                                  fontSize: 14,
-                                                                  color: AppColors
-                                                                      .lightBlue4,
-                                                                ),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                              ),
-                                                            )
-                                                          : SizedBox.shrink(),
-                                                      SizedBox(width: 20),
-                                                      Row(
-                                                        children: <Widget>[
-                                                          Text(
-                                                            DateFormat(
-                                                                    'MM.dd.yyyy')
-                                                                .format(notification
-                                                                        .createdOn ??
-                                                                    DateTime
-                                                                        .now()),
-                                                            style: AppTextStyles
-                                                                .regularText15b
-                                                                .copyWith(
-                                                                    fontSize:
-                                                                        14,
-                                                                    color: AppColors
-                                                                        .lightBlue4),
-                                                          ),
-                                                        ],
+                return Column(
+                  children: [
+                    SizedBox(height: 10),
+                    Dismissible(
+                      key: Key(notification.id ?? ''),
+                      direction: DismissDirection.horizontal,
+                      onDismissed: (direction) {
+                        deleteNotification(notification.id ?? '');
+                      },
+                      child: GestureDetector(
+                        onLongPressEnd: null,
+                        onTap: () async {
+                          gotoPrayer(notification);
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(left: 20.0),
+                          decoration: BoxDecoration(
+                            color: AppColors.cardBorder,
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(10),
+                              topLeft: Radius.circular(10),
+                            ),
+                          ),
+                          child: Container(
+                            margin: EdgeInsetsDirectional.only(
+                                start: 1, bottom: 1, top: 1),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: AppColors.prayerCardBgColor,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(9),
+                                topLeft: Radius.circular(9),
+                              ),
+                            ),
+                            child: Column(
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Column(
+                                        children: <Widget>[
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              notification.sender != ''
+                                                  ? Expanded(
+                                                      child: Text(
+                                                        (groupName(notification
+                                                                        .groupId ??
+                                                                    '') ??
+                                                                '')
+                                                            .sentenceCase(),
+                                                        style: AppTextStyles
+                                                            .regularText15b
+                                                            .copyWith(
+                                                          fontSize: 14,
+                                                          color: AppColors
+                                                              .lightBlue4,
+                                                        ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
                                                       ),
-                                                    ],
+                                                    )
+                                                  : SizedBox.shrink(),
+                                              SizedBox(width: 20),
+                                              Row(
+                                                children: <Widget>[
+                                                  Text(
+                                                    DateFormat('MM.dd.yyyy')
+                                                        .format(notification
+                                                                .createdOn ??
+                                                            DateTime.now()),
+                                                    style: AppTextStyles
+                                                        .regularText15b
+                                                        .copyWith(
+                                                            fontSize: 14,
+                                                            color: AppColors
+                                                                .lightBlue4),
                                                   ),
                                                 ],
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        Divider(
-                                          color: AppColors.divider,
-                                          thickness: 0.5,
-                                        ),
-                                        Row(
-                                          children: <Widget>[
-                                            Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.8,
-                                              child: Text(
-                                                '${notification.sender} added a new prayer to the group.',
-                                                style: AppTextStyles
-                                                    .regularText16b
-                                                    .copyWith(
-                                                  color: AppColors.lightBlue4,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ),
+                                Divider(
+                                  color: AppColors.divider,
+                                  thickness: 0.5,
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.8,
+                                      child: Text(
+                                        '${notification.sender} added a new prayer to the group.',
+                                        style: AppTextStyles.regularText16b
+                                            .copyWith(
+                                          color: AppColors.lightBlue4,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                            SizedBox(height: 10),
-                          ],
-                        );
-                    });
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                  ],
+                );
               }).toList(),
             ]));
   }
@@ -1392,167 +1322,150 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             initiallyExpanded: true,
             children: <Widget>[
               ...editedPrayers.map((notification) {
-                return FutureBuilder<CombineGroupUserStream>(
-                    future: Provider.of<GroupProvider>(context)
-                        .getGroupFuture(notification.groupId, userId ?? ''),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData || snapshot.hasError)
-                        return SizedBox.shrink();
-                      return Column(
-                        children: [
-                          SizedBox(height: 10),
-                          Dismissible(
-                            key: Key(notification.id ?? ''),
-                            direction: DismissDirection.horizontal,
-                            onDismissed: (direction) {
-                              deleteNotification(notification.id ?? '');
-                            },
-                            child: GestureDetector(
-                              onLongPressEnd: null,
-                              onTap: () async {
-                                gotoPrayer(notification);
-                              },
-                              child: Container(
-                                margin: EdgeInsets.only(left: 20.0),
-                                decoration: BoxDecoration(
-                                  color: AppColors.cardBorder,
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(10),
-                                    topLeft: Radius.circular(10),
-                                  ),
-                                ),
-                                child: Container(
-                                  margin: EdgeInsetsDirectional.only(
-                                      start: 1, bottom: 1, top: 1),
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 20),
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.prayerCardBgColor,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(9),
-                                      topLeft: Radius.circular(9),
-                                    ),
-                                  ),
-                                  child: Column(
-                                    children: <Widget>[
-                                      Row(
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: Column(
-                                              children: <Widget>[
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: <Widget>[
-                                                    notification.sender != ''
-                                                        ? Expanded(
-                                                            child: Text(
-                                                              notification
-                                                                      .sender ??
-                                                                  '',
-                                                              style: AppTextStyles
-                                                                  .regularText15b
-                                                                  .copyWith(
-                                                                fontSize: 14,
-                                                                color: AppColors
-                                                                    .lightBlue4,
-                                                              ),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                            ),
-                                                          )
-                                                        : SizedBox.shrink(),
-                                                    SizedBox(width: 20),
-                                                    Row(
-                                                      children: <Widget>[
-                                                        Container(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.3,
-                                                          child: Text(
-                                                            snapshot.data?.group
-                                                                    ?.name ??
-                                                                '',
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            style: TextStyle(
-                                                                color: AppColors
-                                                                    .lightBlue4),
-                                                          ).marginOnly(
-                                                              right: 2),
-                                                        ),
-                                                        Text(
-                                                          '|',
-                                                          style: TextStyle(
-                                                              color: AppColors
-                                                                  .lightBlue4),
-                                                        ).marginOnly(right: 5),
-                                                        Text(
-                                                          DateFormat(
-                                                                  'MM.dd.yyyy')
-                                                              .format(notification
-                                                                      .createdOn ??
-                                                                  DateTime
-                                                                      .now()),
-                                                          style: AppTextStyles
-                                                              .regularText15b
-                                                              .copyWith(
-                                                                  fontSize: 14,
-                                                                  color: AppColors
-                                                                      .lightBlue4),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Divider(
-                                        color: AppColors.divider,
-                                        thickness: 0.5,
-                                      ),
-                                      Row(
-                                        children: <Widget>[
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.8,
-                                            child: Text(
-                                              (notification.message ?? '')
-                                                          .length >
-                                                      99
-                                                  ? (notification.message ?? '')
-                                                      .substring(0, 100)
-                                                  : notification.message ?? '',
-                                              style: AppTextStyles
-                                                  .regularText16b
-                                                  .copyWith(
-                                                color: AppColors.lightBlue4,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                return Column(
+                  children: [
+                    SizedBox(height: 10),
+                    Dismissible(
+                      key: Key(notification.id ?? ''),
+                      direction: DismissDirection.horizontal,
+                      onDismissed: (direction) {
+                        deleteNotification(notification.id ?? '');
+                      },
+                      child: GestureDetector(
+                        onLongPressEnd: null,
+                        onTap: () async {
+                          gotoPrayer(notification);
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(left: 20.0),
+                          decoration: BoxDecoration(
+                            color: AppColors.cardBorder,
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(10),
+                              topLeft: Radius.circular(10),
                             ),
                           ),
-                          SizedBox(height: 10),
-                        ],
-                      );
-                    });
+                          child: Container(
+                            margin: EdgeInsetsDirectional.only(
+                                start: 1, bottom: 1, top: 1),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: AppColors.prayerCardBgColor,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(9),
+                                topLeft: Radius.circular(9),
+                              ),
+                            ),
+                            child: Column(
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Column(
+                                        children: <Widget>[
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              notification.sender != ''
+                                                  ? Expanded(
+                                                      child: Text(
+                                                        notification.sender ??
+                                                            '',
+                                                        style: AppTextStyles
+                                                            .regularText15b
+                                                            .copyWith(
+                                                          fontSize: 14,
+                                                          color: AppColors
+                                                              .lightBlue4,
+                                                        ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    )
+                                                  : SizedBox.shrink(),
+                                              SizedBox(width: 20),
+                                              Row(
+                                                children: <Widget>[
+                                                  Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.3,
+                                                    child: Text(
+                                                      (groupName(notification
+                                                                      .groupId ??
+                                                                  '') ??
+                                                              '')
+                                                          .sentenceCase(),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          color: AppColors
+                                                              .lightBlue4),
+                                                    ).marginOnly(right: 2),
+                                                  ),
+                                                  Text(
+                                                    '|',
+                                                    style: TextStyle(
+                                                        color: AppColors
+                                                            .lightBlue4),
+                                                  ).marginOnly(right: 5),
+                                                  Text(
+                                                    DateFormat('MM.dd.yyyy')
+                                                        .format(notification
+                                                                .createdOn ??
+                                                            DateTime.now()),
+                                                    style: AppTextStyles
+                                                        .regularText15b
+                                                        .copyWith(
+                                                            fontSize: 14,
+                                                            color: AppColors
+                                                                .lightBlue4),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Divider(
+                                  color: AppColors.divider,
+                                  thickness: 0.5,
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.8,
+                                      child: Text(
+                                        (notification.message ?? '').length > 99
+                                            ? (notification.message ?? '')
+                                                .substring(0, 100)
+                                            : notification.message ?? '',
+                                        style: AppTextStyles.regularText16b
+                                            .copyWith(
+                                          color: AppColors.lightBlue4,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                  ],
+                );
               }).toList(),
             ]));
   }
@@ -1581,167 +1494,150 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             initiallyExpanded: true,
             children: <Widget>[
               ...archivedPrayers.map((notification) {
-                return FutureBuilder<CombineGroupUserStream>(
-                    future: Provider.of<GroupProvider>(context)
-                        .getGroupFuture(notification.groupId, userId ?? ''),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData || snapshot.hasError)
-                        return SizedBox.shrink();
-                      return Column(
-                        children: [
-                          SizedBox(height: 10),
-                          Dismissible(
-                            key: Key(notification.id ?? ''),
-                            direction: DismissDirection.horizontal,
-                            onDismissed: (direction) {
-                              deleteNotification(notification.id ?? '');
-                            },
-                            child: GestureDetector(
-                              onLongPressEnd: null,
-                              onTap: () async {
-                                gotoPrayer(notification);
-                              },
-                              child: Container(
-                                margin: EdgeInsets.only(left: 20.0),
-                                decoration: BoxDecoration(
-                                  color: AppColors.cardBorder,
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(10),
-                                    topLeft: Radius.circular(10),
-                                  ),
-                                ),
-                                child: Container(
-                                  margin: EdgeInsetsDirectional.only(
-                                      start: 1, bottom: 1, top: 1),
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 20),
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.prayerCardBgColor,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(9),
-                                      topLeft: Radius.circular(9),
-                                    ),
-                                  ),
-                                  child: Column(
-                                    children: <Widget>[
-                                      Row(
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: Column(
-                                              children: <Widget>[
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: <Widget>[
-                                                    notification.sender != ''
-                                                        ? Expanded(
-                                                            child: Text(
-                                                              notification
-                                                                      .sender ??
-                                                                  '',
-                                                              style: AppTextStyles
-                                                                  .regularText15b
-                                                                  .copyWith(
-                                                                fontSize: 14,
-                                                                color: AppColors
-                                                                    .lightBlue4,
-                                                              ),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                            ),
-                                                          )
-                                                        : SizedBox.shrink(),
-                                                    SizedBox(width: 20),
-                                                    Row(
-                                                      children: <Widget>[
-                                                        Container(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.3,
-                                                          child: Text(
-                                                            snapshot.data?.group
-                                                                    ?.name ??
-                                                                '',
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            style: TextStyle(
-                                                                color: AppColors
-                                                                    .lightBlue4),
-                                                          ).marginOnly(
-                                                              right: 2),
-                                                        ),
-                                                        Text(
-                                                          '|',
-                                                          style: TextStyle(
-                                                              color: AppColors
-                                                                  .lightBlue4),
-                                                        ).marginOnly(right: 5),
-                                                        Text(
-                                                          DateFormat(
-                                                                  'MM.dd.yyyy')
-                                                              .format(notification
-                                                                      .createdOn ??
-                                                                  DateTime
-                                                                      .now()),
-                                                          style: AppTextStyles
-                                                              .regularText15b
-                                                              .copyWith(
-                                                                  fontSize: 14,
-                                                                  color: AppColors
-                                                                      .lightBlue4),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Divider(
-                                        color: AppColors.divider,
-                                        thickness: 0.5,
-                                      ),
-                                      Row(
-                                        children: <Widget>[
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.8,
-                                            child: Text(
-                                              (notification.message ?? '')
-                                                          .length >
-                                                      99
-                                                  ? (notification.message ?? '')
-                                                      .substring(0, 100)
-                                                  : notification.message ?? '',
-                                              style: AppTextStyles
-                                                  .regularText16b
-                                                  .copyWith(
-                                                color: AppColors.lightBlue4,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                return Column(
+                  children: [
+                    SizedBox(height: 10),
+                    Dismissible(
+                      key: Key(notification.id ?? ''),
+                      direction: DismissDirection.horizontal,
+                      onDismissed: (direction) {
+                        deleteNotification(notification.id ?? '');
+                      },
+                      child: GestureDetector(
+                        onLongPressEnd: null,
+                        onTap: () async {
+                          gotoPrayer(notification);
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(left: 20.0),
+                          decoration: BoxDecoration(
+                            color: AppColors.cardBorder,
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(10),
+                              topLeft: Radius.circular(10),
                             ),
                           ),
-                          SizedBox(height: 10),
-                        ],
-                      );
-                    });
+                          child: Container(
+                            margin: EdgeInsetsDirectional.only(
+                                start: 1, bottom: 1, top: 1),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: AppColors.prayerCardBgColor,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(9),
+                                topLeft: Radius.circular(9),
+                              ),
+                            ),
+                            child: Column(
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Column(
+                                        children: <Widget>[
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              notification.sender != ''
+                                                  ? Expanded(
+                                                      child: Text(
+                                                        notification.sender ??
+                                                            '',
+                                                        style: AppTextStyles
+                                                            .regularText15b
+                                                            .copyWith(
+                                                          fontSize: 14,
+                                                          color: AppColors
+                                                              .lightBlue4,
+                                                        ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    )
+                                                  : SizedBox.shrink(),
+                                              SizedBox(width: 20),
+                                              Row(
+                                                children: <Widget>[
+                                                  Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.3,
+                                                    child: Text(
+                                                      (groupName(notification
+                                                                      .groupId ??
+                                                                  '') ??
+                                                              '')
+                                                          .sentenceCase(),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          color: AppColors
+                                                              .lightBlue4),
+                                                    ).marginOnly(right: 2),
+                                                  ),
+                                                  Text(
+                                                    '|',
+                                                    style: TextStyle(
+                                                        color: AppColors
+                                                            .lightBlue4),
+                                                  ).marginOnly(right: 5),
+                                                  Text(
+                                                    DateFormat('MM.dd.yyyy')
+                                                        .format(notification
+                                                                .createdOn ??
+                                                            DateTime.now()),
+                                                    style: AppTextStyles
+                                                        .regularText15b
+                                                        .copyWith(
+                                                            fontSize: 14,
+                                                            color: AppColors
+                                                                .lightBlue4),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Divider(
+                                  color: AppColors.divider,
+                                  thickness: 0.5,
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.8,
+                                      child: Text(
+                                        (notification.message ?? '').length > 99
+                                            ? (notification.message ?? '')
+                                                .substring(0, 100)
+                                            : notification.message ?? '',
+                                        style: AppTextStyles.regularText16b
+                                            .copyWith(
+                                          color: AppColors.lightBlue4,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                  ],
+                );
               }).toList(),
             ]));
   }
@@ -1770,174 +1666,150 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             initiallyExpanded: true,
             children: <Widget>[
               ...answeredPrayers.map((notification) {
-                return FutureBuilder<CombineGroupUserStream>(
-                    future: Provider.of<GroupProvider>(context)
-                        .getGroupFuture(notification.groupId, userId ?? ''),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData || snapshot.hasError)
-                        return SizedBox.shrink();
-                      else
-                        return Column(
-                          children: [
-                            SizedBox(height: 10),
-                            Dismissible(
-                              key: Key(notification.id ?? ''),
-                              direction: DismissDirection.horizontal,
-                              onDismissed: (direction) {
-                                deleteNotification(notification.id ?? '');
-                              },
-                              child: GestureDetector(
-                                onLongPressEnd: null,
-                                onTap: () async {
-                                  gotoPrayer(notification);
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.only(left: 20.0),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.cardBorder,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(10),
-                                      topLeft: Radius.circular(10),
-                                    ),
-                                  ),
-                                  child: Container(
-                                    margin: EdgeInsetsDirectional.only(
-                                        start: 1, bottom: 1, top: 1),
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 20),
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.prayerCardBgColor,
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(9),
-                                        topLeft: Radius.circular(9),
-                                      ),
-                                    ),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Row(
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: Column(
-                                                children: <Widget>[
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: <Widget>[
-                                                      notification.sender != ''
-                                                          ? Expanded(
-                                                              child: Text(
-                                                                notification
-                                                                        .sender ??
-                                                                    '',
-                                                                style: AppTextStyles
-                                                                    .regularText15b
-                                                                    .copyWith(
-                                                                  fontSize: 14,
-                                                                  color: AppColors
-                                                                      .lightBlue4,
-                                                                ),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                              ),
-                                                            )
-                                                          : SizedBox.shrink(),
-                                                      SizedBox(width: 20),
-                                                      Row(
-                                                        children: <Widget>[
-                                                          Container(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.3,
-                                                            child: Text(
-                                                              snapshot
-                                                                      .data
-                                                                      ?.group
-                                                                      ?.name ??
-                                                                  '',
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              style: TextStyle(
-                                                                  color: AppColors
-                                                                      .lightBlue4),
-                                                            ).marginOnly(
-                                                                right: 2),
-                                                          ),
-                                                          Text(
-                                                            '|',
-                                                            style: TextStyle(
-                                                                color: AppColors
-                                                                    .lightBlue4),
-                                                          ).marginOnly(
-                                                              right: 5),
-                                                          Text(
-                                                            DateFormat(
-                                                                    'MM.dd.yyyy')
-                                                                .format(notification
-                                                                        .createdOn ??
-                                                                    DateTime
-                                                                        .now()),
-                                                            style: AppTextStyles
-                                                                .regularText15b
-                                                                .copyWith(
-                                                                    fontSize:
-                                                                        14,
-                                                                    color: AppColors
-                                                                        .lightBlue4),
-                                                          ),
-                                                        ],
+                return Column(
+                  children: [
+                    SizedBox(height: 10),
+                    Dismissible(
+                      key: Key(notification.id ?? ''),
+                      direction: DismissDirection.horizontal,
+                      onDismissed: (direction) {
+                        deleteNotification(notification.id ?? '');
+                      },
+                      child: GestureDetector(
+                        onLongPressEnd: null,
+                        onTap: () async {
+                          gotoPrayer(notification);
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(left: 20.0),
+                          decoration: BoxDecoration(
+                            color: AppColors.cardBorder,
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(10),
+                              topLeft: Radius.circular(10),
+                            ),
+                          ),
+                          child: Container(
+                            margin: EdgeInsetsDirectional.only(
+                                start: 1, bottom: 1, top: 1),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: AppColors.prayerCardBgColor,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(9),
+                                topLeft: Radius.circular(9),
+                              ),
+                            ),
+                            child: Column(
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Column(
+                                        children: <Widget>[
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              notification.sender != ''
+                                                  ? Expanded(
+                                                      child: Text(
+                                                        notification.sender ??
+                                                            '',
+                                                        style: AppTextStyles
+                                                            .regularText15b
+                                                            .copyWith(
+                                                          fontSize: 14,
+                                                          color: AppColors
+                                                              .lightBlue4,
+                                                        ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
                                                       ),
-                                                    ],
+                                                    )
+                                                  : SizedBox.shrink(),
+                                              SizedBox(width: 20),
+                                              Row(
+                                                children: <Widget>[
+                                                  Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.3,
+                                                    child: Text(
+                                                      (groupName(notification
+                                                                      .groupId ??
+                                                                  '') ??
+                                                              '')
+                                                          .sentenceCase(),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          color: AppColors
+                                                              .lightBlue4),
+                                                    ).marginOnly(right: 2),
+                                                  ),
+                                                  Text(
+                                                    '|',
+                                                    style: TextStyle(
+                                                        color: AppColors
+                                                            .lightBlue4),
+                                                  ).marginOnly(right: 5),
+                                                  Text(
+                                                    DateFormat('MM.dd.yyyy')
+                                                        .format(notification
+                                                                .createdOn ??
+                                                            DateTime.now()),
+                                                    style: AppTextStyles
+                                                        .regularText15b
+                                                        .copyWith(
+                                                            fontSize: 14,
+                                                            color: AppColors
+                                                                .lightBlue4),
                                                   ),
                                                 ],
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        Divider(
-                                          color: AppColors.divider,
-                                          thickness: 0.5,
-                                        ),
-                                        Row(
-                                          children: <Widget>[
-                                            Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.8,
-                                              child: Text(
-                                                (notification.message ?? '')
-                                                            .length >
-                                                        99
-                                                    ? (notification.message ??
-                                                            '')
-                                                        .substring(0, 100)
-                                                    : notification.message ??
-                                                        '',
-                                                style: AppTextStyles
-                                                    .regularText16b
-                                                    .copyWith(
-                                                  color: AppColors.lightBlue4,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ),
+                                Divider(
+                                  color: AppColors.divider,
+                                  thickness: 0.5,
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.8,
+                                      child: Text(
+                                        (notification.message ?? '').length > 99
+                                            ? (notification.message ?? '')
+                                                .substring(0, 100)
+                                            : notification.message ?? '',
+                                        style: AppTextStyles.regularText16b
+                                            .copyWith(
+                                          color: AppColors.lightBlue4,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                            SizedBox(height: 10),
-                          ],
-                        );
-                    });
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                  ],
+                );
               }).toList(),
             ]));
   }
@@ -1966,219 +1838,172 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               ...prayerUpdates.map((PushNotificationModel notification) {
                 final userId =
                     Provider.of<UserProvider>(context).currentUser.id;
-                return FutureBuilder<CombineGroupUserStream>(
-                    future: Provider.of<GroupProvider>(context)
-                        .getGroupFuture(notification.groupId, userId ?? ''),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData || snapshot.hasError)
-                        return SizedBox.shrink();
-                      else
-                        return Column(
-                          children: [
-                            SizedBox(height: 10),
-                            Dismissible(
-                              key: Key(notification.id ?? ''),
-                              direction: DismissDirection.horizontal,
-                              onDismissed: (direction) {
-                                deleteNotification(notification.id ?? '');
-                              },
-                              child: GestureDetector(
-                                onLongPressEnd: null,
-                                onTap: () async {
-                                  gotoPrayer(notification);
-                                },
-                                child: Container(
-                                  margin: EdgeInsets.only(left: 20.0),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.cardBorder,
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(10),
-                                      topLeft: Radius.circular(10),
-                                    ),
-                                  ),
-                                  child: Container(
-                                    margin: EdgeInsetsDirectional.only(
-                                        start: 1, bottom: 1, top: 1),
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 20),
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.prayerCardBgColor,
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(9),
-                                        topLeft: Radius.circular(9),
-                                      ),
-                                    ),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Row(
-                                          children: <Widget>[
-                                            Expanded(
-                                              child: Column(
-                                                children: <Widget>[
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: <Widget>[
-                                                      notification.sender != ''
-                                                          ? Expanded(
-                                                              child: Text(
-                                                                notification
-                                                                        .sender ??
-                                                                    '',
-                                                                style: AppTextStyles
-                                                                    .regularText15b
-                                                                    .copyWith(
-                                                                  fontSize: 14,
-                                                                  color: AppColors
-                                                                      .lightBlue4,
-                                                                ),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                              ),
-                                                            )
-                                                          : SizedBox.shrink(),
-                                                      SizedBox(width: 20),
-                                                      Row(
-                                                        children: <Widget>[
-                                                          Container(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.3,
-                                                            child: Text(
-                                                              snapshot
-                                                                      .data
-                                                                      ?.group
-                                                                      ?.name ??
-                                                                  '',
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              style: TextStyle(
-                                                                  color: AppColors
-                                                                      .lightBlue4),
-                                                            ).marginOnly(
-                                                                right: 2),
-                                                          ),
-                                                          Text(
-                                                            '|',
-                                                            style: TextStyle(
-                                                                color: AppColors
-                                                                    .lightBlue4),
-                                                          ).marginOnly(
-                                                              right: 5),
-                                                          Text(
-                                                            DateFormat(
-                                                                    'MM.dd.yyyy')
-                                                                .format(notification
-                                                                        .createdOn ??
-                                                                    DateTime
-                                                                        .now()),
-                                                            style: AppTextStyles
-                                                                .regularText15b
-                                                                .copyWith(
-                                                                    fontSize:
-                                                                        14,
-                                                                    color: AppColors
-                                                                        .lightBlue4),
-                                                          ),
-                                                        ],
+                return Column(
+                  children: [
+                    SizedBox(height: 10),
+                    Dismissible(
+                      key: Key(notification.id ?? ''),
+                      direction: DismissDirection.horizontal,
+                      onDismissed: (direction) {
+                        deleteNotification(notification.id ?? '');
+                      },
+                      child: GestureDetector(
+                        onLongPressEnd: null,
+                        onTap: () async {
+                          gotoPrayer(notification);
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(left: 20.0),
+                          decoration: BoxDecoration(
+                            color: AppColors.cardBorder,
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(10),
+                              topLeft: Radius.circular(10),
+                            ),
+                          ),
+                          child: Container(
+                            margin: EdgeInsetsDirectional.only(
+                                start: 1, bottom: 1, top: 1),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: AppColors.prayerCardBgColor,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(9),
+                                topLeft: Radius.circular(9),
+                              ),
+                            ),
+                            child: Column(
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Column(
+                                        children: <Widget>[
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              notification.sender != ''
+                                                  ? Expanded(
+                                                      child: Text(
+                                                        notification.sender ??
+                                                            '',
+                                                        style: AppTextStyles
+                                                            .regularText15b
+                                                            .copyWith(
+                                                          fontSize: 14,
+                                                          color: AppColors
+                                                              .lightBlue4,
+                                                        ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
                                                       ),
-                                                    ],
+                                                    )
+                                                  : SizedBox.shrink(),
+                                              SizedBox(width: 20),
+                                              Row(
+                                                children: <Widget>[
+                                                  Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.3,
+                                                    child: Text(
+                                                      (groupName(notification
+                                                                      .groupId ??
+                                                                  '') ??
+                                                              '')
+                                                          .sentenceCase(),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          color: AppColors
+                                                              .lightBlue4),
+                                                    ).marginOnly(right: 2),
+                                                  ),
+                                                  Text(
+                                                    '|',
+                                                    style: TextStyle(
+                                                        color: AppColors
+                                                            .lightBlue4),
+                                                  ).marginOnly(right: 5),
+                                                  Text(
+                                                    DateFormat('MM.dd.yyyy')
+                                                        .format(notification
+                                                                .createdOn ??
+                                                            DateTime.now()),
+                                                    style: AppTextStyles
+                                                        .regularText15b
+                                                        .copyWith(
+                                                            fontSize: 14,
+                                                            color: AppColors
+                                                                .lightBlue4),
                                                   ),
                                                 ],
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        Divider(
-                                          color: AppColors.divider,
-                                          thickness: 0.5,
-                                        ),
-                                        Row(
-                                          children: <Widget>[
-                                            Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.8,
-                                              child: Text(
-                                                (notification.message ?? '')
-                                                            .length >
-                                                        99
-                                                    ? (notification.message ??
-                                                            '')
-                                                        .substring(0, 100)
-                                                    : notification.message ??
-                                                        '',
-                                                style: AppTextStyles
-                                                    .regularText16b
-                                                    .copyWith(
-                                                  color: AppColors.lightBlue4,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ),
+                                Divider(
+                                  color: AppColors.divider,
+                                  thickness: 0.5,
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.8,
+                                      child: Text(
+                                        (notification.message ?? '').length > 99
+                                            ? (notification.message ?? '')
+                                                .substring(0, 100)
+                                            : notification.message ?? '',
+                                        style: AppTextStyles.regularText16b
+                                            .copyWith(
+                                          color: AppColors.lightBlue4,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                            SizedBox(height: 10),
-                          ],
-                        );
-                    });
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                  ],
+                );
               }).toList(),
             ]));
   }
 
   Widget _buildPanel() {
+    final requests = Provider.of<NotificationProvider>(context).requests;
+    final newPrayers = Provider.of<NotificationProvider>(context).newPrayers;
+    final requestAccepted =
+        Provider.of<NotificationProvider>(context).requestAccepted;
+    final editedPrayers =
+        Provider.of<NotificationProvider>(context).editedPrayers;
+    final archivedPrayers =
+        Provider.of<NotificationProvider>(context).archivedPrayers;
+    final answeredPrayers =
+        Provider.of<NotificationProvider>(context).answeredPrayers;
+    final inappropriateContent =
+        Provider.of<NotificationProvider>(context).inappropriateContent;
+    final prayerUpdates =
+        Provider.of<NotificationProvider>(context).prayerUpdates;
+    final leftGroup = Provider.of<NotificationProvider>(context).leftGroup;
+    final joinGroup = Provider.of<NotificationProvider>(context).joinGroup;
     final data = Provider.of<NotificationProvider>(context).notifications;
-    data.sort((a, b) => (b.createdOn ?? DateTime.now())
-        .compareTo(a.createdOn ?? DateTime.now()));
-    final requests =
-        data.where((e) => e.messageType == NotificationType.request).toList();
-    final inappropriateContent = data
-        .where((e) => e.messageType == NotificationType.inappropriate_content)
-        .toList();
-    final leftGroup = data
-        .where((e) => e.messageType == NotificationType.leave_group)
-        .toList();
-    final joinGroup = data
-        .where((e) => e.messageType == NotificationType.join_group)
-        .toList();
-    final requestAccepted = data
-        .where((e) => e.messageType == NotificationType.accept_request)
-        .toList();
-    // final remove = data
-    //     .where((e) => e.messageType == NotificationType.remove_from_group)
-    //     .toList();
-
-    // final requestDenied = data
-    //     .where((e) => e.messageType == NotificationType.deny_request)
-    //     .toList();
-
-    final newPrayers =
-        data.where((e) => e.messageType == NotificationType.prayer).toList();
-
-    final prayerUpdates = data
-        .where((e) => e.messageType == NotificationType.prayer_updates)
-        .toList();
-    final editedPrayers = data
-        .where((e) => e.messageType == NotificationType.edited_prayers)
-        .toList();
-    final archivedPrayers = data
-        .where((e) => e.messageType == NotificationType.archived_prayers)
-        .toList();
-    final answeredPrayers = data
-        .where((e) => e.messageType == NotificationType.answered_prayers)
-        .toList();
 
     return Container(
       child: Column(
@@ -2197,6 +2022,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   ),
                 )
               : Container(),
+
           requests.length > 0 ? _buildRequestPanel(requests) : Container(),
           newPrayers.length > 0
               ? _buildNewPrayersPanel(newPrayers)

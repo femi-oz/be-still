@@ -39,6 +39,36 @@ class NotificationProvider with ChangeNotifier {
   List<PushNotificationModel> _notifications = [];
   List<PushNotificationModel> get notifications => _notifications;
 
+  List<PushNotificationModel> _requests = [];
+  List<PushNotificationModel> get requests => _requests;
+
+  List<PushNotificationModel> _inappropriateContent = [];
+  List<PushNotificationModel> get inappropriateContent => _inappropriateContent;
+
+  List<PushNotificationModel> _leftGroup = [];
+  List<PushNotificationModel> get leftGroup => _leftGroup;
+
+  List<PushNotificationModel> _joinGroup = [];
+  List<PushNotificationModel> get joinGroup => _joinGroup;
+
+  List<PushNotificationModel> _requestAccepted = [];
+  List<PushNotificationModel> get requestAccepted => _requestAccepted;
+
+  List<PushNotificationModel> _newPrayers = [];
+  List<PushNotificationModel> get newPrayers => _newPrayers;
+
+  List<PushNotificationModel> _prayerUpdates = [];
+  List<PushNotificationModel> get prayerUpdates => _prayerUpdates;
+
+  List<PushNotificationModel> _editedPrayers = [];
+  List<PushNotificationModel> get editedPrayers => _editedPrayers;
+
+  List<PushNotificationModel> _archivedPrayers = [];
+  List<PushNotificationModel> get archivedPrayers => _archivedPrayers;
+
+  List<PushNotificationModel> _answeredPrayers = [];
+  List<PushNotificationModel> get answeredPrayers => _answeredPrayers;
+
   List<LocalNotificationModel> _prayerTimeNotifications = [];
   List<LocalNotificationModel> get prayerTimeNotifications =>
       _prayerTimeNotifications;
@@ -155,6 +185,49 @@ class NotificationProvider with ChangeNotifier {
           .getUserNotifications(userId)
           .asBroadcastStream()
           .listen((notifications) async {
+        notifications.sort((a, b) => (b.createdOn ?? DateTime.now())
+            .compareTo(a.createdOn ?? DateTime.now()));
+        _requests = notifications
+            .where((e) => e.messageType == NotificationType.request)
+            .toList();
+
+        _inappropriateContent = notifications
+            .where(
+                (e) => e.messageType == NotificationType.inappropriate_content)
+            .toList();
+
+        _leftGroup = notifications
+            .where((e) => e.messageType == NotificationType.leave_group)
+            .toList();
+
+        _joinGroup = notifications
+            .where((e) => e.messageType == NotificationType.join_group)
+            .toList();
+
+        _requestAccepted = notifications
+            .where((e) => e.messageType == NotificationType.accept_request)
+            .toList();
+
+        _newPrayers = notifications
+            .where((e) => e.messageType == NotificationType.prayer)
+            .toList();
+
+        _prayerUpdates = notifications
+            .where((e) => e.messageType == NotificationType.prayer_updates)
+            .toList();
+
+        _editedPrayers = notifications
+            .where((e) => e.messageType == NotificationType.edited_prayers)
+            .toList();
+
+        _archivedPrayers = notifications
+            .where((e) => e.messageType == NotificationType.archived_prayers)
+            .toList();
+
+        _answeredPrayers = notifications
+            .where((e) => e.messageType == NotificationType.answered_prayers)
+            .toList();
+
         _notifications = notifications;
 
         notifyListeners();
