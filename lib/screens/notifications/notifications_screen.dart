@@ -424,10 +424,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   String? groupName(String id) {
     final allGroups = Provider.of<GroupProvider>(context).allGroups;
-    final groupName =
-        (allGroups.firstWhere((element) => element.group?.id == id).group ??
-                GroupModel.defaultValue())
-            .name;
+    final groupName = (allGroups
+                .firstWhere(
+                  (element) => element.group?.id == id,
+                  orElse: () => CombineGroupUserStream.defaultValue(),
+                )
+                .group ??
+            GroupModel.defaultValue())
+        .name;
     return groupName;
   }
 
