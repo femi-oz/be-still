@@ -4,6 +4,7 @@ class UserDataModel {
   String? id;
   String? firstName;
   String? lastName;
+  String? email;
   DateTime? dateOfBirth;
   List<DeviceModel>? devices;
   String? churchName;
@@ -30,6 +31,7 @@ class UserDataModel {
       {this.id,
       this.firstName,
       this.lastName,
+      this.email,
       this.dateOfBirth,
       this.devices,
       this.churchName,
@@ -56,6 +58,7 @@ class UserDataModel {
     id = json['id'];
     firstName = json['firstName'];
     lastName = json['lastName'];
+    email = json['email'];
     dateOfBirth = json['dateOfBirth'];
     if (json['devices'] != null) {
       devices = <DeviceModel>[];
@@ -89,6 +92,7 @@ class UserDataModel {
     data['id'] = this.id;
     data['firstName'] = this.firstName;
     data['lastName'] = this.lastName;
+    data['email'] = this.email;
     data['dateOfBirth'] = this.dateOfBirth;
     if (this.devices != null) {
       data['devices'] = this.devices!.map((v) => v.toJson()).toList();

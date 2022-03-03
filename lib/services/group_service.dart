@@ -3,6 +3,8 @@ import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/group_settings_model.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/models/group.model.dart';
+import 'package:be_still/models/models/group_user.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/services/log_service.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -14,6 +16,7 @@ import 'package:dio/dio.dart';
 import '../locator.dart';
 
 class GroupService {
+  //#region
   final _databaseReference = FirebaseFirestore.instance;
   final CollectionReference<Map<String, dynamic>> _groupCollectionReference =
       FirebaseFirestore.instance.collection("Group");
@@ -660,5 +663,56 @@ class GroupService {
         modifiedBy: userId,
         modifiedOn: DateTime.now());
     return groupsSettings;
+  }
+  //#endregion
+
+//=============================================================================================================================//
+//new data structure
+
+  final CollectionReference<Map<String, dynamic>>
+      _groupDataCollectionReference =
+      FirebaseFirestore.instance.collection("groups_v2");
+
+  Future<void> createGroup(
+      {required String userId,
+      required String name,
+      required String purpose,
+      required bool requireAdminApproval,
+      required String organization,
+      required String location,
+      required String type}) async {
+    try {
+      final doc = GroupDataModel(
+        name: name,
+        purpose: purpose,
+        requireAdminApproval: requireAdminApproval,
+        location: location,
+        organization: organization,
+        requests: [],
+        type: type,
+        users: [
+          GroupUserDataModel(
+            enableNotificationForUpdates: true,
+            notifyMeOfFlaggedPrayers: true,
+            notifyWhenNewMemberJoins: true,
+            role: GroupUserRole.admin,
+            userId: userId,
+            status: Status.active,
+            createdBy: userId,
+            modifiedBy: userId,
+            createdDate: DateTime.now(),
+            modifiedDate: DateTime.now(),
+          )
+        ],
+        status: Status.active,
+        createdBy: userId,
+        modifiedBy: userId,
+        createdDate: DateTime.now(),
+        modifiedDate: DateTime.now(),
+      ).toJson();
+      await _groupDataCollectionReference.add(doc);
+    } catch (e) {
+      StringUtils.getErrorMessage(e);
+    }
   }
 }

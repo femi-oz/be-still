@@ -1,4 +1,4 @@
-class GroupUserModel {
+class GroupUserDataModel {
   String? id;
   String? userId;
   String? role;
@@ -11,7 +11,7 @@ class GroupUserModel {
   DateTime? modifiedDate;
   String? status;
 
-  GroupUserModel(
+  GroupUserDataModel(
       {this.id,
       this.userId,
       this.role,
@@ -24,7 +24,7 @@ class GroupUserModel {
       this.modifiedDate,
       this.status});
 
-  GroupUserModel.fromJson(Map<String, dynamic> json) {
+  GroupUserDataModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     userId = json['userId'];
     role = json['role'];

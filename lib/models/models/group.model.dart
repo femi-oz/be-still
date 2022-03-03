@@ -9,7 +9,7 @@ class GroupDataModel {
   String? location;
   String? type;
   bool? requireAdminApproval;
-  List<GroupUserModel>? users;
+  List<GroupUserDataModel>? users;
   List<RequestModel>? requests;
   String? createdBy;
   String? modifiedBy;
@@ -42,9 +42,9 @@ class GroupDataModel {
     type = json['type'];
     requireAdminApproval = json['requireAdminApproval'];
     if (json['users'] != null) {
-      users = <GroupUserModel>[];
+      users = <GroupUserDataModel>[];
       json['users'].forEach((v) {
-        users!.add(new GroupUserModel.fromJson(v));
+        users!.add(new GroupUserDataModel.fromJson(v));
       });
     }
     if (json['requests'] != null) {
