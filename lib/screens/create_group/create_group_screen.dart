@@ -27,7 +27,7 @@ class CreateGroupScreen extends StatefulWidget {
 }
 
 class _CreateGroupScreenState extends State<CreateGroupScreen> {
-  GroupType _option = GroupType.normal;
+  String _option = GroupType.normal;
   int _step = 1;
   AppController appController = Get.find();
   final _formKey = GlobalKey<FormState>();
