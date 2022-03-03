@@ -1,5 +1,5 @@
-import 'package:be_still/models/models/bible.model.dart';
-import 'package:be_still/models/models/devotional.model.dart';
+import 'package:be_still/models/v2/bible.model.dart';
+import 'package:be_still/models/v2/devotional.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

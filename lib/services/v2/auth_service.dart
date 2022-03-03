@@ -1,7 +1,7 @@
 import 'package:be_still/flavor_config.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/models/user.model.dart';
+import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/services/v2/user_service.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';

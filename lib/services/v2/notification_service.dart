@@ -4,9 +4,9 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/flavor_config.dart';
 import 'package:be_still/models/message_template.dart';
-import 'package:be_still/models/models/local_notification.model.dart';
-import 'package:be_still/models/models/message.model.dart';
-import 'package:be_still/models/models/notification.mode.dart';
+import 'package:be_still/models/v2/local_notification.model.dart';
+import 'package:be_still/models/v2/message.model.dart';
+import 'package:be_still/models/v2/notification.mode.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 

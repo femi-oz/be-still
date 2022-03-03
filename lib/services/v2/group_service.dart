@@ -1,9 +1,9 @@
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/models/group.model.dart';
-import 'package:be_still/models/models/group_user.model.dart';
-import 'package:be_still/models/models/request.model.dart';
+import 'package:be_still/models/v2/group.model.dart';
+import 'package:be_still/models/v2/group_user.model.dart';
+import 'package:be_still/models/v2/request.model.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
