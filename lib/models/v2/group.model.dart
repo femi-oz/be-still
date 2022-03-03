@@ -1,5 +1,5 @@
-import 'package:be_still/models/models/group_user.model.dart';
-import 'package:be_still/models/models/request.model.dart';
+import 'package:be_still/models/v2/group_user.model.dart';
+import 'package:be_still/models/v2/request.model.dart';
 
 class GroupDataModel {
   String? id;

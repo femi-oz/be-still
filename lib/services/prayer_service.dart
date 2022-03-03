@@ -865,7 +865,7 @@ class PrayerService {
               .map((e) => PrayerDataModel.fromJson(e.data()))
               .toList());
     } catch (e) {
-      throw StringUtils.getErrorMessage(e);
+      throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 

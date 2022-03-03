@@ -125,9 +125,7 @@ class AuthenticationService {
           email: email,
           firstName: firstName,
           lastName: lastName,
-          dateOfBirth: dob,
-          deviceId: '',
-          token: '');
+          dateOfBirth: dob);
       await sendEmailVerification();
     } on FirebaseException catch (e) {
       final message = StringUtils.generateExceptionMessage(e.code);

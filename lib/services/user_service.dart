@@ -26,18 +26,6 @@ class UserService {
   AuthenticationService _authenticationService =
       locator<AuthenticationService>();
 
-  deviceModel() async {
-    var deviceInfo = DeviceInfoPlugin();
-    if (Platform.isIOS) {
-      var iosInfo = await deviceInfo.iosInfo;
-      print(iosInfo);
-    } else {
-      var andriodInfo = await deviceInfo.androidInfo;
-
-      print(andriodInfo);
-    }
-  }
-
   Future addUserData(String uid, String email, String password,
       String firstName, String lastName, DateTime dob) async {
     // Generate uuid

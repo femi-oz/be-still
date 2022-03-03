@@ -2,13 +2,13 @@ class LocalNotificationModel {
   String? id;
   String? userId;
   String? message;
-  String? localNotificationId;
+  int? localNotificationId;
   String? type;
-  String? scheduleDate;
+  DateTime? scheduleDate;
   String? createdBy;
   String? modifiedBy;
-  String? createdDate;
-  String? modifiedDate;
+  DateTime? createdDate;
+  DateTime? modifiedDate;
   String? status;
 
   LocalNotificationModel(

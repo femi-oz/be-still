@@ -62,6 +62,7 @@ class StringUtils {
       " icon to access recommended online Bibles, learn more about the app in the help section, or log out.";
   static String unathorized =
       "You're unathorized to perform this action. Kindly log in";
+  static String documentDoesNotExist = "Document does not exist.";
 
   static String getErrorMessage(e) {
     return (e?.message != null ? e.message : StringUtils.errorOccured) ??

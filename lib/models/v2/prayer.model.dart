@@ -1,6 +1,6 @@
-import 'package:be_still/models/models/follower.model.dart';
-import 'package:be_still/models/models/tag.model.dart';
-import 'package:be_still/models/models/update.model.dart';
+import 'package:be_still/models/v2/follower.model.dart';
+import 'package:be_still/models/v2/tag.model.dart';
+import 'package:be_still/models/v2/update.model.dart';
 
 class PrayerDataModel {
   String? id;
