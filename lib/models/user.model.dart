@@ -1,51 +1,83 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class UserModel {
-  final String id;
-  final String firstName;
-  final String lastName;
-  final String email;
-  final String keyReference;
-  final int churchId;
-  final String dateOfBirth;
-  final String createdBy;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
+  String? id;
+  String? firstName;
+  String? lastName;
+  String? email;
+  String? keyReference;
+  int? churchId;
+  String? dateOfBirth;
+  String? createdBy;
+  String? pushToken;
+  DateTime? createdOn;
+  String? modifiedBy;
+  DateTime? modifiedOn;
 
-  const UserModel({
+  UserModel({
     this.id,
-    @required this.firstName,
-    @required this.lastName,
-    @required this.email,
-    @required this.keyReference,
-    @required this.churchId,
-    @required this.dateOfBirth,
-    @required this.createdBy,
-    @required this.createdOn,
-    @required this.modifiedBy,
-    @required this.modifiedOn,
+    this.firstName,
+    this.lastName,
+    this.email,
+    this.keyReference,
+    this.churchId,
+    this.dateOfBirth,
+    this.pushToken,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
   });
 
-  UserModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
-      : id = snapshot.id,
-        firstName = snapshot.data()['FirstName'],
-        lastName = snapshot.data()['LastName'],
-        email = snapshot.data()['Email'],
-        keyReference = snapshot.data()['KeyReference'],
-        churchId = snapshot.data()['ChurchId'],
-        dateOfBirth = '',
-        createdBy = snapshot.data()['CreatedBy'],
-        createdOn = snapshot.data()['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data()['ModifiedBy'],
-        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+  factory UserModel.defaultValue() => UserModel(
+      id: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      keyReference: '',
+      churchId: 0,
+      dateOfBirth: '',
+      pushToken: '',
+      createdBy: '',
+      createdOn: DateTime.now(),
+      modifiedBy: '',
+      modifiedOn: DateTime.now());
+
+  factory UserModel.fromData(Map<String, dynamic> data, String did) {
+    final id = did;
+    final firstName = data['FirstName'] ?? '';
+    final pushToken = data['PushToken'] ?? '';
+    final lastName = data['LastName'] ?? '';
+    final email = data['Email'] ?? '';
+    final keyReference = data['KeyReference'] ?? '';
+    final churchId = data['ChurchId'] ?? '';
+    final dateOfBirth = '';
+    final createdBy = data['CreatedBy'] ?? '';
+    final createdOn = data['CreatedOn'].toDate() ?? DateTime.now();
+    final modifiedBy = data['ModifiedBy'] ?? '';
+    final modifiedOn = data['ModifiedOn'].toDate() ?? DateTime.now();
+
+    return UserModel(
+        id: id,
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        keyReference: keyReference,
+        churchId: churchId,
+        dateOfBirth: dateOfBirth,
+        pushToken: pushToken,
+        createdBy: createdBy,
+        createdOn: createdOn,
+        modifiedBy: modifiedBy,
+        modifiedOn: modifiedOn);
+  }
 
   Map<String, dynamic> toJson() {
     return {
       'FirstName': firstName,
       'LastName': lastName,
       'Email': email,
+      'PushToken': pushToken,
       'DOB': dateOfBirth,
       'KeyReference': keyReference,
       'ChurchId': churchId,
@@ -65,4 +97,10 @@ class UserModel {
       'keyReference': keyReference,
     };
   }
+}
+
+class UserVerify {
+  final PlatformException? error;
+  final bool needsVerification;
+  UserVerify({required this.error, required this.needsVerification});
 }

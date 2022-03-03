@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/auth_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
+import 'package:be_still/providers/group_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -25,6 +27,7 @@ class CustomDrawer extends StatefulWidget {
   final GlobalKey keyButton3;
   final GlobalKey keyButton4;
   final GlobalKey keyButton5;
+  final GlobalKey keyButton6;
   final scaffoldKey;
   CustomDrawer(
     this.setCurrentIndex,
@@ -33,6 +36,7 @@ class CustomDrawer extends StatefulWidget {
     this.keyButton3,
     this.keyButton4,
     this.keyButton5,
+    this.keyButton6,
     this.scaffoldKey,
   );
 
@@ -57,7 +61,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
         throw 'Could not launch https://www.bestillapp.com/help';
       }
     } catch (e, s) {
-      BeStilDialog.showErrorDialog(context, e, _userProvider.currentUser, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.getErrorMessage(e),
+          _userProvider.currentUser, s);
     }
   }
 
@@ -81,14 +86,23 @@ class _CustomDrawerState extends State<CustomDrawer> {
           throw 'Could not launch https://my.bible.com/bible';
         }
       } catch (e, s) {
-        BeStilDialog.showErrorDialog(context, e, _userProvider.currentUser, s);
+        BeStilDialog.showErrorDialog(context, StringUtils.getErrorMessage(e),
+            _userProvider.currentUser, s);
       }
     }
+  }
+
+  closeAllStreams() {
+    Provider.of<GroupProvider>(context, listen: false).flush();
+    Provider.of<NotificationProvider>(context, listen: false).flush();
+    Provider.of<PrayerProvider>(context, listen: false).flush();
+    Provider.of<GroupPrayerProvider>(context, listen: false).flush();
   }
 
   _openLogoutConfirmation(BuildContext context) {
     final _authProvider =
         Provider.of<AuthenticationProvider>(context, listen: false);
+
     final dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
@@ -169,7 +183,16 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   ),
                   GestureDetector(
                     onTap: () async {
+                      final userId =
+                          Provider.of<UserProvider>(context, listen: false)
+                              .currentUser
+                              .id;
                       await _authProvider.signOut();
+                      Provider.of<NotificationProvider>(context, listen: false)
+                          .cancelLocalNotifications();
+                      Provider.of<UserProvider>(context, listen: false)
+                          .removePushToken(userId ?? '');
+                      closeAllStreams();
                       Navigator.pushReplacement(
                         context,
                         SlideRightRoute(page: LoginScreen()),
@@ -247,8 +270,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           color: AppColors.topNavTextColor,
                         ),
                         onTap: () {
-                          // AppCOntroller appCOntroller = Get.find();
-                          // appCOntroller.setCurrentPage(0, false);
+                          // appController appController = Get.find();
+                          // appController.setCurrentPage(0, false);
                           Navigator.pop(context);
                         },
                       )
@@ -275,9 +298,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: InkWell(
                             onTap: () async {
-                              AppCOntroller appCOntroller = Get.find();
+                              AppController appController = Get.find();
 
-                              appCOntroller.setCurrentPage(6, false);
+                              appController.setCurrentPage(6, false, 0);
                               await Future.delayed(Duration(milliseconds: 300));
                               Navigator.pop(context);
                             },
@@ -290,9 +313,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: InkWell(
                               onTap: () async {
-                                AppCOntroller appCOntroller = Get.find();
+                                AppController appController = Get.find();
 
-                                appCOntroller.setCurrentPage(5, false);
+                                appController.setCurrentPage(5, false, 0);
                                 await Future.delayed(
                                     Duration(milliseconds: 300));
                                 Navigator.pop(context);
@@ -305,10 +328,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: InkWell(
                             onTap: () async {
-                              AppCOntroller appCOntroller = Get.find();
+                              AppController appController = Get.find();
 
-                              appCOntroller.setCurrentPage(4, false);
-                              appCOntroller.settingsTab = 0;
+                              appController.setCurrentPage(4, false, 0);
+                              appController.settingsTab = 0;
                               await Future.delayed(Duration(milliseconds: 300));
                               Navigator.pop(context);
                             },
@@ -330,17 +353,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: InkWell(
                             onTap: () {
-                              AppCOntroller appCOntroller = Get.find();
+                              AppController appController = Get.find();
 
-                              appCOntroller.setCurrentPage(0, true);
+                              appController.setCurrentPage(0, true, 0);
                               Navigator.pop(context);
-                              TutorialTarget.showTutorial(
+                              TutorialTarget().showTutorial(
                                 context,
                                 widget.keyButton,
                                 widget.keyButton2,
                                 widget.keyButton3,
                                 widget.keyButton4,
                                 widget.keyButton5,
+                                widget.keyButton6,
                               );
                             },
                             child: Text("QUICK TIPS",

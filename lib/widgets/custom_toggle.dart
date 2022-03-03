@@ -7,8 +7,14 @@ class CustomToggle extends StatelessWidget {
   final Function onChange;
   final bool value;
   final bool hasText;
-  final String title;
-  CustomToggle({this.value, this.onChange, this.title, this.hasText = true});
+  final bool disabled;
+  final String? title;
+  CustomToggle(
+      {required this.value,
+      required this.onChange,
+      this.title,
+      this.hasText = true,
+      this.disabled = false});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -20,25 +26,26 @@ class CustomToggle extends StatelessWidget {
             Container(
               width: MediaQuery.of(context).size.width * 0.7,
               child: Text(
-                title,
+                title ?? '',
                 style: AppTextStyles.regularText15.copyWith(
-                  color: AppColors.textFieldText,
+                  color:
+                      AppColors.textFieldText.withOpacity(disabled ? 0.3 : 1),
                 ),
               ),
             ),
           Platform.isIOS
               ? CupertinoSwitch(
-                  value: value,
+                  value: disabled ? false : value,
                   activeColor: AppColors.lightBlue4,
                   trackColor: Colors.grey[400],
-                  onChanged: (value) => onChange(value),
+                  onChanged: disabled ? null : (value) => onChange(value),
                 )
               : Switch(
-                  value: value,
+                  value: disabled ? false : value,
                   activeColor: Colors.white,
                   activeTrackColor: AppColors.lightBlue4,
                   inactiveThumbColor: Colors.white,
-                  onChanged: (value) => onChange(value),
+                  onChanged: disabled ? null : (value) => onChange(value),
                 ),
         ],
       ),

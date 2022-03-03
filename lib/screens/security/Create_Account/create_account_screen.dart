@@ -1,10 +1,8 @@
-import 'dart:convert';
-
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -38,7 +36,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       new TextEditingController();
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _dobController = new TextEditingController();
-  DateTime _selectedDate;
+  DateTime _selectedDate = DateTime.now();
   bool _enableSubmit = false;
   bool _autoValidate = false;
 
@@ -55,7 +53,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     FocusScope.of(context).unfocus();
     var pickedDate = await showDatePicker(
       context: context,
-      initialDate: _selectedDate == null ? DateTime.now() : _selectedDate,
+      initialDate: _selectedDate,
       firstDate: DateTime(1901, 1),
       lastDate: DateTime.now(),
     );
@@ -77,29 +75,33 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       PlatformException e = PlatformException(
           code: 'custom',
           message: 'You must accept terms to create an account.');
-      BeStilDialog.showErrorDialog(context, e, null, null);
+      final s = StackTrace.fromString(e.stacktrace ?? '');
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
       return;
     }
     setState(() => _autoValidate = true);
-    if (!_formKey.currentState.validate()) return null;
-    _formKey.currentState.save();
+    if (!_formKey.currentState!.validate()) return null;
+    _formKey.currentState!.save();
 
     try {
       BeStilDialog.showLoading(context, 'Registering...');
-      if (_firstnameController.text == null ||
-          _firstnameController.text.trim() == '') {
+      if (_firstnameController.text.trim().isEmpty) {
         BeStilDialog.hideLoading(context);
         PlatformException e = PlatformException(
             code: 'custom',
             message: 'First Name is empty, please enter a valid name.');
-        BeStilDialog.showErrorDialog(context, e, null, null);
-      } else if (_lastnameController.text == null ||
-          _lastnameController.text.trim() == '') {
+        final s = StackTrace.fromString(e.stacktrace ?? '');
+        BeStilDialog.showErrorDialog(context, StringUtils.getErrorMessage(e),
+            UserModel.defaultValue(), s);
+      } else if (_lastnameController.text.trim().isEmpty) {
         BeStilDialog.hideLoading(context);
         PlatformException e = PlatformException(
             code: 'custom',
             message: 'Last Name is empty, please enter a valid name.');
-        BeStilDialog.showErrorDialog(context, e, null, null);
+        final s = StackTrace.fromString(e.stacktrace ?? '');
+        BeStilDialog.showErrorDialog(context, StringUtils.getErrorMessage(e),
+            UserModel.defaultValue(), s);
       } else {
         await Provider.of<AuthenticationProvider>(context, listen: false)
             .registerUser(
@@ -109,41 +111,24 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           lastName: _lastnameController.text,
           dob: _selectedDate,
         );
-        await Provider.of<UserProvider>(context, listen: false)
-            .setCurrentUser(false);
-        final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
-        Settings.lastUser =
-            Settings.rememberMe ? jsonEncode(user.toJson2()) : '';
-        Settings.userPassword =
-            Settings.rememberMe ? _passwordController.text : '';
+
+        Settings.lastUser = '';
+        Settings.userPassword = '';
+        Settings.enableLocalAuth = false;
         BeStilDialog.hideLoading(context);
         showInfoDialog(context);
       }
     } on HttpException catch (e, s) {
-      var message = '';
-
-      if (e.message ==
-          'The email has already been registered. Please login or reset your password.') {
-        message =
-            'That email address is already in use. Please select another one.';
-      } else {
-        message = e.message;
-      }
-
       BeStilDialog.hideLoading(context);
 
-      PlatformException er =
-          PlatformException(code: 'custom', message: message);
-
-      BeStilDialog.showErrorDialog(context, er, null, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
     } catch (e, s) {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
           _emailController.text, 'REGISTER/screen/_createAccount');
-
       BeStilDialog.hideLoading(context);
-
-      BeStilDialog.showErrorDialog(context, e, null, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.errorOccured, UserModel.defaultValue(), s);
     }
   }
 
@@ -364,7 +349,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       child: Form(
         key: _formKey,
         // ignore: deprecated_member_use
-        autovalidate: _autoValidate,
+        // autovalidate: _autoValidate,
+
+        autovalidateMode: _autoValidate
+            ? AutovalidateMode.onUserInteraction
+            : AutovalidateMode.disabled,
         child: Column(
           children: <Widget>[
             CustomInput(
@@ -423,7 +412,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               controller: _confirmPasswordController,
               keyboardType: TextInputType.visiblePassword,
               isRequired: true,
-              validator: (value) {
+              validator: (String value) {
                 if (_passwordController.text != value) {
                   return 'Password fields do not match';
                 }

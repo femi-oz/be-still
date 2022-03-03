@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -28,7 +29,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  AnimationController _textAnimationController;
+  late AnimationController _textAnimationController;
   AuthenticationProvider _authenticationProvider = AuthenticationProvider();
 
   var _isInit = true;
@@ -50,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
         startTime();
       });
       setState(() => _isInit = false);
@@ -70,36 +71,44 @@ class _SplashScreenState extends State<SplashScreen>
             Settings.enabledContactPermission = p == PermissionStatus.granted);
       }
     } catch (e, s) {
-      BeStilDialog.showErrorDialog(context, e, null, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
     }
   }
 
   Future<void> setRouteDestination() async {
-    _getPermissions();
-    var message =
-        Provider.of<NotificationProvider>(context, listen: false).message;
-    if (message != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        if (message.type == NotificationType.prayer_time) {
-          await Provider.of<PrayerProvider>(context, listen: false)
-              .setPrayerTimePrayers(message.entityId);
-          AppCOntroller appCOntroller = Get.find();
-
-          appCOntroller.setCurrentPage(2, false);
-          Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
-          Navigator.of(context).pushNamedAndRemoveUntil(
-              EntryScreen.routeName, (Route<dynamic> route) => false);
-        }
-        if (message.type == NotificationType.prayer) {
-          await Provider.of<PrayerProvider>(context, listen: false)
-              .setPrayer(message.entityId);
-        }
-      });
-      Provider.of<NotificationProvider>(context, listen: false).clearMessage();
-    } else {
-      Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+    try {
+      _getPermissions();
+      final message =
+          Provider.of<NotificationProvider>(context, listen: false).message;
+      if ((message.entityId ?? '').isNotEmpty) {
+        WidgetsBinding.instance?.addPostFrameCallback((_) async {
+          if (message.type == NotificationType.prayer_time) {
+            await Provider.of<PrayerProvider>(context, listen: false)
+                .setPrayerTimePrayers(message.entityId ?? '');
+            AppController appController = Get.find();
+            appController.setCurrentPage(2, false, 0);
+            Provider.of<MiscProvider>(context, listen: false)
+                .setLoadStatus(true);
+            Navigator.of(context).pushNamedAndRemoveUntil(
+                EntryScreen.routeName, (Route<dynamic> route) => false);
+          }
+          if (message.type == NotificationType.prayer) {
+            Provider.of<PrayerProvider>(context, listen: false)
+                .setCurrentPrayerId(message.entityId ?? '');
+          }
+        });
+        Provider.of<NotificationProvider>(context, listen: false)
+            .clearMessage();
+      } else {
+        Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            EntryScreen.routeName, (Route<dynamic> route) => false);
+      }
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -147,95 +156,93 @@ class _SplashScreenState extends State<SplashScreen>
 
   initScreen(BuildContext context) {
     double targetValue = MediaQuery.of(context).size.height * 0.3;
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: Settings.isDarkMode
-              ? LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  colors: [
-                      Color(0xFF043569),
-                      Color(0xFF011730),
-                      Color(0xFF043467),
-                      Color(0xFF01162E),
-                    ])
-              : RadialGradient(colors: [Color(0XFFFFFFFF), Color(0XFFC1C5C8)]),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 32),
-        child: Column(
-          children: [
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TweenAnimationBuilder(
-                    tween: Tween<double>(begin: 0, end: targetValue),
-                    onEnd: () {
-                      setState(() => targetValue = targetValue);
-                    },
-                    duration: Duration(seconds: 2),
-                    builder: (BuildContext context, double size, Widget child) {
-                      return Container(
-                        height: size,
-                        child: Image.asset(
-                          StringUtils.logo,
-                          fit: BoxFit.cover,
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
+    return Container(
+      height: Get.height,
+      decoration: BoxDecoration(
+        gradient: Settings.isDarkMode
+            ? LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [
+                    Color(0xFF043569),
+                    Color(0xFF011730),
+                    Color(0xFF043467),
+                    Color(0xFF01162E),
+                  ])
+            : RadialGradient(colors: [Color(0XFFFFFFFF), Color(0XFFC1C5C8)]),
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 32),
+      child: Column(
+        children: [
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TweenAnimationBuilder(
+                  tween: Tween<double>(begin: 0, end: targetValue),
+                  onEnd: () {
+                    setState(() => targetValue = targetValue);
+                  },
+                  duration: Duration(seconds: 2),
+                  builder: (BuildContext context, double size, Widget? child) {
+                    return Container(
+                      height: size,
+                      child: Image.asset(
+                        StringUtils.logo,
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
-            AnimatedBuilder(
-              animation: _textAnimationController,
-              builder: (context, widget) {
-                return Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.copyright,
-                          size: 12,
+          ),
+          AnimatedBuilder(
+            animation: _textAnimationController,
+            builder: (context, widget) {
+              return Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.copyright,
+                        size: 12,
+                        color: AppColors.splashTextColor,
+                      ),
+                      Text(
+                        StringUtils.copyRight1,
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.medium10.copyWith(
                           color: AppColors.splashTextColor,
                         ),
-                        Text(
-                          StringUtils.copyRight1,
-                          textAlign: TextAlign.center,
-                          style: AppTextStyles.medium10.copyWith(
-                            color: AppColors.splashTextColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 4),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          AppIcons.bestill_copyright,
-                          size: 16,
-                          color: AppColors.splashLogo,
-                        ),
-                        SizedBox(width: 10.0),
-                        Text(
-                          StringUtils.copyRight2,
-                          textAlign: TextAlign.center,
-                          style: AppTextStyles.medium10.copyWith(
-                            color: AppColors.splashTextColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                );
-              },
-            ),
-            SizedBox(height: 40.0),
-          ],
-        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        AppIcons.bestill_copyright,
+                        size: 16,
+                        color: AppColors.splashLogo,
+                      ),
+                      SizedBox(width: 10.0),
+                      Text(
+                        StringUtils.copyRight2,
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.medium10.copyWith(
+                            color: AppColors.splashTextColor, fontSize: 8),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
+          SizedBox(height: 40.0),
+        ],
       ),
     );
   }

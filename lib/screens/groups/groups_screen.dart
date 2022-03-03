@@ -1,13 +1,11 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/groups/widgets/group_tools.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -25,22 +23,27 @@ class GroupScreen extends StatefulWidget {
 }
 
 class _GroupScreenState extends State<GroupScreen> {
-  AppCOntroller appCOntroller = Get.find();
+  AppController appController = Get.find();
 
-  UserModel _user;
   Future<bool> _onWillPop() async {
-    return (Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
-        false;
+    // return (Navigator.of(context).pushNamedAndRemoveUntil(
+    //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+    //     false;
+    return false;
   }
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-      await Provider.of<MiscProvider>(context, listen: false)
-          .setPageTitle('MY GROUPS');
-      // appCOntroller.setCurrentPage(4, true);
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      try {
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setPageTitle('GROUPS');
+      } catch (e, s) {
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.errorOccured, user, s);
+      }
     });
     super.initState();
   }
@@ -49,12 +52,6 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   void didChangeDependencies() async {
     if (_isInit) {
-      // final _user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // await Provider.of<GroupProvider>(context, listen: false)
-      //     .setAllGroups(_user.id);
-      // await Provider.of<GroupProvider>(context, listen: false)
-      //     .setUserGroups(_user.id);
       setState(() {});
 
       _isInit = false;
@@ -67,26 +64,30 @@ class _GroupScreenState extends State<GroupScreen> {
       await Provider.of<GroupProvider>(context, listen: false)
           .setCurrentGroup(data);
       await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setGroupPrayers(data.group.id);
+          .setGroupPrayers(data.group?.id ?? '');
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    var data = Provider.of<GroupProvider>(context, listen: false).userGroups;
-    
+    final data = Provider.of<GroupProvider>(context).userGroups;
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-        appBar: CustomAppBar(showPrayerActions: false),
+        appBar: CustomAppBar(
+          showPrayerActions: false,
+          isSearchMode: false,
+          showOnlyTitle: true,
+        ),
         body: SingleChildScrollView(
           child: Container(
             decoration: BoxDecoration(
@@ -98,6 +99,7 @@ class _GroupScreenState extends State<GroupScreen> {
               image: DecorationImage(
                 image: AssetImage(StringUtils.backgroundImage),
                 alignment: Alignment.bottomCenter,
+                fit: BoxFit.cover,
               ),
             ),
             child: SizedBox(
@@ -111,9 +113,17 @@ class _GroupScreenState extends State<GroupScreen> {
                       padding: EdgeInsets.only(left: 50),
                       child: LongButton(
                         onPress: () {
-                          Provider.of<MiscProvider>(context, listen: false)
-                              .setPageTitle('FIND A GROUP');
-                          appCOntroller.setCurrentPage(11, true);
+                          try {
+                            Provider.of<MiscProvider>(context, listen: false)
+                                .setPageTitle('FIND A GROUP');
+                            appController.setCurrentPage(11, true, 3);
+                          } catch (e, s) {
+                            final user = Provider.of<UserProvider>(context,
+                                    listen: false)
+                                .currentUser;
+                            BeStilDialog.showErrorDialog(
+                                context, StringUtils.errorOccured, user, s);
+                          }
                         },
                         text: 'FIND A GROUP',
                         backgroundColor:
@@ -127,12 +137,20 @@ class _GroupScreenState extends State<GroupScreen> {
                       padding: EdgeInsets.only(left: 50),
                       child: LongButton(
                         onPress: () async {
-                          await Provider.of<MiscProvider>(context,
-                                  listen: false)
-                              .setPageTitle('CREATE A GROUP');
-                          Provider.of<GroupProvider>(context, listen: false)
-                              .setEditMode(false);
-                          appCOntroller.setCurrentPage(12, true);
+                          try {
+                            await Provider.of<MiscProvider>(context,
+                                    listen: false)
+                                .setPageTitle('CREATE A GROUP');
+                            Provider.of<GroupProvider>(context, listen: false)
+                                .setEditMode(false);
+                            appController.setCurrentPage(12, true, 3);
+                          } catch (e, s) {
+                            final user = Provider.of<UserProvider>(context,
+                                    listen: false)
+                                .currentUser;
+                            BeStilDialog.showErrorDialog(
+                                context, StringUtils.errorOccured, user, s);
+                          }
                         },
                         text: 'CREATE A GROUP',
                         backgroundColor:
@@ -144,87 +162,108 @@ class _GroupScreenState extends State<GroupScreen> {
                     SizedBox(height: 30),
                     data.length == 0
                         ? Container(
-                            padding: EdgeInsets.only(right: 20, left: 20),
-                            child: Text(
-                              'You are currently not in any groups',
-                              style: AppTextStyles.demiboldText34,
-                              textAlign: TextAlign.center,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 80, vertical: 60),
+                            child: Opacity(
+                              opacity: 0.3,
+                              child: Text(
+                                'You are currently not in any group',
+                                style: AppTextStyles.demiboldText34,
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           )
                         : Container(
                             padding: EdgeInsets.only(left: 50),
                             child: Column(
                               children: <Widget>[
-                                ...data
-                                    .map(
-                                      (e) => Column(
-                                        children: [
-                                          LongButton(
-                                            onPress: () async {
-                                              _getPrayers(e);
-                                              appCOntroller.setCurrentPage(
-                                                  8, true);
-                                            },
-                                            text: e.group.name.capitalizeFirst,
-                                            backgroundColor:
-                                                AppColors.groupCardBgColor,
-                                            textColor: AppColors.lightBlue3,
-                                            hasIcon: false,
-                                            hasMore: true,
-                                            child:_user != null? e.groupUsers.firstWhere((x) => (x.userId == _user.id && x.role == GroupUserRole.admin), orElse: () => null) != null? Container(
-                                              alignment: Alignment.center,
-                                              height: 25,
-                                              width: 60,
-                                              decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color:
-                                                          AppColors.lightBlue3,
-                                                      width: 1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(10)),
-                                              child: Text(
+                                ...data.map((e) {
+                                  final _currentUser =
+                                      Provider.of<UserProvider>(context)
+                                          .currentUser;
+
+                                  bool isAdmin = (e.groupUsers ?? [])
+                                      .where(
+                                          (e) => e.role == GroupUserRole.admin)
+                                      .map((e) => e.userId)
+                                      .contains(_currentUser.id);
+                                  return Column(
+                                    children: [
+                                      LongButton(
+                                        onPress: () async {
+                                          try {
+                                            _getPrayers(e);
+                                            appController.setCurrentPage(
+                                                8, true, 3);
+                                          } on HttpException catch (e, s) {
+                                            final user =
+                                                Provider.of<UserProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .currentUser;
+                                            BeStilDialog.showErrorDialog(
+                                                context,
+                                                StringUtils.getErrorMessage(e),
+                                                user,
+                                                s);
+                                          } catch (e, s) {
+                                            final user =
+                                                Provider.of<UserProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .currentUser;
+                                            BeStilDialog.showErrorDialog(
+                                                context,
+                                                StringUtils.errorOccured,
+                                                user,
+                                                s);
+                                          }
+                                        },
+                                        text: e.group?.name ?? '',
+                                        backgroundColor:
+                                            AppColors.groupCardBgColor,
+                                        textColor: AppColors.lightBlue3,
+                                        hasIcon: false,
+                                        hasMore: true,
+                                        child: isAdmin
+                                            ? Text(
                                                 "Admin",
                                                 style: TextStyle(
-                                                  color: AppColors.lightBlue3,
-                                                  fontSize: 12
-                                                ),
+                                                    color: AppColors.lightBlue3,
+                                                    fontSize: 12),
                                                 textAlign: TextAlign.center,
-                                              ),
-                                            ): SizedBox.shrink():SizedBox.shrink(),
-                                            onPressMore: () =>
-                                                showModalBottomSheet(
-                                              context: context,
-                                              barrierColor:
-                                                  Provider.of<ThemeProvider>(
-                                                              context,
-                                                              listen: false)
-                                                          .isDarkModeEnabled
-                                                      ? AppColors
-                                                          .backgroundColor[0]
-                                                          .withOpacity(0.8)
-                                                      : Color(0xFF021D3C)
-                                                          .withOpacity(0.7),
-                                              backgroundColor:
-                                                  Provider.of<ThemeProvider>(
-                                                              context,
-                                                              listen: false)
-                                                          .isDarkModeEnabled
-                                                      ? AppColors
-                                                          .backgroundColor[0]
-                                                          .withOpacity(0.8)
-                                                      : Color(0xFF021D3C)
-                                                          .withOpacity(0.7),
-                                              isScrollControlled: true,
-                                              builder: (BuildContext context) {
-                                                return GroupTools(e);
-                                              },
-                                            ),
-                                          ),
-                                          SizedBox(height: 10),
-                                        ],
+                                              )
+                                            : null,
+                                        onPressMore: () => showModalBottomSheet(
+                                          context: context,
+                                          barrierColor:
+                                              Provider.of<ThemeProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .isDarkModeEnabled
+                                                  ? AppColors.backgroundColor[0]
+                                                      .withOpacity(0.8)
+                                                  : Color(0xFF021D3C)
+                                                      .withOpacity(0.7),
+                                          backgroundColor:
+                                              Provider.of<ThemeProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .isDarkModeEnabled
+                                                  ? AppColors.backgroundColor[0]
+                                                      .withOpacity(0.8)
+                                                  : Color(0xFF021D3C)
+                                                      .withOpacity(0.7),
+                                          isScrollControlled: true,
+                                          builder: (BuildContext context) {
+                                            return GroupTools(e);
+                                          },
+                                        ),
                                       ),
-                                    )
-                                    .toList(),
+                                      SizedBox(height: 10),
+                                    ],
+                                  );
+                                }).toList(),
                               ],
                             ),
                           ),

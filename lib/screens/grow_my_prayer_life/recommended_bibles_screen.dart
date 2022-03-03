@@ -3,7 +3,7 @@ import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -25,15 +25,22 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
 
   @override
   void didChangeDependencies() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      var userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      await Provider.of<MiscProvider>(context, listen: false)
-          .setSearchMode(false);
-      await Provider.of<MiscProvider>(context, listen: false)
-          .setSearchQuery('');
-      Provider.of<PrayerProvider>(context, listen: false)
-          .searchPrayers('', userId);
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      try {
+        var userId =
+            Provider.of<UserProvider>(context, listen: false).currentUser.id;
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setSearchMode(false);
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setSearchQuery('');
+        Provider.of<PrayerProvider>(context, listen: false)
+            .searchPrayers('', userId ?? '');
+      } catch (e, s) {
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.errorOccured, user, s);
+      }
     });
     super.didChangeDependencies();
   }
@@ -47,12 +54,13 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
   }
 
   Future<bool> _onWillPop() async {
-    AppCOntroller appCOntroller = Get.find();
+    AppController appController = Get.find();
 
-    appCOntroller.setCurrentPage(0, true);
-    return (Navigator.of(context).pushNamedAndRemoveUntil(
-            EntryScreen.routeName, (Route<dynamic> route) => false)) ??
-        false;
+    appController.setCurrentPage(0, true, 6);
+    // return (Navigator.of(context).pushNamedAndRemoveUntil(
+    //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
+    //     false;
+    return false;
   }
 
   @override
@@ -101,7 +109,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                               color: AppColors.lightBlue3,
                               size: 20,
                             ),
-                            // onPressed: () => widget.setCurrentIndex(0, true),
+                            // onPressed: () => widget.setCurrentIndex(0, true, 6),
                             onPressed: () =>
                                 Scaffold.of(context).openEndDrawer(),
                             label: Container(
@@ -181,7 +189,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                     margin: EdgeInsets.only(
                         left: MediaQuery.of(context).size.width * 0.1),
                     child: Text(
-                      bibleData[i].shortName,
+                      bibleData[i].shortName ?? '',
                       textAlign: TextAlign.center,
                       style: AppTextStyles.boldText20.copyWith(
                         color: AppColors.white,
@@ -198,7 +206,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
                       child: Column(
                         children: <Widget>[
                           Text(
-                            bibleData[i].name,
+                            bibleData[i].name ?? '',
                             style: AppTextStyles.regularText16b
                                 .copyWith(color: AppColors.prayerTextColor),
                             textAlign: TextAlign.center,

@@ -10,8 +10,8 @@ class CustomButtonGroup extends StatelessWidget {
   final Color color;
   CustomButtonGroup({
     this.isSelected: false,
-    @required this.title,
-    @required this.onSelected,
+    required this.title,
+    required this.onSelected,
     this.length = 1,
     this.index = 0,
     this.color = AppColors.lightBlue4,
@@ -40,11 +40,13 @@ class CustomButtonGroup extends StatelessWidget {
                 side: MaterialStateProperty.all<BorderSide>(
                     BorderSide(color: Colors.transparent))),
             child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
               child: FittedBox(
+                fit: BoxFit.contain,
                 child: Text(
                   title.toUpperCase(),
                   style: AppTextStyles.boldText20
-                      .copyWith(color: color, height: 1.5),
+                      .copyWith(color: color, height: 1.2, fontSize: 14),
                 ),
               ),
             ),

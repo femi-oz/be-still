@@ -1,31 +1,32 @@
-import 'dart:ui';
-
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/groups/widgets/filter_options.dart';
-import 'package:be_still/screens/notifications/notifications_screen.dart';
 import 'package:be_still/screens/prayer/widgets/filter_options.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final Function switchSearchMode;
+  final Function? switchSearchMode;
   final bool isSearchMode;
   final bool showPrayerActions;
   final bool isGroup;
-  final GlobalKey globalKey;
+  final bool showOnlyTitle;
+  final GlobalKey? globalKey;
   CustomAppBar({
-    Key key,
+    Key? key,
     this.switchSearchMode,
     this.isSearchMode = false,
     this.isGroup = false,
+    this.showOnlyTitle = false,
     this.showPrayerActions = true,
     this.globalKey,
   })  : preferredSize = Size.fromHeight(kToolbarHeight),
@@ -42,18 +43,24 @@ class _CustomAppBarState extends State<CustomAppBar> {
   TextEditingController _searchController = TextEditingController();
   final _searchKey = GlobalKey();
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
   void _searchPrayer(String value) async {
     final userId =
         Provider.of<UserProvider>(context, listen: false).currentUser.id;
     await Provider.of<MiscProvider>(context, listen: false)
         .setSearchQuery(value);
     await Provider.of<PrayerProvider>(context, listen: false)
-        .searchPrayers(value, userId);
+        .searchPrayers(value, userId ?? '');
   }
 
   void _clearSearchField() async {
     _searchController.clear();
     _searchPrayer('');
+    _searchGroupPrayer('');
   }
 
   void _searchGroupPrayer(String value) async {
@@ -62,7 +69,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
     await Provider.of<MiscProvider>(context, listen: false)
         .setSearchQuery(value);
     await Provider.of<GroupPrayerProvider>(context, listen: false)
-        .searchPrayers(value, userId);
+        .searchPrayers(value, userId ?? '');
   }
 
   void _clearGroupSearchField() async {
@@ -123,11 +130,18 @@ class _CustomAppBarState extends State<CustomAppBar> {
         });
   }
 
+  int get getCount {
+    final notifications =
+        Provider.of<NotificationProvider>(context).notifications;
+    return notifications.length;
+  }
+
   @override
   Widget build(BuildContext context) {
     String pageTitle = Provider.of<MiscProvider>(context).pageTitle;
-    final notifications =
-        Provider.of<NotificationProvider>(context).notifications;
+    final searchQuery =
+        Provider.of<MiscProvider>(context, listen: true).searchQuery;
+    _searchController.text = searchQuery;
 
     return AppBar(
       flexibleSpace: Container(
@@ -149,8 +163,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
           widget.showPrayerActions
               ? InkWell(
                   onTap: () {
-                    if (_searchController.text.isEmpty) {
-                      widget.switchSearchMode(true);
+                    if (_searchController.text.isEmpty &&
+                        widget.switchSearchMode != null) {
+                      widget.switchSearchMode!(true);
                       Provider.of<MiscProvider>(context, listen: false)
                           .setSearchMode(true);
                       setState(() {});
@@ -197,7 +212,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
               : Container(),
         ],
       ),
-      title: widget.isSearchMode
+      title: !widget.showOnlyTitle && widget.isSearchMode
           ? Container(
               width: MediaQuery.of(context).size.width * 2,
               child: Row(
@@ -229,17 +244,18 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     ),
                     onTap: () => setState(
                       () {
-                        widget.isGroup
-                            ? _clearGroupSearchField()
-                            : _clearSearchField();
+                        if (widget.switchSearchMode != null) {
+                          widget.isGroup
+                              ? _clearGroupSearchField()
+                              : _clearSearchField();
 
-                        widget.switchSearchMode(false);
-                        Provider.of<MiscProvider>(context, listen: false)
-                            .setSearchMode(false);
-                        Provider.of<MiscProvider>(context, listen: false)
-                            .setSearchQuery('');
-
-                        setState(() {});
+                          widget.switchSearchMode!(false);
+                          Provider.of<MiscProvider>(context, listen: false)
+                              .setSearchMode(false);
+                          Provider.of<MiscProvider>(context, listen: false)
+                              .setSearchQuery('');
+                          setState(() {});
+                        }
                       },
                     ),
                   )
@@ -247,7 +263,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
               ),
             )
           : Text(
-              widget.showPrayerActions ? pageTitle : '',
+              widget.showOnlyTitle
+                  ? pageTitle
+                  : widget.showPrayerActions
+                      ? pageTitle
+                      : '',
               style: TextStyle(
                 color: AppColors.bottomNavIconColor,
                 fontSize: 22,
@@ -258,51 +278,39 @@ class _CustomAppBarState extends State<CustomAppBar> {
       actions: <Widget>[
         !widget.isSearchMode
             ? GestureDetector(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => NotificationsScreen(),
-                  ),
-                ),
+                onTap: () {
+                  AppController appController = Get.find();
+                  appController.setCurrentPage(
+                      14, false, appController.currentPage);
+                },
                 child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
                   child: Center(
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                              notifications.length != 0
-                                  ? Icons.notifications
-                                  : Icons.notifications_none,
-                              size: 30,
-                              color: notifications.length != 0
-                                  ? AppColors.red
-                                  : AppColors.white),
-                          onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => NotificationsScreen(),
-                            ),
-                          ),
-                        ),
-                        notifications.length != 0
-                            ? Padding(
-                                padding: EdgeInsets.only(
-                                    right: notifications.length == 1
-                                        ? 2
-                                        : notifications.length > 9
-                                            ? 1
-                                            : 0),
-                                child: Text(notifications.length.toString(),
-                                    style: TextStyle(
-                                        fontSize: 10,
-                                        color: AppColors.white,
-                                        fontWeight: FontWeight.w600)),
-                              )
-                            : Container(),
-                      ],
-                    ),
-                  ),
+                      child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Icon(
+                          getCount != 0
+                              ? Icons.notifications
+                              : Icons.notifications_none,
+                          size: 30,
+                          color:
+                              getCount != 0 ? AppColors.red : AppColors.white),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            right: getCount == 1
+                                ? 2
+                                : getCount > 9
+                                    ? 1
+                                    : 0),
+                        child: Text(getCount < 1 ? '' : getCount.toString(),
+                            style: TextStyle(
+                                fontSize: 10,
+                                color: AppColors.white,
+                                fontWeight: FontWeight.w600)),
+                      )
+                    ],
+                  )),
                 ),
               )
             : Container(),

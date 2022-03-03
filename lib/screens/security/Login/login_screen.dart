@@ -1,6 +1,7 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
@@ -8,8 +9,8 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
-import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/debouncer.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/navigation.dart';
@@ -40,8 +41,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  bool rememberMe = false;
-
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -50,14 +49,18 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordKey = GlobalKey();
   final _usernameKey = GlobalKey();
   final LocalAuthentication _localAuthentication = LocalAuthentication();
+  final _debounce = Debouncer(delay: const Duration(seconds: 1));
+  List<BiometricType> listOfBiometrics = [];
+  String verificationSendMessage = 'Resend verification email';
+
+  bool rememberMe = false;
   bool isBioMetricAvailable = false;
-  List<BiometricType> listOfBiometrics;
   bool showFingerPrint = false;
   bool showFaceId = false;
   bool showSuffix = true;
   bool _autoValidate = false;
   bool verificationSent = false;
-  String verificationSendMessage = 'Resend verification email';
+  bool isLoading = false;
   bool needsVerification = false;
 
   Future<void> _isBiometricAvailable() async {
@@ -103,9 +106,10 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_isInit) {
       setState(() => isFormValid = _usernameController.text.isNotEmpty &&
           _passwordController.text.isNotEmpty);
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
+      WidgetsBinding.instance?.addPostFrameCallback((_) async {
         await _isBiometricAvailable();
-        bool showBioAuth = ModalRoute.of(context)?.settings?.arguments ?? false;
+        bool showBioAuth =
+            (ModalRoute.of(context)?.settings.arguments ?? false) as bool;
         if (showBioAuth && isBioMetricAvailable && Settings.enableLocalAuth)
           _biologin();
       });
@@ -129,14 +133,14 @@ class _LoginScreenState extends State<LoginScreen> {
     FirebaseAuth auth = FirebaseAuth.instance;
 
     FirebaseDynamicLinks.instance.onLink(
-        onSuccess: (PendingDynamicLinkData dynamicLink) async {
-      final Uri deepLink = dynamicLink.link;
+        onSuccess: (PendingDynamicLinkData? dynamicLink) async {
+      final Uri? deepLink = dynamicLink?.link;
 
       if (deepLink != null) {
         var actionCode = deepLink.queryParameters['oobCode'];
         try {
-          await auth.checkActionCode(actionCode);
-          await auth.applyActionCode(actionCode);
+          await auth.checkActionCode(actionCode ?? '');
+          await auth.applyActionCode(actionCode ?? '');
           showInfoDialog(context);
         } on FirebaseAuthException catch (e) {
           if (e.code == 'invalid-action-code') {
@@ -149,15 +153,15 @@ class _LoginScreenState extends State<LoginScreen> {
       print(e.message);
     });
 
-    final PendingDynamicLinkData data =
+    final PendingDynamicLinkData? data =
         await FirebaseDynamicLinks.instance.getInitialLink();
-    final Uri deepLink = data?.link;
+    final Uri? deepLink = data?.link;
 
     if (deepLink != null) {
       var actionCode = deepLink.queryParameters['oobCode'];
       try {
-        await auth.checkActionCode(actionCode);
-        await auth.applyActionCode(actionCode);
+        await auth.checkActionCode(actionCode ?? '');
+        await auth.applyActionCode(actionCode ?? '');
         showInfoDialog(context);
       } on FirebaseAuthException catch (e) {
         if (e.code == 'invalid-action-code') {
@@ -229,36 +233,47 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> setRouteDestination() async {
-    var message =
-        Provider.of<NotificationProvider>(context, listen: false).message;
-    if (message != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
+    try {
+      final message =
+          Provider.of<NotificationProvider>(context, listen: false).message;
+      if ((message.entityId ?? '').isNotEmpty) {
         if (message.type == NotificationType.prayer_time) {
           await Provider.of<PrayerProvider>(context, listen: false)
-              .setPrayerTimePrayers(message.entityId);
-          // Provider.of<MiscProvider>(context, listen: false).setCurrentPage(2);
-          AppCOntroller appCOntroller = Get.find();
-
-          appCOntroller.setCurrentPage(2, false);
+              .setPrayerTimePrayers(message.entityId ?? '');
+          AppController appController = Get.find();
+          appController.setCurrentPage(2, false, 0);
           Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
           Navigator.of(context).pushNamedAndRemoveUntil(
               EntryScreen.routeName, (Route<dynamic> route) => false);
         }
         if (message.type == NotificationType.prayer) {
-          await Provider.of<PrayerProvider>(context, listen: false)
-              .setPrayer(message.entityId);
-          // NavigationService.instance.navigateToReplacement(PrayerDetails());
+          Provider.of<PrayerProvider>(context, listen: false)
+              .setCurrentPrayerId(message.entityId ?? '');
         }
-      });
-      Provider.of<NotificationProvider>(context, listen: false).clearMessage();
-    } else {
-      await Provider.of<MiscProvider>(context, listen: false)
-          .setLoadStatus(true);
-      AppCOntroller appCOntroller = Get.find();
+        Provider.of<NotificationProvider>(context, listen: false)
+            .clearMessage();
+      } else {
+        await Provider.of<MiscProvider>(context, listen: false)
+            .setLoadStatus(true);
+        AppController appController = Get.find();
 
-      appCOntroller.setCurrentPage(0, false);
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+        appController.setCurrentPage(0, false, 0);
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            EntryScreen.routeName, (Route<dynamic> route) => false);
+      }
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -273,29 +288,30 @@ class _LoginScreenState extends State<LoginScreen> {
       BeStilDialog.hideLoading(context);
       await Provider.of<AuthenticationProvider>(context, listen: false)
           .signOut();
-    } on HttpException catch (e) {
+    } on HttpException catch (e, s) {
       verificationSent = false;
       setState(() => verificationSendMessage =
           'Resend verification email failed. Please try again');
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e, null, null);
-    } catch (e) {
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
+    } catch (e, s) {
       verificationSent = false;
       setState(() => verificationSendMessage =
           'Resend verification email failed. Please try again');
       Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
           _usernameController.text, 'LOGIN/screen/_resendVerification');
       BeStilDialog.hideLoading(context);
-      PlatformException err = PlatformException(
-          code: 'custom', message: 'An error occured. Please try again.');
-      BeStilDialog.showErrorDialog(context, err, null, null);
+
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.errorOccured, UserModel.defaultValue(), s);
     }
   }
 
   void _login() async {
     setState(() => _autoValidate = true);
-    if (!_formKey.currentState.validate()) return null;
-    _formKey.currentState.save();
+    if (!_formKey.currentState!.validate()) return;
+    _formKey.currentState!.save();
 
     BeStilDialog.showLoading(context, 'Authenticating');
     try {
@@ -310,18 +326,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
       Settings.lastUser = jsonEncode(user.toJson2());
       Settings.userPassword = _passwordController.text;
-
-      LocalNotification.setNotificationsOnNewDevice(context);
+      if (Settings.enabledReminderPermission)
+        LocalNotification.setNotificationsOnNewDevice(context);
 
       BeStilDialog.hideLoading(context);
       await setRouteDestination();
     } on HttpException catch (e, s) {
       needsVerification =
-          Provider.of<AuthenticationProvider>(context, listen: false)
-              .needsVerification;
+          e.message == StringUtils.generateExceptionMessage('not-verified');
 
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e, null, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
     } catch (e, s) {
       needsVerification =
           Provider.of<AuthenticationProvider>(context, listen: false)
@@ -330,54 +346,70 @@ class _LoginScreenState extends State<LoginScreen> {
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
       BeStilDialog.hideLoading(context);
-      BeStilDialog.showErrorDialog(context, e, null, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.errorOccured, UserModel.defaultValue(), s);
     }
   }
 
-  void _biologin() async {
+  Future<void> _biologin() async {
     try {
-      var userInfo = jsonDecode(Settings.lastUser);
-      var usernname = userInfo['email'];
-      var password = Settings.userPassword;
+      final userInfo = jsonDecode(Settings.lastUser);
+      final usernname = userInfo['email'];
+      final password = Settings.userPassword;
       await Provider.of<AuthenticationProvider>(context, listen: false).signIn(
         email: usernname,
         password: password,
       );
-      var isAuth =
+      final isAuth =
           await Provider.of<AuthenticationProvider>(context, listen: false)
-              .biometricSignin(_usernameController.text);
+              .biometricSignin();
+      BeStilDialog.showLoading(context, 'Authenticating');
+      isLoading = true;
       if (isAuth) {
         await Provider.of<UserProvider>(context, listen: false)
             .setCurrentUser(false);
+        BeStilDialog.hideLoading(context);
+        isLoading = false;
 
         await setRouteDestination();
+      } else {
+        BeStilDialog.hideLoading(context);
+        isLoading = false;
       }
-    } on HttpException catch (e) {
-      BeStilDialog.showErrorDialog(context, e, null, null);
-    } catch (e) {
+    } on HttpException catch (e, s) {
+      if (isLoading) {
+        BeStilDialog.hideLoading(context);
+        isLoading = false;
+      }
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
+    } catch (e, s) {
+      if (isLoading) {
+        BeStilDialog.hideLoading(context);
+        isLoading = false;
+      }
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
-      PlatformException er = PlatformException(
-          code: 'custom', message: 'An error occured. Please try again');
-      BeStilDialog.showErrorDialog(context, er, null, null);
+
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.errorOccured, UserModel.defaultValue(), s);
     }
   }
 
   _toggleBiometrics() {
     if (Settings.enableLocalAuth) {
-      setState(() {
-        Settings.enableLocalAuth = false;
-        Settings.setenableLocalAuth = false;
-        showSuffix = true;
-      });
+      Settings.enableLocalAuth = false;
+      Settings.setenableLocalAuth = false;
+      showSuffix = true;
     } else {
-      _openLogoutConfirmation(context);
+      _openBioConfirmation(context);
       Settings.setenableLocalAuth = true;
       showSuffix = false;
     }
+    setState(() {});
   }
 
-  _openLogoutConfirmation(BuildContext context) {
+  _openBioConfirmation(BuildContext context) {
     AlertDialog dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
       contentPadding: EdgeInsets.all(0),
@@ -436,9 +468,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<bool> _onWillPop() async {
-    return (Navigator.of(context).pushNamedAndRemoveUntil(
-            LoginScreen.routeName, (Route<dynamic> route) => false)) ??
-        false;
+    // return (Navigator.of(context).pushNamedAndRemoveUntil(
+    //         LoginScreen.routeName, (Route<dynamic> route) => false)) ??
+    //     false;
+    return false;
   }
 
   bool isFormValid = false;
@@ -545,41 +578,44 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _bioButton() {
     return Container(
-      padding: EdgeInsets.only(
-        left: 40,
-      ),
-      child: Container(
-        width: 50.0,
-        height: 50.0,
-        padding: EdgeInsets.only(top: 15.0, right: 15.0),
-        child: GestureDetector(
-            onTap: () => _biologin(),
-            child: showFingerPrint && showFaceId
-                ? Image.asset(
-                    'assets/images/icon_face_id_ios.png',
-                  )
-                : !showFingerPrint && showFaceId
-                    ? Image.asset(
-                        'assets/images/icon_face_id_ios.png',
-                      )
-                    : Icon(
-                        Icons.fingerprint,
-                        color: Colors.black,
-                        size: 37,
-                      )),
-      ),
+      width: 50.0,
+      height: 50.0,
+      margin: EdgeInsets.only(left: 40),
+      padding: EdgeInsets.only(top: 15.0, right: 15.0),
+      child: GestureDetector(
+          onTap: () => _debounce(() {
+                _biologin();
+              }),
+          child: showFingerPrint && showFaceId
+              ? Image.asset(
+                  'assets/images/icon_face_id_ios.png',
+                )
+              : !showFingerPrint && showFaceId
+                  ? Image.asset(
+                      'assets/images/icon_face_id_ios.png',
+                    )
+                  : Icon(
+                      Icons.fingerprint,
+                      color: Colors.black,
+                      size: 37,
+                    )),
     );
   }
 
   void _setDefaults() {
     Settings.rememberMe = false;
-    setState(() => Settings.enableLocalAuth = false);
+    Settings.enableLocalAuth = false;
+    Settings.setenableLocalAuth = false;
   }
 
   Widget _buildForm() {
     return Form(
       // ignore: deprecated_member_use
-      autovalidate: _autoValidate,
+      // autovalidate: _autoValidate,
+
+      autovalidateMode: _autoValidate
+          ? AutovalidateMode.onUserInteraction
+          : AutovalidateMode.disabled,
       key: _formKey,
       child: Column(
         children: <Widget>[
@@ -592,13 +628,14 @@ class _LoginScreenState extends State<LoginScreen> {
             isEmail: true,
             isSearch: false,
             onTextchanged: (i) {
-              setState(() => isFormValid =
-                  _usernameController.text.isNotEmpty &&
-                      _passwordController.text.isNotEmpty);
+              isFormValid = _usernameController.text.isNotEmpty &&
+                  _passwordController.text.isNotEmpty;
+              print(Settings.lastUser);
               if (Settings.lastUser.isNotEmpty) {
                 if (_usernameController.text !=
                     jsonDecode(Settings.lastUser)['email']) _setDefaults();
               }
+              setState(() {});
             },
           ),
           SizedBox(height: 15.0),
@@ -624,7 +661,9 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               Align(
                   alignment: Alignment.bottomRight,
-                  child: Settings.enableLocalAuth ? _bioButton() : Container())
+                  child: Settings.enableLocalAuth
+                      ? _bioButton()
+                      : SizedBox.shrink())
             ],
           )
         ],
@@ -638,7 +677,9 @@ class _LoginScreenState extends State<LoginScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         InkWell(
-          child: Text("Create an Account", style: AppTextStyles.regularText15),
+          child: Text("Create an Account",
+              style: AppTextStyles.regularText14
+                  .copyWith(color: AppColors.lightBlue4)),
           onTap: () {
             Navigator.push(
               context,
@@ -648,18 +689,14 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         Row(
           children: <Widget>[
-            Text('Remember Me', style: AppTextStyles.regularText15),
-            SizedBox(width: 12),
+            Text('Remember Me',
+                style: AppTextStyles.regularText14
+                    .copyWith(color: AppColors.lightBlue4)),
             CustomToggle(
               hasText: false,
               onChange: (value) => setState(() => Settings.rememberMe = value),
               value: _remeberMe,
             ),
-            // Switch.adaptive(
-            //   activeColor: AppColors.lightBlue4,
-            //   value: _remeberMe,
-            //   onChanged: (value) => setState(() => Settings.rememberMe = value),
-            // ),
           ],
         ),
       ],

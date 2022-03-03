@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:be_still/enums/theme_mode.dart';
@@ -5,9 +6,12 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
+import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/navigation.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_edit_field.dart';
 import 'package:package_info/package_info.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -114,33 +118,38 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               height: 25,
             ),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 40),
+              margin: EdgeInsets.symmetric(horizontal: 30),
+
+              // margin: EdgeInsets.symmetric(horizontal: 20),
               width: double.infinity,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Container(
-                      height: 30,
-                      width: MediaQuery.of(context).size.width * .28,
-                      decoration: BoxDecoration(
-                        color: AppColors.grey.withOpacity(0.5),
-                        border: Border.all(
-                          color: AppColors.cardBorder,
-                          width: 1,
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        height: 30,
+                        width: MediaQuery.of(context).size.width * .30,
+                        decoration: BoxDecoration(
+                          color: AppColors.grey.withOpacity(0.5),
+                          border: Border.all(
+                            color: AppColors.cardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
                         ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'CANCEL',
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
+                        child: Center(
+                          child: Text(
+                            'CANCEL',
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
@@ -149,26 +158,29 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                   SizedBox(
                     width: 10,
                   ),
-                  GestureDetector(
-                    onTap: () => openAppSettings(),
-                    child: Container(
-                      height: 30,
-                      width: MediaQuery.of(context).size.width * .30,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        border: Border.all(
-                          color: AppColors.cardBorder,
-                          width: 1,
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => openAppSettings(),
+                      child: Container(
+                        height: 30,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          border: Border.all(
+                            color: AppColors.cardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
                         ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'GO TO SETTINGS',
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
+                            'GO TO SETTINGS',
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
@@ -214,18 +226,39 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     }
   }
 
+  Future<void> _setReminderPermission() async {
+    if (!Settings.enabledReminderPermission) {
+      Settings.enabledReminderPermission = true;
+      LocalNotification.setNotificationsOnNewDevice(context);
+    } else {
+      Settings.enabledReminderPermission = false;
+      Provider.of<NotificationProvider>(context, listen: false)
+          .cancelLocalNotifications();
+    }
+    setState(() {});
+  }
+
+  void _setDefaults() {
+    Settings.rememberMe = false;
+    Settings.enableLocalAuth = false;
+    Settings.setenableLocalAuth = false;
+  }
+
   void _updateEmail(UserModel user) async {
     try {
       await Provider.of<UserProvider>(context, listen: false)
-          .updateEmail(_newEmail.text, user.id);
+          .updateEmail(_newEmail.text, user.id ?? '');
+      final newUser = user..email = _newEmail.text.trim();
+      Settings.lastUser = jsonEncode(newUser.toJson2());
       BeStilDialog.showSuccessDialog(
         context,
         'Your email has been updated successfully. Verify your new email and re-login!',
       );
       _newEmail.clear();
-      Future.delayed(Duration(seconds: 5), () async {
+      Future.delayed(Duration(seconds: 2), () async {
         await Provider.of<AuthenticationProvider>(context, listen: false)
             .signOut();
+        _setDefaults();
         Navigator.pushReplacement(
           context,
           SlideRightRoute(page: LoginScreen()),
@@ -236,24 +269,20 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
 
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
-      print(e.message);
-      var message = '';
-      if (e.message ==
+      String message = StringUtils.getErrorMessage(e);
+      if (message ==
           'The email address is already in use by another account.') {
         message =
             'That email address is already in use. Please select another email.';
-      } else {
-        message = e.message;
       }
 
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      PlatformException er =
-          PlatformException(code: 'custom', message: message);
 
-      BeStilDialog.showErrorDialog(context, er, user, s);
+      BeStilDialog.showErrorDialog(context, message, user, s);
       _newEmail.clear();
     }
   }
@@ -264,6 +293,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
           .updatePassword(_newPassword.text);
       _newPassword.clear();
       _newConfirmPassword.clear();
+      _setDefaults();
 
       BeStilDialog.showSuccessDialog(
           context, 'Your password has been updated successfully');
@@ -271,7 +301,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
 
       _newPassword.clear();
       _newConfirmPassword.clear();
@@ -279,7 +310,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
       _newPassword.clear();
       _newConfirmPassword.clear();
     }
@@ -312,7 +343,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
           e.message == 'The application has encountered an error.') {
         message = 'Password is incorrect.';
       } else {
-        message = e.message;
+        message = e.message ?? '';
       }
       BeStilDialog.hideLoading(context);
       final user =
@@ -320,13 +351,14 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       PlatformException er =
           PlatformException(code: 'custom', message: message);
 
-      BeStilDialog.showErrorDialog(context, er, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(er), user, s);
     } catch (e, s) {
       _currentPassword.clear();
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -366,7 +398,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
             ),
             SizedBox(height: 30),
             CustomEditField(
-              value: _currentUser.email,
+              value: _currentUser.email ?? '',
               onPressed: () {
                 setState(() => isVerified = false);
                 _update(_ModalType.email, context);
@@ -390,13 +422,20 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               title: 'Allow Be Still to access contacts?',
               value: Settings.enabledContactPermission,
             ),
+            SizedBox(height: 15),
+            CustomToggle(
+              onChange: (value) => _setReminderPermission(),
+              title: 'Enable notifications for reminders?',
+              value: Settings.enabledReminderPermission,
+            ),
             SizedBox(height: 20),
             CustomSectionHeder('App Appearance'),
             SizedBox(height: 35),
-            Padding(
+            Container(
+              width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   for (int i = 0; i < _themeModes.length; i++)
                     CustomButtonGroup(
@@ -434,7 +473,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     var _user = Provider.of<UserProvider>(context, listen: false).currentUser;
     final _formKey = GlobalKey<FormState>();
     bool _autoValidate = false;
-    _newEmail.text = _user.email;
+    _newEmail.text = _user.email ?? '';
     final alert = AlertDialog(
       insetPadding: EdgeInsets.all(10),
       backgroundColor: AppColors.backgroundColor[1],
@@ -457,7 +496,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               SizedBox(height: 10.0),
               Form(
                 // ignore: deprecated_member_use
-                autovalidate: _autoValidate,
+                // autovalidate: _autoValidate,
+                autovalidateMode: _autoValidate == true
+                    ? AutovalidateMode.onUserInteraction
+                    : AutovalidateMode.disabled,
                 key: _formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -508,7 +550,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                               isRequired: true,
                               label: 'Confirm New Password',
                               controller: _newConfirmPassword,
-                              validator: (value) {
+                              validator: (String? value) {
                                 if (_newPassword.text != value) {
                                   return 'Password fields do not match';
                                 }
@@ -557,8 +599,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                           ),
                           onPressed: () {
                             setState(() => _autoValidate = true);
-                            if (!_formKey.currentState.validate()) return null;
-                            _formKey.currentState.save();
+                            if (!_formKey.currentState!.validate()) return null;
+                            _formKey.currentState!.save();
                             _verifyPassword(
                               _user,
                               type,

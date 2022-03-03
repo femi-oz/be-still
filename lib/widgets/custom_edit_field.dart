@@ -1,7 +1,6 @@
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class CustomEditField extends StatelessWidget {
   final String value;
@@ -9,10 +8,10 @@ class CustomEditField extends StatelessWidget {
   final bool showLabel;
   final String label;
   CustomEditField({
-    this.value,
-    this.onPressed,
-    this.showLabel,
-    this.label,
+    this.value = '',
+    required this.onPressed,
+    this.showLabel = false,
+    this.label = '',
   });
   @override
   Widget build(BuildContext context) {

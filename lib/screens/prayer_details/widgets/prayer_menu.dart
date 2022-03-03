@@ -4,33 +4,32 @@ import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
+import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
-import 'package:be_still/screens/add_update/add_update.dart';
-import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
+import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/share_prayer.dart';
 import 'package:be_still/widgets/snooze_prayer.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
-import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:provider/provider.dart';
 
 class PrayerMenu extends StatefulWidget {
   final BuildContext parentcontext;
   final bool hasReminder;
   final Function updateUI;
-  final CombinePrayerStream prayerData;
+  final CombinePrayerStream? prayerData;
   final LocalNotificationModel reminder;
   @override
   PrayerMenu(this.parentcontext, this.hasReminder, this.reminder, this.updateUI,
@@ -49,52 +48,174 @@ class _PrayerMenuState extends State<PrayerMenu> {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  void _markPrayerAsFavorite(CombinePrayerStream prayerData) async {
-    BeStilDialog.showLoading(context);
-    try {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .favoritePrayer(prayerData.userPrayer.id);
-      BeStilDialog.hideLoading(context);
-      Navigator.pop(context);
+  // FollowedPrayerModel followedPrayer = FollowedPrayerModel();
+  // bool isAdmin = false;
 
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
+  @override
+  void initState() {
+    // getGroup();
+
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() async {
+    Provider.of<PrayerProvider>(context).getPrayer();
+    super.didChangeDependencies();
+  }
+
+  bool get isAdmin {
+    try {
+      final _user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+
+      return Provider.of<GroupPrayerProvider>(context)
+          .followedPrayers
+          .any((element) {
+        if (element.prayerId == widget.prayerData?.prayer?.id &&
+            element.createdBy == _user.id &&
+            (element.isFollowedByAdmin ?? false)) {
+          return true;
+        } else {
+          return false;
+        }
+      });
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
-
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+      return false;
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+      return false;
     }
   }
 
-  void _unMarkPrayerAsFavorite(CombinePrayerStream prayerData) async {
-    BeStilDialog.showLoading(context);
+  // getGroup() async {
+  //   try {
+  //     var _userId =
+  //         Provider.of<UserProvider>(context, listen: false).currentUser.id;
+  //     await Provider.of<GroupPrayerProvider>(context, listen: false)
+  //         .setFollowedPrayerByUserId(_userId ?? '');
+  //   } on HttpException catch (e, s) {
+  //     BeStilDialog.hideLoading(context);
+  //     final user =
+  //         Provider.of<UserProvider>(context, listen: false).currentUser;
+  //     BeStilDialog.showErrorDialog(
+  //         context, StringUtils.getErrorMessage(e), user, s);
+  //   } catch (e, s) {
+  //     BeStilDialog.hideLoading(context);
+  //     final user =
+  //         Provider.of<UserProvider>(context, listen: false).currentUser;
+  //     BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+  //   }
+  // }
 
+  clearSearch() async {
+    final userId =
+        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    if (Provider.of<MiscProvider>(context, listen: false).search) {
+      await Provider.of<MiscProvider>(context, listen: false)
+          .setSearchMode(false);
+      await Provider.of<MiscProvider>(context, listen: false)
+          .setSearchQuery('');
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .searchPrayers('', userId ?? '');
+    }
+  }
+
+  void _markPrayerAsFavorite(CombinePrayerStream? prayerData) async {
+    BeStilDialog.showLoading(context);
     try {
       await Provider.of<PrayerProvider>(context, listen: false)
-          .unfavoritePrayer(prayerData.userPrayer.id);
+          .favoritePrayer(prayerData?.userPrayer?.id ?? '');
+      await clearSearch();
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(0, true, 0);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
+  }
+
+  void _unFollowPrayer() async {
+    BeStilDialog.showLoading(context);
+    try {
+      final _userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+
+      final s = Provider.of<GroupPrayerProvider>(context, listen: false)
+          .followedPrayers;
+      final followedPrayer = s.firstWhere(
+          (element) =>
+              element.prayerId == widget.prayerData?.prayer?.id &&
+              element.createdBy == _userId,
+          orElse: () => FollowedPrayerModel.defaultValue());
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .removeFromMyList(
+              followedPrayer.id ?? '', widget.prayerData?.userPrayer?.id ?? '');
+      clearSearch();
+
+      BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
+      AppController appController = Get.find();
+      appController.setCurrentPage(0, true, 0);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
+  }
+
+  bool get isFollowing {
+    var isFollowing = Provider.of<GroupPrayerProvider>(context, listen: false)
+        .followedPrayers
+        .any((element) => element.prayerId == widget.prayerData?.prayer?.id);
+    return isFollowing;
+  }
+
+  void _unMarkPrayerAsFavorite(CombinePrayerStream? prayerData) async {
+    BeStilDialog.showLoading(context);
+
+    try {
+      await Provider.of<PrayerProvider>(context, listen: false)
+          .unfavoritePrayer(prayerData?.userPrayer?.id ?? '');
+      clearSearch();
+
+      BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
+      AppController appController = Get.find();
+      appController.setCurrentPage(0, true, 0);
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
 
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -104,29 +225,32 @@ class _PrayerMenuState extends State<PrayerMenu> {
       var notifications =
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
-              .where((e) => e.entityId == widget.prayerData.userPrayer.id)
+              .where((e) => e.entityId == widget.prayerData?.userPrayer?.id)
               .toList();
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id));
+              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       await Provider.of<PrayerProvider>(context, listen: false)
-          .deletePrayer(widget.prayerData.userPrayer.id);
+          .deletePrayer(widget.prayerData?.userPrayer?.id ?? '');
+      clearSearch();
+
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 
-      AppCOntroller appCOntroller = Get.find();
+      AppController appController = Get.find();
       Navigator.pop(context);
-      appCOntroller.setCurrentPage(0, true);
+      appController.setCurrentPage(0, true, 0);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -180,25 +304,27 @@ class _PrayerMenuState extends State<PrayerMenu> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Container(
-                      height: 30,
-                      width: MediaQuery.of(context).size.width * .28,
-                      decoration: BoxDecoration(
-                        color: AppColors.grey.withOpacity(0.5),
-                        border: Border.all(
-                          color: AppColors.cardBorder,
-                          width: 1,
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Container(
+                        height: 30,
+                        // width: MediaQuery.of(context).size.width * .28,
+                        decoration: BoxDecoration(
+                          color: AppColors.grey.withOpacity(0.5),
+                          border: Border.all(
+                            color: AppColors.cardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
                         ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 7, horizontal: 18),
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
                             'CANCEL',
                             style: TextStyle(
                               color: AppColors.white,
@@ -206,30 +332,32 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
                   SizedBox(
                     width: 20,
                   ),
-                  GestureDetector(
-                    onTap: _onDelete,
-                    child: Container(
-                      height: 30,
-                      width: MediaQuery.of(context).size.width * .28,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        border: Border.all(
-                          color: AppColors.cardBorder,
-                          width: 1,
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: _onDelete,
+                      child: Container(
+                        height: 30,
+                        // width: MediaQuery.of(context).size.width * .28,
+                        padding:
+                            EdgeInsets.symmetric(vertical: 7, horizontal: 18),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          border: Border.all(
+                            color: AppColors.cardBorder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
                         ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
                             'DELETE',
                             style: TextStyle(
                               color: AppColors.white,
@@ -237,7 +365,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -256,7 +384,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
         });
   }
 
-  void _onMarkAsAnswered(CombinePrayerStream prayerData) async {
+  void _onMarkAsAnswered(CombinePrayerStream? prayerData) async {
     BeStilDialog.showLoading(context);
 
     try {
@@ -264,75 +392,83 @@ class _PrayerMenuState extends State<PrayerMenu> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.userPrayer.id &&
+                  e.entityId == widget.prayerData?.userPrayer?.id &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id));
+              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       await Provider.of<PrayerProvider>(context, listen: false)
-          .markPrayerAsAnswered(prayerData.prayer.id, prayerData.userPrayer.id);
+          .markPrayerAsAnswered(
+              prayerData?.prayer?.id ?? '', prayerData?.userPrayer?.id ?? '');
+      clearSearch();
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(0, true, 0);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
-  void _unMarkAsAnswered(CombinePrayerStream prayerData) async {
+  void _unMarkAsAnswered(CombinePrayerStream? prayerData) async {
     BeStilDialog.showLoading(context);
     try {
       await Provider.of<PrayerProvider>(context, listen: false)
           .unMarkPrayerAsAnswered(
-              prayerData.prayer.id, prayerData.userPrayer.id);
+              prayerData?.prayer?.id ?? '', prayerData?.userPrayer?.id ?? '');
+      clearSearch();
+
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(0, true, 0);
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
-  void _unArchive(CombinePrayerStream prayerData) async {
+  void _unArchive(CombinePrayerStream? prayerData) async {
     BeStilDialog.showLoading(context);
 
     try {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .unArchivePrayer(prayerData.userPrayer.id, prayerData.prayer.id);
+      await Provider.of<PrayerProvider>(context, listen: false).unArchivePrayer(
+          prayerData?.userPrayer?.id ?? '', prayerData?.prayer?.id ?? '');
+      await clearSearch();
+
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(0, true, 0);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
-  void _onArchive(CombinePrayerStream prayerData) async {
+  void _onArchive(CombinePrayerStream? prayerData) async {
     BeStilDialog.showLoading(context);
 
     try {
@@ -340,30 +476,33 @@ class _PrayerMenuState extends State<PrayerMenu> {
           Provider.of<NotificationProvider>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.userPrayer.id &&
+                  e.entityId == widget.prayerData?.userPrayer?.id &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
           await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id));
+              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
 
       await Provider.of<PrayerProvider>(context, listen: false)
-          .archivePrayer(widget.prayerData.userPrayer.id);
+          .archivePrayer(widget.prayerData?.userPrayer?.id ?? '');
+      clearSearch();
+
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(0, true, 0);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -387,337 +526,461 @@ class _PrayerMenuState extends State<PrayerMenu> {
             reminder: widget.reminder,
           );
         });
+
+    clearSearch();
   }
 
-  void _unSnoozePrayer(CombinePrayerStream prayerData) async {
+  void _unSnoozePrayer(CombinePrayerStream? prayerData) async {
     BeStilDialog.showLoading(context);
 
     try {
       await Provider.of<PrayerProvider>(context, listen: false).unSnoozePrayer(
-          prayerData.prayer.id, DateTime.now(), prayerData.userPrayer.id);
+          prayerData?.prayer?.id ?? '',
+          DateTime.now(),
+          prayerData?.userPrayer?.id ?? '');
+      clearSearch();
+
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(0, true, 0);
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
   Widget build(BuildContext context) {
-    var isDisable = widget.prayerData.prayer.isAnswer ||
-        widget.prayerData.userPrayer.isArchived ||
-        widget.prayerData.userPrayer.isSnoozed;
-    var isSnoozeAndUpdateDisable = widget.prayerData.prayer.isAnswer ||
-        widget.prayerData.userPrayer.isArchived;
+    bool isGroupPrayer = widget.prayerData?.prayer?.isGroup ?? false;
     final _user = Provider.of<UserProvider>(context).currentUser;
-    bool isOwner = widget.prayerData.prayer.createdBy == _user.id;
+    bool isOwner = widget.prayerData?.prayer?.createdBy == _user.id;
+    bool isArchived = widget.prayerData?.userPrayer?.isArchived ?? false;
+    bool isSnoozed = widget.prayerData?.userPrayer?.isSnoozed ?? false;
+    bool isAnswered = widget.prayerData?.prayer?.isAnswer ?? false;
+    /*
+    LOGICS FOR DISABLING
+    ----------------------
+      cases
+      ---------
+      is owner
+      is archived
+      is answered
+      is snoozed
+      -----------
+      logics
+      -----------
+      Share => is archived,is snoozed,is answered
+      Edit => is not owner, is archived,is snoozed,is answered
+      Add update => is not owner, is archived,is snoozed,is answered
+      Reminder => is not owner, is archived,is snoozed,is answered
+      Snooze => is not owner, is archived,is answered
+      Mark as Answered
+      Mark as Favorite
+      Archive
+      Delete => is owner
+      Un-follow => is group prayer
+      Flag as inappropriate => is group prayer and not owner
+    */
 
     return Container(
-      padding: EdgeInsets.only(top: 50),
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      child: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            SizedBox(height: 30),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Container(
-                padding: EdgeInsets.only(left: 20),
-                decoration: BoxDecoration(
-                  color: Provider.of<ThemeProvider>(context, listen: false)
-                          .isDarkModeEnabled
-                      ? Colors.transparent
-                      : AppColors.white,
-                  borderRadius: BorderRadius.only(
-                    bottomRight: Radius.circular(7),
-                    topRight: Radius.circular(7),
+        padding: EdgeInsets.only(top: 50),
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: SingleChildScrollView(
+            child: Column(children: <Widget>[
+          SizedBox(height: 30),
+          Align(
+            alignment: Alignment.topLeft,
+            child: Container(
+              padding: EdgeInsets.only(left: 20),
+              decoration: BoxDecoration(
+                color: Provider.of<ThemeProvider>(context, listen: false)
+                        .isDarkModeEnabled
+                    ? Colors.transparent
+                    : AppColors.white,
+                borderRadius: BorderRadius.only(
+                  bottomRight: Radius.circular(7),
+                  topRight: Radius.circular(7),
+                ),
+              ),
+              child: TextButton.icon(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                    Provider.of<ThemeProvider>(context, listen: false)
+                            .isDarkModeEnabled
+                        ? Colors.transparent
+                        : AppColors.white,
                   ),
                 ),
-                child: TextButton.icon(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                      Provider.of<ThemeProvider>(context, listen: false)
-                              .isDarkModeEnabled
-                          ? Colors.transparent
-                          : AppColors.white,
-                    ),
-                  ),
-                  icon: Icon(
-                    AppIcons.bestill_back_arrow,
-                    size: 20,
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  label: Text(
-                    'BACK',
-                    style: AppTextStyles.boldText20,
-                  ),
+                icon: Icon(
+                  AppIcons.bestill_back_arrow,
+                  size: 20,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                label: Text(
+                  'BACK',
+                  style: AppTextStyles.boldText20,
                 ),
               ),
             ),
-            SizedBox(height: 10),
-            SingleChildScrollView(
+          ),
+          SizedBox(height: 10),
+          SingleChildScrollView(
               child: Container(
-                width: MediaQuery.of(context).size.width,
-                padding: EdgeInsets.only(left: 50),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    LongButton(
-                        textColor: AppColors.lightBlue3,
-                        backgroundColor:
-                            Provider.of<ThemeProvider>(context, listen: false)
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.only(left: 50),
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        LongButton(
+                            textColor: AppColors.lightBlue3,
+                            backgroundColor: Provider.of<ThemeProvider>(context,
+                                        listen: false)
                                     .isDarkModeEnabled
                                 ? AppColors.backgroundColor[0].withOpacity(0.7)
                                 : AppColors.white,
-                        icon: AppIcons.bestill_share,
-                        text: 'Share',
-                        isDisabled: isDisable,
-                        onPress: () => isDisable ? null : _share()),
-                    LongButton(
-                      textColor: AppColors.lightBlue3,
-                      backgroundColor:
-                          Provider.of<ThemeProvider>(context, listen: false)
+                            icon: AppIcons.bestill_share,
+                            text: 'Share',
+                            isDisabled: !isOwner ||
+                                isAnswered ||
+                                isSnoozed ||
+                                isArchived,
+                            onPress: () => !isOwner ||
+                                    isAnswered ||
+                                    isSnoozed ||
+                                    isArchived
+                                ? () {}
+                                : _share()),
+                        LongButton(
+                          textColor: AppColors.lightBlue3,
+                          backgroundColor: Provider.of<ThemeProvider>(context,
+                                      listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
-                      icon: AppIcons.bestill_edit,
-                      isDisabled: isSnoozeAndUpdateDisable || !isOwner,
-                      onPress: isSnoozeAndUpdateDisable ||
-                              !((!widget.prayerData.prayer.isGroup) ||
-                                  (widget.prayerData.prayer.isGroup && isOwner))
-                          ? () {}
-                          : () async {
-                              Provider.of<PrayerProvider>(context,
-                                      listen: false)
-                                  .setEditMode(true);
-                              Provider.of<PrayerProvider>(context,
-                                      listen: false)
-                                  .setEditPrayer(widget.prayerData);
-                              Navigator.pop(context);
-                              await Future.delayed(Duration(milliseconds: 200));
-                              AppCOntroller appCOntroller = Get.find();
+                          icon: AppIcons.bestill_edit,
+                          isDisabled:
+                              !isOwner || isAnswered || isSnoozed || isArchived,
+                          onPress: !isOwner ||
+                                  isAnswered ||
+                                  isSnoozed ||
+                                  isArchived
+                              ? () {}
+                              : () async {
+                                  try {
+                                    Provider.of<PrayerProvider>(context,
+                                            listen: false)
+                                        .setEditMode(true, false);
+                                    Provider.of<PrayerProvider>(context,
+                                            listen: false)
+                                        .setEditPrayer(
+                                            prayer: widget.prayerData?.prayer ??
+                                                PrayerModel.defaultValue(),
+                                            updates:
+                                                widget.prayerData?.updates ??
+                                                    [],
+                                            tags:
+                                                widget.prayerData?.tags ?? []);
+                                    Navigator.pop(context);
+                                    await Future.delayed(
+                                        Duration(milliseconds: 200));
+                                    AppController appController = Get.find();
 
-                              appCOntroller.setCurrentPage(1, true);
-                            },
-                      text: 'Edit',
-                    ),
-                    LongButton(
-                      textColor: AppColors.lightBlue3,
-                      backgroundColor:
-                          Provider.of<ThemeProvider>(context, listen: false)
+                                    appController.setCurrentPage(
+                                        1, true, appController.currentPage);
+                                  } on HttpException catch (e, s) {
+                                    BeStilDialog.hideLoading(context);
+                                    final user = Provider.of<UserProvider>(
+                                            context,
+                                            listen: false)
+                                        .currentUser;
+                                    BeStilDialog.showErrorDialog(
+                                        context,
+                                        StringUtils.getErrorMessage(e),
+                                        user,
+                                        s);
+                                  } catch (e, s) {
+                                    BeStilDialog.hideLoading(context);
+                                    final user = Provider.of<UserProvider>(
+                                            context,
+                                            listen: false)
+                                        .currentUser;
+                                    BeStilDialog.showErrorDialog(context,
+                                        StringUtils.errorOccured, user, s);
+                                  }
+                                },
+                          text: 'Edit',
+                        ),
+                        LongButton(
+                          textColor: AppColors.lightBlue3,
+                          backgroundColor: Provider.of<ThemeProvider>(context,
+                                      listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
-                      icon: AppIcons.bestill_update,
-                      isDisabled: isSnoozeAndUpdateDisable || !isOwner,
-                      onPress: () => isSnoozeAndUpdateDisable || !isOwner
-                          ? () {}
-                          : Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddUpdate(),
-                              ),
-                            ),
-                      text: 'Add an Update',
-                    ),
-                    LongButton(
-                      textColor: AppColors.lightBlue3,
-                      backgroundColor:
-                          Provider.of<ThemeProvider>(context, listen: false)
+                          icon: AppIcons.bestill_update,
+                          isDisabled:
+                              !isOwner || isAnswered || isSnoozed || isArchived,
+                          onPress: !isOwner ||
+                                  isAnswered ||
+                                  isSnoozed ||
+                                  isArchived
+                              ? () {}
+                              : () {
+                                  Provider.of<PrayerProvider>(context,
+                                          listen: false)
+                                      .setEditPrayer(
+                                          prayer: widget.prayerData?.prayer ??
+                                              PrayerModel.defaultValue(),
+                                          updates:
+                                              widget.prayerData?.updates ?? [],
+                                          tags: widget.prayerData?.tags ?? []);
+
+                                  AppController appController = Get.find();
+                                  appController.setCurrentPage(
+                                      13, true, appController.currentPage);
+                                  Navigator.pop(context);
+                                },
+                          text: 'Add an Update',
+                        ),
+                        LongButton(
+                          textColor: AppColors.lightBlue3,
+                          backgroundColor: Provider.of<ThemeProvider>(context,
+                                      listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
-                      icon: AppIcons.bestill_reminder,
-                      isDisabled: !isOwner,
-                      suffix: widget.hasReminder &&
-                              widget.reminder.frequency == Frequency.one_time
-                          ? DateFormat('dd MMM yyyy hh:mma').format(widget
-                              .reminder.scheduledDate) //'19 May 2021 11:45PM'
-                          : widget.hasReminder &&
-                                  widget.reminder.frequency !=
+                          icon: AppIcons.bestill_reminder,
+                          isDisabled: isAnswered || isSnoozed || isArchived,
+                          suffix: widget.hasReminder &&
+                                  widget.reminder.frequency ==
                                       Frequency.one_time
-                              ? widget.reminder.frequency
-                              : null,
-                      onPress: () => isDisable || !isOwner
-                          ? () {}
-                          : showDialog(
-                              context: context,
-                              barrierColor: AppColors.detailBackgroundColor[1]
-                                  .withOpacity(0.5),
-                              builder: (BuildContext context) {
-                                return Dialog(
-                                  insetPadding: EdgeInsets.all(20),
-                                  backgroundColor: AppColors.prayerCardBgColor,
-                                  shape: RoundedRectangleBorder(
-                                    side: BorderSide(color: AppColors.darkBlue),
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(10.0),
-                                    ),
-                                  ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 30),
-                                        child: ReminderPicker(
-                                          entityId: widget
-                                                  .prayerData?.userPrayer?.id ??
-                                              '',
-                                          type: NotificationType.reminder,
-                                          hideActionuttons: false,
-                                          reminder: widget.hasReminder
-                                              ? widget.reminder
-                                              : null,
-                                          onCancel: () =>
-                                              Navigator.of(context).pop(),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                      text: 'Reminder',
-                    ),
-                    LongButton(
-                      textColor: AppColors.lightBlue3,
-                      backgroundColor:
-                          Provider.of<ThemeProvider>(context, listen: false)
-                                  .isDarkModeEnabled
-                              ? AppColors.backgroundColor[0].withOpacity(0.7)
-                              : AppColors.white,
-                      icon: AppIcons.bestill_snooze,
-                      isDisabled: widget.prayerData.prayer.isAnswer ||
-                          widget.prayerData.userPrayer.isArchived ||
-                          !isOwner,
-                      onPress: () => widget.prayerData.prayer.isAnswer ||
-                              widget.prayerData.userPrayer.isArchived ||
-                              !isOwner
-                          ? () {}
-                          : widget.prayerData.userPrayer.isSnoozed
-                              ? _unSnoozePrayer(widget.prayerData)
+                              ? DateFormat('dd MMM yyyy hh:mma').format(
+                                  widget.reminder.scheduledDate ??
+                                      DateTime.now())
+                              : widget.hasReminder &&
+                                      widget.reminder.frequency !=
+                                          Frequency.one_time
+                                  ? widget.reminder.frequency
+                                  : '',
+                          onPress: () => isAnswered || isSnoozed || isArchived
+                              ? () {}
                               : showDialog(
                                   context: context,
                                   barrierColor: AppColors
                                       .detailBackgroundColor[1]
                                       .withOpacity(0.5),
-                                  builder: (BuildContext context) => Dialog(
-                                    insetPadding: EdgeInsets.all(20),
-                                    backgroundColor:
-                                        AppColors.prayerCardBgColor,
-                                    shape: RoundedRectangleBorder(
-                                      side:
-                                          BorderSide(color: AppColors.darkBlue),
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(10.0),
+                                  builder: (BuildContext context) {
+                                    return Dialog(
+                                      insetPadding: EdgeInsets.all(20),
+                                      backgroundColor:
+                                          AppColors.prayerCardBgColor,
+                                      shape: RoundedRectangleBorder(
+                                        side: BorderSide(
+                                            color: AppColors.darkBlue),
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(10.0),
+                                        ),
+                                      ),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 30),
+                                            child: ReminderPicker(
+                                              isGroup: false,
+                                              entityId: widget.prayerData
+                                                      ?.userPrayer?.id ??
+                                                  '',
+                                              type: NotificationType.reminder,
+                                              hideActionuttons: false,
+                                              reminder: widget.hasReminder
+                                                  ? widget.reminder
+                                                  : null,
+                                              onCancel: () =>
+                                                  Navigator.of(context).pop(),
+                                              prayerData: widget.prayerData,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                          text: 'Reminder',
+                        ),
+                        LongButton(
+                          textColor: AppColors.lightBlue3,
+                          backgroundColor: Provider.of<ThemeProvider>(context,
+                                      listen: false)
+                                  .isDarkModeEnabled
+                              ? AppColors.backgroundColor[0].withOpacity(0.7)
+                              : AppColors.white,
+                          icon: AppIcons.bestill_snooze,
+                          isDisabled: !isOwner || isAnswered || isArchived,
+                          onPress: () => !isOwner || isAnswered || isArchived
+                              ? () {}
+                              : widget.prayerData?.userPrayer?.isSnoozed ??
+                                      false
+                                  ? _unSnoozePrayer(widget.prayerData)
+                                  : showDialog(
+                                      context: context,
+                                      barrierColor: AppColors
+                                          .detailBackgroundColor[1]
+                                          .withOpacity(0.5),
+                                      builder: (BuildContext context) => Dialog(
+                                        insetPadding: EdgeInsets.all(20),
+                                        backgroundColor:
+                                            AppColors.prayerCardBgColor,
+                                        shape: RoundedRectangleBorder(
+                                          side: BorderSide(
+                                              color: AppColors.darkBlue),
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(10.0),
+                                          ),
+                                        ),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 30),
+                                              child: SnoozePrayer(
+                                                  widget.prayerData),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 30),
-                                          child:
-                                              SnoozePrayer(widget.prayerData),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                      text: widget.prayerData.userPrayer.isSnoozed
-                          ? 'Unsnooze'
-                          : 'Snooze',
-                      // text: 'Snooze',
-                    ),
-                    LongButton(
-                      textColor: AppColors.lightBlue3,
-                      backgroundColor:
-                          Provider.of<ThemeProvider>(context, listen: false)
+                          text:
+                              widget.prayerData?.userPrayer?.isSnoozed ?? false
+                                  ? 'Unsnooze'
+                                  : 'Snooze',
+                          // text: 'Snooze',
+                        ),
+                        LongButton(
+                          textColor: AppColors.lightBlue3,
+                          backgroundColor: Provider.of<ThemeProvider>(context,
+                                      listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
-                      isDisabled: !isOwner,
-                      icon: AppIcons.bestill_answered,
-                      onPress: !isOwner
-                          ? () {}
-                          : () => widget.prayerData.prayer.isAnswer
-                              ? _unMarkAsAnswered(widget.prayerData)
-                              : _onMarkAsAnswered(widget.prayerData),
-                      text: widget.prayerData.prayer.isAnswer
-                          ? 'Unmark as Answered'
-                          : 'Mark as Answered',
-                    ),
-                    LongButton(
-                      textColor: AppColors.lightBlue3,
-                      backgroundColor:
-                          Provider.of<ThemeProvider>(context, listen: false)
+                          isDisabled: !isOwner && !isAdmin,
+                          icon: AppIcons.bestill_answered,
+                          onPress: !isOwner && !isAdmin
+                              ? () {}
+                              : () =>
+                                  widget.prayerData?.prayer?.isAnswer ?? false
+                                      ? _unMarkAsAnswered(widget.prayerData)
+                                      : _onMarkAsAnswered(widget.prayerData),
+                          text: widget.prayerData?.prayer?.isAnswer ?? false
+                              ? 'Unmark as Answered'
+                              : 'Mark as Answered',
+                        ),
+                        LongButton(
+                          textColor: AppColors.lightBlue3,
+                          backgroundColor: Provider.of<ThemeProvider>(context,
+                                      listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
-                      icon: widget.prayerData.userPrayer.isFavorite
-                          ? Icons.favorite_border_outlined
-                          : Icons.favorite,
-                      isDisabled: !isOwner,
-                      onPress: !isOwner
-                          ? () {}
-                          : () => widget.prayerData.userPrayer.isFavorite
-                              ? _unMarkPrayerAsFavorite(widget.prayerData)
-                              : _markPrayerAsFavorite(widget.prayerData),
-                      text: widget.prayerData.userPrayer.isFavorite
-                          ? 'Unmark as Favorite '
-                          : 'Mark as Favorite ',
-                    ),
-                    LongButton(
-                      textColor: AppColors.lightBlue3,
-                      hasIcon: true,
-                      isDisabled: !isOwner,
-                      backgroundColor:
-                          Provider.of<ThemeProvider>(context, listen: false)
+                          icon:
+                              widget.prayerData?.userPrayer?.isFavorite ?? false
+                                  ? Icons.favorite_border_outlined
+                                  : Icons.favorite,
+                          isDisabled: !isOwner,
+                          onPress: !isOwner
+                              ? () {}
+                              : () => widget
+                                          .prayerData?.userPrayer?.isFavorite ??
+                                      false
+                                  ? _unMarkPrayerAsFavorite(widget.prayerData)
+                                  : _markPrayerAsFavorite(widget.prayerData),
+                          text:
+                              widget.prayerData?.userPrayer?.isFavorite ?? false
+                                  ? 'Unmark as Favorite '
+                                  : 'Mark as Favorite ',
+                        ),
+                        LongButton(
+                          textColor: AppColors.lightBlue3,
+                          hasIcon: true,
+                          isDisabled: !isOwner && !isAdmin,
+                          backgroundColor: Provider.of<ThemeProvider>(context,
+                                      listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
-                      icon: AppIcons
-                          .bestill_icons_bestill_archived_icon_revised_drk,
-                      onPress: !isOwner
-                          ? () {}
-                          : () => widget.prayerData.userPrayer.isArchived
-                              ? _unArchive(widget.prayerData)
-                              : _onArchive(widget.prayerData),
-                      text: widget.prayerData.userPrayer.isArchived
-                          ? 'Unarchive'
-                          : 'Archive',
-                    ),
-                    LongButton(
-                      textColor: AppColors.lightBlue3,
-                      backgroundColor:
-                          Provider.of<ThemeProvider>(context, listen: false)
+                          icon: AppIcons
+                              .bestill_icons_bestill_archived_icon_revised_drk,
+                          onPress: !isOwner && !isAdmin
+                              ? () {}
+                              : () =>
+                                  widget.prayerData?.userPrayer?.isArchived ??
+                                          false
+                                      ? _unArchive(widget.prayerData)
+                                      : _onArchive(widget.prayerData),
+                          text:
+                              widget.prayerData?.userPrayer?.isArchived ?? false
+                                  ? 'Unarchive'
+                                  : 'Archive',
+                        ),
+                        LongButton(
+                          textColor: AppColors.lightBlue3,
+                          backgroundColor: Provider.of<ThemeProvider>(context,
+                                      listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
-                      icon: Icons.delete_forever,
-                      isDisabled: !isOwner,
-                      onPress: !isOwner
-                          ? () {}
-                          : () => _openDeleteConfirmation(context),
-                      text: 'Delete',
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                          icon: Icons.delete_forever,
+                          isDisabled: !isOwner,
+                          onPress: !isOwner
+                              ? () {}
+                              : () => _openDeleteConfirmation(context),
+                          text: 'Delete',
+                        ),
+                        if (isGroupPrayer)
+                          LongButton(
+                            textColor: AppColors.lightBlue3,
+                            backgroundColor: Provider.of<ThemeProvider>(context,
+                                        listen: false)
+                                    .isDarkModeEnabled
+                                ? AppColors.backgroundColor[0].withOpacity(0.7)
+                                : AppColors.white,
+                            icon: Icons.star,
+                            isDisabled: !isGroupPrayer,
+                            suffix: '',
+                            onPress: () => _unFollowPrayer(),
+                            text: 'Unfollow',
+                          ),
+                        if (isGroupPrayer)
+                          LongButton(
+                              textColor: AppColors.lightBlue3,
+                              backgroundColor: Provider.of<ThemeProvider>(
+                                          context,
+                                          listen: false)
+                                      .isDarkModeEnabled
+                                  ? AppColors.backgroundColor[0]
+                                      .withOpacity(0.7)
+                                  : AppColors.white,
+                              icon: Icons.info,
+                              isDisabled: isGroupPrayer,
+                              suffix: '',
+                              onPress: () => () {},
+                              text: 'Flag as inappropriate')
+                      ])))
+        ])));
   }
 }

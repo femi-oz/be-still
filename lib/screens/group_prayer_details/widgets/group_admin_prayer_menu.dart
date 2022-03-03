@@ -1,16 +1,11 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/prayer_provider.dart';
 
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
-
-import 'package:provider/provider.dart';
 
 class GroupAdminPrayerMenu extends StatefulWidget {
   final PrayerModel prayer;
@@ -23,15 +18,9 @@ class GroupAdminPrayerMenu extends StatefulWidget {
 }
 
 class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
-  BuildContext bcontext;
-
   void _onHide() async {
     try {
-      UserModel _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showLoading(
-        bcontext,
-      );
+      BeStilDialog.showLoading(context);
       // await Provider.of<PrayerProvider>(context, listen: false)
       //     .hidePrayer(widget.prayer.id, _user);
       await Future.delayed(Duration(milliseconds: 300));
@@ -47,9 +36,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
 
   void _onHideFromGroup() async {
     try {
-      BeStilDialog.showLoading(
-        bcontext,
-      );
+      BeStilDialog.showLoading(context);
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
     } on HttpException catch (_) {
@@ -62,7 +49,6 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
   }
 
   Widget build(BuildContext context) {
-    setState(() => this.bcontext = context);
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -98,7 +84,7 @@ class _GroupAdminPrayerMenuState extends State<GroupAdminPrayerMenu> {
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Text(
-                            'Add to my List',
+                            'Add to my Prayers',
                             style: TextStyle(
                               color: AppColors.lightBlue4,
                               fontSize: 14,

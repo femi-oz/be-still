@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/bible.model.dart';
 import 'package:be_still/models/devotionals.model.dart';
@@ -12,23 +14,37 @@ class DevotionalProvider with ChangeNotifier {
   List<DevotionalModel> _devotionals = [];
   List<BibleModel> get bibles => _bibles;
   List<DevotionalModel> get devotionals => _devotionals;
+  late StreamSubscription<List<DevotionalModel>> devotionalStream;
+
   Future<void> getBibles() async {
-    if (_firebaseAuth.currentUser == null) return null;
-    _devotionalService.getBibles().asBroadcastStream().listen((bibles) {
-      bibles.sort((a, b) => a.name.compareTo(b.name));
-      _bibles = bibles;
-      notifyListeners();
-    });
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      _devotionalService.getBibles().asBroadcastStream().listen((bibles) {
+        bibles.sort((a, b) => (a.name ?? '').compareTo((b.name ?? '')));
+        _bibles = bibles;
+        notifyListeners();
+      });
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> getDevotionals() async {
-    if (_firebaseAuth.currentUser == null) return null;
-    _devotionalService
-        .getDevotionals()
-        .asBroadcastStream()
-        .listen((devotionals) {
-      _devotionals = devotionals;
-      notifyListeners();
-    });
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      devotionalStream = _devotionalService
+          .getDevotionals()
+          .asBroadcastStream()
+          .listen((devotionals) {
+        _devotionals = devotionals;
+        notifyListeners();
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  void flush() {
+    devotionalStream.cancel();
   }
 }

@@ -1,53 +1,62 @@
+import 'package:be_still/models/group_settings_model.dart';
 import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/models/user.model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 
 class GroupModel {
-  final String id;
-  final String name;
-  final String status;
-  final String email;
-  final String description;
-  final String organization;
-  final String location;
-  final bool isPrivate;
-  final bool isFeed;
-  final String createdBy;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
+  final String? id;
+  final String? name;
+  final String? status;
+  final String? description;
+  final String? organization;
+  final String? location;
+  final bool? isPrivate;
+  final bool? isFeed;
+  final String? createdBy;
+  final DateTime? createdOn;
+  final String? modifiedBy;
+  final DateTime? modifiedOn;
 
   const GroupModel({
     this.id,
-    @required this.name,
-    @required this.status,
-    @required this.email,
-    @required this.description,
-    @required this.organization,
-    @required this.location,
-    @required this.isPrivate,
-    @required this.isFeed,
-    @required this.createdBy,
-    @required this.createdOn,
-    @required this.modifiedBy,
-    @required this.modifiedOn,
+    this.name,
+    this.status,
+    this.description,
+    this.organization,
+    this.location,
+    this.isPrivate,
+    this.isFeed,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
   });
 
-  GroupModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
-      : id = snapshot.id,
-        name = snapshot.data()['Name'],
-        description = snapshot.data()['Description'],
-        status = snapshot.data()['Status'],
-        email = snapshot.data()['Email'],
-        organization = snapshot.data()['Organization'],
-        location = snapshot.data()['Location'],
-        isPrivate = snapshot.data()['IsPrivate'],
-        isFeed = snapshot.data()['IsFeed'],
-        createdBy = snapshot.data()['CreatedBy'],
-        createdOn = snapshot.data()['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data()['ModifiedBy'],
-        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+  GroupModel.defaultValue()
+      : id = '',
+        name = '',
+        description = '',
+        status = '',
+        organization = '',
+        location = '',
+        isPrivate = false,
+        isFeed = false,
+        createdBy = '',
+        createdOn = DateTime.now(),
+        modifiedBy = '',
+        modifiedOn = DateTime.now();
+
+  GroupModel.fromData(Map<String, dynamic> snapshot, String did)
+      : id = did,
+        name = snapshot['Name'] ?? 'N/A',
+        description = snapshot['Description'] ?? 'N/A',
+        status = snapshot['Status'] ?? 'N/A',
+        organization = snapshot['Organization'] ?? 'N/A',
+        location = snapshot['Location'] ?? '',
+        isPrivate = snapshot['IsPrivate'] ?? false,
+        isFeed = snapshot['IsFeed'] ?? false,
+        createdBy = snapshot['CreatedBy'] ?? '',
+        createdOn = snapshot['CreatedOn']?.toDate() ?? DateTime.now(),
+        modifiedBy = snapshot['ModifiedBy'] ?? '',
+        modifiedOn = snapshot['ModifiedOn']?.toDate() ?? DateTime.now();
 
   Map<String, dynamic> toJson() {
     return {
@@ -55,7 +64,6 @@ class GroupModel {
       'Name': name,
       'Description': description,
       'Status': status,
-      'Email': email,
       'Organization': organization,
       'Location': location,
       'IsPrivate': isPrivate,
@@ -69,27 +77,27 @@ class GroupModel {
 }
 
 class GroupRequestModel {
-  final String id;
-  final String groupId;
-  final String userId;
-  final String status;
-  final String createdBy;
-  final DateTime createdOn;
+  final String? id;
+  final String? groupId;
+  final String? userId;
+  final String? status;
+  final String? createdBy;
+  final DateTime? createdOn;
 
   const GroupRequestModel(
       {this.id,
-      @required this.userId,
-      @required this.groupId,
-      @required this.status,
-      @required this.createdBy,
-      @required this.createdOn});
-  GroupRequestModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
-      : id = snapshot.id,
-        userId = snapshot.data()['UserId'],
-        groupId = snapshot.data()['GroupId'],
-        status = snapshot.data()['Status'],
-        createdBy = snapshot.data()['CreatedBy'],
-        createdOn = snapshot.data()['CreatedOn'].toDate();
+      this.userId,
+      this.groupId,
+      this.status,
+      this.createdBy,
+      this.createdOn});
+  GroupRequestModel.fromData(Map<String, dynamic> snapshot, String did)
+      : id = did,
+        userId = snapshot['UserId'] ?? '',
+        groupId = snapshot['GroupId'] ?? '',
+        status = snapshot['Status'] ?? '',
+        createdBy = snapshot['CreatedBy'] ?? '',
+        createdOn = snapshot['CreatedOn']?.toDate() ?? DateTime.now();
   Map<String, dynamic> toJson() {
     return {
       'Id': id,
@@ -103,41 +111,41 @@ class GroupRequestModel {
 }
 
 class GroupInviteModel {
-  final String groupName;
-  final String groupId;
-  final String email;
-  final String sender;
-  final String senderId;
-  final String id;
-  final String createdBy;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
+  final String? groupName;
+  final String? groupId;
+  final String? email;
+  final String? sender;
+  final String? senderId;
+  final String? id;
+  final String? createdBy;
+  final DateTime? createdOn;
+  final String? modifiedBy;
+  final DateTime? modifiedOn;
 
   const GroupInviteModel({
     this.id,
-    @required this.groupName,
-    @required this.groupId,
-    @required this.email,
-    @required this.sender,
-    @required this.senderId,
-    @required this.createdBy,
-    @required this.createdOn,
-    @required this.modifiedBy,
-    @required this.modifiedOn,
+    this.groupName,
+    this.groupId,
+    this.email,
+    this.sender,
+    this.senderId,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
   });
 
-  GroupInviteModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
-      : id = snapshot.id,
-        groupName = snapshot.data()['GroupName'],
-        groupId = snapshot.data()['GroupId'],
-        email = snapshot.data()['Email'],
-        sender = snapshot.data()['Sender'],
-        senderId = snapshot.data()['SenderId'],
-        createdBy = snapshot.data()['CreatedBy'],
-        createdOn = snapshot.data()['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data()['ModifiedBy'],
-        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+  GroupInviteModel.fromData(Map<String, dynamic> snapshot, String did)
+      : id = did,
+        groupName = snapshot['GroupName'] ?? '',
+        groupId = snapshot['GroupId'] ?? '',
+        email = snapshot['Email'] ?? '',
+        sender = snapshot['Sender'] ?? '',
+        senderId = snapshot['SenderId'] ?? '',
+        createdBy = snapshot['CreatedBy'] ?? '',
+        createdOn = snapshot['CreatedOn']?.toDate() ?? DateTime.now(),
+        modifiedBy = snapshot['ModifiedBy'] ?? '',
+        modifiedOn = snapshot['ModifiedOn']?.toDate() ?? DateTime.now();
 
   Map<String, dynamic> toJson() {
     return {
@@ -155,63 +163,80 @@ class GroupInviteModel {
 }
 
 class GroupPrayerModel {
-  final id;
-  final String groupId;
-  final String prayerId;
-  final String sequence;
-  final bool isFavorite;
-  final String status;
-  final String createdBy;
-  final bool isArchived;
-  final bool isSnoozed;
-  final DateTime snoozeEndDate;
-  final DateTime archivedDate;
-  final int snoozeDuration;
-  final String snoozeFrequency;
-  final int deleteStatus;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
+  String? id;
+  String? groupId;
+  String? prayerId;
+  String? sequence;
+  bool? isFavorite;
+  String? status;
+  String? createdBy;
+  bool? isArchived;
+  bool? isSnoozed;
+  DateTime? snoozeEndDate;
+  DateTime? archivedDate;
+  int? snoozeDuration;
+  String? snoozeFrequency;
+  int? deleteStatus;
+  DateTime? createdOn;
+  String? modifiedBy;
+  DateTime? modifiedOn;
 
-  const GroupPrayerModel(
+  GroupPrayerModel(
       {this.id,
-      @required this.groupId,
-      @required this.prayerId,
-      @required this.sequence,
-      @required this.isFavorite,
-      @required this.status,
-      @required this.createdBy,
-      @required this.createdOn,
-      @required this.modifiedBy,
-      @required this.modifiedOn,
-      @required this.deleteStatus,
-      @required this.isSnoozed,
-      @required this.isArchived,
-      @required this.snoozeEndDate,
-      @required this.archivedDate,
-      @required this.snoozeDuration,
-      @required this.snoozeFrequency});
+      this.groupId,
+      this.prayerId,
+      this.sequence,
+      this.isFavorite,
+      this.status,
+      this.createdBy,
+      this.createdOn,
+      this.modifiedBy,
+      this.modifiedOn,
+      this.deleteStatus,
+      this.isSnoozed,
+      this.isArchived,
+      this.snoozeEndDate,
+      this.archivedDate,
+      this.snoozeDuration,
+      this.snoozeFrequency});
 
-  GroupPrayerModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
-      : id = snapshot.id,
-        prayerId = snapshot.data()['PrayerId'],
-        groupId = snapshot.data()['GroupId'],
-        sequence = snapshot.data()['Sequence'],
-        isFavorite = snapshot.data()['IsFavourite'],
-        status = snapshot.data()['Status'],
-        createdBy = snapshot.data()['CreatedBy'],
-        createdOn = snapshot.data()['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data()['ModifiedBy'],
-        modifiedOn = snapshot.data()['ModifiedOn'].toDate(),
-        isSnoozed = snapshot.data()['IsSnoozed'] ?? false,
-        isArchived = snapshot.data()['IsArchived'] ?? false,
-        snoozeDuration = snapshot.data()['SnoozeDuration'] ?? 0,
-        snoozeFrequency = snapshot.data()['SnoozeFrequency'] ?? '',
-        snoozeEndDate =
-            snapshot.data()['SnoozeEndDate']?.toDate() ?? DateTime.now(),
-        archivedDate =
-            snapshot.data()['ArchivedDate']?.toDate() ?? DateTime.now(),
-        deleteStatus = snapshot.data()['DeleteStatus'] ?? 0;
+  factory GroupPrayerModel.defaultValue() => GroupPrayerModel(
+      createdOn: DateTime.now(),
+      modifiedOn: DateTime.now(),
+      id: '',
+      groupId: '',
+      prayerId: '',
+      sequence: '',
+      isFavorite: false,
+      status: '',
+      deleteStatus: 0,
+      isSnoozed: false,
+      isArchived: false,
+      snoozeEndDate: DateTime.now(),
+      archivedDate: DateTime.now(),
+      snoozeDuration: 0,
+      snoozeFrequency: '',
+      createdBy: '',
+      modifiedBy: '');
+
+  GroupPrayerModel.fromData(Map<String, dynamic> snapshot, String did)
+      : id = did,
+        prayerId = snapshot['PrayerId'] ?? '',
+        groupId = snapshot['GroupId'] ?? '',
+        sequence = snapshot['Sequence'] ?? '',
+        isFavorite = snapshot['IsFavourite'] ?? false,
+        status = snapshot['Status'] ?? '',
+        createdBy = snapshot['CreatedBy'] ?? '',
+        createdOn = snapshot['CreatedOn']?.toDate(),
+        modifiedBy = snapshot['ModifiedBy'] ?? '',
+        modifiedOn = snapshot['ModifiedOn']?.toDate(),
+        isSnoozed = snapshot['IsSnoozed'] ?? false,
+        isArchived = snapshot['IsArchived'] ?? false,
+        snoozeDuration = snapshot['SnoozeDuration'] ?? 0,
+        snoozeFrequency = snapshot['SnoozeFrequency'] ?? '',
+        snoozeEndDate = snapshot['SnoozeEndDate']?.toDate() ?? DateTime.now(),
+        archivedDate = snapshot['ArchivedDate']?.toDate() ?? DateTime.now(),
+        deleteStatus = snapshot['DeleteStatus'] ?? 0;
 
   Map<String, dynamic> toJson() {
     return {
@@ -242,51 +267,63 @@ class GroupUserRole {
 }
 
 class GroupUserModel {
-  final String id;
-  final String groupId;
-  final String userId;
-  final String email;
-  final String fullName;
-  final String status;
-  final String role;
-  final String createdBy;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
+  String? id;
+  String? groupId;
+  String? userId;
+  //  String? email;
+  String? fullName;
+  String? status;
+  String? role;
+  String? createdBy;
+  DateTime? createdOn;
+  String? modifiedBy;
+  DateTime? modifiedOn;
 
-  const GroupUserModel({
+  GroupUserModel({
     this.id,
-    @required this.groupId,
-    @required this.userId,
-    @required this.fullName,
-    @required this.email,
-    @required this.status,
-    @required this.role,
-    @required this.createdBy,
-    @required this.createdOn,
-    @required this.modifiedBy,
-    @required this.modifiedOn,
+    this.groupId,
+    this.userId,
+    this.fullName,
+    this.status,
+    this.role,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
   });
 
-  GroupUserModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
-      : id = snapshot.id,
-        userId = snapshot.data()['UserId'],
-        groupId = snapshot.data()['GroupId'],
-        fullName = snapshot.data()['FullName'],
-        email = snapshot.data()['Email'],
-        status = snapshot.data()['Status'],
-        role = snapshot.data()['Role'],
-        createdBy = snapshot.data()['CreatedBy'],
-        createdOn = snapshot.data()['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data()['ModifiedBy'],
-        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+  factory GroupUserModel.defaultValue() => GroupUserModel(
+        id: '',
+        groupId: '',
+        userId: '',
+        role: '',
+        status: '',
+        fullName: '',
+        createdOn: DateTime.now(),
+        modifiedOn: DateTime.now(),
+        createdBy: '',
+        modifiedBy: '',
+      );
+
+  GroupUserModel.fromData(Map<String, dynamic> snapshot, String did)
+      : id = did,
+        userId = snapshot['UserId'] ?? '',
+        groupId = snapshot['GroupId'] ?? '',
+        fullName = snapshot['FullName'] ?? '',
+        // email = snapshot['Email'],
+        status = snapshot['Status'] ?? '',
+        role = snapshot['Role'] ?? '',
+        createdBy = snapshot['CreatedBy'] ?? '',
+        createdOn = snapshot['CreatedOn']?.toDate() ?? DateTime.now(),
+        modifiedBy = snapshot['ModifiedBy'] ?? '',
+        modifiedOn = snapshot['ModifiedOn']?.toDate() ?? DateTime.now();
 
   Map<String, dynamic> toJson() {
     return {
       'UserId': userId,
       'GroupId': groupId,
       'FullName': fullName,
-      'Email': email,
+      // 'Email': email,
       'Status': status,
       'Role': role,
       'CreatedBy': createdBy,
@@ -298,38 +335,38 @@ class GroupUserModel {
 }
 
 class UserGroupModel {
-  final String id;
-  final String groupId;
-  final String userId;
-  final String status;
-  final String role;
-  final String createdBy;
-  final DateTime createdOn;
-  final String modifiedBy;
-  final DateTime modifiedOn;
+  final String? id;
+  final String? groupId;
+  final String? userId;
+  final String? status;
+  final String? role;
+  final String? createdBy;
+  final DateTime? createdOn;
+  final String? modifiedBy;
+  final DateTime? modifiedOn;
 
   const UserGroupModel({
     this.id,
-    @required this.groupId,
-    @required this.userId,
-    @required this.status,
-    @required this.role,
-    @required this.createdBy,
-    @required this.createdOn,
-    @required this.modifiedBy,
-    @required this.modifiedOn,
+    this.groupId,
+    this.userId,
+    this.status,
+    this.role,
+    this.createdBy,
+    this.createdOn,
+    this.modifiedBy,
+    this.modifiedOn,
   });
 
-  UserGroupModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
-      : id = snapshot.id,
-        userId = snapshot.data()['UserId'],
-        groupId = snapshot.data()['GroupId'],
-        status = snapshot.data()['Status'],
-        role = snapshot.data()['Role'],
-        createdBy = snapshot.data()['CreatedBy'],
-        createdOn = snapshot.data()['CreatedOn'].toDate(),
-        modifiedBy = snapshot.data()['ModifiedBy'],
-        modifiedOn = snapshot.data()['ModifiedOn'].toDate();
+  UserGroupModel.fromData(Map<String, dynamic> snapshot, String did)
+      : id = did,
+        userId = snapshot['UserId'] ?? '',
+        groupId = snapshot['GroupId'] ?? '',
+        status = snapshot['Status'] ?? '',
+        role = snapshot['Role'] ?? '',
+        createdBy = snapshot['CreatedBy'] ?? '',
+        createdOn = snapshot['CreatedOn']?.toDate() ?? DateTime.now(),
+        modifiedBy = snapshot['ModifiedBy'] ?? '',
+        modifiedOn = snapshot['ModifiedOn']?.toDate() ?? DateTime.now();
 
   Map<String, dynamic> toJson() {
     return {
@@ -347,18 +384,20 @@ class UserGroupModel {
 }
 
 class GroupUserReferenceModel {
-  final String id;
-  final String userId;
-  final String groupId;
+  final String? id;
+  final String? userId;
+  final String? groupId;
 
-  const GroupUserReferenceModel(
-      {this.id, @required this.userId, @required this.groupId});
+  const GroupUserReferenceModel({
+    this.id,
+    this.userId,
+    this.groupId,
+  });
 
-  GroupUserReferenceModel.fromData(
-      DocumentSnapshot<Map<String, dynamic>> snapshot)
-      : id = snapshot.id,
-        userId = snapshot.data()['UserId'],
-        groupId = snapshot.data()['GroupId'];
+  GroupUserReferenceModel.fromData(Map<String, dynamic> snapshot, String did)
+      : id = did,
+        userId = snapshot['UserId'] ?? '',
+        groupId = snapshot['GroupId'] ?? '';
 
   Map<String, dynamic> toJson() {
     return {
@@ -369,36 +408,45 @@ class GroupUserReferenceModel {
 }
 
 class CombineGroupUserStream {
-  List<GroupUserModel> groupUsers;
-  final List<GroupRequestModel> groupRequests;
-  final GroupModel group;
-  // final UserModel admin;
+  List<GroupUserModel>? groupUsers;
+  final List<GroupRequestModel>? groupRequests;
+  final GroupModel? group;
+  final GroupSettings? groupSettings;
 
-  CombineGroupUserStream(
-    this.groupUsers,
+  CombineGroupUserStream({
+    this.groupUsers = const [],
     this.group,
-    this.groupRequests,
-    // this.admin,
-  );
+    this.groupRequests = const [],
+    this.groupSettings,
+  });
+  factory CombineGroupUserStream.defaultValue() => CombineGroupUserStream(
+      group: GroupModel.defaultValue(),
+      groupRequests: [],
+      groupUsers: [],
+      groupSettings: GroupSettings.defaultValue());
 }
 
 class CombineGroupPrayerStream {
-  final String id;
-  final GroupPrayerModel groupPrayer;
-  @required
-  final PrayerModel prayer;
-  @required
-  final List<PrayerTagModel> tags;
-  @required
-  final List<PrayerUpdateModel> updates;
+  // final String? id;
+  GroupPrayerModel? groupPrayer;
+
+  PrayerModel? prayer;
+
+  List<PrayerTagModel>? tags;
+
+  List<PrayerUpdateModel>? updates;
 
   CombineGroupPrayerStream({
-    this.id,
     this.groupPrayer,
     this.prayer,
     this.tags,
     this.updates,
   });
+  factory CombineGroupPrayerStream.defaultValue() => CombineGroupPrayerStream(
+      groupPrayer: GroupPrayerModel.defaultValue(),
+      prayer: PrayerModel.defaultValue(),
+      tags: [],
+      updates: []);
 }
 
 class CombineGroupInviteStream {

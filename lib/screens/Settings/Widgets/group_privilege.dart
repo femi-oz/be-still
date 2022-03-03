@@ -37,7 +37,7 @@ class GroupPrivilegeSettings extends StatelessWidget {
                   padding:
                       EdgeInsets.symmetric(horizontal: 100.0, vertical: 20.0),
                   child: Text(
-                    user.userId.toUpperCase(),
+                    user.userId ?? ''.toUpperCase(),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: AppColors.lightBlue4,

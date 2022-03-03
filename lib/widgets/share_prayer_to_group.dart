@@ -1,6 +1,4 @@
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
@@ -13,23 +11,6 @@ class SharePrayerToGroups extends StatefulWidget {
 
 class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
   List selectedGroups = [];
-
-  void _getGroup() async {
-    UserModel _user =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
-    // await Provider.of<GroupProvider>(context, listen: false)
-    //     .setAllGroups(_user.id);
-  }
-
-  bool _isInit = true;
-  @override
-  void didChangeDependencies() {
-    if (_isInit) {
-      _getGroup();
-      _isInit = false;
-    }
-    super.didChangeDependencies();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +53,7 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
                     .map((group) => GestureDetector(
                           onTap: () {
                             setState(() {
-                              selectedGroups.add(group.group.id);
+                              selectedGroups.add(group.group?.id);
                             });
                           },
                           child: Container(
@@ -82,7 +63,7 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
                             margin: EdgeInsets.symmetric(
                                 horizontal: 50, vertical: 10),
                             decoration: BoxDecoration(
-                              color: selectedGroups.contains(group.group.id)
+                              color: selectedGroups.contains(group.group?.id)
                                   ? AppColors.activeButton.withOpacity(0.2)
                                   : Colors.transparent,
                               border: Border.all(
@@ -96,7 +77,7 @@ class _SharePrayerToGroupsState extends State<SharePrayerToGroups> {
                                 Padding(
                                   padding: const EdgeInsets.only(left: 10.0),
                                   child: Text(
-                                    group.group.name,
+                                    group.group?.name ?? '',
                                     style: TextStyle(
                                       color: AppColors.lightBlue4,
                                       fontSize: 14,

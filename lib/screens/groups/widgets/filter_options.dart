@@ -1,8 +1,14 @@
+import 'dart:io';
+
 import 'package:be_still/enums/status.dart';
+import 'package:be_still/models/group.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/menu-button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,22 +21,36 @@ class GroupPrayerFilters extends StatefulWidget {
 class _GroupPrayerFiltersState extends State<GroupPrayerFilters> {
   String errorMessage = '';
   void setOption(status) async {
-    errorMessage = '';
+    try {
+      errorMessage = '';
 
-    Provider.of<GroupPrayerProvider>(context, listen: false)
-        .setPrayerFilterOptions(status);
-    Provider.of<GroupPrayerProvider>(context, listen: false).filterPrayers();
-    final group = Provider.of<GroupProvider>(context, listen: false)
-        .currentGroup
-        .group
-        .name
-        .toUpperCase();
-    String heading =
-        '${status == Status.active ? '$group (ACTIVE)' : "$group (${status.toUpperCase()})"}';
-    await Provider.of<MiscProvider>(context, listen: false)
-        .setPageTitle(heading);
-    setState(() {});
-    Navigator.of(context).pop();
+      Provider.of<GroupPrayerProvider>(context, listen: false)
+          .setPrayerFilterOptions(status);
+      Provider.of<GroupPrayerProvider>(context, listen: false).filterPrayers();
+      final group = ((Provider.of<GroupProvider>(context, listen: false)
+                          .currentGroup
+                          .group ??
+                      GroupModel.defaultValue())
+                  .name ??
+              '')
+          .toUpperCase();
+      String heading =
+          '${status == Status.active ? '$group (ACTIVE)' : "$group (${status.toUpperCase()})"}';
+      await Provider.of<MiscProvider>(context, listen: false)
+          .setPageTitle(heading);
+      setState(() {});
+      Navigator.of(context).pop();
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
   }
 
   Widget build(BuildContext context) {
@@ -71,11 +91,11 @@ class _GroupPrayerFiltersState extends State<GroupPrayerFilters> {
                   onPressed: () => setOption(Status.archived),
                   text: Status.archived.toUpperCase(),
                 ),
-                // MenuButton(
-                //   isActive: status == Status.answered,
-                //   onPressed: () => setOption(Status.answered),
-                //   text: Status.answered.toUpperCase(),
-                // ),
+                MenuButton(
+                  isActive: status == Status.answered,
+                  onPressed: () => setOption(Status.answered),
+                  text: Status.answered.toUpperCase(),
+                ),
                 // MenuButton(
                 //   isActive: status == Status.following,
                 //   onPressed: () => setOption(Status.following),

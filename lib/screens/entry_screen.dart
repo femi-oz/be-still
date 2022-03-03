@@ -2,6 +2,7 @@ import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/providers/devotional_provider.dart';
+import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -10,8 +11,8 @@ import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/screens/Prayer/prayer_list.dart';
 import 'package:be_still/screens/Settings/settings_screen.dart';
-import 'package:be_still/screens/add_prayer/add_group_prayer_screen.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
+import 'package:be_still/screens/add_update/add_update.dart';
 import 'package:be_still/screens/create_group/create_group_screen.dart';
 import 'package:be_still/screens/group_prayer_details/group_prayer_details_screen.dart';
 import 'package:be_still/screens/groups/groups_screen.dart';
@@ -19,6 +20,7 @@ import 'package:be_still/screens/groups/widgets/find_a_group.dart';
 import 'package:be_still/screens/groups/widgets/group_prayers.dart';
 import 'package:be_still/screens/grow_my_prayer_life/devotion_and_reading_plans.dart';
 import 'package:be_still/screens/grow_my_prayer_life/recommended_bibles_screen.dart';
+import 'package:be_still/screens/notifications/notifications_screen.dart';
 import 'package:be_still/screens/prayer_details/prayer_details_screen.dart';
 import 'package:be_still/screens/prayer_time/prayer_time_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -26,6 +28,7 @@ import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/info_modal.dart';
 import 'package:be_still/utils/settings.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:be_still/widgets/join_group.dart';
 import 'package:cron/cron.dart';
@@ -42,12 +45,12 @@ class EntryScreen extends StatefulWidget {
   _EntryScreenState createState() => _EntryScreenState();
 }
 
-TutorialCoachMark tutorialCoachMark;
+late TutorialCoachMark tutorialCoachMark;
 
 class _EntryScreenState extends State<EntryScreen> {
-  BuildContext bcontext;
+  // BuildContext bcontext;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  FirebaseMessaging messaging;
+  late FirebaseMessaging messaging;
 
   bool _isSearchMode = false;
   void _switchSearchMode(bool value) => _isSearchMode = value;
@@ -55,64 +58,75 @@ class _EntryScreenState extends State<EntryScreen> {
   final cron = Cron();
 
   initState() {
-    final miscProvider = Provider.of<MiscProvider>(context, listen: false);
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser?.id;
-      if (miscProvider.initialLoad) {
-        await _preLoadData();
-        miscProvider.setLoadStatus(false);
-        final groupId =
-            Provider.of<GroupProvider>(context, listen: false).groupJoinId;
-        final userId =
-            Provider.of<UserProvider>(context, listen: false).currentUser?.id;
-        if (groupId.isNotEmpty)
-          Provider.of<GroupProvider>(context, listen: false)
-              .getGroup(groupId)
-              .asBroadcastStream()
-              .listen((groupPrayer) {
-            if (!groupPrayer.groupUsers.any((u) => u.userId == userId))
-              JoinGroup().showAlert(context, groupPrayer);
-          });
-        initDynamicLinks();
-      }
-      if (Provider.of<SettingsProvider>(context, listen: false)
-          .groupPreferenceSettings
-          .enableNotificationForAllGroups) {
-        messaging = FirebaseMessaging.instance;
-        messaging.getToken().then((value) => {
-              Provider.of<NotificationProvider>(context, listen: false)
-                  .init(value, userId)
-            });
-      }
-    });
+    try {
+      final miscProvider = Provider.of<MiscProvider>(context, listen: false);
+      WidgetsBinding.instance?.addPostFrameCallback((_) async {
+        final user =
+            Provider.of<UserProvider>(context, listen: false).currentUser;
+        if (miscProvider.initialLoad) {
+          await _preLoadData();
+          Future.delayed(Duration(milliseconds: 500));
+          miscProvider.setLoadStatus(false);
+
+          initDynamicLinks();
+        }
+        if ((Provider.of<SettingsProvider>(context, listen: false)
+                .groupPreferenceSettings
+                .enableNotificationForAllGroups ??
+            false)) {
+          messaging = FirebaseMessaging.instance;
+          messaging.getToken().then((value) => {
+                Provider.of<NotificationProvider>(context, listen: false)
+                    .init(value ?? "", user.id ?? '', user)
+              });
+        }
+      });
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+    }
     super.initState();
   }
 
   Future<void> initDynamicLinks() async {
-    FirebaseDynamicLinks.instance.onLink(
-        onSuccess: (PendingDynamicLinkData dynamicLink) async {
-      final Uri deepLink = dynamicLink.link;
-
-      if (deepLink != null) {
-        var groupId = deepLink.queryParameters['groups'];
+    try {
+      String _groupId = '';
+      FirebaseDynamicLinks.instance.onLink(
+          onSuccess: (PendingDynamicLinkData? dynamicLink) async {
+        final Uri deepLink = dynamicLink?.link ?? Uri();
+        // if (deepLink != null) {
+        _groupId = deepLink.queryParameters['groups'] ?? "";
 
         Provider.of<GroupProvider>(context, listen: false)
-            .setJoinGroupId(groupId);
-      }
-    }, onError: (OnLinkErrorException e) async {
-      print('onLinkError');
-      print(e.message);
-    });
+            .setJoinGroupId(_groupId);
+        // }
+      }, onError: (OnLinkErrorException e) async {
+        print('onLinkError');
+        print(e.message);
+      });
 
-    final PendingDynamicLinkData data =
-        await FirebaseDynamicLinks.instance.getInitialLink();
-    final Uri deepLink = data?.link;
+      final PendingDynamicLinkData? data =
+          await FirebaseDynamicLinks.instance.getInitialLink();
+      final Uri deepLink = data?.link ?? Uri();
 
-    if (deepLink != null) {
-      var groupId = deepLink.queryParameters['groups'];
+      _groupId = deepLink.queryParameters['groups'] ?? "";
       Provider.of<GroupProvider>(context, listen: false)
-          .setJoinGroupId(groupId);
+          .setJoinGroupId(_groupId);
+
+      final userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+      if (_groupId.isNotEmpty)
+        Provider.of<GroupProvider>(context, listen: false)
+            .getGroupFuture(_groupId, userId ?? '')
+            .then((groupPrayer) {
+          if (!(groupPrayer.groupUsers ?? []).any((u) => u.userId == userId))
+            JoinGroup().showAlert(context, groupPrayer);
+        });
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProvider>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -126,49 +140,55 @@ class _EntryScreenState extends State<EntryScreen> {
         Settings.enableLocalAuth = false;
 
       final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser?.id;
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
 
+      if ((userId ?? '').isNotEmpty)
+        Provider.of<PrayerProvider>(context, listen: false)
+            .checkPrayerValidity(userId ?? '');
       await _getPrayers();
       await _getActivePrayers();
       await _getDevotionals();
       await _getBibles();
       //load settings
       await Provider.of<SettingsProvider>(context, listen: false)
-          .setPrayerSettings(userId);
+          .setPrayerSettings(userId ?? '');
       await Provider.of<SettingsProvider>(context, listen: false)
-          .setSettings(userId);
+          .setSettings(userId ?? '');
       await Provider.of<SettingsProvider>(context, listen: false)
-          .setSharingSettings(userId);
+          .setSharingSettings(userId ?? '');
       await Provider.of<NotificationProvider>(context, listen: false)
-          .setPrayerTimeNotifications(userId);
+          .setPrayerTimeNotifications(userId ?? '');
+      // await Provider.of<SettingsProvider>(context, listen: false)
+      //     .setGroupSettings(userId??'');
       await Provider.of<SettingsProvider>(context, listen: false)
-          .setGroupSettings(userId);
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .setGroupPreferenceSettings(userId);
+          .setGroupPreferenceSettings(userId ?? '');
       await Provider.of<GroupProvider>(context, listen: false)
-          .setUserGroups(userId);
+          .setUserGroups(userId ?? '');
+      await Provider.of<GroupPrayerProvider>(context, listen: false)
+          .setFollowedPrayerByUserId(userId ?? '');
 
       //set all users
-      await Provider.of<UserProvider>(context, listen: false)
-          .setAllUsers(userId);
+      // await Provider.of<UserProvider>(context, listen: false)
+      //     .setAllUsers(userId ?? '');
 
       // get all push notifications
       await Provider.of<NotificationProvider>(context, listen: false)
-          .setUserNotifications(userId);
+          .setUserNotifications(userId ?? '');
 
       // get all local notifications
       await Provider.of<NotificationProvider>(context, listen: false)
-          .setLocalNotifications(userId);
+          .setLocalNotifications(userId ?? '');
       await Provider.of<GroupProvider>(context, listen: false)
-          .setAllGroups(userId);
+          .setAllGroups(userId ?? '');
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -177,15 +197,16 @@ class _EntryScreenState extends State<EntryScreen> {
       final _user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
       await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayerTimePrayers(_user.id);
+          .setPrayerTimePrayers(_user.id ?? '');
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -196,22 +217,23 @@ class _EntryScreenState extends State<EntryScreen> {
       final searchQuery =
           Provider.of<MiscProvider>(context, listen: false).searchQuery;
       await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayerTimePrayers(_user.id);
+          .setPrayerTimePrayers(_user.id ?? '');
       if (searchQuery.isNotEmpty) {
         Provider.of<PrayerProvider>(context, listen: false)
-            .searchPrayers(searchQuery, _user.id);
+            .searchPrayers(searchQuery, _user.id ?? '');
       } else {
         await Provider.of<PrayerProvider>(context, listen: false)
-            .setPrayers(_user?.id);
+            .setPrayers(_user.id ?? '');
       }
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -222,11 +244,12 @@ class _EntryScreenState extends State<EntryScreen> {
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -236,26 +259,29 @@ class _EntryScreenState extends State<EntryScreen> {
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
   void _setDefaultSnooze(selectedDuration, selectedInterval, settingsId) async {
     try {
+      final userId =
+          Provider.of<UserProvider>(context, listen: false).currentUser.id;
       await Provider.of<SettingsProvider>(context, listen: false)
           .updateSettings(
-        Provider.of<UserProvider>(context, listen: false).currentUser.id,
+        userId ?? '',
         key: SettingsKey.defaultSnoozeDuration,
         value: selectedDuration,
         settingsId: settingsId,
       );
       await Provider.of<SettingsProvider>(context, listen: false)
           .updateSettings(
-        Provider.of<UserProvider>(context, listen: false).currentUser.id,
+        userId ?? '',
         key: SettingsKey.defaultSnoozeFrequency,
         value: selectedInterval,
         settingsId: settingsId,
@@ -263,11 +289,12 @@ class _EntryScreenState extends State<EntryScreen> {
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
@@ -276,13 +303,14 @@ class _EntryScreenState extends State<EntryScreen> {
   GlobalKey _keyButton3 = GlobalKey();
   GlobalKey _keyButton4 = GlobalKey();
   GlobalKey _keyButton5 = GlobalKey();
+  GlobalKey _keyButton6 = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     final miscProvider = Provider.of<MiscProvider>(context);
     _isSearchMode = Provider.of<MiscProvider>(context, listen: false).search;
 
-    AppCOntroller appCOntroller = Get.find();
+    AppController appController = Get.find();
     return Scaffold(
       key: _scaffoldKey,
       body: Container(
@@ -294,10 +322,10 @@ class _EntryScreenState extends State<EntryScreen> {
           ),
         ),
         child: miscProvider.initialLoad
-            ? BeStilDialog.getLoading(context)
+            ? BeStilDialog.getLoading(context, true)
             : new TabBarView(
                 physics: NeverScrollableScrollPhysics(),
-                controller: appCOntroller.tabController,
+                controller: appController.tabController,
                 children: [
                   for (int i = 0; i < getItems().length; i++)
                     getItems().map((e) => e.page).toList()[i],
@@ -305,18 +333,19 @@ class _EntryScreenState extends State<EntryScreen> {
               ),
       ),
       bottomNavigationBar:
-          _createBottomNavigationBar(appCOntroller.currentPage),
+          _createBottomNavigationBar(appController.currentPage),
       endDrawer: CustomDrawer(
         (index) {
-          AppCOntroller appCOntroller = Get.find();
+          AppController appController = Get.find();
 
-          appCOntroller.setCurrentPage(index, true);
+          appController.setCurrentPage(index, true, 0);
         },
         _keyButton,
         _keyButton2,
         _keyButton3,
         _keyButton4,
         _keyButton5,
+        _keyButton6,
         _scaffoldKey,
       ),
       endDrawerEnableOpenDragGesture: false,
@@ -340,38 +369,43 @@ class _EntryScreenState extends State<EntryScreen> {
         child: BottomNavigationBar(
           currentIndex: _currentIndex > 4 ? 4 : _currentIndex,
           onTap: (index) async {
-            switch (index) {
-              case 2:
-                final prayers =
-                    Provider.of<PrayerProvider>(context, listen: false)
-                        .filteredPrayerTimeList;
-                if (prayers.length == 0) {
-                  message =
-                      'You must have at least one active prayer to start prayer time.';
-                  showInfoModal(message, 'PrayerTime', context);
-                } else {
-                  AppCOntroller appCOntroller = Get.find();
+            try {
+              switch (index) {
+                case 2:
+                  final prayers =
+                      Provider.of<PrayerProvider>(context, listen: false)
+                          .filteredPrayerTimeList;
+                  if (prayers.length == 0) {
+                    message =
+                        'You must have at least one active prayer to start prayer time.';
+                    showInfoModal(message, 'PrayerTime', context);
+                  } else {
+                    AppController appController = Get.find();
+                    appController.setCurrentPage(index, true, 0);
+                  }
+                  break;
+                case 1:
+                  Provider.of<PrayerProvider>(context, listen: false)
+                      .setEditMode(false, true);
+                  // Provider.of<PrayerProvider>(context, listen: false)
+                  //     .setEditPrayer();
+                  AppController appController = Get.find();
 
-                  appCOntroller.setCurrentPage(index, true);
-                }
-                break;
-              case 1:
-                Provider.of<PrayerProvider>(context, listen: false)
-                    .setEditMode(false);
-                Provider.of<PrayerProvider>(context, listen: false)
-                    .setEditPrayer(null);
-                AppCOntroller appCOntroller = Get.find();
-
-                appCOntroller.setCurrentPage(1, true);
-                break;
-              case 4:
-                Scaffold.of(context).openEndDrawer();
-                break;
-              default:
-                AppCOntroller appCOntroller = Get.find();
-
-                appCOntroller.setCurrentPage(index, true);
-                break;
+                  appController.setCurrentPage(1, true, 0);
+                  break;
+                case 4:
+                  Scaffold.of(context).openEndDrawer();
+                  break;
+                default:
+                  AppController appController = Get.find();
+                  appController.setCurrentPage(index, true, 0);
+                  break;
+              }
+            } catch (e, s) {
+              final user =
+                  Provider.of<UserProvider>(context, listen: false).currentUser;
+              BeStilDialog.showErrorDialog(
+                  context, StringUtils.errorOccured, user, s);
             }
           },
           showSelectedLabels: false,
@@ -401,6 +435,7 @@ class _EntryScreenState extends State<EntryScreen> {
                         tabItem.title,
                         style: AppTextStyles.boldText14.copyWith(
                           color: AppColors.bottomNavIconColor.withOpacity(0.5),
+                          fontSize: 11,
                           height: 1,
                         ),
                       )
@@ -423,6 +458,7 @@ class _EntryScreenState extends State<EntryScreen> {
             _keyButton3,
             _keyButton4,
             _keyButton5,
+            _keyButton6,
             _isSearchMode,
             _switchSearchMode, //0
           ),
@@ -431,7 +467,7 @@ class _EntryScreenState extends State<EntryScreen> {
             size: 16,
             color: AppColors.bottomNavIconColor,
           ),
-          title: "List",
+          title: "My Prayers",
           padding: 7,
           key: _keyButton,
         ),
@@ -454,7 +490,7 @@ class _EntryScreenState extends State<EntryScreen> {
             color: AppColors.bottomNavIconColor,
           ),
           title: "Pray",
-          padding: 7,
+          padding: 8,
           key: _keyButton3,
         ),
         TabNavigationItem(
@@ -465,7 +501,8 @@ class _EntryScreenState extends State<EntryScreen> {
               color: AppColors.bottomNavIconColor,
             ),
             title: "Groups",
-            padding: 4),
+            padding: 6,
+            key: _keyButton6),
         TabNavigationItem(
           page: SettingsScreen(_setDefaultSnooze), //4
           icon: Icon(
@@ -474,7 +511,7 @@ class _EntryScreenState extends State<EntryScreen> {
             color: AppColors.bottomNavIconColor,
           ),
           title: "More",
-          padding: 2,
+          padding: 4,
           key: _keyButton4,
         ),
         TabNavigationItem(
@@ -523,7 +560,7 @@ class _EntryScreenState extends State<EntryScreen> {
             title: "More",
             padding: 7),
         TabNavigationItem(
-            page: AddGroupPrayer(), //10
+            page: Container(), //10
             icon: Icon(
               Icons.more_horiz,
               size: 20,
@@ -549,6 +586,24 @@ class _EntryScreenState extends State<EntryScreen> {
             ),
             title: "More",
             padding: 7),
+        TabNavigationItem(
+            page: AddUpdate(), //13
+            icon: Icon(
+              Icons.more_horiz,
+              size: 20,
+              color: AppColors.bottomNavIconColor,
+            ),
+            title: "More",
+            padding: 7),
+        TabNavigationItem(
+            page: NotificationsScreen(), //14
+            icon: Icon(
+              Icons.more_horiz,
+              size: 20,
+              color: AppColors.bottomNavIconColor,
+            ),
+            title: "More",
+            padding: 7),
       ];
 }
 
@@ -557,13 +612,13 @@ class TabNavigationItem {
   final String title;
   final Icon icon;
   final double padding;
-  final GlobalKey key;
+  final GlobalKey? key;
 
   TabNavigationItem({
-    @required this.page,
-    @required this.title,
-    @required this.icon,
-    @required this.padding,
+    required this.page,
+    required this.title,
+    required this.icon,
+    required this.padding,
     this.key,
   });
 }

@@ -1,13 +1,20 @@
+import 'dart:io';
+
+import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class NotificationBar extends StatefulWidget implements PreferredSizeWidget {
   final context;
 
-  NotificationBar({Key key, this.context})
+  NotificationBar({Key? key, this.context})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -35,25 +42,47 @@ class NotificationBarState extends State<NotificationBar> {
       centerTitle: true,
       title: data.length > 0
           ? TextButton(
-              onPressed: () =>
-                  Provider.of<NotificationProvider>(context, listen: false)
-                      .clearNotification(context),
+              onPressed: () async {
+                BeStilDialog.showLoading(context);
+                try {
+                  await Provider.of<NotificationProvider>(context,
+                          listen: false)
+                      .clearNotification();
+                  BeStilDialog.hideLoading(context);
+                } on HttpException catch (e, s) {
+                  BeStilDialog.hideLoading(context);
+
+                  final user = Provider.of<UserProvider>(context, listen: false)
+                      .currentUser;
+                  BeStilDialog.showErrorDialog(
+                      context, StringUtils.getErrorMessage(e), user, s);
+                } catch (e, s) {
+                  BeStilDialog.hideLoading(context);
+                  final user = Provider.of<UserProvider>(context, listen: false)
+                      .currentUser;
+                  BeStilDialog.showErrorDialog(
+                      context, StringUtils.errorOccured, user, s);
+                }
+              },
               child: Text(
                 "CLEAR ALL",
                 style: AppTextStyles.boldText16
                     .copyWith(color: AppColors.bottomNavIconColor),
               ),
             )
-          : Text('Notifications',
+          : Text('Alerts',
               style: AppTextStyles.boldText16
                   .copyWith(color: AppColors.bottomNavIconColor)),
       leading: IconButton(
         icon: Icon(
           AppIcons.bestill_close,
-          color: AppColors.textFieldText,
+          color: AppColors.white,
           size: 24,
         ),
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: () {
+          AppController appController = Get.find();
+          appController.setCurrentPage(appController.previousPage, false, 14);
+        },
       ),
       // actions: <Widget>[
       //   ,
