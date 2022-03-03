@@ -1,4 +1,5 @@
 import 'package:be_still/models/models/device.model.dart';
+import 'package:flutter/services.dart';
 
 class UserDataModel {
   String? id;
@@ -119,4 +120,10 @@ class UserDataModel {
     data['status'] = this.status;
     return data;
   }
+}
+
+class UserVerify {
+  final PlatformException? error;
+  final bool needsVerification;
+  UserVerify({required this.error, required this.needsVerification});
 }

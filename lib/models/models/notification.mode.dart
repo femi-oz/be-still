@@ -6,8 +6,8 @@ class NotificationModel {
   String? type;
   String? createdBy;
   String? modifiedBy;
-  String? createdDate;
-  String? modifiedDate;
+  DateTime? createdDate;
+  DateTime? modifiedDate;
   String? status;
 
   NotificationModel(
