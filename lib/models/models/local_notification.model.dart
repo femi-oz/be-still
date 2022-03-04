@@ -1,4 +1,4 @@
-class LocalNotificationModel {
+class LocalNotificationDataModel {
   String? id;
   String? userId;
   String? message;
@@ -11,7 +11,7 @@ class LocalNotificationModel {
   String? modifiedDate;
   String? status;
 
-  LocalNotificationModel(
+  LocalNotificationDataModel(
       {this.id,
       this.userId,
       this.message,
@@ -24,7 +24,7 @@ class LocalNotificationModel {
       this.modifiedDate,
       this.status});
 
-  LocalNotificationModel.fromJson(Map<String, dynamic> json) {
+  LocalNotificationDataModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     userId = json['userId'];
     message = json['message'];
