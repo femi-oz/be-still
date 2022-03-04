@@ -18,11 +18,11 @@ class PrayerService {
 
   final CollectionReference<Map<String, dynamic>>
       _prayerDataCollectionReference =
-      FirebaseFirestore.instance.collection("prayers_v2");
+      FirebaseFirestore.instance.collection('prayers_v2');
 
   final CollectionReference<Map<String, dynamic>>
       _messageTemplateCollectionReference =
-      FirebaseFirestore.instance.collection("MessageTemplate");
+      FirebaseFirestore.instance.collection('MessageTemplate');
 
   final _notificationService = locator<NotificationService>();
 
@@ -59,7 +59,7 @@ class PrayerService {
     }
   }
 
-  Stream<List<PrayerDataModel>> getUserPrayers(String userId) {
+  Stream<List<PrayerDataModel>> getPrayers(String userId) {
     try {
       if (_firebaseAuth.currentUser == null)
         return Stream.error(StringUtils.unathorized);
@@ -89,6 +89,104 @@ class PrayerService {
     }
   }
 
+  Stream<PrayerDataModel> getPrayer(String prayerId) {
+    try {
+      return _prayerDataCollectionReference
+          .doc(prayerId)
+          .snapshots()
+          .map<PrayerDataModel>((doc) => PrayerDataModel.fromJson(doc.data()!));
+    } catch (e) {
+      throw StringUtils.getErrorMessage(e);
+    }
+  }
+
+  Future<void> editPrayer(
+      {required DocumentReference prayerReference,
+      required String prayerId,
+      required String description}) async {
+    try {
+      await prayerReference
+          .update({'description': description, 'modifiedOn': DateTime.now()});
+    } catch (e) {
+      throw StringUtils.getErrorMessage(e);
+    }
+  }
+
+  Future<void> addPrayerToGroup(
+      {required DocumentReference prayerReference,
+      required String groupId,
+      required bool isGroup}) async {
+    try {
+      await prayerReference.update({
+        'groupId': groupId,
+        'modifiedOn': DateTime.now(),
+        'isGroup': isGroup
+      });
+    } catch (e) {
+      throw StringUtils.getErrorMessage(e);
+    }
+  }
+
+  Future<void> unSnoozePrayer({
+    required DocumentReference prayerReference,
+  }) async {
+    try {
+      await prayerReference.update({
+        'isSnoozed': false,
+        'status': Status.active,
+        'snoozeEndDate': null,
+        'modifiedOn': DateTime.now(),
+      });
+    } catch (e) {
+      throw StringUtils.getErrorMessage(e);
+    }
+  }
+
+  Future<void> unArchivePrayer(
+      {required DocumentReference prayerReference}) async {
+    try {
+      await prayerReference.update({
+        'isAnswered': false,
+        'status': Status.active,
+        'modifiedOn': DateTime.now(),
+      });
+    } catch (e) {
+      throw StringUtils.getErrorMessage(e);
+    }
+  }
+
+  Future<void> unMarkPrayerAsAnswered(
+      {required DocumentReference prayerReference}) async {
+    try {
+      await prayerReference.update({
+        'isAnswered': false,
+        'status': Status.active,
+        'modifiedOn': DateTime.now(),
+      });
+    } catch (e) {
+      throw StringUtils.getErrorMessage(e);
+    }
+  }
+
+  Future<void> unFavouritePrayer(
+      {required DocumentReference prayerReference}) async {
+    try {
+      await prayerReference.update({
+        'isFavorite': false,
+        'status': Status.active,
+        'modifiedOn': DateTime.now(),
+      });
+    } catch (e) {
+      throw StringUtils.getErrorMessage(e);
+    }
+  }
+
+  // Future<void>autoDeleteArchivePrayers({
+  //    required int autoDeletePeriod
+  // })async {
+
+  // }
+
   Future<void> createPrayerTag(
       {required DocumentReference prayerReference,
       required List<Contact> contactData,
@@ -115,7 +213,7 @@ class PrayerService {
                 modifiedDate: DateTime.now(),
               ))
           .toList();
-      await prayerReference.update({"tags": tags.map((e) => e.toJson())});
+      await prayerReference.update({'tags': tags.map((e) => e.toJson())});
       sendTagMessageToUsers(
           contactData: contactData,
           description: description,
@@ -207,7 +305,7 @@ class PrayerService {
         ));
 
       await prayerReference
-          .update({"updates": currentUpdates.map((e) => e.toJson())});
+          .update({'updates': currentUpdates.map((e) => e.toJson())});
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -258,6 +356,21 @@ class PrayerService {
       prayerReference.delete();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
+  Future<void> deleteUpdate({
+    required DocumentReference prayerReference,
+    required String prayerUpdateId,
+    required List<UpdateModel> currentUpdates,
+  }) async {
+    try {
+      currentUpdates = currentUpdates
+        ..removeWhere((element) => element.id == prayerUpdateId);
+      await prayerReference
+          .update({'updates': currentUpdates.map((e) => e.toJson())});
+    } catch (e) {
+      throw StringUtils.getErrorMessage(e);
     }
   }
 }

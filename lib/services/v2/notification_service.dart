@@ -1,12 +1,14 @@
 import 'dart:io';
 
-import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/flavor_config.dart';
 import 'package:be_still/models/message_template.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/message.model.dart';
 import 'package:be_still/models/v2/notification.mode.dart';
+import 'package:be_still/models/models/local_notification.model.dart';
+import 'package:be_still/models/models/notification.mode.dart';
+import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -21,6 +23,9 @@ class NotificationService {
   final CollectionReference<Map<String, dynamic>>
       _localNotificationCollectionReference =
       FirebaseFirestore.instance.collection("local_notifications");
+  final CollectionReference<Map<String, dynamic>>
+      _localNotificationCollectionReference =
+      FirebaseFirestore.instance.collection("notifications");
 
   Future<void> addNotification({
     required String message,
@@ -169,6 +174,51 @@ class NotificationService {
       _emailCollectionReference.add(data.toJson());
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
+  Stream<List<LocalNotificationDataModel>> getUserLocalNotification({
+    required String userId,
+  }) {
+    return _localNotificationCollectionReference
+        .where('userId', isEqualTo: userId)
+        .snapshots()
+        .map((event) => event.docs
+            .map((e) => LocalNotificationDataModel.fromJson(e.data()))
+            .toList());
+  }
+
+  Future<void> updateLocalNotification({
+    required DocumentReference notificationReference,
+    required String userId,
+    required String message,
+    required String localNotificationId,
+    required String type,
+    required String scheduleDate,
+    required String status,
+  }) async {
+    try {
+      await notificationReference.update({
+        'message': message,
+        'localNotificationId': localNotificationId,
+        'type': type,
+        'scheduleDate': scheduleDate,
+        'status': status,
+        'modifiedBy': userId,
+        'modifiedDate': DateTime.now()
+      });
+    } catch (e) {
+      StringUtils.getErrorMessage(e);
+    }
+  }
+
+  Future<void> clearAllNotifications({required List<String> ids}) async {
+    try {
+      ids.forEach((element) {
+        _notificationCollectionReference.doc(element).delete();
+      });
+    } catch (e) {
+      StringUtils.getErrorMessage(e);
     }
   }
 }

@@ -18,6 +18,15 @@ class UserService {
   final CollectionReference<Map<String, dynamic>> _userDataCollectionReference =
       FirebaseFirestore.instance.collection("users_v2");
 
+  Stream<List<UserDataModel>> getAllUsers() {
+    try {
+      return _userDataCollectionReference.snapshots().map((event) =>
+          event.docs.map((e) => UserDataModel.fromJson(e.data())).toList());
+    } catch (e) {
+      throw StringUtils.getErrorMessage(e);
+    }
+  }
+
   Future<void> createUser({
     required String uid,
     required String firstName,
@@ -133,6 +142,23 @@ class UserService {
       }
     } catch (e) {
       throw Exception('Failed to get platform version');
+    }
+  }
+
+  Future<void> deletePushToken(
+      {required DocumentReference userReference,
+      required String deviceId,
+      required String userId,
+      required List<DeviceModel> devices}) async {
+    try {
+      devices.removeWhere((element) => element.id == deviceId);
+      userReference.update({
+        'devices': devices,
+        'modifiedBy': userId,
+        'modifiedDate': DateTime.now()
+      });
+    } catch (e) {
+      StringUtils.getErrorMessage(e);
     }
   }
 }
