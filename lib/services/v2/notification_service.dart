@@ -6,13 +6,13 @@ import 'package:be_still/models/message_template.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/message.model.dart';
 import 'package:be_still/models/v2/notification.mode.dart';
-import 'package:be_still/models/models/local_notification.model.dart';
-import 'package:be_still/models/models/notification.mode.dart';
-import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class NotificationService {
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   final CollectionReference<Map<String, dynamic>> _smsCollectionReference =
       FirebaseFirestore.instance.collection("SMSMessage");
   final CollectionReference<Map<String, dynamic>> _emailCollectionReference =
@@ -23,15 +23,11 @@ class NotificationService {
   final CollectionReference<Map<String, dynamic>>
       _localNotificationCollectionReference =
       FirebaseFirestore.instance.collection("local_notifications");
-  final CollectionReference<Map<String, dynamic>>
-      _localNotificationCollectionReference =
-      FirebaseFirestore.instance.collection("notifications");
 
   Future<void> addNotification({
     required String message,
     required List<String> tokens,
     required String type,
-    required String userId,
   }) async {
     try {
       final doc = NotificationModel(
@@ -39,9 +35,9 @@ class NotificationService {
         status: Status.active,
         tokens: tokens,
         type: type,
-        userId: userId,
-        modifiedBy: userId,
-        createdBy: userId,
+        userId: _firebaseAuth.currentUser?.uid,
+        modifiedBy: _firebaseAuth.currentUser?.uid,
+        createdBy: _firebaseAuth.currentUser?.uid,
         createdDate: DateTime.now(),
         modifiedDate: DateTime.now(),
       ).toJson();
@@ -54,20 +50,19 @@ class NotificationService {
   Future<void> storeLocalNotifications({
     required String message,
     required String type,
-    required String userId,
     required int localNotificationId,
     required DateTime scheduleDate,
   }) async {
     try {
-      final doc = LocalNotificationModel(
+      final doc = LocalNotificationDataModel(
         message: message,
         status: Status.active,
         localNotificationId: localNotificationId,
         scheduleDate: scheduleDate,
         type: type,
-        userId: userId,
-        modifiedBy: userId,
-        createdBy: userId,
+        userId: _firebaseAuth.currentUser?.uid,
+        modifiedBy: _firebaseAuth.currentUser?.uid,
+        createdBy: _firebaseAuth.currentUser?.uid,
         createdDate: DateTime.now(),
         modifiedDate: DateTime.now(),
       ).toJson();
@@ -77,10 +72,10 @@ class NotificationService {
     }
   }
 
-  Stream<List<NotificationModel>> getUserPushNotifications(String userId) {
+  Stream<List<NotificationModel>> getUserPushNotifications() {
     try {
       return _notificationCollectionReference
-          .where('userId', isEqualTo: userId)
+          .where('userId', isEqualTo: _firebaseAuth.currentUser?.uid)
           .snapshots()
           .map((event) => event.docs
               .map((e) => NotificationModel.fromJson(e.data()))
@@ -177,11 +172,9 @@ class NotificationService {
     }
   }
 
-  Stream<List<LocalNotificationDataModel>> getUserLocalNotification({
-    required String userId,
-  }) {
+  Stream<List<LocalNotificationDataModel>> getUserLocalNotification() {
     return _localNotificationCollectionReference
-        .where('userId', isEqualTo: userId)
+        .where('userId', isEqualTo: _firebaseAuth.currentUser?.uid)
         .snapshots()
         .map((event) => event.docs
             .map((e) => LocalNotificationDataModel.fromJson(e.data()))
@@ -190,7 +183,6 @@ class NotificationService {
 
   Future<void> updateLocalNotification({
     required DocumentReference notificationReference,
-    required String userId,
     required String message,
     required String localNotificationId,
     required String type,
@@ -204,7 +196,7 @@ class NotificationService {
         'type': type,
         'scheduleDate': scheduleDate,
         'status': status,
-        'modifiedBy': userId,
+        'modifiedBy': _firebaseAuth.currentUser?.uid,
         'modifiedDate': DateTime.now()
       });
     } catch (e) {

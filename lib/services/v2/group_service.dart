@@ -1,10 +1,12 @@
+import 'dart:io';
+
 import 'package:be_still/enums/request_status.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
-import 'package:be_still/models/models/follower.model.dart';
-import 'package:be_still/models/models/group.model.dart';
-import 'package:be_still/models/models/group_user.model.dart';
-import 'package:be_still/models/models/request.model.dart';
+import 'package:be_still/models/v2/follower.model.dart';
+import 'package:be_still/models/v2/group.model.dart';
+import 'package:be_still/models/v2/group_user.model.dart';
+import 'package:be_still/models/v2/request.model.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
@@ -13,13 +15,13 @@ import 'package:uuid/uuid.dart';
 
 class GroupService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   final CollectionReference<Map<String, dynamic>>
       _groupDataCollectionReference =
       FirebaseFirestore.instance.collection("groups_v2");
 
   Future<void> createGroup(
-      {required String userId,
-      required String name,
+      {required String name,
       required String purpose,
       required bool requireAdminApproval,
       required String organization,
@@ -42,17 +44,17 @@ class GroupService {
             notifyMeOfFlaggedPrayers: true,
             notifyWhenNewMemberJoins: true,
             role: GroupUserRole.admin,
-            userId: userId,
+            userId: _firebaseAuth.currentUser?.uid,
             status: Status.active,
-            createdBy: userId,
-            modifiedBy: userId,
+            createdBy: _firebaseAuth.currentUser?.uid,
+            modifiedBy: _firebaseAuth.currentUser?.uid,
             createdDate: DateTime.now(),
             modifiedDate: DateTime.now(),
           )
         ],
         status: Status.active,
-        createdBy: userId,
-        modifiedBy: userId,
+        createdBy: _firebaseAuth.currentUser?.uid,
+        modifiedBy: _firebaseAuth.currentUser?.uid,
         createdDate: DateTime.now(),
         modifiedDate: DateTime.now(),
       ).toJson();
@@ -62,12 +64,12 @@ class GroupService {
     }
   }
 
-  Stream<List<GroupDataModel>> getUserGroups(String userId) {
+  Stream<List<GroupDataModel>> getUserGroups() {
     try {
       if (_firebaseAuth.currentUser == null)
         return Stream.error(StringUtils.unathorized);
       return _groupDataCollectionReference
-          .where('users.userId', isEqualTo: userId)
+          .where('users.userId', isEqualTo: _firebaseAuth.currentUser?.uid)
           .snapshots()
           .map((event) => event.docs
               .map((e) => GroupDataModel.fromJson(e.data()))
@@ -80,7 +82,6 @@ class GroupService {
   Future<void> requestToJoinGroup({
     required DocumentReference groupReference,
     required List<RequestModel> currentRequests,
-    required String userId,
     required String description,
   }) async {
     try {
@@ -90,11 +91,11 @@ class GroupService {
       currentRequests = currentRequests
         ..add(RequestModel(
           id: docId,
-          userId: userId,
+          userId: _firebaseAuth.currentUser?.uid,
           status: Status.active,
-          createdBy: userId,
+          createdBy: _firebaseAuth.currentUser?.uid,
           createdDate: DateTime.now(),
-          modifiedBy: userId,
+          modifiedBy: _firebaseAuth.currentUser?.uid,
           modifiedDate: DateTime.now(),
         ));
 
@@ -111,7 +112,6 @@ class GroupService {
     required List<RequestModel> currentRequests,
     required RequestModel request,
     required String requestId,
-    required String userId,
   }) async {
     try {
       if (_firebaseAuth.currentUser == null)
@@ -122,7 +122,7 @@ class GroupService {
           status: request.status,
           createdBy: request.createdBy,
           createdDate: request.createdDate,
-          modifiedBy: userId,
+          modifiedBy: _firebaseAuth.currentUser?.uid,
           modifiedDate: DateTime.now());
 
       await groupReference
@@ -136,7 +136,6 @@ class GroupService {
   Future<void> autoJoinGroup({
     required DocumentReference groupReference,
     required List<GroupUserDataModel> currentUsers,
-    required String userId,
     required String description,
   }) async {
     try {
@@ -146,15 +145,15 @@ class GroupService {
       currentUsers = currentUsers
         ..add(GroupUserDataModel(
           id: docId,
-          userId: userId,
+          userId: _firebaseAuth.currentUser?.uid,
           role: GroupUserRole.member,
           enableNotificationForUpdates: true,
           notifyMeOfFlaggedPrayers: true,
           notifyWhenNewMemberJoins: true,
           status: Status.active,
-          createdBy: userId,
+          createdBy: _firebaseAuth.currentUser?.uid,
           createdDate: DateTime.now(),
-          modifiedBy: userId,
+          modifiedBy: _firebaseAuth.currentUser?.uid,
           modifiedDate: DateTime.now(),
         ));
 
@@ -176,7 +175,7 @@ class GroupService {
   }
 
   Future<void> inviteMember(String groupName, String groupId, String email,
-      String sender, String senderId, String userId) async {
+      String sender, String senderId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
@@ -185,7 +184,7 @@ class GroupService {
       final data = {
         'groupName': groupName,
         'groupId': groupId,
-        'userId': userId,
+        'userId': _firebaseAuth.currentUser?.uid,
         'email': email,
         'sender': sender,
         'senderId': senderId,
@@ -211,7 +210,6 @@ class GroupService {
   Future<void> editGroup(
       {required DocumentReference groupReference,
       required String groupId,
-      required String userId,
       required GroupDataModel groupData}) async {
     try {
       await groupReference.update({
@@ -221,7 +219,7 @@ class GroupService {
         'location': groupData.location,
         'type': groupData.type,
         'requireAdminApproval': groupData.requireAdminApproval,
-        'modifiedBy': userId,
+        'modifiedBy': _firebaseAuth.currentUser?.uid,
         'modifiedDate': DateTime.now()
       });
     } catch (e) {
@@ -231,7 +229,6 @@ class GroupService {
 
   Future<void> denyJoinRequest(
       {required DocumentReference groupReference,
-      required String userId,
       required String requestId,
       required List<RequestModel> requests}) async {
     try {
@@ -239,7 +236,7 @@ class GroupService {
           requests.where((element) => element.id == requestId).toList();
       requestToUpdate.map((e) {
         e.status = RequestStatus.denied;
-        e.modifiedBy = userId;
+        e.modifiedBy = _firebaseAuth.currentUser?.uid;
         e.modifiedDate = DateTime.now();
       });
 
@@ -254,17 +251,18 @@ class GroupService {
     required DocumentReference prayerReference,
     required List<GroupUserDataModel> groupUsers,
     required List<FollowerModel> followers,
-    required String userId,
   }) async {
     try {
-      groupUsers.removeWhere((element) => element.userId == userId);
+      groupUsers.removeWhere(
+          (element) => element.userId == _firebaseAuth.currentUser?.uid);
       groupUsers.map((e) {
-        e.modifiedBy = userId;
+        e.modifiedBy = _firebaseAuth.currentUser?.uid;
         e.modifiedDate = DateTime.now();
       });
-      followers.removeWhere((element) => element.userId == userId);
+      followers.removeWhere(
+          (element) => element.userId == _firebaseAuth.currentUser?.uid);
       followers.map((e) {
-        e.modifiedBy = userId;
+        e.modifiedBy = _firebaseAuth.currentUser?.uid;
         e.modifiedDate = DateTime.now();
       });
       await groupReference.update({'users': groupUsers});
@@ -274,18 +272,18 @@ class GroupService {
     }
   }
 
-  Future<void> updateGroupSettings(
-      {required DocumentReference groupReference,
-      required bool enableNotificationForUpdates,
-      required bool notifyMeofFlaggedPrayers,
-      required bool notifyWhenNewMemberJoins,
-      required String userId}) async {
+  Future<void> updateGroupSettings({
+    required DocumentReference groupReference,
+    required bool enableNotificationForUpdates,
+    required bool notifyMeofFlaggedPrayers,
+    required bool notifyWhenNewMemberJoins,
+  }) async {
     try {
       await groupReference.update({
         'enableNotificationForUpdates': enableNotificationForUpdates,
         'notifyMeofFlaggedPrayers': notifyMeofFlaggedPrayers,
         'notifyWhenNewMemberJoins': notifyWhenNewMemberJoins,
-        'modifiedBy': userId,
+        'modifiedBy': _firebaseAuth.currentUser?.uid,
         'modifiedDate': DateTime.now()
       });
     } catch (e) {

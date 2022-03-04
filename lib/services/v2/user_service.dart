@@ -148,13 +148,12 @@ class UserService {
   Future<void> deletePushToken(
       {required DocumentReference userReference,
       required String deviceId,
-      required String userId,
       required List<DeviceModel> devices}) async {
     try {
       devices.removeWhere((element) => element.id == deviceId);
       userReference.update({
         'devices': devices,
-        'modifiedBy': userId,
+        'modifiedBy': _firebaseAuth.currentUser?.uid,
         'modifiedDate': DateTime.now()
       });
     } catch (e) {

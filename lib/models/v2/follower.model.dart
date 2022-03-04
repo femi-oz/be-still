@@ -1,6 +1,7 @@
 class FollowerModel {
   String? id;
   String? userId;
+  String? prayerStatus;
   String? createdBy;
   String? modifiedBy;
   DateTime? createdDate;
@@ -10,6 +11,7 @@ class FollowerModel {
   FollowerModel(
       {this.id,
       this.userId,
+      this.prayerStatus,
       this.createdBy,
       this.modifiedBy,
       this.createdDate,
@@ -19,6 +21,7 @@ class FollowerModel {
   FollowerModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     userId = json['userId'];
+    prayerStatus = json['prayerStatus'];
     createdBy = json['createdBy'];
     modifiedBy = json['modifiedBy'];
     createdDate = json['createdDate'];
@@ -30,6 +33,7 @@ class FollowerModel {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['userId'] = this.userId;
+    data['prayerStatus'] = this.prayerStatus;
     data['createdBy'] = this.createdBy;
     data['modifiedBy'] = this.modifiedBy;
     data['createdDate'] = this.createdDate;
