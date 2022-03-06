@@ -7,6 +7,9 @@ import 'package:be_still/services/notification_service.dart';
 import 'package:be_still/services/prayer_service.dart';
 import 'package:be_still/services/settings_service.dart';
 import 'package:be_still/services/user_service.dart';
+import 'package:be_still/services/v2/auth_service.dart';
+import 'package:be_still/services/v2/prayer_service.dart';
+import 'package:be_still/services/v2/user_service.dart';
 import 'package:get_it/get_it.dart';
 
 GetIt locator = GetIt.instance;
@@ -21,4 +24,8 @@ void setupLocator() {
   locator.registerLazySingleton(() => NotificationService());
   locator.registerLazySingleton(() => DevotionalService());
   locator.registerLazySingleton(() => LogService());
+
+  locator.registerLazySingleton(() => AuthenticationServicev2());
+  locator.registerLazySingleton(() => PrayerServiceV2());
+  locator.registerLazySingleton(() => UserServiceV2());
 }

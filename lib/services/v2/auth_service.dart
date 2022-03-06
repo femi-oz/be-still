@@ -9,7 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 
-class AuthenticationService {
+class AuthenticationServicev2 {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final _localAuth = LocalAuthentication();
 
@@ -120,7 +120,7 @@ class AuthenticationService {
         password: password,
       );
       User? user = _firebaseAuth.currentUser;
-      await locator<UserService>().createUser(
+      await locator<UserServiceV2>().createUser(
           uid: user?.uid ?? '',
           email: email,
           firstName: firstName,

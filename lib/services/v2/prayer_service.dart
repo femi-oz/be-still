@@ -14,7 +14,7 @@ import 'package:contacts_service/contacts_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
 
-class PrayerService {
+class PrayerServiceV2 {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   final CollectionReference<Map<String, dynamic>>
@@ -115,11 +115,10 @@ class PrayerService {
   }
 
   Future<void> editPrayer(
-      {required DocumentReference prayerReference,
-      required String prayerId,
-      required String description}) async {
+      {required String prayerId, required String description}) async {
     try {
-      await prayerReference
+      await _prayerDataCollectionReference
+          .doc(prayerId)
           .update({'description': description, 'modifiedOn': DateTime.now()});
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -141,26 +140,28 @@ class PrayerService {
     }
   }
 
-  Future<void> snoozePrayer(
-      {required DocumentReference prayerReference}) async {
+  Future<void> snoozePrayer({required String prayerId}) async {
     try {
-      prayerReference.update({'status': Status.snoozed});
+      _prayerDataCollectionReference
+          .doc(prayerId)
+          .update({'status': Status.snoozed});
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
-  Future<void> unSnoozePrayer(
-      {required DocumentReference prayerReference}) async {
+  Future<void> unSnoozePrayer({required String prayerId}) async {
     try {
-      prayerReference.update({'status': Status.active});
+      _prayerDataCollectionReference
+          .doc(prayerId)
+          .update({'status': Status.active});
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
   Future<void> archivePrayer({
-    required DocumentReference prayerReference,
+    required String prayerId,
     required List<FollowerModel> currentFollowers,
     required bool isAdmin,
   }) async {
@@ -174,9 +175,13 @@ class PrayerService {
         user = currentFollowers[currentFollowers.indexOf(user)]
           ..prayerStatus = Status.archived;
         currentFollowers[currentFollowers.indexOf(user)] = user;
-        await prayerReference.update({'followers': currentFollowers});
+        await _prayerDataCollectionReference
+            .doc(prayerId)
+            .update({'followers': currentFollowers});
       } else {
-        prayerReference.update({'status': Status.archived});
+        _prayerDataCollectionReference
+            .doc(prayerId)
+            .update({'status': Status.archived});
       }
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -184,7 +189,7 @@ class PrayerService {
   }
 
   Future<void> unArchivePrayer(
-      {required DocumentReference prayerReference,
+      {required String prayerId,
       required List<FollowerModel> currentFollowers,
       required bool isAdmin}) async {
     if (currentFollowers.isNotEmpty &&
@@ -196,31 +201,37 @@ class PrayerService {
       user = currentFollowers[currentFollowers.indexOf(user)]
         ..prayerStatus = Status.active;
       currentFollowers[currentFollowers.indexOf(user)] = user;
-      await prayerReference.update({'followers': currentFollowers});
+      await _prayerDataCollectionReference
+          .doc(prayerId)
+          .update({'followers': currentFollowers});
     } else {
-      prayerReference.update({'status': Status.active});
+      _prayerDataCollectionReference
+          .doc(prayerId)
+          .update({'status': Status.active});
     }
   }
 
-  Future<void> favoritePrayer(
-      {required DocumentReference prayerReference}) async {
+  Future<void> favoritePrayer({required String prayerId}) async {
     try {
-      prayerReference.update({'status': Status.favorite});
+      _prayerDataCollectionReference
+          .doc(prayerId)
+          .update({'status': Status.favorite});
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
-  Future<void> unFavoritePrayer(
-      {required DocumentReference prayerReference}) async {
-    prayerReference.update({'status': Status.active});
+  Future<void> unFavoritePrayer({required String prayerId}) async {
+    _prayerDataCollectionReference
+        .doc(prayerId)
+        .update({'status': Status.active});
   }
 
   Future<void> createPrayerTag(
-      {required DocumentReference prayerReference,
-      required List<Contact> contactData,
+      {required List<Contact> contactData,
       required String username,
-      required String description}) async {
+      required String description,
+      required String prayerId}) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
@@ -241,7 +252,9 @@ class PrayerService {
                 modifiedDate: DateTime.now(),
               ))
           .toList();
-      await prayerReference.update({'tags': tags.map((e) => e.toJson())});
+      await _prayerDataCollectionReference
+          .doc(prayerId)
+          .update({'tags': tags.map((e) => e.toJson())});
       sendTagMessageToUsers(
           contactData: contactData,
           description: description,
@@ -252,14 +265,15 @@ class PrayerService {
   }
 
   Future<void> removePrayerTag(
-      {required DocumentReference prayerReference,
+      {required String prayerId,
       required List<TagModel> currentTags,
       required String tagId}) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       currentTags = currentTags..removeWhere((element) => element.id == tagId);
-      await prayerReference
+      await _prayerDataCollectionReference
+          .doc(prayerId)
           .update({"tags": currentTags.map((e) => e.toJson())});
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -310,7 +324,7 @@ class PrayerService {
   }
 
   Future<void> createPrayerUpdate({
-    required DocumentReference prayerReference,
+    required String prayerId,
     required List<UpdateModel> currentUpdates,
     required String description,
   }) async {
@@ -329,20 +343,20 @@ class PrayerService {
           modifiedDate: DateTime.now(),
         ));
 
-      await prayerReference
+      await _prayerDataCollectionReference
+          .doc(prayerId)
           .update({'updates': currentUpdates.map((e) => e.toJson())});
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
-  Future<void> editPrayerUpdate({
-    required DocumentReference prayerReference,
-    required List<UpdateModel> currentUpdates,
-    required UpdateModel update,
-    required String updateId,
-    required String description,
-  }) async {
+  Future<void> editPrayerUpdate(
+      {required List<UpdateModel> currentUpdates,
+      required UpdateModel update,
+      required String updateId,
+      required String description,
+      required String prayerId}) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
@@ -354,19 +368,19 @@ class PrayerService {
           createdDate: update.createdDate,
           modifiedBy: _firebaseAuth.currentUser?.uid,
           modifiedDate: DateTime.now());
-      await prayerReference
+      await _prayerDataCollectionReference
+          .doc(prayerId)
           .update({"updates": currentUpdates.map((e) => e.toJson())});
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
-  Future<void> markPrayerAsAnswered(
-      {required DocumentReference prayerReference}) async {
+  Future<void> markPrayerAsAnswered({required String prayerId}) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      prayerReference.update({
+      _prayerDataCollectionReference.doc(prayerId).update({
         'isAnswered': true,
         'status': Status.archived,
         'modifiedOn': DateTime.now(),
@@ -377,10 +391,9 @@ class PrayerService {
     }
   }
 
-  Future<void> unMarkPrayerAsAnswered(
-      {required DocumentReference prayerReference}) async {
+  Future<void> unMarkPrayerAsAnswered({required String prayerId}) async {
     try {
-      await prayerReference.update({
+      await _prayerDataCollectionReference.doc(prayerId).update({
         'isAnswered': false,
         'modifiedOn': DateTime.now(),
       });
@@ -389,26 +402,26 @@ class PrayerService {
     }
   }
 
-  Future<void> deletePrayer(
-      {required DocumentReference prayerReference}) async {
+  Future<void> deletePrayer({required String prayerId}) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      prayerReference.delete();
+      _prayerDataCollectionReference.doc(prayerId).delete();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
   Future<void> deleteUpdate({
-    required DocumentReference prayerReference,
+    required String prayerId,
     required String prayerUpdateId,
     required List<UpdateModel> currentUpdates,
   }) async {
     try {
       currentUpdates = currentUpdates
         ..removeWhere((element) => element.id == prayerUpdateId);
-      await prayerReference
+      await _prayerDataCollectionReference
+          .doc(prayerId)
           .update({'updates': currentUpdates.map((e) => e.toJson())});
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));

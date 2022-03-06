@@ -8,6 +8,8 @@ import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/auth_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/debouncer.dart';
@@ -315,19 +317,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
     BeStilDialog.showLoading(context, 'Authenticating');
     try {
-      await Provider.of<AuthenticationProvider>(context, listen: false).signIn(
+      await Provider.of<AuthenticationProviderV2>(context, listen: false)
+          .signIn(
         email: _usernameController.text,
         password: _passwordController.text,
       );
-      await Provider.of<UserProvider>(context, listen: false)
+      await Provider.of<UserProviderV2>(context, listen: false)
           .setCurrentUser(false);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
 
-      Settings.lastUser = jsonEncode(user.toJson2());
-      Settings.userPassword = _passwordController.text;
-      if (Settings.enabledReminderPermission)
-        LocalNotification.setNotificationsOnNewDevice(context);
+      // Settings.lastUser = jsonEncode(user.toJson());
+      // Settings.userPassword = _passwordController.text;
+      // if (Settings.enabledReminderPermission)
+      //   LocalNotification.setNotificationsOnNewDevice(context);
 
       BeStilDialog.hideLoading(context);
       await setRouteDestination();
@@ -356,12 +359,13 @@ class _LoginScreenState extends State<LoginScreen> {
       final userInfo = jsonDecode(Settings.lastUser);
       final usernname = userInfo['email'];
       final password = Settings.userPassword;
-      await Provider.of<AuthenticationProvider>(context, listen: false).signIn(
+      await Provider.of<AuthenticationProviderV2>(context, listen: false)
+          .signIn(
         email: usernname,
         password: password,
       );
       final isAuth =
-          await Provider.of<AuthenticationProvider>(context, listen: false)
+          await Provider.of<AuthenticationProviderV2>(context, listen: false)
               .biometricSignin();
       BeStilDialog.showLoading(context, 'Authenticating');
       isLoading = true;

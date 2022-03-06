@@ -11,6 +11,9 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/auth_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/services/log_service.dart';
 import 'package:be_still/utils/settings.dart' as st;
 import 'package:firebase_core/firebase_core.dart';
@@ -52,6 +55,9 @@ void main() async {
           ChangeNotifierProvider(create: (ctx) => NotificationProvider()),
           ChangeNotifierProvider(create: (ctx) => DevotionalProvider()),
           ChangeNotifierProvider(create: (ctx) => LogProvider()),
+          ChangeNotifierProvider(create: (ctx) => UserProviderV2()),
+          ChangeNotifierProvider(create: (ctx) => AuthenticationProviderV2()),
+          ChangeNotifierProvider(create: (ctx) => PrayerProviderV2()),
         ],
         child: MyApp(),
       ),

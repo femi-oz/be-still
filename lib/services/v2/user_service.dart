@@ -12,7 +12,7 @@ import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-class UserService {
+class UserServiceV2 {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   final CollectionReference<Map<String, dynamic>> _userDataCollectionReference =
@@ -84,11 +84,24 @@ class UserService {
     }
   }
 
+  Future updatePassword(String newPassword) async {
+    User? user = _firebaseAuth.currentUser;
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      await user?.updatePassword(newPassword);
+    } catch (e) {
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
   Future<void> updateEmail(
-      {required DocumentReference userReference,
+      {
+      // required DocumentReference userReference,
       required String newEmail}) async {
     try {
-      userReference.update({'email': newEmail});
+      _userDataCollectionReference
+          .doc(_firebaseAuth.currentUser?.uid ?? '')
+          .update({'email': newEmail});
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -146,12 +159,12 @@ class UserService {
   }
 
   Future<void> deletePushToken(
-      {required DocumentReference userReference,
-      required String deviceId,
-      required List<DeviceModel> devices}) async {
+      {required String deviceId, required List<DeviceModel> devices}) async {
     try {
       devices.removeWhere((element) => element.id == deviceId);
-      userReference.update({
+      _userDataCollectionReference
+          .doc(_firebaseAuth.currentUser?.uid ?? '')
+          .update({
         'devices': devices,
         'modifiedBy': _firebaseAuth.currentUser?.uid,
         'modifiedDate': DateTime.now()

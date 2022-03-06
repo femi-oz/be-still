@@ -60,7 +60,7 @@ class UserDataModel {
     firstName = json['firstName'];
     lastName = json['lastName'];
     email = json['email'];
-    dateOfBirth = json['dateOfBirth'];
+    dateOfBirth = json['dateOfBirth'].toDate();
     if (json['devices'] != null) {
       devices = <DeviceModel>[];
       json['devices'].forEach((v) {
@@ -83,8 +83,8 @@ class UserDataModel {
     includeAnsweredPrayerAutoDelete = json['includeAnsweredPrayerAutoDelete'];
     createdBy = json['createdBy'];
     modifiedBy = json['modifiedBy'];
-    createdDate = json['createdDate'];
-    modifiedDate = json['modifiedDate'];
+    createdDate = json['createdDate'].toDate();
+    modifiedDate = json['modifiedDate'].toDate();
     status = json['status'];
   }
 
