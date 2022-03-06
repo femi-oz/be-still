@@ -10,7 +10,7 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class NotificationService {
+class NotificationServiceV2 {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   final CollectionReference<Map<String, dynamic>> _smsCollectionReference =
@@ -85,10 +85,11 @@ class NotificationService {
     }
   }
 
-  Future<void> cancelPushNotification(
-      {required DocumentReference notificationReference}) async {
+  Future<void> cancelPushNotification(String notificationId) async {
     try {
-      notificationReference.update({'status': Status.inactive});
+      _notificationCollectionReference
+          .doc(notificationId)
+          .update({'status': Status.inactive});
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

@@ -9,7 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 
-class AuthenticationServicev2 {
+class AuthenticationServiceV2 {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final _localAuth = LocalAuthentication();
 

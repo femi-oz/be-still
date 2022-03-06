@@ -25,7 +25,7 @@ class PrayerServiceV2 {
       _messageTemplateCollectionReference =
       FirebaseFirestore.instance.collection('MessageTemplate');
 
-  final _notificationService = locator<NotificationService>();
+  final _notificationService = locator<NotificationServiceV2>();
 
   Future<void> createPrayer(
       {String? groupId, required String description, bool? isGroup}) async {
@@ -64,6 +64,7 @@ class PrayerServiceV2 {
       return _prayerDataCollectionReference
           .where('userId', isEqualTo: _firebaseAuth.currentUser?.uid)
           .where('isGroup', isEqualTo: false)
+          .where('status', isNotEqualTo: Status.deleted)
           .snapshots()
           .map((event) => event.docs
               .map((e) => PrayerDataModel.fromJson(e.data()))
@@ -79,6 +80,7 @@ class PrayerServiceV2 {
         return Stream.error(StringUtils.unathorized);
       return _prayerDataCollectionReference
           .where('followers.userId', isEqualTo: _firebaseAuth.currentUser?.uid)
+          .where('status', isNotEqualTo: Status.deleted)
           .snapshots()
           .map((event) => event.docs
               .map((e) => PrayerDataModel.fromJson(e.data()))
@@ -94,6 +96,7 @@ class PrayerServiceV2 {
         return Stream.error(StringUtils.unathorized);
       return _prayerDataCollectionReference
           .where('groupId', isEqualTo: groupId)
+          .where('status', isNotEqualTo: Status.deleted)
           .snapshots()
           .map((event) => event.docs
               .map((e) => PrayerDataModel.fromJson(e.data()))
@@ -406,7 +409,9 @@ class PrayerServiceV2 {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      _prayerDataCollectionReference.doc(prayerId).delete();
+      _prayerDataCollectionReference
+          .doc(prayerId)
+          .update({'status': Status.deleted});
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
