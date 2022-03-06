@@ -13,24 +13,24 @@ class DevotionalService {
       FirebaseFirestore.instance.collection("DevotionalAndPlan");
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  Stream<List<BibleDataModel>> getBibles() {
+  Future<List<BibleDataModel>> getBibles() {
     try {
       if (_firebaseAuth.currentUser == null)
-        return Stream.error(StringUtils.unathorized);
-      final bibles = _bibleCollectionReference.snapshots();
-      return bibles.map(
+        return Future.error(StringUtils.unathorized);
+      final bibles = _bibleCollectionReference.get();
+      return bibles.then(
           (e) => e.docs.map((e) => BibleDataModel.fromJson(e.data())).toList());
     } catch (err) {
       throw HttpException(StringUtils.getErrorMessage(err));
     }
   }
 
-  Stream<List<DevotionalDataModel>> getDevotionals() {
+  Future<List<DevotionalDataModel>> getDevotionals() {
     try {
       if (_firebaseAuth.currentUser == null)
-        return Stream.error(StringUtils.unathorized);
-      var devotionals = _devotionalCollectionReference.snapshots();
-      return devotionals.map((e) =>
+        return Future.error(StringUtils.unathorized);
+      var devotionals = _devotionalCollectionReference.get();
+      return devotionals.then((e) =>
           e.docs.map((e) => DevotionalDataModel.fromJson(e.data())).toList());
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));

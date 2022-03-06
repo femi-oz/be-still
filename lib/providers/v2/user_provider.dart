@@ -7,20 +7,17 @@ import 'package:flutter/cupertino.dart';
 
 class UserProviderV2 with ChangeNotifier {
   UserServiceV2 _userService = locator<UserServiceV2>();
-  final userId = FirebaseAuth.instance.currentUser?.uid;
+  final _firebaseUserId = FirebaseAuth.instance.currentUser?.uid;
 
   UserDataModel _selectedUser = UserDataModel();
   UserDataModel get selectedUser => _selectedUser;
-
-  String _userToken = '';
-  String get userToken => _userToken;
 
   List<UserDataModel> _allUsers = <UserDataModel>[];
   List<UserDataModel> get allUsers => _allUsers;
 
   Future getUserById() async {
     try {
-      return _userService.getUserById(userId ?? '').then((event) {
+      return _userService.getUserById(_firebaseUserId ?? '').then((event) {
         _selectedUser = event;
         notifyListeners();
       });
@@ -29,14 +26,10 @@ class UserProviderV2 with ChangeNotifier {
     }
   }
 
-  Future returnUserToken(String deviceId) async {
+  Future<List<String>> returnUserToken(String userId) async {
     try {
-      await _userService.getUserById(userId ?? '').then((value) {
-        _userToken = (value.devices ?? <DeviceModel>[])
-                .firstWhere((element) => element.id == deviceId)
-                .token ??
-            '';
-        notifyListeners();
+      return await _userService.getUserById(userId).then((value) {
+        return (value.devices ?? []).map((e) => e.token ?? '').toList();
       });
     } catch (e) {
       rethrow;
@@ -46,7 +39,7 @@ class UserProviderV2 with ChangeNotifier {
   Future setAllUsers() async {
     try {
       _userService.getAllUsers().asBroadcastStream().listen((users) {
-        _allUsers = users.where((e) => e.id != userId).toList();
+        _allUsers = users.where((e) => e.id != _firebaseUserId).toList();
         notifyListeners();
       });
     } catch (e) {
@@ -56,7 +49,7 @@ class UserProviderV2 with ChangeNotifier {
 
   Future setCurrentUser(bool isLocalAuth) async {
     try {
-      _selectedUser = await _userService.getUserById(userId ?? '');
+      _selectedUser = await _userService.getUserById(_firebaseUserId ?? '');
       notifyListeners();
     } catch (e) {
       rethrow;

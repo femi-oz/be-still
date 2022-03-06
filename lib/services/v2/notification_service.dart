@@ -2,10 +2,14 @@ import 'dart:io';
 
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/flavor_config.dart';
+import 'package:be_still/locator.dart';
 import 'package:be_still/models/message_template.dart';
+import 'package:be_still/models/v2/device.model.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/message.model.dart';
-import 'package:be_still/models/v2/notification.mode.dart';
+import 'package:be_still/models/v2/notification.model.dart';
+import 'package:be_still/models/v2/user.model.dart';
+import 'package:be_still/services/v2/user_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -24,8 +28,24 @@ class NotificationServiceV2 {
       _localNotificationCollectionReference =
       FirebaseFirestore.instance.collection("local_notifications");
 
+  final CollectionReference<Map<String, dynamic>> _userDataCollectionReference =
+      FirebaseFirestore.instance.collection("users_v2");
+
+  UserServiceV2 _userService = locator<UserServiceV2>();
+
+  init(List<DeviceModel> userDevices) async {
+    try {
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
+      _userService.addPushToken(userDevices);
+    } catch (e) {
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
   Future<void> addNotification({
     required String message,
+    required String senderName,
     required List<String> tokens,
     required String type,
   }) async {
@@ -183,15 +203,15 @@ class NotificationServiceV2 {
   }
 
   Future<void> updateLocalNotification({
-    required DocumentReference notificationReference,
+    required String notificationId,
     required String message,
     required String localNotificationId,
     required String type,
-    required String scheduleDate,
+    required DateTime scheduleDate,
     required String status,
   }) async {
     try {
-      await notificationReference.update({
+      await _notificationCollectionReference.doc(notificationId).update({
         'message': message,
         'localNotificationId': localNotificationId,
         'type': type,
@@ -202,6 +222,16 @@ class NotificationServiceV2 {
       });
     } catch (e) {
       StringUtils.getErrorMessage(e);
+    }
+  }
+
+  Future<void> removeLocalNotification(String notificationId) async {
+    try {
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
+      _localNotificationCollectionReference.doc(notificationId).delete();
+    } catch (e) {
+      throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 

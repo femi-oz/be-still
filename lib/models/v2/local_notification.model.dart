@@ -4,6 +4,7 @@ class LocalNotificationDataModel {
   String? message;
   int? localNotificationId;
   String? type;
+  String? frequency;
   DateTime? scheduleDate;
   String? createdBy;
   String? modifiedBy;
@@ -17,6 +18,7 @@ class LocalNotificationDataModel {
       this.message,
       this.localNotificationId,
       this.type,
+      this.frequency,
       this.scheduleDate,
       this.createdBy,
       this.modifiedBy,
@@ -30,6 +32,7 @@ class LocalNotificationDataModel {
     message = json['message'];
     localNotificationId = json['localNotificationId'];
     type = json['type'];
+    frequency = json['frequency'];
     scheduleDate = json['scheduleDate'];
     createdBy = json['createdBy'];
     modifiedBy = json['modifiedBy'];
@@ -45,6 +48,7 @@ class LocalNotificationDataModel {
     data['message'] = this.message;
     data['localNotificationId'] = this.localNotificationId;
     data['type'] = this.type;
+    data['frequency'] = this.frequency;
     data['scheduleDate'] = this.scheduleDate;
     data['createdBy'] = this.createdBy;
     data['modifiedBy'] = this.modifiedBy;
