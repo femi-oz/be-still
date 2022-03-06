@@ -19,6 +19,7 @@ class PrayerProviderV2 with ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final userId = FirebaseAuth.instance.currentUser?.uid;
   late StreamSubscription<List<PrayerDataModel>> prayerStream;
+  late StreamSubscription<List<PrayerDataModel>> followedPrayerStream;
 
   PrayerType _currentPrayerType = PrayerType.userPrayers;
   PrayerType get currentPrayerType => _currentPrayerType;
@@ -61,23 +62,27 @@ class PrayerProviderV2 with ChangeNotifier {
   Future<void> setPrayers() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
+// todo: merge user prayers and prayers current user is following
+      followedPrayerStream = _prayerService
+          .getUserFollowedPrayers()
+          .asBroadcastStream()
+          .listen((data) {
+        _followedPrayers = data
+            .where((element) => (element.followers ?? <FollowerModel>[]).any(
+                (element) => element.userId == _firebaseAuth.currentUser?.uid))
+            .toList();
+
+        notifyListeners();
+      });
+
       prayerStream = _prayerService.getUserPrayers().asBroadcastStream().listen(
         (data) {
-          _prayers = data;
+          _userPrayers = data;
+          _prayers = [..._userPrayers, ..._followedPrayers];
           filterPrayers();
           notifyListeners();
         },
       );
-
-      _prayerService
-          .getUserFollowedPrayers()
-          .asBroadcastStream()
-          .listen((data) {
-        _followedPrayers = data;
-        // _prayers = [..._userPrayers, ..._followedPrayers];
-        filterPrayers();
-        notifyListeners();
-      });
     } catch (e) {
       rethrow;
     }
@@ -509,5 +514,6 @@ class PrayerProviderV2 with ChangeNotifier {
 
   void flush() {
     prayerStream.cancel();
+    followedPrayerStream.cancel();
   }
 }

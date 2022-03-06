@@ -92,7 +92,7 @@ class PrayerServiceV2 {
       if (_firebaseAuth.currentUser == null)
         return Stream.error(StringUtils.unathorized);
       return _prayerDataCollectionReference
-          .where('followers.userId', isEqualTo: _firebaseAuth.currentUser?.uid)
+          .where('isGroup', isEqualTo: true)
           .snapshots()
           .map((event) => event.docs
               .map((e) => PrayerDataModel.fromJson(e.data()))
