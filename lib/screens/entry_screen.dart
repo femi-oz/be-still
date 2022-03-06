@@ -34,6 +34,7 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:be_still/widgets/join_group.dart';
 import 'package:cron/cron.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -148,7 +149,7 @@ class _EntryScreenState extends State<EntryScreen> {
         Provider.of<PrayerProviderV2>(context, listen: false)
             .checkPrayerValidity(userId ?? '');
       await _getPrayers();
-      // await _getActivePrayers();
+      await _getActivePrayers();
       await _getDevotionals();
       await _getBibles();
       //load settings
@@ -170,8 +171,7 @@ class _EntryScreenState extends State<EntryScreen> {
       //     .setFollowedPrayerByUserId(userId ?? '');
 
       //set all users
-      // await Provider.of<UserProvider>(context, listen: false)
-      //     .setAllUsers(userId ?? '');
+      await Provider.of<UserProviderV2>(context, listen: false).setAllUsers();
 
       // get all push notifications
       // await Provider.of<NotificationProvider>(context, listen: false)
@@ -196,10 +196,9 @@ class _EntryScreenState extends State<EntryScreen> {
 
   Future<void> _getActivePrayers() async {
     try {
-      final _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayerTimePrayers(_user.id ?? '');
+      final _userId = FirebaseAuth.instance.currentUser?.uid;
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .setPrayerTimePrayers(_userId ?? '');
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;

@@ -63,7 +63,8 @@ class PrayerProviderV2 with ChangeNotifier {
       if (_firebaseAuth.currentUser == null) return null;
       prayerStream = _prayerService.getUserPrayers().asBroadcastStream().listen(
         (data) {
-          _userPrayers = data;
+          _prayers = data;
+          filterPrayers();
           notifyListeners();
         },
       );
@@ -73,7 +74,7 @@ class PrayerProviderV2 with ChangeNotifier {
           .asBroadcastStream()
           .listen((data) {
         _followedPrayers = data;
-        _prayers = [..._userPrayers, ..._followedPrayers];
+        // _prayers = [..._userPrayers, ..._followedPrayers];
         filterPrayers();
         notifyListeners();
       });
