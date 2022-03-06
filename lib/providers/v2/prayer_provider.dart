@@ -35,6 +35,12 @@ class PrayerProviderV2 with ChangeNotifier {
   List<PrayerDataModel> _prayers = [];
   List<PrayerDataModel> get prayers => _prayers;
 
+  List<PrayerDataModel> _followedPrayers = [];
+  List<PrayerDataModel> get followedPrayers => _followedPrayers;
+
+  List<PrayerDataModel> _userPrayers = [];
+  List<PrayerDataModel> get userPrayers => _userPrayers;
+
   String _filterOption = Status.active;
   String get filterOption => _filterOption;
 
@@ -57,19 +63,20 @@ class PrayerProviderV2 with ChangeNotifier {
       if (_firebaseAuth.currentUser == null) return null;
       prayerStream = _prayerService.getUserPrayers().asBroadcastStream().listen(
         (data) {
-          final userPrayers = data;
-          _prayerService
-              .getUserFollowedPrayers()
-              .asBroadcastStream()
-              .listen((data) {
-            final followedPrayers = data;
-            _prayers = [...userPrayers, ...followedPrayers];
-          });
-
-          filterPrayers();
+          _userPrayers = data;
           notifyListeners();
         },
       );
+
+      _prayerService
+          .getUserFollowedPrayers()
+          .asBroadcastStream()
+          .listen((data) {
+        _followedPrayers = data;
+        _prayers = [..._userPrayers, ..._followedPrayers];
+        filterPrayers();
+        notifyListeners();
+      });
     } catch (e) {
       rethrow;
     }
@@ -351,7 +358,6 @@ class PrayerProviderV2 with ChangeNotifier {
 
   Future<void> unMarkPrayerAsAnswered(
     String prayerId,
-    String userPrayerId,
   ) async {
     try {
       await _prayerService.unMarkPrayerAsAnswered(prayerId: prayerId);

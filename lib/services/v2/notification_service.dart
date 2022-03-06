@@ -5,12 +5,12 @@ import 'package:be_still/flavor_config.dart';
 import 'package:be_still/models/message_template.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/message.model.dart';
-import 'package:be_still/models/v2/notification.mode.dart';
+import 'package:be_still/models/v2/notification.model.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class NotificationService {
+class NotificationServiceV2 {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   final CollectionReference<Map<String, dynamic>> _smsCollectionReference =

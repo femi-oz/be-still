@@ -9,6 +9,8 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/Prayer/prayer_list.dart';
 import 'package:be_still/screens/Settings/settings_screen.dart';
 import 'package:be_still/screens/add_prayer/add_prayer_screen.dart';
@@ -143,43 +145,43 @@ class _EntryScreenState extends State<EntryScreen> {
           Provider.of<UserProvider>(context, listen: false).currentUser.id;
 
       if ((userId ?? '').isNotEmpty)
-        Provider.of<PrayerProvider>(context, listen: false)
+        Provider.of<PrayerProviderV2>(context, listen: false)
             .checkPrayerValidity(userId ?? '');
       await _getPrayers();
-      await _getActivePrayers();
+      // await _getActivePrayers();
       await _getDevotionals();
       await _getBibles();
       //load settings
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .setPrayerSettings(userId ?? '');
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .setSettings(userId ?? '');
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .setSharingSettings(userId ?? '');
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .setPrayerTimeNotifications(userId ?? '');
+      // await Provider.of<SettingsProvider>(context, listen: false)
+      //     .setPrayerSettings(userId ?? '');
+      // await Provider.of<SettingsProvider>(context, listen: false)
+      //     .setSettings(userId ?? '');
+      // await Provider.of<SettingsProvider>(context, listen: false)
+      //     .setSharingSettings(userId ?? '');
+      // await Provider.of<NotificationProvider>(context, listen: false)
+      //     .setPrayerTimeNotifications(userId ?? '');
       // await Provider.of<SettingsProvider>(context, listen: false)
       //     .setGroupSettings(userId??'');
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .setGroupPreferenceSettings(userId ?? '');
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setUserGroups(userId ?? '');
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setFollowedPrayerByUserId(userId ?? '');
+      // await Provider.of<SettingsProvider>(context, listen: false)
+      //     .setGroupPreferenceSettings(userId ?? '');
+      // await Provider.of<GroupProvider>(context, listen: false)
+      //     .setUserGroups(userId ?? '');
+      // await Provider.of<GroupPrayerProvider>(context, listen: false)
+      //     .setFollowedPrayerByUserId(userId ?? '');
 
       //set all users
       // await Provider.of<UserProvider>(context, listen: false)
       //     .setAllUsers(userId ?? '');
 
       // get all push notifications
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .setUserNotifications(userId ?? '');
+      // await Provider.of<NotificationProvider>(context, listen: false)
+      //     .setUserNotifications(userId ?? '');
 
-      // get all local notifications
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .setLocalNotifications(userId ?? '');
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setAllGroups(userId ?? '');
+      // // get all local notifications
+      // await Provider.of<NotificationProvider>(context, listen: false)
+      //     .setLocalNotifications(userId ?? '');
+      // await Provider.of<GroupProvider>(context, listen: false)
+      //     .setAllGroups(userId ?? '');
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -213,27 +215,27 @@ class _EntryScreenState extends State<EntryScreen> {
   Future<void> _getPrayers() async {
     try {
       final _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       final searchQuery =
           Provider.of<MiscProvider>(context, listen: false).searchQuery;
-      await Provider.of<PrayerProvider>(context, listen: false)
+      await Provider.of<PrayerProviderV2>(context, listen: false)
           .setPrayerTimePrayers(_user.id ?? '');
       if (searchQuery.isNotEmpty) {
-        Provider.of<PrayerProvider>(context, listen: false)
+        Provider.of<PrayerProviderV2>(context, listen: false)
             .searchPrayers(searchQuery, _user.id ?? '');
       } else {
-        await Provider.of<PrayerProvider>(context, listen: false)
-            .setPrayers(_user.id ?? '');
+        await Provider.of<PrayerProviderV2>(context, listen: false)
+            .setPrayers();
       }
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
+      // BeStilDialog.showErrorDialog(
+      //     context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 

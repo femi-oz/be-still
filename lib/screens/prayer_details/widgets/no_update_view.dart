@@ -1,11 +1,14 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
+import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:contacts_service/contacts_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
@@ -15,7 +18,7 @@ import 'package:provider/provider.dart';
 import 'package:easy_rich_text/easy_rich_text.dart';
 
 class NoUpdateView extends StatefulWidget {
-  final CombinePrayerStream? prayerData;
+  final PrayerDataModel? prayerData;
   @override
   NoUpdateView(this.prayerData);
 
@@ -249,17 +252,17 @@ class _NoUpdateViewState extends State<NoUpdateView> {
 
   Widget build(BuildContext context) {
     // final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
-    final userId = Provider.of<UserProvider>(context).currentUser.id;
-    bool isOwner = widget.prayerData?.prayer?.createdBy == userId;
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    bool isOwner = widget.prayerData?.createdBy == userId;
     return Container(
       padding: EdgeInsets.all(20),
       child: Column(
         children: <Widget>[
-          widget.prayerData?.prayer?.groupId != '0'
+          widget.prayerData?.groupId != '0'
               ? Container(
                   margin: EdgeInsets.only(bottom: 20),
                   child: Text(
-                    widget.prayerData?.prayer?.creatorName ?? '',
+                    widget.prayerData?.creatorName ?? '',
                     style: AppTextStyles.boldText16.copyWith(
                       color: AppColors.lightBlue4,
                     ),
@@ -276,8 +279,8 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                   children: <Widget>[
                     Text(
                       DateFormat('hh:mma | MM.dd.yyyy')
-                          .format(widget.prayerData?.prayer?.createdOn ??
-                              DateTime.now())
+                          .format(
+                              widget.prayerData?.createdDate ?? DateTime.now())
                           .toLowerCase(),
                       style: AppTextStyles.regularText18b
                           .copyWith(color: AppColors.prayerModeBorder),
@@ -308,7 +311,7 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                     child: SingleChildScrollView(
                       child: isOwner
                           ? EasyRichText(
-                              widget.prayerData?.prayer?.description ?? '',
+                              widget.prayerData?.description ?? '',
                               defaultStyle:
                                   AppTextStyles.regularText16b.copyWith(
                                 color: AppColors.prayerTextColor,
@@ -316,10 +319,13 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                               textAlign: TextAlign.left,
                               patternList: [
                                 for (var i = 0;
-                                    i < (widget.prayerData?.tags ?? []).length;
+                                    i <
+                                        (widget.prayerData?.tags ??
+                                                <TagModel>[])
+                                            .length;
                                     i++)
                                   EasyRichTextPattern(
-                                      targetString: (widget.prayerData?.tags[i]
+                                      targetString: (widget.prayerData?.tags?[i]
                                                   .displayName ??
                                               '')
                                           .trim(),
@@ -327,14 +333,14 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                                         ..onTap = () {
                                           _openShareModal(
                                               context,
-                                              widget.prayerData?.tags[i]
+                                              widget.prayerData?.tags?[i]
                                                       .phoneNumber ??
                                                   '',
-                                              widget.prayerData?.tags[i]
+                                              widget.prayerData?.tags?[i]
                                                       .email ??
                                                   '',
-                                              widget.prayerData?.tags[i]
-                                                      .identifier ??
+                                              widget.prayerData?.tags?[i]
+                                                      .contactIdentifier ??
                                                   '');
                                         },
                                       style: AppTextStyles.regularText15
@@ -345,7 +351,7 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                               ],
                             )
                           : Text(
-                              widget.prayerData?.prayer?.description ?? '',
+                              widget.prayerData?.description ?? '',
                               style: AppTextStyles.regularText16b.copyWith(
                                 color: AppColors.prayerTextColor,
                               ),

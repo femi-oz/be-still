@@ -2,14 +2,17 @@ import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/screens/prayer_details/widgets/no_update_view.dart';
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/widgets/update_view.dart';
@@ -27,6 +30,9 @@ import 'package:provider/provider.dart';
 
 class PrayerDetails extends StatefulWidget {
   static const routeName = 'prayer-details';
+  final String prayerId;
+
+  PrayerDetails({this.prayerId = ''});
 
   @override
   _PrayerDetailsState createState() => _PrayerDetailsState();
@@ -64,41 +70,41 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   // String reminderString = '';
 
   Widget _buildMenu(
-      CombinePrayerStream? prayerData, LocalNotificationModel reminder) {
+      PrayerDataModel? prayerData, LocalNotificationModel reminder) {
     return PrayerMenu(context, hasReminder(prayerData), reminder,
         () => updateUI(), prayerData);
   }
 
-  String reminderString(CombinePrayerStream? prayerData) {
+  String reminderString(PrayerDataModel? prayerData) {
     final reminders = Provider.of<NotificationProvider>(context)
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
 
     LocalNotificationModel? reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == (prayerData?.userPrayer?.id ?? ''),
+        (reminder) => reminder.entityId == (prayerData?.id ?? ''),
         orElse: () => LocalNotificationModel.defaultValue());
     return reminder.notificationText ?? '';
   }
 
-  bool hasReminder(CombinePrayerStream? prayerData) {
+  bool hasReminder(PrayerDataModel? prayerData) {
     final reminders = Provider.of<NotificationProvider>(context)
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
 
-    return reminders.any(
-        (reminder) => reminder.entityId == (prayerData?.userPrayer?.id ?? ''));
+    return reminders
+        .any((reminder) => reminder.entityId == (prayerData?.id ?? ''));
   }
 
-  bool isReminderActive(CombinePrayerStream? prayerData) {
+  bool isReminderActive(PrayerDataModel? prayerData) {
     final reminders = Provider.of<NotificationProvider>(context)
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
 
     LocalNotificationModel rem = reminders.firstWhere(
-        (reminder) => reminder.entityId == prayerData?.userPrayer?.id,
+        (reminder) => reminder.entityId == prayerData?.id,
         orElse: () => LocalNotificationModel.defaultValue());
     if ((rem.id ?? '').isNotEmpty) {
       if (rem.frequency != Frequency.one_time) {
@@ -145,11 +151,11 @@ class _PrayerDetailsState extends State<PrayerDetails> {
     super.didChangeDependencies();
   }
 
-  LocalNotificationModel _reminder(CombinePrayerStream? prayerData) {
+  LocalNotificationModel _reminder(PrayerDataModel? prayerData) {
     final reminders = Provider.of<NotificationProvider>(context, listen: false)
         .localNotifications;
     return reminders.firstWhere(
-        (reminder) => reminder.entityId == (prayerData?.userPrayer?.id ?? ''),
+        (reminder) => reminder.entityId == (prayerData?.id ?? ''),
         orElse: () => LocalNotificationModel.defaultValue());
   }
 
@@ -159,13 +165,14 @@ class _PrayerDetailsState extends State<PrayerDetails> {
       appBar: CustomAppBar(
         showPrayerActions: false,
       ),
-      body: StreamBuilder<CombinePrayerStream>(
-          stream: Provider.of<PrayerProvider>(context).getPrayer(),
+      body: StreamBuilder<PrayerDataModel>(
+          stream: Provider.of<PrayerProviderV2>(context)
+              .getPrayer(prayerId: widget.prayerId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting)
               return BeStilDialog.getLoading(context, false);
             if (snapshot.hasData &&
-                (snapshot.data?.userPrayer?.deleteStatus ?? 0) == 0) {
+                (snapshot.data?.status == Status.inactive)) {
               return Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -239,10 +246,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                         ],
                       ),
                     ),
-                    if ((snapshot.data?.userPrayer ??
-                                UserPrayerModel.defaultValue())
-                            .isSnoozed ??
-                        false)
+                    if ((snapshot.data?.status == Status.snoozed))
                       Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                         InkWell(
                           onTap: () => showDialog(
@@ -267,8 +271,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                                           vertical: 30),
                                       child: ReminderPicker(
                                         isGroup: false,
-                                        entityId:
-                                            snapshot.data?.userPrayer?.id ?? '',
+                                        entityId: snapshot.data?.id ?? '',
                                         type: NotificationType.reminder,
                                         reminder: _reminder(snapshot.data),
                                         hideActionuttons: false,
@@ -293,7 +296,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                               Container(
                                 margin: EdgeInsets.only(left: 7),
                                 child: Text(
-                                    'Snoozed until ${DateFormat('MMM').format(snapshot.data?.userPrayer?.snoozeEndDate ?? DateTime.now())} ${getDayText(snapshot.data?.userPrayer?.snoozeEndDate?.day)}, ${DateFormat('yyyy h:mm a').format(snapshot.data?.userPrayer?.snoozeEndDate ?? DateTime.now())}',
+                                    'Snoozed until ${DateFormat('MMM').format(snapshot.data?.snoozeEndDate ?? DateTime.now())} ${getDayText(snapshot.data?.snoozeEndDate?.day)}, ${DateFormat('yyyy h:mm a').format(snapshot.data?.snoozeEndDate ?? DateTime.now())}',
                                     style: AppTextStyles.regularText12),
                               ),
                             ],
@@ -332,9 +335,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                                                 vertical: 30),
                                             child: ReminderPicker(
                                               isGroup: false,
-                                              entityId: snapshot
-                                                      .data?.userPrayer?.id ??
-                                                  '',
+                                              entityId: snapshot.data?.id ?? '',
                                               type: NotificationType.reminder,
                                               reminder:
                                                   _reminder(snapshot.data),
@@ -371,10 +372,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                           )
                         : Container(),
                     SizedBox(height: 10),
-                    if (((snapshot.data?.prayer ?? PrayerModel.defaultValue())
-                                .id ??
-                            '')
-                        .isNotEmpty)
+                    if (((snapshot.data?.id) ?? '').isNotEmpty)
                       Expanded(
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 20),

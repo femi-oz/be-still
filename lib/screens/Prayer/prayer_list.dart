@@ -3,10 +3,13 @@ import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/Prayer/Widgets/prayer_card.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -86,11 +89,11 @@ class _PrayerListState extends State<PrayerList> {
     super.didChangeDependencies();
   }
 
-  Future<void> onTapCard(CombinePrayerStream prayerData) async {
+  Future<void> onTapCard(PrayerDataModel prayerData) async {
     BeStilDialog.showLoading(context, '');
     try {
-      Provider.of<PrayerProvider>(context, listen: false)
-          .setCurrentPrayerId(prayerData.userPrayer?.id ?? '');
+      // Provider.of<PrayerProviderV2>(context, listen: false)
+      //     .setCurrentPrayerId(prayerData.userPrayer?.id ?? '');
       await Future.delayed(const Duration(milliseconds: 300),
           () => BeStilDialog.hideLoading(context));
       AppController appController = Get.find();
@@ -98,32 +101,32 @@ class _PrayerListState extends State<PrayerList> {
       // Navigator.push(context, SlideRightRoute(page: PrayerDetails()));
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
+      // final user =
+      //     Provider.of<UserProvider>(context, listen: false).currentUser;
+      // BeStilDialog.showErrorDialog(
+      //     context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+      // final user =
+      //     Provider.of<UserProvider>(context, listen: false).currentUser;
+      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
     }
   }
 
   Future<void> _getPrayers() async {
     try {
       final _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       final searchQuery =
           Provider.of<MiscProvider>(context, listen: false).searchQuery;
-      await Provider.of<PrayerProvider>(context, listen: false)
+      await Provider.of<PrayerProviderV2>(context, listen: false)
           .setPrayerTimePrayers(_user.id ?? '');
       if (searchQuery.isNotEmpty) {
-        Provider.of<PrayerProvider>(context, listen: false)
+        Provider.of<PrayerProviderV2>(context, listen: false)
             .searchPrayers(searchQuery, _user.id ?? '');
       } else {
-        await Provider.of<PrayerProvider>(context, listen: false)
-            .setPrayers(_user.id ?? '');
+        await Provider.of<PrayerProviderV2>(context, listen: false)
+            .setPrayers();
       }
     } on HttpException catch (e, s) {
       final user =
@@ -157,10 +160,10 @@ class _PrayerListState extends State<PrayerList> {
 
   @override
   Widget build(BuildContext context) {
-    final prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
+    final prayers = Provider.of<PrayerProviderV2>(context).filteredPrayers;
 
     final currentPrayerType =
-        Provider.of<PrayerProvider>(context).currentPrayerType;
+        Provider.of<PrayerProviderV2>(context).currentPrayerType;
     return WillPopScope(
       onWillPop: () async => false,
       child: GestureDetector(
@@ -344,12 +347,9 @@ class _PrayerListState extends State<PrayerList> {
                                           onTap: () => onTapCard(prayers[i]),
                                           child: PrayerCard(
                                             prayerData: prayers[i],
-                                            timeago: DateFormatter((prayers[i]
-                                                                .prayer ??
-                                                            PrayerModel
-                                                                .defaultValue())
-                                                        .modifiedOn ??
-                                                    DateTime.now())
+                                            timeago: DateFormatter(
+                                                    (prayers[i]).modifiedDate ??
+                                                        DateTime.now())
                                                 .format(),
                                           ));
                                   },

@@ -11,6 +11,8 @@ import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
@@ -187,7 +189,7 @@ class _AddPrayerState extends State<AddPrayer> {
 
     try {
       final _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
 
       setState(() => _autoValidate = true);
       if (!_formKey.currentState!.validate()) return;
@@ -197,21 +199,21 @@ class _AddPrayerState extends State<AddPrayer> {
         PlatformException e = PlatformException(
             code: 'custom', message: 'You can not save empty prayers');
         final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
+            Provider.of<UserProviderV2>(context, listen: false).selectedUser;
         final s = StackTrace.fromString(e.stacktrace ?? '');
-        BeStilDialog.showErrorDialog(
-            context, StringUtils.getErrorMessage(e), user, s);
+        // BeStilDialog.showErrorDialog(
+        //     context, StringUtils.getErrorMessage(e), user, s);
       } else {
         final userName =
             '${_user.firstName?.capitalizeFirst} ${_user.lastName?.capitalizeFirst}';
         if (!Provider.of<PrayerProvider>(context, listen: false).isEdit) {
           if ((selected?.name ?? '').isEmpty ||
               (selected?.name) == 'My Prayers') {
-            await Provider.of<PrayerProvider>(context, listen: false).addPrayer(
+            await Provider.of<PrayerProviderV2>(context, listen: false)
+                .addPrayer(
+              '',
               _descriptionController.text,
-              _user.id ?? '',
-              userName,
-              _backupDescription,
+              false,
             );
           } else {
             await Provider.of<GroupProvider>(context, listen: false)
@@ -245,13 +247,13 @@ class _AddPrayerState extends State<AddPrayer> {
                   .contains(contact.displayName ?? '')) {
                 if ((selected?.name ?? '').isEmpty ||
                     (selected?.name) == 'My Prayers') {
-                  await Provider.of<PrayerProvider>(context, listen: false)
-                      .addPrayerTag(
-                          contactList, _user, _descriptionController.text, '');
+                  await Provider.of<PrayerProviderV2>(context, listen: false)
+                      .addPrayerTag(contactList, _user.firstName ?? '',
+                          _descriptionController.text, '');
                 } else {
-                  await Provider.of<GroupPrayerProvider>(context, listen: false)
-                      .addPrayerTag(
-                          contactList, _user, _descriptionController.text, '');
+                  // await Provider.of<GroupPrayerProvider>(context, listen: false)
+                  //     .addPrayerTag(
+                  //         contactList, _user, _descriptionController.text, '');
                 }
               }
             }
@@ -271,7 +273,7 @@ class _AddPrayerState extends State<AddPrayer> {
             appController.setCurrentPage(8, true, 1);
           }
         } else {
-          _edit(_user);
+          // _edit(_user);
         }
       }
     } on HttpException catch (e, s) {

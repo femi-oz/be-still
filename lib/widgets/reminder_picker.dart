@@ -6,6 +6,7 @@ import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
@@ -31,7 +32,7 @@ class ReminderPicker extends StatefulWidget {
   final String type;
   final String entityId;
   final bool popTwice;
-  final CombinePrayerStream? prayerData;
+  final PrayerDataModel? prayerData;
 
   @override
   ReminderPicker(
@@ -267,7 +268,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
       // final prayerData =
       //     Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
       final title = '$selectedFrequency reminder to pray';
-      final description = widget.prayerData?.prayer?.description ?? '';
+      final description = widget.prayerData?.description ?? '';
 
       final scheduleDate = LocalNotification.scheduleDate(
         hour,

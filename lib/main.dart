@@ -55,6 +55,8 @@ void main() async {
           ChangeNotifierProvider(create: (ctx) => NotificationProvider()),
           ChangeNotifierProvider(create: (ctx) => DevotionalProvider()),
           ChangeNotifierProvider(create: (ctx) => LogProvider()),
+
+          // -------------------------------------------------------//
           ChangeNotifierProvider(create: (ctx) => UserProviderV2()),
           ChangeNotifierProvider(create: (ctx) => AuthenticationProviderV2()),
           ChangeNotifierProvider(create: (ctx) => PrayerProviderV2()),

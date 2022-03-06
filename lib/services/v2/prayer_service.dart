@@ -7,6 +7,7 @@ import 'package:be_still/models/v2/follower.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/models/v2/update.model.dart';
+import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/services/v2/notification_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -21,19 +22,30 @@ class PrayerServiceV2 {
       _prayerDataCollectionReference =
       FirebaseFirestore.instance.collection('prayers_v2');
 
+  final CollectionReference<Map<String, dynamic>> _userDataCollectionReference =
+      FirebaseFirestore.instance.collection('users_v2');
+
   final CollectionReference<Map<String, dynamic>>
       _messageTemplateCollectionReference =
       FirebaseFirestore.instance.collection('MessageTemplate');
 
-  final _notificationService = locator<NotificationService>();
+  final _notificationService = locator<NotificationServiceV2>();
 
   Future<void> createPrayer(
       {String? groupId, required String description, bool? isGroup}) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
+
+      final userDoc = await _userDataCollectionReference
+          .doc(_firebaseAuth.currentUser?.uid)
+          .get();
+      final user = UserDataModel.fromJson(userDoc.data()!);
+
       final doc = PrayerDataModel(
+        id: '',
         description: description,
+        creatorName: (user.firstName ?? '') + ' ' + (user.lastName ?? ''),
         isAnswered: false,
         isFavorite: false,
         isGroup: isGroup ?? false,
@@ -48,9 +60,11 @@ class PrayerServiceV2 {
         modifiedBy: _firebaseAuth.currentUser?.uid,
         createdDate: DateTime.now(),
         modifiedDate: DateTime.now(),
-        snoozeEndDate: null,
+        snoozeEndDate: DateTime.now(),
       ).toJson();
-      await _prayerDataCollectionReference.add(doc);
+      await _prayerDataCollectionReference.add(doc).then((value) {
+        _prayerDataCollectionReference.doc(value.id).update({'id': value.id});
+      });
       //todo send push notification if group
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));

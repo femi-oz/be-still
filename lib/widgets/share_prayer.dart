@@ -1,4 +1,6 @@
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
+import 'package:be_still/models/v2/update.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
@@ -14,7 +16,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class SharePrayer extends StatefulWidget {
-  final CombinePrayerStream? prayerData;
+  final PrayerDataModel? prayerData;
   final bool hasReminder;
   final reminder;
   SharePrayer(
@@ -33,8 +35,7 @@ class _SharePrayerState extends State<SharePrayer> {
     final _churchEmail = Provider.of<SettingsProvider>(context, listen: false)
         .sharingSettings
         .churchEmail;
-    final _prayer =
-        widget.prayerData?.prayer?.description ?? ''.capitalizeFirst ?? '';
+    final _prayer = widget.prayerData?.description ?? ''.capitalizeFirst ?? '';
     final firstName = _user.firstName ?? ''.capitalizeFirst ?? '';
     final lastName = _user.lastName ?? ''.capitalizeFirst ?? '';
     final _footerText =
@@ -45,13 +46,13 @@ https://www.bestillapp.com.''';
           ? '''I am sharing with you the following prayer request from my Be Still app: 
 
 $_emailUpdatesToString
-${DateFormat('dd MMMM yyyy').format(widget.prayerData?.prayer?.createdOn ?? DateTime.now())}
+${DateFormat('dd MMMM yyyy').format(widget.prayerData?.createdDate ?? DateTime.now())}
 $_prayer   
 
 $_footerText'''
           : '''I am sharing with you the following prayer request from my Be Still app: 
 
-${DateFormat('dd MMMM yyyy').format(widget.prayerData?.prayer?.createdOn ?? DateTime.now())}
+${DateFormat('dd MMMM yyyy').format(widget.prayerData?.createdDate ?? DateTime.now())}
 $_prayer   
 
 $_footerText''',
@@ -67,13 +68,13 @@ $_footerText''',
     final _churchPhone = Provider.of<SettingsProvider>(context, listen: false)
         .sharingSettings
         .churchPhone;
-    final _prayer = widget.prayerData?.prayer?.description ?? '';
+    final _prayer = widget.prayerData?.description ?? '';
     final _footerText =
         "This prayer need has been shared with you from the Be Still app, which allows you to create a prayer list for yourself or a group of friends. \n\nhttps://www.bestillapp.com";
 
     await sendSMS(
             message:
-                "Please pray for $_prayer (${DateFormat('dd MMM yyyy').format(widget.prayerData?.prayer?.createdOn ?? DateTime.now())}) ${_textUpdatesToString != '' ? ' $_textUpdatesToString \n\n' : '\n\n'}$_footerText",
+                "Please pray for $_prayer (${DateFormat('dd MMM yyyy').format(widget.prayerData?.createdDate ?? DateTime.now())}) ${_textUpdatesToString != '' ? ' $_textUpdatesToString \n\n' : '\n\n'}$_footerText",
             recipients: isChurch ? [_churchPhone ?? ''] : [])
         .catchError((onError) {
       print(onError);
@@ -82,13 +83,15 @@ $_footerText''',
 
   initState() {
     var emailUpdates = [];
-    widget.prayerData?.updates.forEach((u) => emailUpdates.add(
-        '''${DateFormat('dd MMMM yyyy').format(u.createdOn ?? DateTime.now())}
+    widget.prayerData?.updates ??
+        <UpdateModel>[].forEach((u) => emailUpdates.add(
+            '''${DateFormat('dd MMMM yyyy').format(u.createdDate ?? DateTime.now())}
 ${u.description}
 '''));
     var textUpdates = [];
-    widget.prayerData?.updates.forEach((u) => textUpdates.add(
-        '${u.description} (${DateFormat('dd MMM yyyy').format(u.createdOn ?? DateTime.now())})'));
+    widget.prayerData?.updates ??
+        <UpdateModel>[].forEach((u) => textUpdates.add(
+            '${u.description} (${DateFormat('dd MMM yyyy').format(u.createdDate ?? DateTime.now())})'));
 
     _emailUpdatesToString = emailUpdates.join(" ");
     _textUpdatesToString = textUpdates.join(" ");

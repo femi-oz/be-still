@@ -5,13 +5,16 @@ import 'package:be_still/models/v2/update.model.dart';
 class PrayerDataModel {
   String? id;
   String? description;
+  String? creatorName;
   bool? isAnswered;
   bool? isInappropriate;
   bool? isGroup;
   bool? isFavorite;
   String? userId;
   String? groupId;
-  String? snoozeEndDate;
+  DateTime? snoozeEndDate;
+  String? snoozeFrequency;
+  int? snoozeDuration;
   List<UpdateModel>? updates;
   List<TagModel>? tags;
   List<FollowerModel>? followers;
@@ -24,6 +27,7 @@ class PrayerDataModel {
   PrayerDataModel(
       {this.id,
       this.description,
+      this.creatorName,
       this.isAnswered,
       this.isInappropriate,
       this.isGroup,
@@ -31,6 +35,8 @@ class PrayerDataModel {
       this.userId,
       this.groupId,
       this.snoozeEndDate,
+      this.snoozeFrequency,
+      this.snoozeDuration,
       this.updates,
       this.tags,
       this.followers,
@@ -43,13 +49,16 @@ class PrayerDataModel {
   PrayerDataModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     description = json['description'];
+    creatorName = json['creatorName'];
     isAnswered = json['isAnswered'];
     isInappropriate = json['isInappropriate'];
     isGroup = json['isGroup'];
     isFavorite = json['isFavorite'];
     userId = json['userId'];
     groupId = json['groupId'];
-    snoozeEndDate = json['snoozeEndDate'];
+    snoozeEndDate = json['snoozeEndDate'].toDate();
+    snoozeFrequency = json['snoozeFrequency'];
+    snoozeDuration = json['snoozeDuration'];
     if (json['updates'] != null) {
       updates = <UpdateModel>[];
       json['updates'].forEach((v) {
@@ -70,8 +79,8 @@ class PrayerDataModel {
     }
     createdBy = json['createdBy'];
     modifiedBy = json['modifiedBy'];
-    createdDate = json['createdDate'];
-    modifiedDate = json['modifiedDate'];
+    createdDate = json['createdDate'].toDate();
+    modifiedDate = json['modifiedDate'].toDate();
     status = json['status'];
   }
 
@@ -79,6 +88,7 @@ class PrayerDataModel {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['description'] = this.description;
+    data['creatorName'] = this.creatorName;
     data['isAnswered'] = this.isAnswered;
     data['isInappropriate'] = this.isInappropriate;
     data['isGroup'] = this.isGroup;
@@ -86,6 +96,8 @@ class PrayerDataModel {
     data['userId'] = this.userId;
     data['groupId'] = this.groupId;
     data['snoozeEndDate'] = this.snoozeEndDate;
+    data['snoozeFrequency'] = this.snoozeFrequency;
+    data['snoozeDuration'] = this.snoozeDuration;
     if (this.updates != null) {
       data['updates'] = this.updates!.map((v) => v.toJson()).toList();
     }
