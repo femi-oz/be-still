@@ -3,26 +3,20 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/notification.model.dart';
-import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/v2/follower.model.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/models/v2/update.model.dart';
-import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
-import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/share_prayer.dart';
@@ -131,14 +125,13 @@ class _PrayerMenuState extends State<PrayerMenu> {
   // }
 
   clearSearch() async {
-    final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    if (Provider.of<MiscProvider>(context, listen: false).search) {
-      await Provider.of<MiscProvider>(context, listen: false)
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (Provider.of<MiscProviderV2>(context, listen: false).search) {
+      await Provider.of<MiscProviderV2>(context, listen: false)
           .setSearchMode(false);
-      await Provider.of<MiscProvider>(context, listen: false)
+      await Provider.of<MiscProviderV2>(context, listen: false)
           .setSearchQuery('');
-      await Provider.of<PrayerProvider>(context, listen: false)
+      await Provider.of<PrayerProviderV2>(context, listen: false)
           .searchPrayers('', userId ?? '');
     }
   }
@@ -241,12 +234,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
     BeStilDialog.showLoading(context);
     try {
       var notifications =
-          Provider.of<NotificationProvider>(context, listen: false)
+          Provider.of<NotificationProviderV2>(context, listen: false)
               .localNotifications
-              .where((e) => e.entityId == widget.prayerData?.id)
+              .where((e) => e.prayerId == widget.prayerData?.id)
               .toList();
       notifications.forEach((e) async =>
-          await Provider.of<NotificationProvider>(context, listen: false)
+          await Provider.of<NotificationProviderV2>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       await Provider.of<PrayerProviderV2>(context, listen: false)
           .deletePrayer(widget.prayerData?.id ?? '');
@@ -408,14 +401,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
     try {
       var notifications =
-          Provider.of<NotificationProvider>(context, listen: false)
+          Provider.of<NotificationProviderV2>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData?.id &&
+                  e.prayerId == widget.prayerData?.id &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
-          await Provider.of<NotificationProvider>(context, listen: false)
+          await Provider.of<NotificationProviderV2>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       await Provider.of<PrayerProviderV2>(context, listen: false)
           .markPrayerAsAnswered(
@@ -499,14 +492,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
     try {
       var notifications =
-          Provider.of<NotificationProvider>(context, listen: false)
+          Provider.of<NotificationProviderV2>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData?.id &&
+                  e.prayerId == widget.prayerData?.id &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
-          await Provider.of<NotificationProvider>(context, listen: false)
+          await Provider.of<NotificationProviderV2>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
 
       await Provider.of<PrayerProviderV2>(context, listen: false).archivePrayer(
@@ -913,11 +906,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           icon: AppIcons.bestill_answered,
                           onPress: !isOwner && !isAdmin
                               ? () {}
-                              : () =>
-                                  widget.prayerData?.status == Status.answered
-                                      ? _unMarkAsAnswered(widget.prayerData)
-                                      : _onMarkAsAnswered(widget.prayerData),
-                          text: widget.prayerData?.status == Status.answered
+                              : () => widget.prayerData?.isAnswered == true
+                                  ? _unMarkAsAnswered(widget.prayerData)
+                                  : _onMarkAsAnswered(widget.prayerData),
+                          text: widget.prayerData?.isAnswered == true
                               ? 'Unmark as Answered'
                               : 'Mark as Answered',
                         ),

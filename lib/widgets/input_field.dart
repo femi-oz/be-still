@@ -1,9 +1,8 @@
-import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -136,13 +135,10 @@ class _CustomInputState extends State<CustomInput> {
   }
 
   void _searchPrayer(String value) async {
-    final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    await Provider.of<MiscProvider>(context, listen: false)
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    await Provider.of<MiscProviderV2>(context, listen: false)
         .setSearchQuery(value);
-    await Provider.of<PrayerProvider>(context, listen: false)
-        .searchPrayers(value, userId ?? '');
-    await Provider.of<GroupPrayerProvider>(context, listen: false)
+    await Provider.of<PrayerProviderV2>(context, listen: false)
         .searchPrayers(value, userId ?? '');
   }
 

@@ -463,7 +463,9 @@ class PrayerProviderV2 with ChangeNotifier {
       }
       if (_filterOption == Status.answered) {
         answeredPrayers = prayers
-            .where((PrayerDataModel data) => data.status == Status.answered)
+            .where((PrayerDataModel data) =>
+                (data.status == Status.archived) &&
+                (data.isAnswered ?? false) == true)
             .toList();
       }
       if (_filterOption == Status.archived) {

@@ -5,7 +5,7 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class DevotionalService {
+class DevotionalServiceV2 {
   final CollectionReference<Map<String, dynamic>> _bibleCollectionReference =
       FirebaseFirestore.instance.collection("Bible");
   final CollectionReference<Map<String, dynamic>>

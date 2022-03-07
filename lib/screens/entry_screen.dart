@@ -1,14 +1,11 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/providers/devotional_provider.dart';
-import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/settings_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/models/v2/device.model.dart';
+import 'package:be_still/providers/v2/devotional_provider.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/Prayer/prayer_list.dart';
@@ -62,10 +59,10 @@ class _EntryScreenState extends State<EntryScreen> {
 
   initState() {
     try {
-      final miscProvider = Provider.of<MiscProvider>(context, listen: false);
+      final miscProvider = Provider.of<MiscProviderV2>(context, listen: false);
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
         final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
+            Provider.of<UserProviderV2>(context, listen: false).selectedUser;
         if (miscProvider.initialLoad) {
           await _preLoadData();
           Future.delayed(Duration(milliseconds: 500));
@@ -73,14 +70,11 @@ class _EntryScreenState extends State<EntryScreen> {
 
           initDynamicLinks();
         }
-        if ((Provider.of<SettingsProvider>(context, listen: false)
-                .groupPreferenceSettings
-                .enableNotificationForAllGroups ??
-            false)) {
+        if ((user.enableNotificationsForAllGroups ?? false)) {
           messaging = FirebaseMessaging.instance;
           messaging.getToken().then((value) => {
-                Provider.of<NotificationProvider>(context, listen: false)
-                    .init(value ?? "", user.id ?? '', user)
+                Provider.of<NotificationProviderV2>(context, listen: false)
+                    .init(user.devices ?? <DeviceModel>[])
               });
         }
       });
@@ -102,7 +96,7 @@ class _EntryScreenState extends State<EntryScreen> {
         // if (deepLink != null) {
         _groupId = deepLink.queryParameters['groups'] ?? "";
 
-        Provider.of<GroupProvider>(context, listen: false)
+        Provider.of<GroupProviderV2>(context, listen: false)
             .setJoinGroupId(_groupId);
         // }
       }, onError: (OnLinkErrorException e) async {
@@ -115,18 +109,18 @@ class _EntryScreenState extends State<EntryScreen> {
       final Uri deepLink = data?.link ?? Uri();
 
       _groupId = deepLink.queryParameters['groups'] ?? "";
-      Provider.of<GroupProvider>(context, listen: false)
+      Provider.of<GroupProviderV2>(context, listen: false)
           .setJoinGroupId(_groupId);
 
-      final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      if (_groupId.isNotEmpty)
-        Provider.of<GroupProvider>(context, listen: false)
-            .getGroupFuture(_groupId, userId ?? '')
-            .then((groupPrayer) {
-          if (!(groupPrayer.groupUsers ?? []).any((u) => u.userId == userId))
-            JoinGroup().showAlert(context, groupPrayer);
-        });
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+
+      // if (_groupId.isNotEmpty)
+      //   Provider.of<GroupProvider>(context, listen: false)
+      //       .getGroupFuture(_groupId, userId ?? '')
+      //       .then((groupPrayer) {
+      //     if (!(groupPrayer.groupUsers ?? []).any((u) => u.userId == userId))
+      //       JoinGroup().showAlert(context, groupPrayer);
+      //   });
     } catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).selectedUser;
@@ -144,8 +138,7 @@ class _EntryScreenState extends State<EntryScreen> {
       else
         Settings.enableLocalAuth = false;
 
-      final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+      final userId = FirebaseAuth.instance.currentUser?.uid;
 
       if ((userId ?? '').isNotEmpty)
         Provider.of<PrayerProviderV2>(context, listen: false)
@@ -220,7 +213,7 @@ class _EntryScreenState extends State<EntryScreen> {
       final _user =
           Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       final searchQuery =
-          Provider.of<MiscProvider>(context, listen: false).searchQuery;
+          Provider.of<MiscProviderV2>(context, listen: false).searchQuery;
       await Provider.of<PrayerProviderV2>(context, listen: false)
           .setPrayerTimePrayers(_user.id ?? '');
       if (searchQuery.isNotEmpty) {
@@ -245,7 +238,7 @@ class _EntryScreenState extends State<EntryScreen> {
 
   Future<void> _getDevotionals() async {
     try {
-      await Provider.of<DevotionalProvider>(context, listen: false)
+      await Provider.of<DevotionalProviderV2>(context, listen: false)
           .getDevotionals();
     } on HttpException catch (e, s) {
       final user =
@@ -262,7 +255,8 @@ class _EntryScreenState extends State<EntryScreen> {
 
   Future<void> _getBibles() async {
     try {
-      await Provider.of<DevotionalProvider>(context, listen: false).getBibles();
+      await Provider.of<DevotionalProviderV2>(context, listen: false)
+          .getBibles();
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).selectedUser;
@@ -276,36 +270,35 @@ class _EntryScreenState extends State<EntryScreen> {
     }
   }
 
-  void _setDefaultSnooze(selectedDuration, selectedInterval, settingsId) async {
-    try {
-      final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .updateSettings(
-        userId ?? '',
-        key: SettingsKey.defaultSnoozeDuration,
-        value: selectedDuration,
-        settingsId: settingsId,
-      );
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .updateSettings(
-        userId ?? '',
-        key: SettingsKey.defaultSnoozeFrequency,
-        value: selectedInterval,
-        settingsId: settingsId,
-      );
-    } on HttpException catch (e, s) {
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    } catch (e, s) {
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    }
-  }
+  // void _setDefaultSnooze(selectedDuration, selectedInterval, settingsId) async {
+  //   try {
+  //     final userId = FirebaseAuth.instance.currentUser?.uid;
+  //     await Provider.of<UserProviderV2>(context, listen: false)
+  //         .updateSettings(
+  //       userId ?? '',
+  //       key: SettingsKey.defaultSnoozeDuration,
+  //       value: selectedDuration,
+  //       settingsId: settingsId,
+  //     );
+  //     await Provider.of<SettingsProvider>(context, listen: false)
+  //         .updateSettings(
+  //       userId ?? '',
+  //       key: SettingsKey.defaultSnoozeFrequency,
+  //       value: selectedInterval,
+  //       settingsId: settingsId,
+  //     );
+  //   } on HttpException catch (e, s) {
+  //     final user =
+  //         Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+  //     BeStilDialog.showErrorDialog(
+  //         context, StringUtils.getErrorMessage(e), user, s);
+  //   } catch (e, s) {
+  //     final user =
+  //         Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+  //     BeStilDialog.showErrorDialog(
+  //         context, StringUtils.getErrorMessage(e), user, s);
+  //   }
+  // }
 
   GlobalKey _keyButton = GlobalKey();
   GlobalKey _keyButton2 = GlobalKey();
@@ -316,8 +309,8 @@ class _EntryScreenState extends State<EntryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final miscProvider = Provider.of<MiscProvider>(context);
-    _isSearchMode = Provider.of<MiscProvider>(context, listen: false).search;
+    final miscProvider = Provider.of<MiscProviderV2>(context);
+    _isSearchMode = Provider.of<MiscProviderV2>(context, listen: false).search;
 
     AppController appController = Get.find();
     return Scaffold(
@@ -382,7 +375,7 @@ class _EntryScreenState extends State<EntryScreen> {
               switch (index) {
                 case 2:
                   final prayers =
-                      Provider.of<PrayerProvider>(context, listen: false)
+                      Provider.of<PrayerProviderV2>(context, listen: false)
                           .filteredPrayerTimeList;
                   if (prayers.length == 0) {
                     message =
@@ -394,7 +387,7 @@ class _EntryScreenState extends State<EntryScreen> {
                   }
                   break;
                 case 1:
-                  Provider.of<PrayerProvider>(context, listen: false)
+                  Provider.of<PrayerProviderV2>(context, listen: false)
                       .setEditMode(false, true);
                   // Provider.of<PrayerProvider>(context, listen: false)
                   //     .setEditPrayer();
@@ -513,7 +506,7 @@ class _EntryScreenState extends State<EntryScreen> {
             padding: 6,
             key: _keyButton6),
         TabNavigationItem(
-          page: SettingsScreen(_setDefaultSnooze), //4
+          page: SettingsScreen(() {}), //4
           icon: Icon(
             Icons.more_horiz,
             size: 22,

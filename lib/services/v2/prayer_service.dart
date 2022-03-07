@@ -230,18 +230,14 @@ class PrayerServiceV2 {
 
   Future<void> favoritePrayer({required String prayerId}) async {
     try {
-      _prayerDataCollectionReference
-          .doc(prayerId)
-          .update({'status': Status.favorite});
+      _prayerDataCollectionReference.doc(prayerId).update({'isFavorite': true});
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
   Future<void> unFavoritePrayer({required String prayerId}) async {
-    _prayerDataCollectionReference
-        .doc(prayerId)
-        .update({'status': Status.active});
+    _prayerDataCollectionReference.doc(prayerId).update({'isFavorite': false});
   }
 
   Future<void> createPrayerTag(

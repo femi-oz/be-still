@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
-import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/providers/theme_provider.dart';

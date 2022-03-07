@@ -22,6 +22,7 @@ class UserDataModel {
   bool? autoPlayMusic;
   bool? enableSharingViaText;
   bool? enableSharingViaEmail;
+  bool? enableNotificationsForAllGroups;
   bool? includeAnsweredPrayerAutoDelete;
   String? createdBy;
   String? modifiedBy;
@@ -50,6 +51,7 @@ class UserDataModel {
       this.autoPlayMusic,
       this.enableSharingViaText,
       this.enableSharingViaEmail,
+      this.enableNotificationsForAllGroups,
       this.includeAnsweredPrayerAutoDelete,
       this.createdBy,
       this.modifiedBy,
@@ -88,6 +90,7 @@ class UserDataModel {
     autoPlayMusic = json['autoPlayMusic'];
     enableSharingViaText = json['enableSharingViaText'];
     enableSharingViaEmail = json['enableSharingViaEmail'];
+    enableNotificationsForAllGroups = json['enableNotificationsForAllGroups'];
     includeAnsweredPrayerAutoDelete = json['includeAnsweredPrayerAutoDelete'];
     createdBy = json['createdBy'];
     modifiedBy = json['modifiedBy'];
@@ -122,6 +125,8 @@ class UserDataModel {
     data['autoPlayMusic'] = this.autoPlayMusic;
     data['enableSharingViaText'] = this.enableSharingViaText;
     data['enableSharingViaEmail'] = this.enableSharingViaEmail;
+    data['enableNotificationsForAllGroups'] =
+        this.enableNotificationsForAllGroups;
     data['includeAnsweredPrayerAutoDelete'] =
         this.includeAnsweredPrayerAutoDelete;
     data['createdBy'] = this.createdBy;
@@ -130,6 +135,15 @@ class UserDataModel {
     data['modifiedDate'] = this.modifiedDate;
     data['status'] = this.status;
     return data;
+  }
+
+  Map<String, dynamic> toJson2() {
+    return {
+      'id': id,
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+    };
   }
 }
 

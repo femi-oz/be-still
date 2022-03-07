@@ -2,12 +2,8 @@ import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/Prayer/Widgets/prayer_card.dart';
@@ -58,11 +54,11 @@ class _PrayerListState extends State<PrayerList> {
     if (_isInit) {
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
         try {
-          var status =
-              Provider.of<PrayerProvider>(context, listen: false).filterOption;
+          var status = Provider.of<PrayerProviderV2>(context, listen: false)
+              .filterOption;
           String heading =
               '${status == Status.active ? 'MY PRAYERS' : status.toUpperCase()}';
-          await Provider.of<MiscProvider>(context, listen: false)
+          await Provider.of<MiscProviderV2>(context, listen: false)
               .setPageTitle(heading);
           if (Settings.isAppInit)
             TutorialTarget().showTutorial(
@@ -119,7 +115,7 @@ class _PrayerListState extends State<PrayerList> {
       final _user =
           Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       final searchQuery =
-          Provider.of<MiscProvider>(context, listen: false).searchQuery;
+          Provider.of<MiscProviderV2>(context, listen: false).searchQuery;
       await Provider.of<PrayerProviderV2>(context, listen: false)
           .setPrayerTimePrayers(_user.id ?? '');
       if (searchQuery.isNotEmpty) {
@@ -143,7 +139,7 @@ class _PrayerListState extends State<PrayerList> {
   }
 
   String get message {
-    final filterOption = Provider.of<PrayerProvider>(context).filterOption;
+    final filterOption = Provider.of<PrayerProviderV2>(context).filterOption;
 
     if (filterOption.toLowerCase() == Status.active.toLowerCase()) {
       return 'You do not have any active prayers.';
@@ -227,7 +223,7 @@ class _PrayerListState extends State<PrayerList> {
                                         try {
                                           AppController appController =
                                               Get.find();
-                                          Provider.of<PrayerProvider>(context,
+                                          Provider.of<PrayerProviderV2>(context,
                                                   listen: false)
                                               .setEditMode(false, true);
                                           appController.setCurrentPage(
@@ -294,7 +290,7 @@ class _PrayerListState extends State<PrayerList> {
                                                       AppController
                                                           appController =
                                                           Get.find();
-                                                      Provider.of<PrayerProvider>(
+                                                      Provider.of<PrayerProviderV2>(
                                                               context,
                                                               listen: false)
                                                           .setEditMode(

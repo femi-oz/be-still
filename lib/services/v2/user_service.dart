@@ -61,6 +61,7 @@ class UserServiceV2 {
         enableBackgroundMusic: true,
         enableSharingViaEmail: true,
         enableSharingViaText: true,
+        enableNotificationsForAllGroups: true,
         doNotDisturb: true,
         createdBy: uid,
         modifiedBy: uid,
@@ -124,21 +125,24 @@ class UserServiceV2 {
   Future<void> addPushToken(List<DeviceModel> userDevices) async {
     try {
       final id = await deviceId();
+      var devices = DeviceModel();
       final messaging = FirebaseMessaging.instance;
       final newToken = await messaging.getToken();
       if (userDevices.any((element) => element.id == id)) {
         userDevices = userDevices.map((element) {
           if (element.id == id) {
             element = element..token = newToken;
+            devices = DeviceModel(id: element.id, token: newToken);
           }
           return element;
         }).toList();
       } else {
         userDevices.add(DeviceModel(id: await deviceId(), token: newToken));
+        devices = DeviceModel(id: await deviceId(), token: newToken);
       }
-      _userDataCollectionReference
-          .doc(_firebaseAuth.currentUser?.uid)
-          .update({'devices': userDevices.map((e) => e.toJson())});
+      _userDataCollectionReference.doc(_firebaseAuth.currentUser?.uid).update({
+        'devices': FieldValue.arrayUnion([devices.toJson()])
+      });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

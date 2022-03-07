@@ -1,15 +1,14 @@
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/screens/groups/widgets/filter_options.dart';
 import 'package:be_still/screens/prayer/widgets/filter_options.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/widgets/input_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -49,11 +48,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
   }
 
   void _searchPrayer(String value) async {
-    final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    await Provider.of<MiscProvider>(context, listen: false)
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    await Provider.of<MiscProviderV2>(context, listen: false)
         .setSearchQuery(value);
-    await Provider.of<PrayerProvider>(context, listen: false)
+    await Provider.of<PrayerProviderV2>(context, listen: false)
         .searchPrayers(value, userId ?? '');
   }
 
@@ -64,11 +62,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
   }
 
   void _searchGroupPrayer(String value) async {
-    final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    await Provider.of<MiscProvider>(context, listen: false)
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+
+    await Provider.of<MiscProviderV2>(context, listen: false)
         .setSearchQuery(value);
-    await Provider.of<GroupPrayerProvider>(context, listen: false)
+    await Provider.of<PrayerProviderV2>(context, listen: false)
         .searchPrayers(value, userId ?? '');
   }
 
@@ -83,7 +81,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
   void didChangeDependencies() {
     if (_isInit) {
       final searchQuery =
-          Provider.of<MiscProvider>(context, listen: false).searchQuery;
+          Provider.of<MiscProviderV2>(context, listen: false).searchQuery;
       setState(() {
         if (searchQuery != '') {
           _searchController.text = searchQuery;
@@ -132,15 +130,15 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
   int get getCount {
     final notifications =
-        Provider.of<NotificationProvider>(context).notifications;
+        Provider.of<NotificationProviderV2>(context).notifications;
     return notifications.length;
   }
 
   @override
   Widget build(BuildContext context) {
-    String pageTitle = Provider.of<MiscProvider>(context).pageTitle;
+    String pageTitle = Provider.of<MiscProviderV2>(context).pageTitle;
     final searchQuery =
-        Provider.of<MiscProvider>(context, listen: true).searchQuery;
+        Provider.of<MiscProviderV2>(context, listen: true).searchQuery;
     _searchController.text = searchQuery;
 
     return AppBar(
@@ -166,7 +164,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     if (_searchController.text.isEmpty &&
                         widget.switchSearchMode != null) {
                       widget.switchSearchMode!(true);
-                      Provider.of<MiscProvider>(context, listen: false)
+                      Provider.of<MiscProviderV2>(context, listen: false)
                           .setSearchMode(true);
                       setState(() {});
                     } else {
@@ -250,9 +248,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
                               : _clearSearchField();
 
                           widget.switchSearchMode!(false);
-                          Provider.of<MiscProvider>(context, listen: false)
+                          Provider.of<MiscProviderV2>(context, listen: false)
                               .setSearchMode(false);
-                          Provider.of<MiscProvider>(context, listen: false)
+                          Provider.of<MiscProviderV2>(context, listen: false)
                               .setSearchQuery('');
                           setState(() {});
                         }

@@ -1,15 +1,11 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
-import 'package:be_still/providers/auth_provider.dart';
-import 'package:be_still/providers/log_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/providers/v2/auth_provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -238,25 +234,26 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> setRouteDestination() async {
     try {
       final message =
-          Provider.of<NotificationProvider>(context, listen: false).message;
+          Provider.of<NotificationProviderV2>(context, listen: false).message;
       if ((message.entityId ?? '').isNotEmpty) {
         if (message.type == NotificationType.prayer_time) {
-          await Provider.of<PrayerProvider>(context, listen: false)
+          await Provider.of<PrayerProviderV2>(context, listen: false)
               .setPrayerTimePrayers(message.entityId ?? '');
           AppController appController = Get.find();
           appController.setCurrentPage(2, false, 0);
-          Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
+          Provider.of<MiscProviderV2>(context, listen: false)
+              .setLoadStatus(true);
           Navigator.of(context).pushNamedAndRemoveUntil(
               EntryScreen.routeName, (Route<dynamic> route) => false);
         }
         if (message.type == NotificationType.prayer) {
-          Provider.of<PrayerProvider>(context, listen: false)
+          Provider.of<PrayerProviderV2>(context, listen: false)
               .setCurrentPrayerId(message.entityId ?? '');
         }
-        Provider.of<NotificationProvider>(context, listen: false)
+        Provider.of<NotificationProviderV2>(context, listen: false)
             .clearMessage();
       } else {
-        await Provider.of<MiscProvider>(context, listen: false)
+        await Provider.of<MiscProviderV2>(context, listen: false)
             .setLoadStatus(true);
         AppController appController = Get.find();
 
@@ -284,13 +281,13 @@ class _LoginScreenState extends State<LoginScreen> {
   void _resendVerification() async {
     try {
       BeStilDialog.showLoading(context, '');
-      await Provider.of<AuthenticationProvider>(context, listen: false)
+      await Provider.of<AuthenticationProviderV2>(context, listen: false)
           .sendEmailVerification();
       verificationSent = true;
       setState(() => verificationSendMessage =
           'Email verification sent. Please check your email');
       BeStilDialog.hideLoading(context);
-      await Provider.of<AuthenticationProvider>(context, listen: false)
+      await Provider.of<AuthenticationProviderV2>(context, listen: false)
           .signOut();
     } on HttpException catch (e, s) {
       verificationSent = false;
@@ -303,8 +300,7 @@ class _LoginScreenState extends State<LoginScreen> {
       verificationSent = false;
       setState(() => verificationSendMessage =
           'Resend verification email failed. Please try again');
-      Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
-          _usernameController.text, 'LOGIN/screen/_resendVerification');
+
       BeStilDialog.hideLoading(context);
 
       BeStilDialog.showErrorDialog(
@@ -329,10 +325,10 @@ class _LoginScreenState extends State<LoginScreen> {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).selectedUser;
 
-      // Settings.lastUser = jsonEncode(user.toJson());
-      // Settings.userPassword = _passwordController.text;
-      // if (Settings.enabledReminderPermission)
-      //   LocalNotification.setNotificationsOnNewDevice(context);
+      Settings.lastUser = jsonEncode(user.toJson2());
+      Settings.userPassword = _passwordController.text;
+      if (Settings.enabledReminderPermission)
+        LocalNotification.setNotificationsOnNewDevice(context);
 
       BeStilDialog.hideLoading(context);
       await setRouteDestination();
@@ -345,11 +341,9 @@ class _LoginScreenState extends State<LoginScreen> {
           context, StringUtils.getErrorMessage(e), UserDataModel(), s);
     } catch (e, s) {
       needsVerification =
-          Provider.of<AuthenticationProvider>(context, listen: false)
+          Provider.of<AuthenticationProviderV2>(context, listen: false)
               .needsVerification;
 
-      Provider.of<LogProvider>(context, listen: false).setErrorLog(
-          e.toString(), _usernameController.text, 'LOGIN/screen/_login');
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(
           context, StringUtils.errorOccured, UserDataModel(), s);
@@ -372,7 +366,7 @@ class _LoginScreenState extends State<LoginScreen> {
       BeStilDialog.showLoading(context, 'Authenticating');
       isLoading = true;
       if (isAuth) {
-        await Provider.of<UserProvider>(context, listen: false)
+        await Provider.of<UserProviderV2>(context, listen: false)
             .setCurrentUser(false);
         BeStilDialog.hideLoading(context);
         isLoading = false;
@@ -394,8 +388,6 @@ class _LoginScreenState extends State<LoginScreen> {
         BeStilDialog.hideLoading(context);
         isLoading = false;
       }
-      Provider.of<LogProvider>(context, listen: false).setErrorLog(
-          e.toString(), _usernameController.text, 'LOGIN/screen/_login');
 
       BeStilDialog.showErrorDialog(
           context, StringUtils.errorOccured, UserDataModel(), s);

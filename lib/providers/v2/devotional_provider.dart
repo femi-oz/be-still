@@ -7,8 +7,8 @@ import 'package:be_still/services/v2/devotional_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
-class DevotionalProvider with ChangeNotifier {
-  DevotionalService _devotionalService = locator<DevotionalService>();
+class DevotionalProviderV2 with ChangeNotifier {
+  DevotionalServiceV2 _devotionalService = locator<DevotionalServiceV2>();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   List<BibleDataModel> _bibles = [];
   List<DevotionalDataModel> _devotionals = [];
