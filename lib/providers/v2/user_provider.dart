@@ -47,6 +47,14 @@ class UserProviderV2 with ChangeNotifier {
     }
   }
 
+  String getPrayerCreatorName(String userId) {
+    final user = userId == _firebaseUserId
+        ? selectedUser
+        : _allUsers.firstWhere((element) => element.id == userId);
+    final userName = (user.firstName ?? '') + ' ' + (user.lastName ?? '');
+    return userName;
+  }
+
   Future setCurrentUser(bool isLocalAuth) async {
     try {
       _selectedUser = await _userService.getUserById(_firebaseUserId ?? '');

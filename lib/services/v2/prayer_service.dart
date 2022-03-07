@@ -281,17 +281,16 @@ class PrayerServiceV2 {
     }
   }
 
-  Future<void> removePrayerTag(
-      {required String prayerId,
-      required List<TagModel> currentTags,
-      required String tagId}) async {
+  Future<void> removePrayerTag({
+    required String prayerId,
+    required TagModel currentTag,
+  }) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      currentTags = currentTags..removeWhere((element) => element.id == tagId);
-      await _prayerDataCollectionReference
-          .doc(prayerId)
-          .update({"tags": currentTags.map((e) => e.toJson())});
+      await _prayerDataCollectionReference.doc(prayerId).update({
+        "tags": FieldValue.arrayRemove([currentTag.toJson()])
+      });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -342,15 +341,15 @@ class PrayerServiceV2 {
 
   Future<void> createPrayerUpdate({
     required String prayerId,
-    required List<UpdateModel> currentUpdates,
     required String description,
   }) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       final docId = Uuid().v1();
-      currentUpdates = currentUpdates
-        ..add(UpdateModel(
+
+      final updateList = [
+        UpdateModel(
           id: docId,
           description: description,
           status: Status.active,
@@ -358,26 +357,25 @@ class PrayerServiceV2 {
           createdDate: DateTime.now(),
           modifiedBy: _firebaseAuth.currentUser?.uid,
           modifiedDate: DateTime.now(),
-        ));
+        ).toJson()
+      ];
 
       await _prayerDataCollectionReference
           .doc(prayerId)
-          .update({'updates': FieldValue.arrayUnion(currentUpdates)});
+          .update({'updates': FieldValue.arrayUnion(updateList)});
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
   Future<void> editPrayerUpdate(
-      {required List<UpdateModel> currentUpdates,
-      required UpdateModel update,
-      required String updateId,
+      {required UpdateModel update,
       required String description,
       required String prayerId}) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      currentUpdates[currentUpdates.indexOf(update)] = UpdateModel(
+      final newUpdate = UpdateModel(
           id: update.id,
           description: description,
           status: update.status,
@@ -385,9 +383,10 @@ class PrayerServiceV2 {
           createdDate: update.createdDate,
           modifiedBy: _firebaseAuth.currentUser?.uid,
           modifiedDate: DateTime.now());
-      await _prayerDataCollectionReference
-          .doc(prayerId)
-          .update({"updates": currentUpdates.map((e) => e.toJson())});
+      deleteUpdate(prayerId: prayerId, currentUpdate: update);
+      await _prayerDataCollectionReference.doc(prayerId).update({
+        'updates': FieldValue.arrayUnion([newUpdate.toJson()])
+      });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -433,15 +432,12 @@ class PrayerServiceV2 {
 
   Future<void> deleteUpdate({
     required String prayerId,
-    required String prayerUpdateId,
-    required List<UpdateModel> currentUpdates,
+    required UpdateModel currentUpdate,
   }) async {
     try {
-      currentUpdates = currentUpdates
-        ..removeWhere((element) => element.id == prayerUpdateId);
-      await _prayerDataCollectionReference
-          .doc(prayerId)
-          .update({'updates': currentUpdates.map((e) => e.toJson())});
+      await _prayerDataCollectionReference.doc(prayerId).update({
+        'updates': FieldValue.arrayRemove([currentUpdate.toJson()])
+      });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

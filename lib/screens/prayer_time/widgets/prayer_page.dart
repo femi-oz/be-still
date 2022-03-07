@@ -1,14 +1,16 @@
-import 'package:be_still/models/prayer.model.dart';
 
+import 'package:be_still/models/v2/prayer.model.dart';
+import 'package:be_still/models/v2/update.model.dart';
 import 'package:be_still/screens/prayer_time/Widgets/no_update_view.dart';
 import 'package:be_still/screens/prayer_time/Widgets/update_view.dart';
+
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 
 class PrayerView extends StatelessWidget {
-  final CombinePrayerStream data;
+  final PrayerDataModel prayer;
 
-  PrayerView(this.data);
+  PrayerView(this.prayer);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -16,7 +18,7 @@ class PrayerView extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 20),
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 30),
-        child: data.updates.length > 0 ? UpdateView(data) : NoUpdateView(data),
+        child: (prayer.updates ?? <UpdateModel>[]).length > 0 ? UpdateView(prayer) : NoUpdateView(prayer),
         width: double.infinity,
         height: MediaQuery.of(context).size.height * 0.84,
         padding: EdgeInsets.all(20),

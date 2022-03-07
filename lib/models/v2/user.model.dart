@@ -1,5 +1,4 @@
 import 'package:be_still/models/v2/device.model.dart';
-import 'package:be_still/models/v2/follower.model.dart';
 import 'package:flutter/services.dart';
 
 class UserDataModel {

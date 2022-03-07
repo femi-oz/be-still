@@ -242,11 +242,9 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> removePrayerTag(
-      String tagId, List<TagModel> tags, String prayerId) async {
+  Future<void> removePrayerTag(TagModel tag, String prayerId) async {
     try {
-      await _prayerService.removePrayerTag(
-          tagId: tagId, currentTags: tags, prayerId: prayerId);
+      await _prayerService.removePrayerTag(currentTag: tag, prayerId: prayerId);
     } catch (e) {
       rethrow;
     }
@@ -256,9 +254,7 @@ class PrayerProviderV2 with ChangeNotifier {
       List<UpdateModel> updates, String prayerId, String description) async {
     try {
       await _prayerService.createPrayerUpdate(
-          prayerId: prayerId,
-          currentUpdates: updates,
-          description: description);
+          prayerId: prayerId, description: description);
     } catch (e) {
       rethrow;
     }
@@ -273,15 +269,13 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> editUpdate(String description, String prayerId,
-      List<UpdateModel> updates, UpdateModel update, String updateId) async {
+  Future<void> editUpdate(
+      String description, String prayerId, UpdateModel update) async {
     try {
       await _prayerService.editPrayerUpdate(
-        currentUpdates: updates,
         description: description,
         prayerId: prayerId,
         update: update,
-        updateId: updateId,
       );
     } catch (e) {
       rethrow;
@@ -389,14 +383,13 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> deleteUpdate(
-      String prayerId, List<UpdateModel> updates, String updateId) async {
+  Future<void> deleteUpdate(String prayerId, UpdateModel update) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       await _prayerService.deleteUpdate(
-          currentUpdates: updates,
-          prayerId: prayerId,
-          prayerUpdateId: updateId);
+        currentUpdate: update,
+        prayerId: prayerId,
+      );
     } catch (e) {
       rethrow;
     }

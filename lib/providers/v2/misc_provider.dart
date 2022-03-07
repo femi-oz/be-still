@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class MiscProvider with ChangeNotifier {
+class MiscProviderV2 with ChangeNotifier {
   String _pageTitle = 'MY PRAYERS';
   String get pageTitle => _pageTitle;
 

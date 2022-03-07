@@ -1,13 +1,14 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+
+import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/prayer_time/widgets/prayer_page.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:math' as math;
@@ -29,13 +30,12 @@ class _PrayerTimeState extends State<PrayerTime> {
   void initState() {
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
       try {
-        var userId =
-            Provider.of<UserProvider>(context, listen: false).currentUser.id;
+        var userId = FirebaseAuth.instance.currentUser?.uid;
         await Provider.of<MiscProvider>(context, listen: false)
             .setSearchMode(false);
         await Provider.of<MiscProvider>(context, listen: false)
             .setSearchQuery('');
-        Provider.of<PrayerProvider>(context, listen: false)
+        Provider.of<PrayerProviderV2>(context, listen: false)
             .searchPrayers('', userId ?? '');
       } catch (e, s) {
         final user =
@@ -61,7 +61,7 @@ class _PrayerTimeState extends State<PrayerTime> {
 
   @override
   Widget build(BuildContext context) {
-    var prayers = Provider.of<PrayerProvider>(context).filteredPrayerTimeList;
+    var prayers = Provider.of<PrayerProviderV2>(context).filteredPrayerTimeList;
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(

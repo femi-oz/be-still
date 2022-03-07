@@ -256,6 +256,9 @@ class _UpdateView extends State<UpdateView> {
         .compareTo(a.modifiedDate ?? DateTime.now()));
     updates =
         updates.where((element) => element.status != Status.inactive).toList();
+    final creatorName = Provider.of<UserProviderV2>(context)
+        .getPrayerCreatorName(widget.prayerData?.createdBy ?? '');
+
     return Container(
       child: SingleChildScrollView(
         child: Container(
@@ -263,18 +266,16 @@ class _UpdateView extends State<UpdateView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              widget.prayerData?.groupId != '0'
-                  ? Container(
-                      margin: EdgeInsets.only(bottom: 15),
-                      child: Text(
-                        widget.prayerData?.createdBy ?? '',
-                        style: AppTextStyles.regularText18b.copyWith(
-                            color: AppColors.prayerPrimaryColor,
-                            fontWeight: FontWeight.w500),
-                        textAlign: TextAlign.left,
-                      ),
-                    )
-                  : Container(),
+              Container(
+                margin: EdgeInsets.only(bottom: 20),
+                child: Text(
+                  creatorName,
+                  style: AppTextStyles.boldText16.copyWith(
+                    color: AppColors.lightBlue4,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
               for (int i = 0; i < updates.length; i++)
                 _buildDetail(
                     '',

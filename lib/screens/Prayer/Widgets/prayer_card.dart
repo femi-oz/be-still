@@ -2,16 +2,11 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/v2/follower.model.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
-import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
@@ -23,7 +18,6 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/models/prayer.model.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:be_still/widgets/snooze_prayer.dart';
@@ -49,33 +43,33 @@ class _PrayerCardState extends State<PrayerCard> {
   }
 
   bool get hasReminder {
-    final reminders = Provider.of<NotificationProvider>(context)
+    final reminders = Provider.of<NotificationProviderV2>(context)
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
     final res = reminders.any(
-      (reminder) => reminder.entityId == widget.prayerData.id,
+      (reminder) => reminder.prayerId == widget.prayerData.id,
     );
     return res;
   }
 
   bool get isReminderActive {
-    final reminders = Provider.of<NotificationProvider>(context)
+    final reminders = Provider.of<NotificationProviderV2>(context)
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
-    LocalNotificationModel rem = reminders.firstWhere(
-        (reminder) => reminder.entityId == widget.prayerData.id,
-        orElse: () => LocalNotificationModel.defaultValue());
+    LocalNotificationDataModel rem = reminders.firstWhere(
+        (reminder) => reminder.prayerId == widget.prayerData.id,
+        orElse: () => LocalNotificationDataModel());
     if ((rem.id ?? '').isNotEmpty) {
       if (rem.frequency != Frequency.one_time) {
         return true;
       } else {
-        if ((rem.scheduledDate ?? DateTime.now().subtract(Duration(hours: 1)))
+        if ((rem.scheduleDate ?? DateTime.now().subtract(Duration(hours: 1)))
             .isAfter(DateTime.now())) {
           return true;
         } else {
-          Provider.of<NotificationProvider>(context).deleteLocalNotification(
+          Provider.of<NotificationProviderV2>(context).deleteLocalNotification(
               rem.id ?? '', rem.localNotificationId ?? 0);
           return false;
         }
@@ -93,14 +87,14 @@ class _PrayerCardState extends State<PrayerCard> {
 
     try {
       var notifications =
-          Provider.of<NotificationProvider>(context, listen: false)
+          Provider.of<NotificationProviderV2>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.id &&
+                  e.prayerId == widget.prayerData.id &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
-          await Provider.of<NotificationProvider>(context, listen: false)
+          await Provider.of<NotificationProviderV2>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       await Provider.of<PrayerProviderV2>(context, listen: false)
           .markPrayerAsAnswered(widget.prayerData.id ?? '');
@@ -168,14 +162,14 @@ class _PrayerCardState extends State<PrayerCard> {
 
     try {
       var notifications =
-          Provider.of<NotificationProvider>(context, listen: false)
+          Provider.of<NotificationProviderV2>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.id &&
+                  e.prayerId == widget.prayerData.id &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
-          await Provider.of<NotificationProvider>(context, listen: false)
+          await Provider.of<NotificationProviderV2>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
 
       await Provider.of<PrayerProviderV2>(context, listen: false).archivePrayer(
@@ -260,10 +254,10 @@ class _PrayerCardState extends State<PrayerCard> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(
-      //     context, StringUtils.getErrorMessage(e), user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -279,16 +273,16 @@ class _PrayerCardState extends State<PrayerCard> {
           .getPrayer(prayerId: widget.prayerData.id ?? '');
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(
-      //     context, StringUtils.getErrorMessage(e), user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(
-      //     context, StringUtils.getErrorMessage(e), user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -310,6 +304,8 @@ class _PrayerCardState extends State<PrayerCard> {
   @override
   Widget build(BuildContext context) {
     final _user = FirebaseAuth.instance.currentUser?.uid;
+    final creatorName = Provider.of<UserProviderV2>(context)
+        .getPrayerCreatorName(widget.prayerData.createdBy ?? '');
     bool isOwner = widget.prayerData.createdBy == _user;
     var tags = '';
     final eTags = widget.prayerData.tags ??
@@ -466,7 +462,7 @@ class _PrayerCardState extends State<PrayerCard> {
                                       : SizedBox(),
                                   widget.prayerData.userId != _user
                                       ? Text(
-                                          widget.prayerData.createdBy ?? '',
+                                          creatorName,
                                           style:
                                               AppTextStyles.boldText14.copyWith(
                                             color: AppColors.lightBlue4,

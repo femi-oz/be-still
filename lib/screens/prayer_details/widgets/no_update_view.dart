@@ -257,15 +257,18 @@ class _NoUpdateViewState extends State<NoUpdateView> {
     // final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
     final userId = FirebaseAuth.instance.currentUser?.uid;
     bool isOwner = widget.prayerData?.createdBy == userId;
+    final creatorName = Provider.of<UserProviderV2>(context)
+        .getPrayerCreatorName(widget.prayerData?.createdBy ?? '');
     return Container(
       padding: EdgeInsets.all(20),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           widget.prayerData?.groupId != '0'
               ? Container(
                   margin: EdgeInsets.only(bottom: 20),
                   child: Text(
-                    widget.prayerData?.creatorName ?? '',
+                    creatorName,
                     style: AppTextStyles.boldText16.copyWith(
                       color: AppColors.lightBlue4,
                     ),

@@ -1,20 +1,14 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/enums/save_options.dart';
 import 'package:be_still/enums/status.dart';
-import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/models/user.model.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/update.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
-import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/log_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -29,6 +23,7 @@ import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
+import 'package:uuid/uuid.dart';
 
 class AddPrayer extends StatefulWidget {
   static const routeName = '/app-prayer';
@@ -64,9 +59,9 @@ class _AddPrayerState extends State<AddPrayer> {
   bool _isInit = true;
   List<Contact> tagList = [];
   List<Contact> contactList = [];
-  List<SaveOptionModel> saveOptions = [];
+  List<SaveOption> saveOptions = [];
   String tagText = '';
-  SaveOptionModel? selected;
+  SaveOption? selected;
   final widgetKey = GlobalKey();
 
   @override
@@ -74,13 +69,12 @@ class _AddPrayerState extends State<AddPrayer> {
     if (_isInit) {
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
         try {
-          var userId =
-              Provider.of<UserProvider>(context, listen: false).currentUser.id;
-          await Provider.of<MiscProvider>(context, listen: false)
+          var userId = FirebaseAuth.instance.currentUser?.uid;
+          await Provider.of<MiscProviderV2>(context, listen: false)
               .setSearchMode(false);
-          await Provider.of<MiscProvider>(context, listen: false)
+          await Provider.of<MiscProviderV2>(context, listen: false)
               .setSearchQuery('');
-          Provider.of<PrayerProvider>(context, listen: false)
+          Provider.of<PrayerProviderV2>(context, listen: false)
               .searchPrayers('', userId ?? '');
         } on HttpException catch (e, s) {
           final user =
@@ -102,33 +96,44 @@ class _AddPrayerState extends State<AddPrayer> {
   Future<void> _edit(UserDataModel _user) async {
     final userName = (_user.firstName ?? '') + ' ' + (_user.lastName ?? '');
 
-    PrayerModel prayerToEdit =
-        Provider.of<PrayerProvider>(context, listen: false).prayerToEdit;
+    PrayerDataModel prayerToEdit =
+        Provider.of<PrayerProviderV2>(context, listen: false).prayerToEdit;
     final prayerId = prayerToEdit.id ?? '';
 
     if (updateTextControllers.length > 0) {
-      updateTextControllers.forEach((element) async {
-        if (element.ctrl.text == '') {
-          await Provider.of<PrayerProvider>(context, listen: false)
-              .deleteUpdate(element.id);
+      updateTextControllers.forEach((update) async {
+        if (update.ctrl.text == '') {
+          await Provider.of<PrayerProviderV2>(context, listen: false)
+              .deleteUpdate(
+                  prayerToEdit.id ?? '',
+                  (prayerToEdit.updates ?? <UpdateModel>[])
+                      .firstWhere((element) => element.id == update.id));
+          return;
         }
-        await Provider.of<PrayerProvider>(context, listen: false)
-            .editUpdate(element.ctrl.text, element.id);
+
+        final updateValue = (prayerToEdit.updates ?? <UpdateModel>[])
+            .firstWhere((element) => element.id == update.id);
+
+        await Provider.of<PrayerProviderV2>(context, listen: false).editUpdate(
+          update.ctrl.text,
+          prayerToEdit.id ?? '',
+          updateValue,
+        );
       });
     }
-    await Provider.of<PrayerProvider>(context, listen: false)
+    await Provider.of<PrayerProviderV2>(context, listen: false)
         .editprayer(_descriptionController.text, prayerId);
 
     //tags
     final tags = [
-      ...Provider.of<PrayerProvider>(context, listen: false).prayerToEditTags
+      ...Provider.of<PrayerProviderV2>(context, listen: false).prayerToEditTags
     ];
     final List<String> ids = [];
     if (updates.length > 0) {
       for (final up in updateTextControllers) {
         if (up.backupText != up.ctrl.text) {
           for (final c in up.contactList) {
-            if (!tags.any((t) => t.identifier == c.identifier)) {
+            if (!tags.any((t) => t.contactIdentifier == c.identifier)) {
               await Provider.of<PrayerProviderV2>(context, listen: false)
                   .addPrayerTag(up.contactList, userName, up.ctrl.text, '');
               ids.add(up.ctrl.text);
@@ -143,7 +148,7 @@ class _AddPrayerState extends State<AddPrayer> {
           _descriptionController.text.contains(tag.displayName ?? ''))) {}
 
       for (final c in contactList) {
-        if (!tags.any((t) => t.identifier == c.identifier)) {
+        if (!tags.any((t) => t.contactIdentifier == c.identifier)) {
           await Provider.of<PrayerProviderV2>(context, listen: false)
               .addPrayerTag(
                   contactList, userName, _descriptionController.text, '');
@@ -156,8 +161,8 @@ class _AddPrayerState extends State<AddPrayer> {
       if (!_descriptionController.text.contains(tag.displayName ?? '') &&
           !updateTextControllers
               .any((u) => u.ctrl.text.contains(tag.displayName ?? ''))) {
-        await Provider.of<PrayerProvider>(context, listen: false)
-            .removePrayerTag(tag.id ?? '');
+        await Provider.of<PrayerProviderV2>(context, listen: false)
+            .removePrayerTag(tag, prayerId);
       }
     }
 
@@ -168,25 +173,23 @@ class _AddPrayerState extends State<AddPrayer> {
       appController.setCurrentPage(0, true, 1);
     } else {
       final groupPrayerId =
-          (Provider.of<GroupPrayerProvider>(context, listen: false)
+          (Provider.of<PrayerProviderV2>(context, listen: false)
               .currentPrayerId);
-      final groupId = (Provider.of<GroupProvider>(context, listen: false)
-                      .currentGroup
-                      .group ??
-                  GroupModel.defaultValue())
-              .id ??
-          '';
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .sendPrayerNotification(
-        prayerId,
-        groupPrayerId,
-        NotificationType.edited_prayers,
-        groupId,
-        context,
-        _descriptionController.text,
-      );
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setCurrentGroupById(groupId, _user.id ?? '');
+      final groupId =
+          (Provider.of<GroupProviderV2>(context, listen: false).currentGroup)
+                  .id ??
+              '';
+      // await Provider.of<NotificationProviderV2>(context, listen: false)
+      //     .sendPrayerNotification(
+      //   prayerId,
+      //   groupPrayerId,
+      //   NotificationType.edited_prayers,
+      //   groupId,
+      //   context,
+      //   _descriptionController.text,
+      // );
+      await Provider.of<GroupProviderV2>(context, listen: false)
+          .setCurrentGroupById(groupId);
       appController.setCurrentPage(8, true, 1);
     }
   }
@@ -213,7 +216,7 @@ class _AddPrayerState extends State<AddPrayer> {
       } else {
         final userName =
             '${_user.firstName?.capitalizeFirst} ${_user.lastName?.capitalizeFirst}';
-        if (!Provider.of<PrayerProvider>(context, listen: false).isEdit) {
+        if (!Provider.of<PrayerProviderV2>(context, listen: false).isEdit) {
           if ((selected?.name ?? '').isEmpty ||
               (selected?.name) == 'My Prayers') {
             await Provider.of<PrayerProviderV2>(context, listen: false)
@@ -223,29 +226,27 @@ class _AddPrayerState extends State<AddPrayer> {
               false,
             );
           } else {
-            await Provider.of<GroupProvider>(context, listen: false)
-                .setCurrentGroupById(selected?.id ?? '', _user.id ?? '');
-            await Provider.of<GroupPrayerProvider>(context, listen: false)
+            await Provider.of<GroupProviderV2>(context, listen: false)
+                .setCurrentGroupById(selected?.id ?? '');
+            await Provider.of<PrayerProviderV2>(context, listen: false)
                 .addPrayer(
               _descriptionController.text,
               (selected?.id ?? ''),
-              userName,
-              _backupDescription,
-              _user.id ?? '',
+              true,
             );
             final prayerId =
-                Provider.of<GroupPrayerProvider>(context, listen: false)
-                    .newPrayerId;
+                Provider.of<PrayerProviderV2>(context, listen: false)
+                    .currentPrayerId;
 
-            await Provider.of<NotificationProvider>(context, listen: false)
-                .sendPrayerNotification(
-              prayerId,
-              prayerId,
-              NotificationType.prayer,
-              selected?.id ?? '',
-              context,
-              _descriptionController.text,
-            );
+            // await Provider.of<NotificationProviderV2>(context, listen: false)
+            //     .sendPrayerNotification(
+            //   prayerId,
+            //   prayerId,
+            //   NotificationType.prayer,
+            //   selected?.id ?? '',
+            //   context,
+            //   _descriptionController.text,
+            // );
           }
 
           if (contactList.length > 0) {
@@ -272,10 +273,9 @@ class _AddPrayerState extends State<AddPrayer> {
             BeStilDialog.hideLoading(context);
             appController.setCurrentPage(0, true, 1);
           } else {
-            await Provider.of<GroupProvider>(context, listen: false)
-                .setCurrentGroupById(selected?.id ?? '', _user.id ?? '');
-            await Provider.of<GroupPrayerProvider>(context, listen: false)
-                .setGroupPrayers(selected?.id ?? '');
+            await Provider.of<GroupProviderV2>(context, listen: false)
+                .setCurrentGroupById(selected?.id ?? '');
+            //todo set current group prayers
             BeStilDialog.hideLoading(context);
             appController.setCurrentPage(8, true, 1);
           }
@@ -337,11 +337,11 @@ class _AddPrayerState extends State<AddPrayer> {
     final userGroups =
         Provider.of<GroupProviderV2>(context, listen: false).userGroups;
     final userId = FirebaseAuth.instance.currentUser?.uid;
-    saveOptions.add(SaveOptionModel(id: userId, name: 'My Prayers'));
+    saveOptions.add(SaveOption(id: userId, name: 'My Prayers'));
     if (userGroups.length > 0) {
       for (final element in userGroups) {
         final option =
-            new SaveOptionModel(id: element.id ?? '', name: element.name ?? '');
+            new SaveOption(id: element.id ?? '', name: element.name ?? '');
         saveOptions.add(option);
       }
     }
@@ -405,8 +405,6 @@ class _AddPrayerState extends State<AddPrayer> {
           Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
-      Provider.of<LogProvider>(context, listen: false).setErrorLog(
-          e.toString(), userId ?? '', 'ADD_PRAYER/screen/onTextChange_tag');
     }
   }
 
@@ -907,7 +905,7 @@ class _AddPrayerState extends State<AddPrayer> {
                           child: DropdownButtonHideUnderline(
                             child: Container(
                               width: MediaQuery.of(context).size.width * 0.5,
-                              child: new DropdownButton<SaveOptionModel>(
+                              child: new DropdownButton<SaveOption>(
                                   hint: Container(
                                     margin: const EdgeInsets.only(
                                         left: 5.0, right: 10),
@@ -927,13 +925,12 @@ class _AddPrayerState extends State<AddPrayer> {
                                   onChanged: (value) {
                                     setState(() {
                                       selected = value ??
-                                          SaveOptionModel(
+                                          SaveOption(
                                               id: '', name: 'My Prayers');
                                     });
                                   },
-                                  items: saveOptions.map((SaveOptionModel e) {
-                                    return new DropdownMenuItem<
-                                        SaveOptionModel>(
+                                  items: saveOptions.map((SaveOption e) {
+                                    return new DropdownMenuItem<SaveOption>(
                                       value: e,
                                       child: new Text(
                                         e.name ?? '',
@@ -971,7 +968,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                       // textkey: _prayerKey,
                                       label: 'Prayer description',
                                       controller: _descriptionController,
-                                      maxLines: Provider.of<PrayerProvider>(
+                                      maxLines: Provider.of<PrayerProviderV2>(
                                                       context,
                                                       listen: false)
                                                   .isEdit &&
