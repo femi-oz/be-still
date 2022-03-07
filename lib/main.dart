@@ -24,6 +24,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'app.dart';
 import 'providers/theme_provider.dart';
+import 'providers/v2/notification_provider.dart';
 
 bool userFirestoreEmulator = false;
 void main() async {
@@ -56,17 +57,12 @@ void main() async {
           ChangeNotifierProvider(create: (ctx) => NotificationProvider()),
           ChangeNotifierProvider(create: (ctx) => DevotionalProvider()),
           ChangeNotifierProvider(create: (ctx) => LogProvider()),
-<<<<<<< .mine
-
-          // -------------------------------------------------------//
-=======
           //=========================================================//
-
->>>>>>> .theirs
           ChangeNotifierProvider(create: (ctx) => UserProviderV2()),
           ChangeNotifierProvider(create: (ctx) => AuthenticationProviderV2()),
           ChangeNotifierProvider(create: (ctx) => PrayerProviderV2()),
           ChangeNotifierProvider(create: (ctx) => GroupProviderV2()),
+          ChangeNotifierProvider(create: (ctx) => NotificationProviderV2()),
         ],
         child: MyApp(),
       ),

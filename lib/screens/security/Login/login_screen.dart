@@ -2,6 +2,7 @@ import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
@@ -267,15 +268,16 @@ class _LoginScreenState extends State<LoginScreen> {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -296,7 +298,7 @@ class _LoginScreenState extends State<LoginScreen> {
           'Resend verification email failed. Please try again');
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
+          context, StringUtils.getErrorMessage(e), UserDataModel(), s);
     } catch (e, s) {
       verificationSent = false;
       setState(() => verificationSendMessage =
@@ -306,7 +308,7 @@ class _LoginScreenState extends State<LoginScreen> {
       BeStilDialog.hideLoading(context);
 
       BeStilDialog.showErrorDialog(
-          context, StringUtils.errorOccured, UserModel.defaultValue(), s);
+          context, StringUtils.errorOccured, UserDataModel(), s);
     }
   }
 
@@ -340,7 +342,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
+          context, StringUtils.getErrorMessage(e), UserDataModel(), s);
     } catch (e, s) {
       needsVerification =
           Provider.of<AuthenticationProvider>(context, listen: false)
@@ -350,7 +352,7 @@ class _LoginScreenState extends State<LoginScreen> {
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(
-          context, StringUtils.errorOccured, UserModel.defaultValue(), s);
+          context, StringUtils.errorOccured, UserDataModel(), s);
     }
   }
 
@@ -386,7 +388,7 @@ class _LoginScreenState extends State<LoginScreen> {
         isLoading = false;
       }
       BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
+          context, StringUtils.getErrorMessage(e), UserDataModel(), s);
     } catch (e, s) {
       if (isLoading) {
         BeStilDialog.hideLoading(context);
@@ -396,7 +398,7 @@ class _LoginScreenState extends State<LoginScreen> {
           e.toString(), _usernameController.text, 'LOGIN/screen/_login');
 
       BeStilDialog.showErrorDialog(
-          context, StringUtils.errorOccured, UserModel.defaultValue(), s);
+          context, StringUtils.errorOccured, UserDataModel(), s);
     }
   }
 

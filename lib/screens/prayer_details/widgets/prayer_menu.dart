@@ -6,6 +6,7 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/v2/follower.model.dart';
+import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/models/v2/update.model.dart';
@@ -16,6 +17,7 @@ import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -37,7 +39,7 @@ class PrayerMenu extends StatefulWidget {
   final bool hasReminder;
   final Function updateUI;
   final PrayerDataModel? prayerData;
-  final LocalNotificationModel reminder;
+  final LocalNotificationDataModel reminder;
   @override
   PrayerMenu(this.parentcontext, this.hasReminder, this.reminder, this.updateUI,
       this.prayerData);
@@ -93,16 +95,17 @@ class _PrayerMenuState extends State<PrayerMenu> {
       return true;
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(
-      //     context, StringUtils.getErrorMessage(e), user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
       return false;
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
       return false;
     }
   }
@@ -153,15 +156,16 @@ class _PrayerMenuState extends State<PrayerMenu> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(
-      //     context, StringUtils.getErrorMessage(e), user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -191,8 +195,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -219,16 +224,16 @@ class _PrayerMenuState extends State<PrayerMenu> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(
-      //     context, StringUtils.getErrorMessage(e), user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
-
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -255,15 +260,16 @@ class _PrayerMenuState extends State<PrayerMenu> {
       appController.setCurrentPage(0, true, 0);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(
-      //     context, StringUtils.getErrorMessage(e), user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -424,15 +430,16 @@ class _PrayerMenuState extends State<PrayerMenu> {
       appController.setCurrentPage(0, true, 0);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(
-      //     context, StringUtils.getErrorMessage(e), user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -449,14 +456,15 @@ class _PrayerMenuState extends State<PrayerMenu> {
       AppController appController = Get.find();
       appController.setCurrentPage(0, true, 0);
     } on HttpException catch (e, s) {
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(
-      //     context, StringUtils.getErrorMessage(e), user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -479,9 +487,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
       appController.setCurrentPage(0, true, 0);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -515,14 +524,15 @@ class _PrayerMenuState extends State<PrayerMenu> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -567,15 +577,16 @@ class _PrayerMenuState extends State<PrayerMenu> {
       appController.setCurrentPage(0, true, 0);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(
-      //     context, StringUtils.getErrorMessage(e), user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -720,10 +731,10 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                         1, true, appController.currentPage);
                                   } on HttpException catch (e, s) {
                                     BeStilDialog.hideLoading(context);
-                                    final user = Provider.of<UserProvider>(
+                                    final user = Provider.of<UserProviderV2>(
                                             context,
                                             listen: false)
-                                        .currentUser;
+                                        .selectedUser;
                                     BeStilDialog.showErrorDialog(
                                         context,
                                         StringUtils.getErrorMessage(e),
@@ -731,12 +742,15 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                         s);
                                   } catch (e, s) {
                                     BeStilDialog.hideLoading(context);
-                                    final user = Provider.of<UserProvider>(
+                                    final user = Provider.of<UserProviderV2>(
                                             context,
                                             listen: false)
-                                        .currentUser;
-                                    BeStilDialog.showErrorDialog(context,
-                                        StringUtils.errorOccured, user, s);
+                                        .selectedUser;
+                                    BeStilDialog.showErrorDialog(
+                                        context,
+                                        StringUtils.getErrorMessage(e),
+                                        user,
+                                        s);
                                   }
                                 },
                           text: 'Edit',
@@ -787,7 +801,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                   widget.reminder.frequency ==
                                       Frequency.one_time
                               ? DateFormat('dd MMM yyyy hh:mma').format(
-                                  widget.reminder.scheduledDate ??
+                                  widget.reminder.scheduleDate ??
                                       DateTime.now())
                               : widget.hasReminder &&
                                       widget.reminder.frequency !=

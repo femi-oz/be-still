@@ -6,12 +6,14 @@ import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
@@ -21,6 +23,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:provider/provider.dart';
 
@@ -28,7 +31,7 @@ class ReminderPicker extends StatefulWidget {
   final Function onCancel;
   final bool hideActionuttons;
   final bool isGroup;
-  final LocalNotificationModel? reminder;
+  final LocalNotificationDataModel? reminder;
   final String type;
   final String entityId;
   final bool popTwice;
@@ -69,17 +72,17 @@ class _ReminderPickerState extends State<ReminderPicker> {
   @override
   void initState() {
     if (widget.reminder != null) {
-      selectedHour = int.parse(widget.reminder?.selectedHour ?? '0');
+      selectedHour = widget.reminder?.scheduleDate?.hour ?? 0;
 
-      selectedMinute = int.parse(widget.reminder?.selectedMinute ?? '0');
+      selectedMinute = widget.reminder?.scheduleDate?.minute ?? 0;
       selectedDayOfWeek = LocalNotification.daysOfWeek
-          .indexOf((widget.reminder?.selectedDay ?? '').capitalizeFirst ?? '');
-      selectedPeriod = widget.reminder?.period ?? '';
+          .indexOf((widget.reminder?.scheduleDate?.weekday ?? '').toString());
+      selectedPeriod = DateFormat('a')
+          .format(widget.reminder?.scheduleDate ?? DateTime.now());
       selectedFrequency = widget.reminder?.frequency ?? '';
-      selectedYear = int.parse(widget.reminder?.selectedYear ?? '0');
-      selectedMonth = widget.reminder?.selectedMonth ?? '';
-      selectedDayOfMonth =
-          int.parse(widget.reminder?.selectedDayOfMonth ?? '0');
+      selectedYear = widget.reminder?.scheduleDate?.year ?? 0;
+      selectedMonth = (widget.reminder?.scheduleDate?.month ?? '').toString();
+      selectedDayOfMonth = widget.reminder?.scheduleDate?.day ?? 0;
     } else {
       selectedHour = DateTime.now().hour == 0 ? 12 : DateTime.now().hour;
       selectedMinute = minInTheHour[0];
@@ -183,13 +186,13 @@ class _ReminderPickerState extends State<ReminderPicker> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -229,13 +232,13 @@ class _ReminderPickerState extends State<ReminderPicker> {
 
     if (selectedFrequency == Frequency.one_time &&
         date.isBefore(DateTime.now())) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
       final e = PlatformException(
           code: '', message: 'Please select a date in the future.');
       final s = StackTrace.fromString(e.message ?? '');
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
-          context, 'Please select a date in the future.', user, s);
+          context, StringUtils.getErrorMessage(e), user, s);
       return;
     }
     try {
@@ -329,13 +332,13 @@ class _ReminderPickerState extends State<ReminderPicker> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -358,13 +361,13 @@ class _ReminderPickerState extends State<ReminderPicker> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }

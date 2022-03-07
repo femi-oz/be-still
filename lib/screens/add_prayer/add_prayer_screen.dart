@@ -1,9 +1,12 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/models/v2/update.model.dart';
+import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
@@ -11,6 +14,7 @@ import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -18,6 +22,7 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -51,7 +56,7 @@ class _AddPrayerState extends State<AddPrayer> {
   bool showContactList = false;
   bool showDropdown = false;
 
-  List<PrayerUpdateModel> updates = [];
+  List<UpdateModel> updates = [];
   List<Backup> updateTextControllers = [];
   List<Contact> localContacts = [];
   String _backupDescription = '';
@@ -79,14 +84,14 @@ class _AddPrayerState extends State<AddPrayer> {
               .searchPrayers('', userId ?? '');
         } on HttpException catch (e, s) {
           final user =
-              Provider.of<UserProvider>(context, listen: false).currentUser;
+              Provider.of<UserProviderV2>(context, listen: false).selectedUser;
           BeStilDialog.showErrorDialog(
               context, StringUtils.getErrorMessage(e), user, s);
         } catch (e, s) {
           final user =
-              Provider.of<UserProvider>(context, listen: false).currentUser;
+              Provider.of<UserProviderV2>(context, listen: false).selectedUser;
           BeStilDialog.showErrorDialog(
-              context, StringUtils.errorOccured, user, s);
+              context, StringUtils.getErrorMessage(e), user, s);
         }
       });
       _isInit = false;
@@ -94,7 +99,9 @@ class _AddPrayerState extends State<AddPrayer> {
     super.didChangeDependencies();
   }
 
-  Future<void> _edit(UserModel _user) async {
+  Future<void> _edit(UserDataModel _user) async {
+    final userName = (_user.firstName ?? '') + ' ' + (_user.lastName ?? '');
+
     PrayerModel prayerToEdit =
         Provider.of<PrayerProvider>(context, listen: false).prayerToEdit;
     final prayerId = prayerToEdit.id ?? '';
@@ -122,8 +129,8 @@ class _AddPrayerState extends State<AddPrayer> {
         if (up.backupText != up.ctrl.text) {
           for (final c in up.contactList) {
             if (!tags.any((t) => t.identifier == c.identifier)) {
-              await Provider.of<PrayerProvider>(context, listen: false)
-                  .addPrayerTag(up.contactList, _user, up.ctrl.text, '');
+              await Provider.of<PrayerProviderV2>(context, listen: false)
+                  .addPrayerTag(up.contactList, userName, up.ctrl.text, '');
               ids.add(up.ctrl.text);
             }
           }
@@ -137,9 +144,9 @@ class _AddPrayerState extends State<AddPrayer> {
 
       for (final c in contactList) {
         if (!tags.any((t) => t.identifier == c.identifier)) {
-          await Provider.of<PrayerProvider>(context, listen: false)
+          await Provider.of<PrayerProviderV2>(context, listen: false)
               .addPrayerTag(
-                  contactList, _user, _descriptionController.text, '');
+                  contactList, userName, _descriptionController.text, '');
           ids.add(_descriptionController.text);
         }
       }
@@ -273,29 +280,30 @@ class _AddPrayerState extends State<AddPrayer> {
             appController.setCurrentPage(8, true, 1);
           }
         } else {
-          // _edit(_user);
+          _edit(_user);
         }
       }
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
   @override
   void initState() {
     getContacts();
-    final isEdit = Provider.of<PrayerProvider>(context, listen: false).isEdit;
+    final isEdit = Provider.of<PrayerProviderV2>(context, listen: false).isEdit;
     _descriptionController.text = isEdit
-        ? (Provider.of<PrayerProvider>(context, listen: false).prayerToEdit)
+        ? (Provider.of<PrayerProviderV2>(context, listen: false).prayerToEdit)
                 .description ??
             ''
         : '';
@@ -305,11 +313,12 @@ class _AddPrayerState extends State<AddPrayer> {
     if (isEdit) {
       showDropdown = false;
 
-      updates = Provider.of<PrayerProvider>(context, listen: false)
+      updates = Provider.of<PrayerProviderV2>(context, listen: false)
           .prayerToEditUpdate;
-      updates.sort((a, b) => (b.modifiedOn ?? DateTime.now())
-          .compareTo(a.modifiedOn ?? DateTime.now()));
-      updates = updates.where((element) => element.deleteStatus != -1).toList();
+      updates.sort((a, b) => (b.modifiedDate ?? DateTime.now())
+          .compareTo(a.modifiedDate ?? DateTime.now()));
+      updates =
+          updates.where((element) => element.status != Status.deleted).toList();
 
       updateTextControllers = updates
           .map((e) => Backup(
@@ -323,17 +332,16 @@ class _AddPrayerState extends State<AddPrayer> {
           .toList();
     } else {
       showDropdown =
-          Provider.of<PrayerProvider>(context, listen: false).showDropDown;
+          Provider.of<PrayerProviderV2>(context, listen: false).showDropDown;
     }
     final userGroups =
-        Provider.of<GroupProvider>(context, listen: false).userGroups;
-    final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+        Provider.of<GroupProviderV2>(context, listen: false).userGroups;
+    final userId = FirebaseAuth.instance.currentUser?.uid;
     saveOptions.add(SaveOptionModel(id: userId, name: 'My Prayers'));
     if (userGroups.length > 0) {
       for (final element in userGroups) {
-        final option = new SaveOptionModel(
-            id: element.group?.id ?? '', name: element.group?.name ?? '');
+        final option =
+            new SaveOptionModel(id: element.id ?? '', name: element.name ?? '');
         saveOptions.add(option);
       }
     }
@@ -342,9 +350,9 @@ class _AddPrayerState extends State<AddPrayer> {
       selected = saveOptions[0];
     } else {
       final group =
-          Provider.of<GroupProvider>(context, listen: false).currentGroup;
+          Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
       saveOptions.forEach((element) {
-        if (element.id == (group.group?.id ?? '')) {
+        if (element.id == (group.id ?? '')) {
           selected = element;
         }
       });
@@ -367,8 +375,7 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   void _onTextChange(String val, {Backup? backup}) {
-    final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    final userId = FirebaseAuth.instance.currentUser?.uid;
 
     try {
       final cursorPos = (backup == null ? _descriptionController : backup.ctrl)
@@ -395,8 +402,9 @@ class _AddPrayerState extends State<AddPrayer> {
       setState(() {});
     } catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
       Provider.of<LogProvider>(context, listen: false).setErrorLog(
           e.toString(), userId ?? '', 'ADD_PRAYER/screen/onTextChange_tag');
     }
@@ -424,12 +432,12 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   Future<bool> _onWillPop() async {
-    bool isValid = (!Provider.of<PrayerProvider>(context).isEdit &&
+    bool isValid = (!Provider.of<PrayerProviderV2>(context).isEdit &&
             _descriptionController.text.trim().isNotEmpty) ||
-        (Provider.of<PrayerProvider>(context).isEdit &&
+        (Provider.of<PrayerProviderV2>(context).isEdit &&
             _backupDescription.trim() != _descriptionController.text.trim());
 
-    bool isUpdateValid = Provider.of<PrayerProvider>(context).isEdit &&
+    bool isUpdateValid = Provider.of<PrayerProviderV2>(context).isEdit &&
         updateTextControllers
             .any((e) => e.backupText.trim() != e.ctrl.text.trim());
     if (updates.length > 0) isValid = isValid || isUpdateValid;
@@ -590,17 +598,17 @@ class _AddPrayerState extends State<AddPrayer> {
                               appController.previousPage, true, 1);
                           Navigator.pop(context);
                         } on HttpException catch (e, s) {
-                          final user =
-                              Provider.of<UserProvider>(context, listen: false)
-                                  .currentUser;
+                          final user = Provider.of<UserProviderV2>(context,
+                                  listen: false)
+                              .selectedUser;
                           BeStilDialog.showErrorDialog(
                               context, StringUtils.getErrorMessage(e), user, s);
                         } catch (e, s) {
-                          final user =
-                              Provider.of<UserProvider>(context, listen: false)
-                                  .currentUser;
+                          final user = Provider.of<UserProviderV2>(context,
+                                  listen: false)
+                              .selectedUser;
                           BeStilDialog.showErrorDialog(
-                              context, StringUtils.errorOccured, user, s);
+                              context, StringUtils.getErrorMessage(e), user, s);
                         }
                       },
                       child: Container(
@@ -807,13 +815,13 @@ class _AddPrayerState extends State<AddPrayer> {
 
   @override
   Widget build(BuildContext context) {
-    final userGroups = Provider.of<GroupProvider>(context).userGroups;
-    bool isValid = (!Provider.of<PrayerProvider>(context).isEdit &&
+    final userGroups = Provider.of<GroupProviderV2>(context).userGroups;
+    bool isValid = (!Provider.of<PrayerProviderV2>(context).isEdit &&
             _descriptionController.text.trim().isNotEmpty) ||
-        (Provider.of<PrayerProvider>(context).isEdit &&
+        (Provider.of<PrayerProviderV2>(context).isEdit &&
             _backupDescription.trim() != _descriptionController.text.trim());
 
-    bool isUpdateValid = Provider.of<PrayerProvider>(context).isEdit &&
+    bool isUpdateValid = Provider.of<PrayerProviderV2>(context).isEdit &&
         updateTextControllers
             .any((e) => e.backupText.trim() != e.ctrl.text.trim());
     if (updates.length > 0) isValid = isValid || isUpdateValid;
@@ -872,7 +880,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                       (selected?.name) == 'My Prayers') {
                                     _save();
                                   } else {
-                                    if (!Provider.of<PrayerProvider>(context,
+                                    if (!Provider.of<PrayerProviderV2>(context,
                                             listen: false)
                                         .isEdit) {
                                       _onGroupPrayerSave();
@@ -984,7 +992,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                 contactDropdown()
                             ],
                           ),
-                          if (((Provider.of<PrayerProvider>(context,
+                          if (((Provider.of<PrayerProviderV2>(context,
                                                   listen: false)
                                               .prayerToEdit)
                                           .id ??

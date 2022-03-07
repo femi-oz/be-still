@@ -1,4 +1,5 @@
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_alert_dialog.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -57,7 +58,7 @@ class BeStilDialog {
   }
 
   static Future showErrorDialog(BuildContext context, String error,
-      UserModel? user, StackTrace? stackTrace) async {
+      UserDataModel? user, StackTrace? stackTrace) async {
     showDialog(
       barrierDismissible: false,
       context: context,

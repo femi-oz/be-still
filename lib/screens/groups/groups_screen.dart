@@ -6,6 +6,7 @@ import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/groups/widgets/group_tools.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -40,9 +41,9 @@ class _GroupScreenState extends State<GroupScreen> {
             .setPageTitle('GROUPS');
       } catch (e, s) {
         final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
+            Provider.of<UserProviderV2>(context, listen: false).selectedUser;
         BeStilDialog.showErrorDialog(
-            context, StringUtils.errorOccured, user, s);
+            context, StringUtils.getErrorMessage(e), user, s);
       }
     });
     super.initState();
@@ -67,13 +68,14 @@ class _GroupScreenState extends State<GroupScreen> {
           .setGroupPrayers(data.group?.id ?? '');
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -118,11 +120,11 @@ class _GroupScreenState extends State<GroupScreen> {
                                 .setPageTitle('FIND A GROUP');
                             appController.setCurrentPage(11, true, 3);
                           } catch (e, s) {
-                            final user = Provider.of<UserProvider>(context,
+                            final user = Provider.of<UserProviderV2>(context,
                                     listen: false)
-                                .currentUser;
-                            BeStilDialog.showErrorDialog(
-                                context, StringUtils.errorOccured, user, s);
+                                .selectedUser;
+                            BeStilDialog.showErrorDialog(context,
+                                StringUtils.getErrorMessage(e), user, s);
                           }
                         },
                         text: 'FIND A GROUP',
@@ -145,11 +147,11 @@ class _GroupScreenState extends State<GroupScreen> {
                                 .setEditMode(false);
                             appController.setCurrentPage(12, true, 3);
                           } catch (e, s) {
-                            final user = Provider.of<UserProvider>(context,
+                            final user = Provider.of<UserProviderV2>(context,
                                     listen: false)
-                                .currentUser;
-                            BeStilDialog.showErrorDialog(
-                                context, StringUtils.errorOccured, user, s);
+                                .selectedUser;
+                            BeStilDialog.showErrorDialog(context,
+                                StringUtils.getErrorMessage(e), user, s);
                           }
                         },
                         text: 'CREATE A GROUP',
@@ -197,10 +199,10 @@ class _GroupScreenState extends State<GroupScreen> {
                                                 8, true, 3);
                                           } on HttpException catch (e, s) {
                                             final user =
-                                                Provider.of<UserProvider>(
+                                                Provider.of<UserProviderV2>(
                                                         context,
                                                         listen: false)
-                                                    .currentUser;
+                                                    .selectedUser;
                                             BeStilDialog.showErrorDialog(
                                                 context,
                                                 StringUtils.getErrorMessage(e),
@@ -208,13 +210,13 @@ class _GroupScreenState extends State<GroupScreen> {
                                                 s);
                                           } catch (e, s) {
                                             final user =
-                                                Provider.of<UserProvider>(
+                                                Provider.of<UserProviderV2>(
                                                         context,
                                                         listen: false)
-                                                    .currentUser;
+                                                    .selectedUser;
                                             BeStilDialog.showErrorDialog(
                                                 context,
-                                                StringUtils.errorOccured,
+                                                StringUtils.getErrorMessage(e),
                                                 user,
                                                 s);
                                           }

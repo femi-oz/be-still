@@ -4,6 +4,7 @@ import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/v2/follower.model.dart';
+import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
@@ -11,6 +12,7 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
@@ -225,12 +227,13 @@ class _PrayerCardState extends State<PrayerCard> {
         () => updateUI(), widget.prayerData);
   }
 
-  LocalNotificationModel _reminder(PrayerDataModel? prayerData) {
-    final reminders = Provider.of<NotificationProvider>(context, listen: false)
-        .localNotifications;
+  LocalNotificationDataModel _reminder(PrayerDataModel? prayerData) {
+    final reminders =
+        Provider.of<NotificationProviderV2>(context, listen: false)
+            .localNotifications;
     return reminders.firstWhere(
-        (reminder) => reminder.entityId == (prayerData?.id ?? ''),
-        orElse: () => LocalNotificationModel.defaultValue());
+        (reminder) => reminder.prayerId == (prayerData?.id ?? ''),
+        orElse: () => LocalNotificationDataModel());
   }
 
   updateUI() {
@@ -264,8 +267,9 @@ class _PrayerCardState extends State<PrayerCard> {
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 

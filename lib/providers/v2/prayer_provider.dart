@@ -45,6 +45,9 @@ class PrayerProviderV2 with ChangeNotifier {
   String _filterOption = Status.active;
   String get filterOption => _filterOption;
 
+  String _currentPrayerId = '';
+  String get currentPrayerId => _currentPrayerId;
+
   bool _isEdit = false;
   bool get isEdit => _isEdit;
   bool _showDropDown = false;
@@ -63,22 +66,22 @@ class PrayerProviderV2 with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null) return null;
 // todo: merge user prayers and prayers current user is following
-      followedPrayerStream = _prayerService
-          .getUserFollowedPrayers()
-          .asBroadcastStream()
-          .listen((data) {
-        _followedPrayers = data
-            .where((element) => (element.followers ?? <FollowerModel>[]).any(
-                (element) => element.userId == _firebaseAuth.currentUser?.uid))
-            .toList();
+      // followedPrayerStream = _prayerService
+      //     .getUserFollowedPrayers()
+      //     .asBroadcastStream()
+      //     .listen((data) {
+      //   _followedPrayers = data
+      //       .where((element) => (element.followers ?? <FollowerModel>[]).any(
+      //           (element) => element.userId == _firebaseAuth.currentUser?.uid))
+      //       .toList();
 
-        notifyListeners();
-      });
+      //   notifyListeners();
+      // });
 
       prayerStream = _prayerService.getUserPrayers().asBroadcastStream().listen(
         (data) {
-          _userPrayers = data;
-          _prayers = [..._userPrayers, ..._followedPrayers];
+          _prayers = data;
+          // _prayers = [..._userPrayers, ..._followedPrayers];
           filterPrayers();
           notifyListeners();
         },
@@ -86,6 +89,11 @@ class PrayerProviderV2 with ChangeNotifier {
     } catch (e) {
       rethrow;
     }
+  }
+
+  void setCurrentPrayerId(String prayerId) {
+    _currentPrayerId = prayerId;
+    notifyListeners();
   }
 
   Future<void> getContacts() async {

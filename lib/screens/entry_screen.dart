@@ -86,8 +86,9 @@ class _EntryScreenState extends State<EntryScreen> {
       });
     } catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
     super.initState();
   }
@@ -128,8 +129,9 @@ class _EntryScreenState extends State<EntryScreen> {
         });
     } catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -184,13 +186,14 @@ class _EntryScreenState extends State<EntryScreen> {
       //     .setAllGroups(userId ?? '');
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -201,13 +204,14 @@ class _EntryScreenState extends State<EntryScreen> {
           .setPrayerTimePrayers(_userId ?? '');
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -228,13 +232,14 @@ class _EntryScreenState extends State<EntryScreen> {
       }
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(
-      //     context, StringUtils.getErrorMessage(e), user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).selectedUser;
-      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -244,13 +249,14 @@ class _EntryScreenState extends State<EntryScreen> {
           .getDevotionals();
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -259,13 +265,14 @@ class _EntryScreenState extends State<EntryScreen> {
       await Provider.of<DevotionalProvider>(context, listen: false).getBibles();
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -289,13 +296,14 @@ class _EntryScreenState extends State<EntryScreen> {
       );
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -403,10 +411,10 @@ class _EntryScreenState extends State<EntryScreen> {
                   break;
               }
             } catch (e, s) {
-              final user =
-                  Provider.of<UserProvider>(context, listen: false).currentUser;
+              final user = Provider.of<UserProviderV2>(context, listen: false)
+                  .selectedUser;
               BeStilDialog.showErrorDialog(
-                  context, StringUtils.errorOccured, user, s);
+                  context, StringUtils.getErrorMessage(e), user, s);
             }
           },
           showSelectedLabels: false,

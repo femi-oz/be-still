@@ -1,4 +1,5 @@
 import 'package:be_still/models/v2/device.model.dart';
+import 'package:be_still/models/v2/follower.model.dart';
 import 'package:flutter/services.dart';
 
 class UserDataModel {
@@ -8,6 +9,7 @@ class UserDataModel {
   String? email;
   DateTime? dateOfBirth;
   List<DeviceModel>? devices;
+  List<String>? prayers;
   String? churchName;
   String? churchEmail;
   String? churchPhone;
@@ -35,6 +37,7 @@ class UserDataModel {
       this.email,
       this.dateOfBirth,
       this.devices,
+      this.prayers,
       this.churchName,
       this.churchEmail,
       this.churchPhone,
@@ -67,6 +70,12 @@ class UserDataModel {
         devices!.add(new DeviceModel.fromJson(v));
       });
     }
+    if (json['prayers'] != null) {
+      prayers = <String>[];
+      json['prayers'].forEach((v) {
+        prayers!.add(v);
+      });
+    }
     churchName = json['churchName'];
     churchEmail = json['churchEmail'];
     churchPhone = json['churchPhone'];
@@ -97,6 +106,9 @@ class UserDataModel {
     data['dateOfBirth'] = this.dateOfBirth;
     if (this.devices != null) {
       data['devices'] = this.devices!.map((v) => v.toJson()).toList();
+    }
+    if (this.prayers != null) {
+      data['prayers'] = this.prayers!.map((v) => v).toList();
     }
     data['churchName'] = this.churchName;
     data['churchEmail'] = this.churchEmail;

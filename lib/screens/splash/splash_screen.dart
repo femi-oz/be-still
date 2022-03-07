@@ -2,11 +2,13 @@ import 'dart:async';
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -72,7 +74,7 @@ class _SplashScreenState extends State<SplashScreen>
       }
     } catch (e, s) {
       BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
+          context, StringUtils.getErrorMessage(e), UserDataModel(), s);
     }
   }
 
@@ -107,8 +109,9 @@ class _SplashScreenState extends State<SplashScreen>
       }
     } catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 

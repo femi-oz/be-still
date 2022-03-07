@@ -78,9 +78,9 @@ class _PrayerListState extends State<PrayerList> {
         } catch (e, s) {
           BeStilDialog.hideLoading(context);
           final user =
-              Provider.of<UserProvider>(context, listen: false).currentUser;
+              Provider.of<UserProviderV2>(context, listen: false).selectedUser;
           BeStilDialog.showErrorDialog(
-              context, StringUtils.errorOccured, user, s);
+              context, StringUtils.getErrorMessage(e), user, s);
         }
 
         setState(() => _isInit = false);
@@ -92,8 +92,8 @@ class _PrayerListState extends State<PrayerList> {
   Future<void> onTapCard(PrayerDataModel prayerData) async {
     BeStilDialog.showLoading(context, '');
     try {
-      // Provider.of<PrayerProviderV2>(context, listen: false)
-      //     .setCurrentPrayerId(prayerData.userPrayer?.id ?? '');
+      Provider.of<PrayerProviderV2>(context, listen: false)
+          .setCurrentPrayerId(prayerData.id ?? '');
       await Future.delayed(const Duration(milliseconds: 300),
           () => BeStilDialog.hideLoading(context));
       AppController appController = Get.find();
@@ -101,15 +101,16 @@ class _PrayerListState extends State<PrayerList> {
       // Navigator.push(context, SlideRightRoute(page: PrayerDetails()));
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(
-      //     context, StringUtils.getErrorMessage(e), user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -125,18 +126,19 @@ class _PrayerListState extends State<PrayerList> {
         Provider.of<PrayerProviderV2>(context, listen: false)
             .searchPrayers(searchQuery, _user.id ?? '');
       } else {
-        await Provider.of<PrayerProviderV2>(context, listen: false)
-            .setPrayers();
+        // await Provider.of<PrayerProviderV2>(context, listen: false)
+        //     .setPrayers();
       }
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -234,9 +236,10 @@ class _PrayerListState extends State<PrayerList> {
                                           BeStilDialog.hideLoading(context);
 
                                           final user =
-                                              Provider.of<UserProvider>(context,
+                                              Provider.of<UserProviderV2>(
+                                                      context,
                                                       listen: false)
-                                                  .currentUser;
+                                                  .selectedUser;
                                           BeStilDialog.showErrorDialog(
                                               context,
                                               StringUtils.getErrorMessage(e),
@@ -245,12 +248,13 @@ class _PrayerListState extends State<PrayerList> {
                                         } catch (e, s) {
                                           BeStilDialog.hideLoading(context);
                                           final user =
-                                              Provider.of<UserProvider>(context,
+                                              Provider.of<UserProviderV2>(
+                                                      context,
                                                       listen: false)
-                                                  .currentUser;
+                                                  .selectedUser;
                                           BeStilDialog.showErrorDialog(
                                               context,
-                                              StringUtils.errorOccured,
+                                              StringUtils.getErrorMessage(e),
                                               user,
                                               s);
                                         }
@@ -301,12 +305,11 @@ class _PrayerListState extends State<PrayerList> {
                                                     } on HttpException catch (e, s) {
                                                       BeStilDialog.hideLoading(
                                                           context);
-
                                                       final user = Provider.of<
-                                                                  UserProvider>(
+                                                                  UserProviderV2>(
                                                               context,
                                                               listen: false)
-                                                          .currentUser;
+                                                          .selectedUser;
                                                       BeStilDialog.showErrorDialog(
                                                           context,
                                                           StringUtils
@@ -318,17 +321,17 @@ class _PrayerListState extends State<PrayerList> {
                                                       BeStilDialog.hideLoading(
                                                           context);
                                                       final user = Provider.of<
-                                                                  UserProvider>(
+                                                                  UserProviderV2>(
                                                               context,
                                                               listen: false)
-                                                          .currentUser;
-                                                      BeStilDialog
-                                                          .showErrorDialog(
-                                                              context,
-                                                              StringUtils
-                                                                  .errorOccured,
-                                                              user,
-                                                              s);
+                                                          .selectedUser;
+                                                      BeStilDialog.showErrorDialog(
+                                                          context,
+                                                          StringUtils
+                                                              .getErrorMessage(
+                                                                  e),
+                                                          user,
+                                                          s);
                                                     }
                                                   },
                                                   text: 'Add New Prayer',

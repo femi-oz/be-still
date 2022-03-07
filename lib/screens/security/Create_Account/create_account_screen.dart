@@ -1,5 +1,6 @@
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
 import 'package:be_still/providers/v2/auth_provider.dart';
@@ -78,7 +79,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           message: 'You must accept terms to create an account.');
       final s = StackTrace.fromString(e.stacktrace ?? '');
       BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
+          context, StringUtils.getErrorMessage(e), UserDataModel(), s);
       return;
     }
     setState(() => _autoValidate = true);
@@ -93,16 +94,16 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             code: 'custom',
             message: 'First Name is empty, please enter a valid name.');
         final s = StackTrace.fromString(e.stacktrace ?? '');
-        BeStilDialog.showErrorDialog(context, StringUtils.getErrorMessage(e),
-            UserModel.defaultValue(), s);
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.getErrorMessage(e), UserDataModel(), s);
       } else if (_lastnameController.text.trim().isEmpty) {
         BeStilDialog.hideLoading(context);
         PlatformException e = PlatformException(
             code: 'custom',
             message: 'Last Name is empty, please enter a valid name.');
         final s = StackTrace.fromString(e.stacktrace ?? '');
-        BeStilDialog.showErrorDialog(context, StringUtils.getErrorMessage(e),
-            UserModel.defaultValue(), s);
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.getErrorMessage(e), UserDataModel(), s);
       } else {
         await Provider.of<AuthenticationProviderV2>(context, listen: false)
             .registerUser(

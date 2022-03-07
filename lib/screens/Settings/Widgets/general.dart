@@ -8,6 +8,7 @@ import 'package:be_still/models/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/navigation.dart';
@@ -267,8 +268,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     } on HttpException catch (e, s) {
       _newEmail.clear();
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
@@ -280,9 +280,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       }
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-
-      BeStilDialog.showErrorDialog(context, message, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
       _newEmail.clear();
     }
   }
@@ -300,7 +300,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
 
@@ -309,8 +309,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
       _newPassword.clear();
       _newConfirmPassword.clear();
     }
@@ -346,19 +347,21 @@ class _GeneralSettingsState extends State<GeneralSettings> {
         message = e.message ?? '';
       }
       BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+
       PlatformException er =
           PlatformException(code: 'custom', message: message);
 
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(er), user, s);
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       _currentPassword.clear();
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 

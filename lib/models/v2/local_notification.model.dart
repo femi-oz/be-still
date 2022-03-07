@@ -1,6 +1,7 @@
 class LocalNotificationDataModel {
   String? id;
   String? userId;
+  String? prayerId;
   String? message;
   int? localNotificationId;
   String? type;
@@ -15,6 +16,7 @@ class LocalNotificationDataModel {
   LocalNotificationDataModel(
       {this.id,
       this.userId,
+      this.prayerId,
       this.message,
       this.localNotificationId,
       this.type,
@@ -29,6 +31,7 @@ class LocalNotificationDataModel {
   LocalNotificationDataModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     userId = json['userId'];
+    prayerId = json['prayerId'];
     message = json['message'];
     localNotificationId = json['localNotificationId'];
     type = json['type'];
@@ -45,6 +48,7 @@ class LocalNotificationDataModel {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['userId'] = this.userId;
+    data['prayerId'] = this.prayerId;
     data['message'] = this.message;
     data['localNotificationId'] = this.localNotificationId;
     data['type'] = this.type;

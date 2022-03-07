@@ -2,6 +2,7 @@ import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
@@ -132,7 +133,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       }
     } catch (e, s) {
       BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
+          context, StringUtils.getErrorMessage(e), UserDataModel(), s);
     }
   }
 
@@ -213,7 +214,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       }
     } catch (e, s) {
       BeStilDialog.showErrorDialog(
-          context, StringUtils.errorOccured, UserModel.defaultValue(), s);
+          context, StringUtils.errorOccured, UserDataModel(), s);
     }
   }
 
@@ -236,7 +237,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       }
     } catch (e, s) {
       BeStilDialog.showErrorDialog(
-          context, StringUtils.errorOccured, UserModel.defaultValue(), s);
+          context, StringUtils.errorOccured, UserDataModel(), s);
     }
   }
 

@@ -7,6 +7,7 @@ import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/Prayer/Widgets/group_prayer_card.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -55,14 +56,14 @@ class _GroupPrayersState extends State<GroupPrayers> {
               .setHiddenPrayer(_user.id ?? '');
         } on HttpException catch (e, s) {
           final user =
-              Provider.of<UserProvider>(context, listen: false).currentUser;
+              Provider.of<UserProviderV2>(context, listen: false).selectedUser;
           BeStilDialog.showErrorDialog(
               context, StringUtils.getErrorMessage(e), user, s);
         } catch (e, s) {
           final user =
-              Provider.of<UserProvider>(context, listen: false).currentUser;
+              Provider.of<UserProviderV2>(context, listen: false).selectedUser;
           BeStilDialog.showErrorDialog(
-              context, StringUtils.errorOccured, user, s);
+              context, StringUtils.getErrorMessage(e), user, s);
         }
       });
       _isInit = false;
@@ -163,9 +164,10 @@ class _GroupPrayersState extends State<GroupPrayers> {
                                               9, true, 8);
                                         } on HttpException catch (e, s) {
                                           final user =
-                                              Provider.of<UserProvider>(context,
+                                              Provider.of<UserProviderV2>(
+                                                      context,
                                                       listen: false)
-                                                  .currentUser;
+                                                  .selectedUser;
                                           BeStilDialog.showErrorDialog(
                                               context,
                                               StringUtils.getErrorMessage(e),
@@ -173,12 +175,13 @@ class _GroupPrayersState extends State<GroupPrayers> {
                                               s);
                                         } catch (e, s) {
                                           final user =
-                                              Provider.of<UserProvider>(context,
+                                              Provider.of<UserProviderV2>(
+                                                      context,
                                                       listen: false)
-                                                  .currentUser;
+                                                  .selectedUser;
                                           BeStilDialog.showErrorDialog(
                                               context,
-                                              StringUtils.errorOccured,
+                                              StringUtils.getErrorMessage(e),
                                               user,
                                               s);
                                         }
@@ -208,17 +211,17 @@ class _GroupPrayersState extends State<GroupPrayers> {
                           AppController appController = Get.find();
                           appController.setCurrentPage(1, true, 8);
                         } on HttpException catch (e, s) {
-                          final user =
-                              Provider.of<UserProvider>(context, listen: false)
-                                  .currentUser;
+                          final user = Provider.of<UserProviderV2>(context,
+                                  listen: false)
+                              .selectedUser;
                           BeStilDialog.showErrorDialog(
                               context, StringUtils.getErrorMessage(e), user, s);
                         } catch (e, s) {
-                          final user =
-                              Provider.of<UserProvider>(context, listen: false)
-                                  .currentUser;
+                          final user = Provider.of<UserProviderV2>(context,
+                                  listen: false)
+                              .selectedUser;
                           BeStilDialog.showErrorDialog(
-                              context, StringUtils.errorOccured, user, s);
+                              context, StringUtils.getErrorMessage(e), user, s);
                         }
                       },
                       text: 'Add New Prayer',

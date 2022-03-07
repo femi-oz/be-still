@@ -362,7 +362,7 @@ class PrayerServiceV2 {
 
       await _prayerDataCollectionReference
           .doc(prayerId)
-          .update({'updates': currentUpdates.map((e) => e.toJson())});
+          .update({'updates': FieldValue.arrayUnion(currentUpdates)});
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

@@ -57,6 +57,7 @@ class UserServiceV2 {
         devices: [
           DeviceModel(id: await deviceId(), token: token)
         ], // update token on login where deviceId == deviceId
+        prayers: [''],
         enableBackgroundMusic: true,
         enableSharingViaEmail: true,
         enableSharingViaText: true,

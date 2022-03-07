@@ -5,20 +5,19 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/notification.model.dart';
-import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/prayer_details/widgets/no_update_view.dart';
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/widgets/update_view.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
@@ -30,37 +29,12 @@ import 'package:provider/provider.dart';
 
 class PrayerDetails extends StatefulWidget {
   static const routeName = 'prayer-details';
-  final String prayerId;
-
-  PrayerDetails({this.prayerId = ''});
 
   @override
   _PrayerDetailsState createState() => _PrayerDetailsState();
 }
 
 class _PrayerDetailsState extends State<PrayerDetails> {
-  void getSettings() async {
-    try {
-      final _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .setSettings(_user.id ?? '');
-    } on HttpException catch (e, s) {
-      BeStilDialog.hideLoading(context);
-
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    } catch (e, s) {
-      BeStilDialog.hideLoading(context);
-
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
-    }
-  }
-
   Duration snoozeDurationinDays = Duration.zero;
   DateTime snoozeEndDate = DateTime.now();
   Duration snoozeDurationinHour = Duration.zero;
@@ -69,52 +43,68 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   int snoozeDuration = 0;
   // String reminderString = '';
 
+  String selectedFrequency = '';
+
   Widget _buildMenu(
-      PrayerDataModel? prayerData, LocalNotificationModel reminder) {
+      PrayerDataModel? prayerData, LocalNotificationDataModel reminder) {
     return PrayerMenu(context, hasReminder(prayerData), reminder,
         () => updateUI(), prayerData);
   }
 
   String reminderString(PrayerDataModel? prayerData) {
-    final reminders = Provider.of<NotificationProvider>(context)
+    final reminders = Provider.of<NotificationProviderV2>(context)
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
 
-    LocalNotificationModel? reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == (prayerData?.id ?? ''),
-        orElse: () => LocalNotificationModel.defaultValue());
-    return reminder.notificationText ?? '';
+    LocalNotificationDataModel? reminder = reminders.firstWhere(
+        (reminder) => reminder.prayerId == (prayerData?.id ?? ''),
+        orElse: () => LocalNotificationDataModel());
+    var suffix = "th";
+    var digit = (reminder.scheduleDate?.day ?? 0) % 10;
+    if ((digit > 0 && digit < 4) &&
+        ((reminder.scheduleDate?.day ?? 0) < 11 ||
+            (reminder.scheduleDate?.day ?? 0) > 13)) {
+      suffix = ["st", "nd", "rd"][digit - 1];
+    }
+
+    final notificationText = reminder.frequency == Frequency.weekly
+        ? '${reminder.frequency}, ${LocalNotification.daysOfWeek[reminder.scheduleDate?.weekday ?? 0]}, ${reminder.scheduleDate?.hour}:${reminder.scheduleDate?.minute} ${DateFormat('a').format(reminder.scheduleDate ?? DateTime.now())}'
+        : reminder.frequency == Frequency.one_time
+            ? '$reminder.frequency,  ${reminder.scheduleDate?.month} ${reminder.scheduleDate?.day}$suffix, ${reminder.scheduleDate?.year} ${reminder.scheduleDate?.hour}:${reminder.scheduleDate?.minute} ${DateFormat('a').format(reminder.scheduleDate ?? DateTime.now())}'
+            : '$selectedFrequency, ${reminder.scheduleDate?.hour}:${reminder.scheduleDate?.minute} ${DateFormat('a').format(reminder.scheduleDate ?? DateTime.now())}';
+    reminder.message = notificationText;
+    return reminder.message ?? '';
   }
 
   bool hasReminder(PrayerDataModel? prayerData) {
-    final reminders = Provider.of<NotificationProvider>(context)
+    final reminders = Provider.of<NotificationProviderV2>(context)
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
 
     return reminders
-        .any((reminder) => reminder.entityId == (prayerData?.id ?? ''));
+        .any((reminder) => reminder.prayerId == (prayerData?.id ?? ''));
   }
 
   bool isReminderActive(PrayerDataModel? prayerData) {
-    final reminders = Provider.of<NotificationProvider>(context)
+    final reminders = Provider.of<NotificationProviderV2>(context)
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
 
-    LocalNotificationModel rem = reminders.firstWhere(
-        (reminder) => reminder.entityId == prayerData?.id,
-        orElse: () => LocalNotificationModel.defaultValue());
+    LocalNotificationDataModel rem = reminders.firstWhere(
+        (reminder) => reminder.prayerId == prayerData?.id,
+        orElse: () => LocalNotificationDataModel());
     if ((rem.id ?? '').isNotEmpty) {
       if (rem.frequency != Frequency.one_time) {
         return true;
       } else {
-        if ((rem.scheduledDate ?? DateTime.now().subtract(Duration(hours: 1)))
+        if ((rem.scheduleDate ?? DateTime.now().subtract(Duration(hours: 1)))
             .isAfter(DateTime.now())) {
           return true;
         } else {
-          Provider.of<NotificationProvider>(context).deleteLocalNotification(
+          Provider.of<NotificationProviderV2>(context).deleteLocalNotification(
               rem.id ?? '', rem.localNotificationId ?? 0);
           return false;
         }
@@ -144,35 +134,36 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   void didChangeDependencies() {
     if (_isInit) {
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
-        getSettings();
+        // getSettings();
       });
       _isInit = false;
     }
     super.didChangeDependencies();
   }
 
-  LocalNotificationModel _reminder(PrayerDataModel? prayerData) {
-    final reminders = Provider.of<NotificationProvider>(context, listen: false)
-        .localNotifications;
+  LocalNotificationDataModel _reminder(PrayerDataModel? prayerData) {
+    final reminders =
+        Provider.of<NotificationProviderV2>(context, listen: false)
+            .localNotifications;
     return reminders.firstWhere(
-        (reminder) => reminder.entityId == (prayerData?.id ?? ''),
-        orElse: () => LocalNotificationModel.defaultValue());
+        (reminder) => reminder.prayerId == (prayerData?.id ?? ''),
+        orElse: () => LocalNotificationDataModel());
   }
 
   @override
   Widget build(BuildContext context) {
+    final prayerId = Provider.of<PrayerProviderV2>(context).currentPrayerId;
     return Scaffold(
       appBar: CustomAppBar(
         showPrayerActions: false,
       ),
       body: StreamBuilder<PrayerDataModel>(
           stream: Provider.of<PrayerProviderV2>(context)
-              .getPrayer(prayerId: widget.prayerId),
+              .getPrayer(prayerId: prayerId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting)
               return BeStilDialog.getLoading(context, false);
-            if (snapshot.hasData &&
-                (snapshot.data?.status == Status.inactive)) {
+            if (snapshot.hasData && (snapshot.data?.status == Status.active)) {
               return Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(

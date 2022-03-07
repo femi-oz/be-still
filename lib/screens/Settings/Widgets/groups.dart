@@ -10,6 +10,7 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -46,14 +47,14 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       BeStilDialog.showSuccessDialog(context, message);
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -105,14 +106,15 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -145,14 +147,15 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -210,15 +213,16 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -239,15 +243,16 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -267,8 +272,9 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
 
     setState(() {});
@@ -662,7 +668,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
       return '';
@@ -670,8 +676,9 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
       return '';
     }
   }
@@ -762,17 +769,19 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                 } on HttpException catch (e, s) {
                   BeStilDialog.hideLoading(context);
 
-                  final user = Provider.of<UserProvider>(context, listen: false)
-                      .currentUser;
+                  final user =
+                      Provider.of<UserProviderV2>(context, listen: false)
+                          .selectedUser;
                   BeStilDialog.showErrorDialog(
                       context, StringUtils.getErrorMessage(e), user, s);
                 } catch (e, s) {
                   BeStilDialog.hideLoading(context);
 
-                  final user = Provider.of<UserProvider>(context, listen: false)
-                      .currentUser;
+                  final user =
+                      Provider.of<UserProviderV2>(context, listen: false)
+                          .selectedUser;
                   BeStilDialog.showErrorDialog(
-                      context, StringUtils.errorOccured, user, s);
+                      context, StringUtils.getErrorMessage(e), user, s);
                 }
               },
               value: _groupPreferenceSettings.enableNotificationForAllGroups ??
@@ -1119,11 +1128,11 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                   BeStilDialog.hideLoading(
                                                       context);
 
-                                                  final user =
-                                                      Provider.of<UserProvider>(
-                                                              context,
-                                                              listen: false)
-                                                          .currentUser;
+                                                  final user = Provider.of<
+                                                              UserProviderV2>(
+                                                          context,
+                                                          listen: false)
+                                                      .selectedUser;
                                                   BeStilDialog.showErrorDialog(
                                                       context,
                                                       StringUtils
@@ -1134,14 +1143,15 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                   BeStilDialog.hideLoading(
                                                       context);
 
-                                                  final user =
-                                                      Provider.of<UserProvider>(
-                                                              context,
-                                                              listen: false)
-                                                          .currentUser;
+                                                  final user = Provider.of<
+                                                              UserProviderV2>(
+                                                          context,
+                                                          listen: false)
+                                                      .selectedUser;
                                                   BeStilDialog.showErrorDialog(
                                                       context,
-                                                      StringUtils.errorOccured,
+                                                      StringUtils
+                                                          .getErrorMessage(e),
                                                       user,
                                                       s);
                                                 }

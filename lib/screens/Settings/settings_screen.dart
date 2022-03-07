@@ -4,6 +4,7 @@ import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/Settings/Widgets/groups.dart';
 import 'package:be_still/screens/Settings/Widgets/my_list.dart';
 import 'package:be_still/screens/settings/Widgets/general.dart';
@@ -50,9 +51,9 @@ class _SettingsScreenPage extends State<SettingsScreen>
             .searchPrayers('', userId ?? '');
       } catch (e, s) {
         final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
+            Provider.of<UserProviderV2>(context, listen: false).selectedUser;
         BeStilDialog.showErrorDialog(
-            context, StringUtils.errorOccured, user, s);
+            context, StringUtils.getErrorMessage(e), user, s);
       }
     });
     super.didChangeDependencies();

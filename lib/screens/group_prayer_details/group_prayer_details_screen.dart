@@ -5,11 +5,13 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/notification.model.dart';
+import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/group_prayer_details/widgets/no_update_view.dart';
 import 'package:be_still/screens/group_prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/screens/group_prayer_details/widgets/update_view.dart';
@@ -97,13 +99,14 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
           .setSettings(_user.id ?? '');
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -254,7 +257,8 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                                                       .data?.groupPrayer?.id ??
                                                   '',
                                               type: NotificationType.reminder,
-                                              reminder: _reminder,
+                                              reminder:
+                                                  LocalNotificationDataModel(), // todo: implement reminder
                                               hideActionuttons: false,
                                               onCancel: () =>
                                                   Navigator.of(context).pop(),
@@ -326,7 +330,8 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                                                             '',
                                                         type: NotificationType
                                                             .reminder,
-                                                        reminder: _reminder,
+                                                        reminder:
+                                                            LocalNotificationDataModel(), // todo: implement reminder,
                                                         hideActionuttons: false,
                                                         popTwice: false,
                                                         onCancel: () =>

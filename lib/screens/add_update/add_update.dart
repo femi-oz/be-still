@@ -4,6 +4,7 @@ import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
+import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/providers/group_prayer_provider.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/log_provider.dart';
@@ -12,12 +13,17 @@ import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
 import 'package:contacts_service/contacts_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -74,14 +80,14 @@ class _AddUpdateState extends State<AddUpdate> {
               .searchPrayers('', userId ?? '');
         } on HttpException catch (e, s) {
           final user =
-              Provider.of<UserProvider>(context, listen: false).currentUser;
+              Provider.of<UserProviderV2>(context, listen: false).selectedUser;
           BeStilDialog.showErrorDialog(
               context, StringUtils.getErrorMessage(e), user, s);
         } catch (e, s) {
           final user =
-              Provider.of<UserProvider>(context, listen: false).currentUser;
+              Provider.of<UserProviderV2>(context, listen: false).selectedUser;
           BeStilDialog.showErrorDialog(
-              context, StringUtils.errorOccured, user, s);
+              context, StringUtils.getErrorMessage(e), user, s);
         }
       });
       isInit = false;
@@ -98,9 +104,6 @@ class _AddUpdateState extends State<AddUpdate> {
   }
 
   void _onTextChange(String val) {
-    final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
-
     try {
       var cursorPos = _descriptionController.selection.base.offset;
       var stringBeforeCursor = val.substring(0, cursorPos);
@@ -132,10 +135,9 @@ class _AddUpdateState extends State<AddUpdate> {
       });
     } catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
-      Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
-          userId ?? '', 'ADD_PRAYER_UPDATE/screen/onTextChange_tag');
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -156,31 +158,43 @@ class _AddUpdateState extends State<AddUpdate> {
   Future<void> _save(String prayerId) async {
     setState(() => _autoValidate = true);
 
+    final updates = Provider.of<PrayerProviderV2>(context, listen: false)
+        .prayerToEditUpdate;
+
     try {
       if (!_formKey.currentState!.validate()) return;
       _formKey.currentState!.save();
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+      final userId = FirebaseAuth.instance.currentUser?.uid;
       BeStilDialog.showLoading(context);
       if (_descriptionController.text.trim().isEmpty) {
         BeStilDialog.hideLoading(context);
         PlatformException e = PlatformException(
             code: 'custom', message: 'You can not save empty prayers');
         final s = StackTrace.fromString(e.stacktrace ?? '');
+        final user =
+            Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+        final userName = (user.firstName ?? '') + ' ' + (user.lastName ?? '');
         BeStilDialog.showErrorDialog(
             context, StringUtils.getErrorMessage(e), user, s);
       } else {
-        await Provider.of<PrayerProvider>(context, listen: false)
+        await Provider.of<PrayerProviderV2>(context, listen: false)
             .addPrayerUpdate(
-                user.id ?? '', _descriptionController.text, prayerId);
+          updates,
+          prayerId,
+          _descriptionController.text,
+        );
 
         if (contacts.length > 0) {
           for (final contact in contacts) {
             if (_descriptionController.text
                 .contains(contact.displayName ?? '')) {
-              await Provider.of<PrayerProvider>(context, listen: false)
-                  .addPrayerTag(
-                      contacts, user, _descriptionController.text, prayerId);
+              final user = Provider.of<UserProviderV2>(context, listen: false)
+                  .selectedUser;
+              final userName =
+                  (user.firstName ?? '') + ' ' + (user.lastName ?? '');
+              await Provider.of<PrayerProviderV2>(context, listen: false)
+                  .addPrayerTag(contacts, userName, _descriptionController.text,
+                      prayerId);
             }
           }
         }
@@ -189,23 +203,23 @@ class _AddUpdateState extends State<AddUpdate> {
         if (appController.previousPage == 9 ||
             appController.previousPage == 8) {
           final groupPrayerId =
-              Provider.of<GroupPrayerProvider>(context, listen: false)
+              Provider.of<PrayerProviderV2>(context, listen: false)
                   .currentPrayerId;
-          final groupId = (Provider.of<GroupProvider>(context, listen: false)
-                          .currentGroup
-                          .group ??
-                      GroupModel.defaultValue())
+          final groupId = (Provider.of<GroupProviderV2>(context, listen: false)
+                      .currentGroup)
                   .id ??
               '';
-          await Provider.of<NotificationProvider>(context, listen: false)
-              .sendPrayerNotification(
-            prayerId,
-            groupPrayerId,
-            NotificationType.prayer_updates,
-            groupId,
-            context,
-            _descriptionController.text,
-          );
+
+          //todo send notification
+          // await Provider.of<NotificationProviderV2>(context, listen: false)
+          //     .sendPrayerNotification(
+          //   prayerId,
+          //   groupPrayerId,
+          //   NotificationType.prayer_updates,
+          //   groupId,
+          //   context,
+          //   _descriptionController.text,
+          // );
         }
 
         BeStilDialog.hideLoading(context);
@@ -215,14 +229,15 @@ class _AddUpdateState extends State<AddUpdate> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -421,9 +436,9 @@ class _AddUpdateState extends State<AddUpdate> {
   }
 
   Widget build(BuildContext context) {
-    final currentUser = Provider.of<UserProvider>(context).currentUser;
-    final prayer = Provider.of<PrayerProvider>(context).prayerToEdit;
-    final updates = Provider.of<PrayerProvider>(context).prayerToEditUpdate;
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    final prayer = Provider.of<PrayerProviderV2>(context).prayerToEdit;
+    final updates = Provider.of<PrayerProviderV2>(context).prayerToEditUpdate;
 
     var positionOffset = 3.0;
     var positionOffset2 = 0.0;
@@ -538,7 +553,7 @@ class _AddUpdateState extends State<AddUpdate> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            prayer.userId != currentUser.id
+                            prayer.userId != userId
                                 ? Container(
                                     margin: EdgeInsets.only(bottom: 20),
                                     child: Text(
@@ -566,7 +581,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                               Text(
                                                 intl.DateFormat(
                                                         'hh:mma | MM.dd.yyyy')
-                                                    .format(u.modifiedOn ??
+                                                    .format(u.modifiedDate ??
                                                         DateTime.now()),
                                                 style: AppTextStyles
                                                     .regularText18b
@@ -625,7 +640,7 @@ class _AddUpdateState extends State<AddUpdate> {
                                             ),
                                             Text(
                                               intl.DateFormat(' MM.dd.yyyy')
-                                                  .format(prayer.modifiedOn ??
+                                                  .format(prayer.modifiedDate ??
                                                       DateTime.now()),
                                               style: AppTextStyles
                                                   .regularText18b

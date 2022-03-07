@@ -5,8 +5,11 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/settings.model.dart';
+import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -46,7 +49,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
 
   double itemExtent = 30.0;
   bool showUpdateField = false;
-  LocalNotificationModel reminder = LocalNotificationModel.defaultValue();
+  LocalNotificationDataModel reminder = LocalNotificationDataModel();
 
   _deletePrayerTime(
     int localNotificationId,
@@ -63,13 +66,13 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -78,7 +81,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
   @override
   Widget build(BuildContext context) {
     final prayerTimeList =
-        Provider.of<NotificationProvider>(context).prayerTimeNotifications;
+        Provider.of<NotificationProviderV2>(context).prayerTimeNotifications;
 
     return Container(
       decoration: BoxDecoration(
@@ -151,7 +154,10 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                             data.frequency == Frequency.weekly
                                                 ? Container(
                                                     child: Text(
-                                                      data.selectedDay ?? '',
+                                                      (data.scheduleDate
+                                                                  ?.weekday ??
+                                                              '')
+                                                          .toString(),
                                                       style: AppTextStyles
                                                           .regularText15
                                                           .copyWith(
@@ -166,7 +172,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                                         child: Text(
                                                           DateFormat('MM-dd-yy')
                                                               .format(data
-                                                                      .scheduledDate ??
+                                                                      .scheduleDate ??
                                                                   DateTime
                                                                       .now()),
                                                           style: AppTextStyles
@@ -181,7 +187,9 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                             Row(
                                               children: [
                                                 Text(
-                                                  data.selectedHour ?? '',
+                                                  (data.scheduleDate?.hour ??
+                                                          '')
+                                                      .toString(),
                                                   style: AppTextStyles
                                                       .regularText15
                                                       .copyWith(
@@ -201,7 +209,9 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                                 ),
                                                 SizedBox(width: 5),
                                                 Text(
-                                                  data.selectedMinute ?? '',
+                                                  (data.scheduleDate?.minute ??
+                                                          '')
+                                                      .toString(),
                                                   style: AppTextStyles
                                                       .regularText15
                                                       .copyWith(
@@ -211,7 +221,9 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                                 ),
                                                 SizedBox(width: 5),
                                                 Text(
-                                                  data.period ?? '',
+                                                  DateFormat('a').format(
+                                                      data.scheduleDate ??
+                                                          DateTime.now()),
                                                   style: AppTextStyles
                                                       .regularText15
                                                       .copyWith(

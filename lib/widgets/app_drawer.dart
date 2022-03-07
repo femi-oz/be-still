@@ -7,6 +7,7 @@ import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -61,8 +62,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
         throw 'Could not launch https://www.bestillapp.com/help';
       }
     } catch (e, s) {
-      BeStilDialog.showErrorDialog(context, StringUtils.getErrorMessage(e),
-          _userProvider.currentUser, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -86,8 +89,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
           throw 'Could not launch https://my.bible.com/bible';
         }
       } catch (e, s) {
-        BeStilDialog.showErrorDialog(context, StringUtils.getErrorMessage(e),
-            _userProvider.currentUser, s);
+        final user =
+            Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.getErrorMessage(e), user, s);
       }
     }
   }

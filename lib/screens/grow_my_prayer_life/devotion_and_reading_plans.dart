@@ -5,6 +5,7 @@ import 'package:be_still/providers/devotional_provider.dart';
 import 'package:be_still/providers/misc_provider.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -36,9 +37,9 @@ class _DevotionPlansState extends State<DevotionPlans> {
             .searchPrayers('', userId ?? '');
       } catch (e, s) {
         final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
+            Provider.of<UserProviderV2>(context, listen: false).selectedUser;
         BeStilDialog.showErrorDialog(
-            context, StringUtils.errorOccured, user, s);
+            context, StringUtils.getErrorMessage(e), user, s);
       }
     });
     super.didChangeDependencies();

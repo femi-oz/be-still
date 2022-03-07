@@ -7,15 +7,9 @@ import 'package:be_still/models/message_template.dart';
 import 'package:be_still/models/v2/device.model.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/message.model.dart';
-<<<<<<< .mine
-import 'package:be_still/models/v2/notification.model.dart';
-
-
-=======
 import 'package:be_still/models/v2/notification.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/services/v2/user_service.dart';
->>>>>>> .theirs
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
