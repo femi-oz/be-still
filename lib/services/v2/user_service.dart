@@ -120,9 +120,7 @@ class UserServiceV2 {
     }
   }
 
-  Future<void> addPushToken(
-      {required DocumentReference userReference,
-      required List<DeviceModel> userDevices}) async {
+  Future<void> addPushToken(List<DeviceModel> userDevices) async {
     try {
       final id = await deviceId();
       final messaging = FirebaseMessaging.instance;
@@ -137,7 +135,9 @@ class UserServiceV2 {
       } else {
         userDevices.add(DeviceModel(id: await deviceId(), token: newToken));
       }
-      userReference.update({'devices': userDevices.map((e) => e.toJson())});
+      _userDataCollectionReference
+          .doc(_firebaseAuth.currentUser?.uid)
+          .update({'devices': userDevices.map((e) => e.toJson())});
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

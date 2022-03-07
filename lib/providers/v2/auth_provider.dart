@@ -7,8 +7,8 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/cupertino.dart';
 
 class AuthenticationProviderV2 with ChangeNotifier {
-  AuthenticationServicev2 _authenticationServicev2 =
-      locator<AuthenticationServicev2>();
+  AuthenticationServiceV2 _authenticationServicev2 =
+      locator<AuthenticationServiceV2>();
   bool _needsVerification = false;
   bool get needsVerification => _needsVerification;
 
