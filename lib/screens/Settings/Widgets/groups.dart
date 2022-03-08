@@ -1,5 +1,6 @@
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/settings_key.dart';
+import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/group_settings_model.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -47,12 +48,12 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       BeStilDialog.showSuccessDialog(context, message);
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -76,7 +77,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
           .getUserById(receiver.userId ?? '');
       await Future.delayed(Duration(milliseconds: 500));
       final receiverData =
-          Provider.of<UserProvider>(context, listen: false).selectedUser;
+          Provider.of<UserProvider>(context, listen: false).currentUser;
       var followedPrayers =
           Provider.of<GroupPrayerProvider>(context, listen: false)
               .followedPrayers
@@ -106,13 +107,13 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -147,13 +148,13 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -168,7 +169,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
 
       Future.delayed(Duration(seconds: 5), () async {
         final receiverFullName =
-            '${Provider.of<UserProvider>(context, listen: false).selectedUser.firstName ?? '' + ' ' + (Provider.of<UserProvider>(context, listen: false).selectedUser.lastName ?? '')}';
+            '${Provider.of<UserProvider>(context, listen: false).currentUser.firstName ?? '' + ' ' + (Provider.of<UserProvider>(context, listen: false).currentUser.lastName ?? '')}';
 
         final sender =
             Provider.of<UserProvider>(context, listen: false).currentUser;
@@ -180,7 +181,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
             receiverFullName);
 
         final receiverData =
-            Provider.of<UserProvider>(context, listen: false).selectedUser;
+            Provider.of<UserProvider>(context, listen: false).currentUser;
         await Provider.of<NotificationProvider>(context, listen: false)
             .sendPushNotification(
                 'Your request to join this group has been accepted',
@@ -213,14 +214,14 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -243,14 +244,14 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -267,12 +268,12 @@ class _GroupsSettingsState extends State<GroupsSettings> {
               ? true
               : false;
 
-      userData = Provider.of<UserProvider>(context, listen: false).selectedUser;
+      userData = Provider.of<UserProvider>(context, listen: false).currentUser;
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -661,14 +662,14 @@ class _GroupsSettingsState extends State<GroupsSettings> {
             .getUserById(element.userId ?? '');
       });
       return Provider.of<UserProvider>(context, listen: false)
-              .selectedUser
+              .currentUser
               .lastName ??
           '';
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
       return '';
@@ -676,7 +677,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
       return '';
@@ -771,7 +772,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
 
                   final user =
                       Provider.of<UserProviderV2>(context, listen: false)
-                          .selectedUser;
+                          .currentUser;
                   BeStilDialog.showErrorDialog(
                       context, StringUtils.getErrorMessage(e), user, s);
                 } catch (e, s) {
@@ -779,7 +780,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
 
                   final user =
                       Provider.of<UserProviderV2>(context, listen: false)
-                          .selectedUser;
+                          .currentUser;
                   BeStilDialog.showErrorDialog(
                       context, StringUtils.getErrorMessage(e), user, s);
                 }
@@ -1132,7 +1133,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                               UserProviderV2>(
                                                           context,
                                                           listen: false)
-                                                      .selectedUser;
+                                                      .currentUser;
                                                   BeStilDialog.showErrorDialog(
                                                       context,
                                                       StringUtils
@@ -1147,7 +1148,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                               UserProviderV2>(
                                                           context,
                                                           listen: false)
-                                                      .selectedUser;
+                                                      .currentUser;
                                                   BeStilDialog.showErrorDialog(
                                                       context,
                                                       StringUtils

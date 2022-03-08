@@ -34,7 +34,7 @@ class _AlexaSettingsState extends State<AlexaSettings> {
           settingsId: widget.settings.id ?? '');
     } catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }

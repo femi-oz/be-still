@@ -19,6 +19,7 @@ class PrayerProviderV2 with ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final userId = FirebaseAuth.instance.currentUser?.uid;
   late StreamSubscription<List<PrayerDataModel>> prayerStream;
+  late StreamSubscription<List<PrayerDataModel>> groupPrayerStream;
   late StreamSubscription<List<PrayerDataModel>> followedPrayerStream;
 
   PrayerType _currentPrayerType = PrayerType.userPrayers;
@@ -27,14 +28,26 @@ class PrayerProviderV2 with ChangeNotifier {
   Iterable<Contact> _localContacts = [];
   Iterable<Contact> get localContacts => _localContacts;
 
-  List<PrayerDataModel> _filteredPrayers = [];
-  List<PrayerDataModel> get filteredPrayers => _filteredPrayers;
-
   List<PrayerDataModel> get filteredPrayerTimeList => _filteredPrayerTimeList;
   List<PrayerDataModel> _filteredPrayerTimeList = [];
 
+  //======================= user prayers =================================
+
   List<PrayerDataModel> _prayers = [];
   List<PrayerDataModel> get prayers => _prayers;
+
+  List<PrayerDataModel> _filteredPrayers = [];
+  List<PrayerDataModel> get filteredPrayers => _filteredPrayers;
+
+  //======================= group prayers =================================
+
+  List<PrayerDataModel> _groupPrayers = [];
+  List<PrayerDataModel> get groupPrayers => _groupPrayers;
+
+  List<PrayerDataModel> _filteredGroupPrayers = [];
+  List<PrayerDataModel> get filteredGroupPrayers => _filteredGroupPrayers;
+
+  //=======================================================================
 
   List<PrayerDataModel> _followedPrayers = [];
   List<PrayerDataModel> get followedPrayers => _followedPrayers;
@@ -68,6 +81,22 @@ class PrayerProviderV2 with ChangeNotifier {
       prayerStream =
           _prayerService.getUserPrayers().asBroadcastStream().listen((event) {
         _prayers = event;
+        filterPrayers();
+        notifyListeners();
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> setGroupPrayers(String groupId) async {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      groupPrayerStream = _prayerService
+          .getGroupPrayers(groupId)
+          .asBroadcastStream()
+          .listen((event) {
+        _groupPrayers = event;
         filterPrayers();
         notifyListeners();
       });

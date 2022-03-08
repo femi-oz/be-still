@@ -9,17 +9,28 @@ class UserProviderV2 with ChangeNotifier {
   UserServiceV2 _userService = locator<UserServiceV2>();
   final _firebaseUserId = FirebaseAuth.instance.currentUser?.uid;
 
-  UserDataModel _selectedUser = UserDataModel();
-  UserDataModel get selectedUser => _selectedUser;
+  UserDataModel _currentUser = UserDataModel();
+  UserDataModel get currentUser => _currentUser;
 
   List<UserDataModel> _allUsers = <UserDataModel>[];
   List<UserDataModel> get allUsers => _allUsers;
 
-  Future getUserById() async {
+  Future<void> getUserById() async {
     try {
       return _userService.getUserById(_firebaseUserId ?? '').then((event) {
-        _selectedUser = event;
+        _currentUser = event;
         notifyListeners();
+        return event;
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<UserDataModel> getUserDataById(String userId) async {
+    try {
+      return _userService.getUserById(_firebaseUserId ?? '').then((event) {
+        return event;
       });
     } catch (e) {
       rethrow;
@@ -49,7 +60,7 @@ class UserProviderV2 with ChangeNotifier {
 
   String getPrayerCreatorName(String userId) {
     final user = userId == _firebaseUserId
-        ? selectedUser
+        ? currentUser
         : _allUsers.firstWhere((element) => element.id == userId);
     final userName = (user.firstName ?? '') + ' ' + (user.lastName ?? '');
     return userName;
@@ -57,7 +68,7 @@ class UserProviderV2 with ChangeNotifier {
 
   Future setCurrentUser(bool isLocalAuth) async {
     try {
-      _selectedUser = await _userService.getUserById(_firebaseUserId ?? '');
+      _currentUser = await _userService.getUserById(_firebaseUserId ?? '');
       notifyListeners();
     } catch (e) {
       rethrow;

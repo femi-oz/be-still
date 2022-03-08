@@ -107,9 +107,9 @@ class AppColors {
       getColor(darkMode, light: 0xFFFFFFFF, dark: 0XFF0D1319);
   static Color get prayerTextColor =>
       getColor(darkMode, light: 0xFF002D4B, dark: 0XFFC1C5C8);
-  static Color get addprayerTextColor =>
+  static Color get addPrayerTextColor =>
       getColor(darkMode, light: 0xFFFFFFFF, dark: 0XFF009FD0);
-  static Color get addprayerBgColor =>
+  static Color get addPrayerBgColor =>
       getColor(darkMode, light: 0xFF009FD0, dark: 0XFF021D3C);
   static Color get prayerDetailsBgColor =>
       getColor(darkMode, light: 0xFFFFFFFF, dark: 0XFF03274F);

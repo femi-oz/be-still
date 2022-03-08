@@ -78,12 +78,12 @@ class _AddPrayerState extends State<AddPrayer> {
               .searchPrayers('', userId ?? '');
         } on HttpException catch (e, s) {
           final user =
-              Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+              Provider.of<UserProviderV2>(context, listen: false).currentUser;
           BeStilDialog.showErrorDialog(
               context, StringUtils.getErrorMessage(e), user, s);
         } catch (e, s) {
           final user =
-              Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+              Provider.of<UserProviderV2>(context, listen: false).currentUser;
           BeStilDialog.showErrorDialog(
               context, StringUtils.getErrorMessage(e), user, s);
         }
@@ -199,7 +199,7 @@ class _AddPrayerState extends State<AddPrayer> {
 
     try {
       final _user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
 
       setState(() => _autoValidate = true);
       if (!_formKey.currentState!.validate()) return;
@@ -209,7 +209,7 @@ class _AddPrayerState extends State<AddPrayer> {
         PlatformException e = PlatformException(
             code: 'custom', message: 'You can not save empty prayers');
         final user =
-            Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+            Provider.of<UserProviderV2>(context, listen: false).currentUser;
         final s = StackTrace.fromString(e.stacktrace ?? '');
         // BeStilDialog.showErrorDialog(
         //     context, StringUtils.getErrorMessage(e), user, s);
@@ -286,13 +286,13 @@ class _AddPrayerState extends State<AddPrayer> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -402,7 +402,7 @@ class _AddPrayerState extends State<AddPrayer> {
       setState(() {});
     } catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -598,13 +598,13 @@ class _AddPrayerState extends State<AddPrayer> {
                         } on HttpException catch (e, s) {
                           final user = Provider.of<UserProviderV2>(context,
                                   listen: false)
-                              .selectedUser;
+                              .currentUser;
                           BeStilDialog.showErrorDialog(
                               context, StringUtils.getErrorMessage(e), user, s);
                         } catch (e, s) {
                           final user = Provider.of<UserProviderV2>(context,
                                   listen: false)
-                              .selectedUser;
+                              .currentUser;
                           BeStilDialog.showErrorDialog(
                               context, StringUtils.getErrorMessage(e), user, s);
                         }

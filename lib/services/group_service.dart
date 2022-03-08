@@ -1,5 +1,6 @@
 import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/enums/status.dart';
+import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/group_settings_model.dart';
 import 'package:be_still/models/http_exception.dart';

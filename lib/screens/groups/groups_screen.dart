@@ -1,11 +1,13 @@
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/models/group.model.dart';
+import 'package:be_still/enums/user_role.dart';
+import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/theme_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/groups/widgets/group_tools.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -13,6 +15,7 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -27,9 +30,6 @@ class _GroupScreenState extends State<GroupScreen> {
   AppController appController = Get.find();
 
   Future<bool> _onWillPop() async {
-    // return (Navigator.of(context).pushNamedAndRemoveUntil(
-    //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
-    //     false;
     return false;
   }
 
@@ -37,11 +37,11 @@ class _GroupScreenState extends State<GroupScreen> {
   void initState() {
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
       try {
-        await Provider.of<MiscProvider>(context, listen: false)
+        await Provider.of<MiscProviderV2>(context, listen: false)
             .setPageTitle('GROUPS');
       } catch (e, s) {
         final user =
-            Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+            Provider.of<UserProviderV2>(context, listen: false).currentUser;
         BeStilDialog.showErrorDialog(
             context, StringUtils.getErrorMessage(e), user, s);
       }
@@ -49,31 +49,20 @@ class _GroupScreenState extends State<GroupScreen> {
     super.initState();
   }
 
-  bool _isInit = true;
-  @override
-  void didChangeDependencies() async {
-    if (_isInit) {
-      setState(() {});
-
-      _isInit = false;
-    }
-    super.didChangeDependencies();
-  }
-
-  void _getPrayers(CombineGroupUserStream data) async {
+  Future<void> _getGroupDetails(GroupDataModel group) async {
     try {
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setCurrentGroup(data);
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .setGroupPrayers(data.group?.id ?? '');
+      await Provider.of<GroupProviderV2>(context, listen: false)
+          .setCurrentGroupById(group.id ?? '');
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .setGroupPrayers(group.id ?? '');
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -81,7 +70,7 @@ class _GroupScreenState extends State<GroupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final data = Provider.of<GroupProvider>(context).userGroups;
+    final data = Provider.of<GroupProviderV2>(context).userGroups;
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -116,13 +105,13 @@ class _GroupScreenState extends State<GroupScreen> {
                       child: LongButton(
                         onPress: () {
                           try {
-                            Provider.of<MiscProvider>(context, listen: false)
+                            Provider.of<MiscProviderV2>(context, listen: false)
                                 .setPageTitle('FIND A GROUP');
                             appController.setCurrentPage(11, true, 3);
                           } catch (e, s) {
                             final user = Provider.of<UserProviderV2>(context,
                                     listen: false)
-                                .selectedUser;
+                                .currentUser;
                             BeStilDialog.showErrorDialog(context,
                                 StringUtils.getErrorMessage(e), user, s);
                           }
@@ -130,7 +119,7 @@ class _GroupScreenState extends State<GroupScreen> {
                         text: 'FIND A GROUP',
                         backgroundColor:
                             AppColors.groupActionBgColor.withOpacity(0.9),
-                        textColor: AppColors.addprayerTextColor,
+                        textColor: AppColors.addPrayerTextColor,
                         hasIcon: false,
                       ),
                     ),
@@ -140,16 +129,16 @@ class _GroupScreenState extends State<GroupScreen> {
                       child: LongButton(
                         onPress: () async {
                           try {
-                            await Provider.of<MiscProvider>(context,
+                            await Provider.of<MiscProviderV2>(context,
                                     listen: false)
                                 .setPageTitle('CREATE A GROUP');
-                            Provider.of<GroupProvider>(context, listen: false)
+                            Provider.of<GroupProviderV2>(context, listen: false)
                                 .setEditMode(false);
                             appController.setCurrentPage(12, true, 3);
                           } catch (e, s) {
                             final user = Provider.of<UserProviderV2>(context,
                                     listen: false)
-                                .selectedUser;
+                                .currentUser;
                             BeStilDialog.showErrorDialog(context,
                                 StringUtils.getErrorMessage(e), user, s);
                           }
@@ -157,7 +146,7 @@ class _GroupScreenState extends State<GroupScreen> {
                         text: 'CREATE A GROUP',
                         backgroundColor:
                             AppColors.groupActionBgColor.withOpacity(0.9),
-                        textColor: AppColors.addprayerTextColor,
+                        textColor: AppColors.addPrayerTextColor,
                         hasIcon: false,
                       ),
                     ),
@@ -180,21 +169,21 @@ class _GroupScreenState extends State<GroupScreen> {
                             child: Column(
                               children: <Widget>[
                                 ...data.map((e) {
-                                  final _currentUser =
-                                      Provider.of<UserProvider>(context)
-                                          .currentUser;
+                                  final _userId =
+                                      FirebaseAuth.instance.currentUser?.uid;
+                                  ;
 
-                                  bool isAdmin = (e.groupUsers ?? [])
+                                  bool isAdmin = (e.users ?? [])
                                       .where(
                                           (e) => e.role == GroupUserRole.admin)
                                       .map((e) => e.userId)
-                                      .contains(_currentUser.id);
+                                      .contains(_userId);
                                   return Column(
                                     children: [
                                       LongButton(
                                         onPress: () async {
                                           try {
-                                            _getPrayers(e);
+                                            await _getGroupDetails(e);
                                             appController.setCurrentPage(
                                                 8, true, 3);
                                           } on HttpException catch (e, s) {
@@ -202,7 +191,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                                 Provider.of<UserProviderV2>(
                                                         context,
                                                         listen: false)
-                                                    .selectedUser;
+                                                    .currentUser;
                                             BeStilDialog.showErrorDialog(
                                                 context,
                                                 StringUtils.getErrorMessage(e),
@@ -213,7 +202,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                                 Provider.of<UserProviderV2>(
                                                         context,
                                                         listen: false)
-                                                    .selectedUser;
+                                                    .currentUser;
                                             BeStilDialog.showErrorDialog(
                                                 context,
                                                 StringUtils.getErrorMessage(e),
@@ -221,7 +210,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                                 s);
                                           }
                                         },
-                                        text: e.group?.name ?? '',
+                                        text: e.name ?? '',
                                         backgroundColor:
                                             AppColors.groupCardBgColor,
                                         textColor: AppColors.lightBlue3,

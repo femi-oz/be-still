@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:be_still/enums/request_status.dart';
 import 'package:be_still/enums/status.dart';
+import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/v2/follower.model.dart';
 import 'package:be_still/models/v2/group.model.dart';

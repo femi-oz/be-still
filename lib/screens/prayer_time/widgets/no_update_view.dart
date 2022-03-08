@@ -52,7 +52,7 @@ class _NoUpdateViewState extends State<NoUpdateView> {
       await Provider.of<PrayerProviderV2>(context, listen: false).getContacts();
     } catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }

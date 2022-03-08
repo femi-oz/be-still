@@ -39,7 +39,7 @@ class _PrayerTimeState extends State<PrayerTime> {
             .searchPrayers('', userId ?? '');
       } catch (e, s) {
         final user =
-            Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+            Provider.of<UserProviderV2>(context, listen: false).currentUser;
         BeStilDialog.showErrorDialog(
             context, StringUtils.getErrorMessage(e), user, s);
       }

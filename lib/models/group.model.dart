@@ -260,12 +260,6 @@ class GroupPrayerModel {
   }
 }
 
-class GroupUserRole {
-  static String admin = 'admin';
-  static String moderator = 'moderator';
-  static String member = 'member';
-}
-
 class GroupUserModel {
   String? id;
   String? groupId;

@@ -62,7 +62,7 @@ class _EntryScreenState extends State<EntryScreen> {
       final miscProvider = Provider.of<MiscProviderV2>(context, listen: false);
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
         final user =
-            Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+            Provider.of<UserProviderV2>(context, listen: false).currentUser;
         if (miscProvider.initialLoad) {
           await _preLoadData();
           Future.delayed(Duration(milliseconds: 500));
@@ -80,7 +80,7 @@ class _EntryScreenState extends State<EntryScreen> {
       });
     } catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -123,7 +123,7 @@ class _EntryScreenState extends State<EntryScreen> {
       //   });
     } catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -179,12 +179,12 @@ class _EntryScreenState extends State<EntryScreen> {
       //     .setAllGroups(userId ?? '');
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -197,12 +197,12 @@ class _EntryScreenState extends State<EntryScreen> {
           .setPrayerTimePrayers(_userId ?? '');
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -211,7 +211,7 @@ class _EntryScreenState extends State<EntryScreen> {
   Future<void> _getPrayers() async {
     try {
       final _user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       final searchQuery =
           Provider.of<MiscProviderV2>(context, listen: false).searchQuery;
       await Provider.of<PrayerProviderV2>(context, listen: false)
@@ -225,12 +225,12 @@ class _EntryScreenState extends State<EntryScreen> {
       }
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -242,12 +242,12 @@ class _EntryScreenState extends State<EntryScreen> {
           .getDevotionals();
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -259,12 +259,12 @@ class _EntryScreenState extends State<EntryScreen> {
           .getBibles();
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -289,12 +289,12 @@ class _EntryScreenState extends State<EntryScreen> {
   //     );
   //   } on HttpException catch (e, s) {
   //     final user =
-  //         Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+  //         Provider.of<UserProviderV2>(context, listen: false).currentUser;
   //     BeStilDialog.showErrorDialog(
   //         context, StringUtils.getErrorMessage(e), user, s);
   //   } catch (e, s) {
   //     final user =
-  //         Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+  //         Provider.of<UserProviderV2>(context, listen: false).currentUser;
   //     BeStilDialog.showErrorDialog(
   //         context, StringUtils.getErrorMessage(e), user, s);
   //   }
@@ -405,7 +405,7 @@ class _EntryScreenState extends State<EntryScreen> {
               }
             } catch (e, s) {
               final user = Provider.of<UserProviderV2>(context, listen: false)
-                  .selectedUser;
+                  .currentUser;
               BeStilDialog.showErrorDialog(
                   context, StringUtils.getErrorMessage(e), user, s);
             }

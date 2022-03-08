@@ -357,7 +357,7 @@ class NotificationProviderV2 with ChangeNotifier {
     try {
       List<String> _ids = [];
       final _user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
 
       if (type == NotificationType.prayer ||
           type == NotificationType.prayer_updates) {
