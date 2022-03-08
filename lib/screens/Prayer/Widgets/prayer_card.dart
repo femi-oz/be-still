@@ -256,13 +256,13 @@ class _PrayerCardState extends State<PrayerCard> {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -275,13 +275,13 @@ class _PrayerCardState extends State<PrayerCard> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -289,7 +289,7 @@ class _PrayerCardState extends State<PrayerCard> {
 
   bool get isAdmin {
     final _user =
-        Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+        Provider.of<UserProviderV2>(context, listen: false).currentUser;
 
     return Provider.of<PrayerProviderV2>(context)
         .followedPrayers

@@ -121,7 +121,7 @@ class _SnoozeGroupPrayerState extends State<SnoozeGroupPrayer> {
       await Future.delayed(Duration(milliseconds: 300),
           () => {BeStilDialog.hideLoading(context)});
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }

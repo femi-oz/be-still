@@ -107,7 +107,7 @@ class _SplashScreenState extends State<SplashScreen>
       }
     } catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }

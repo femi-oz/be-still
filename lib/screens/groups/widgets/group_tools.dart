@@ -41,12 +41,12 @@ class _GroupToolsState extends State<GroupTools> {
       Navigator.pop(context);
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -113,14 +113,14 @@ class _GroupToolsState extends State<GroupTools> {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -141,12 +141,12 @@ class _GroupToolsState extends State<GroupTools> {
               receiverId, title, '', entityId, tokens);
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }

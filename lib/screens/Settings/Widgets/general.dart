@@ -268,7 +268,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     } on HttpException catch (e, s) {
       _newEmail.clear();
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
@@ -280,7 +280,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       }
 
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
       _newEmail.clear();
@@ -300,7 +300,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
 
@@ -309,7 +309,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
       _newPassword.clear();
@@ -352,14 +352,14 @@ class _GeneralSettingsState extends State<GeneralSettings> {
           PlatformException(code: 'custom', message: message);
 
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       _currentPassword.clear();
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }

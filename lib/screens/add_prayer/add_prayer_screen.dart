@@ -1,5 +1,4 @@
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/save_options.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -8,7 +7,6 @@ import 'package:be_still/models/v2/update.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
-import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -23,7 +21,6 @@ import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
-import 'package:uuid/uuid.dart';
 
 class AddPrayer extends StatefulWidget {
   static const routeName = '/app-prayer';
@@ -78,12 +75,12 @@ class _AddPrayerState extends State<AddPrayer> {
               .searchPrayers('', userId ?? '');
         } on HttpException catch (e, s) {
           final user =
-              Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+              Provider.of<UserProviderV2>(context, listen: false).currentUser;
           BeStilDialog.showErrorDialog(
               context, StringUtils.getErrorMessage(e), user, s);
         } catch (e, s) {
           final user =
-              Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+              Provider.of<UserProviderV2>(context, listen: false).currentUser;
           BeStilDialog.showErrorDialog(
               context, StringUtils.getErrorMessage(e), user, s);
         }
@@ -199,7 +196,7 @@ class _AddPrayerState extends State<AddPrayer> {
 
     try {
       final _user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
 
       setState(() => _autoValidate = true);
       if (!_formKey.currentState!.validate()) return;
@@ -209,7 +206,7 @@ class _AddPrayerState extends State<AddPrayer> {
         PlatformException e = PlatformException(
             code: 'custom', message: 'You can not save empty prayers');
         final user =
-            Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+            Provider.of<UserProviderV2>(context, listen: false).currentUser;
         final s = StackTrace.fromString(e.stacktrace ?? '');
         // BeStilDialog.showErrorDialog(
         //     context, StringUtils.getErrorMessage(e), user, s);
@@ -286,13 +283,13 @@ class _AddPrayerState extends State<AddPrayer> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -402,7 +399,7 @@ class _AddPrayerState extends State<AddPrayer> {
       setState(() {});
     } catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }

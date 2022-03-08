@@ -41,7 +41,7 @@ class _GroupScreenState extends State<GroupScreen> {
             .setPageTitle('GROUPS');
       } catch (e, s) {
         final user =
-            Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+            Provider.of<UserProviderV2>(context, listen: false).currentUser;
         BeStilDialog.showErrorDialog(
             context, StringUtils.getErrorMessage(e), user, s);
       }
@@ -68,12 +68,12 @@ class _GroupScreenState extends State<GroupScreen> {
           .setGroupPrayers(data.group?.id ?? '');
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }

@@ -74,7 +74,7 @@ class _PrayerListState extends State<PrayerList> {
         } catch (e, s) {
           BeStilDialog.hideLoading(context);
           final user =
-              Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+              Provider.of<UserProviderV2>(context, listen: false).currentUser;
           BeStilDialog.showErrorDialog(
               context, StringUtils.getErrorMessage(e), user, s);
         }
@@ -98,13 +98,13 @@ class _PrayerListState extends State<PrayerList> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -113,7 +113,7 @@ class _PrayerListState extends State<PrayerList> {
   Future<void> _getPrayers() async {
     try {
       final _user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       final searchQuery =
           Provider.of<MiscProviderV2>(context, listen: false).searchQuery;
       await Provider.of<PrayerProviderV2>(context, listen: false)
@@ -127,12 +127,12 @@ class _PrayerListState extends State<PrayerList> {
       }
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }

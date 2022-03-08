@@ -80,12 +80,12 @@ class _AddUpdateState extends State<AddUpdate> {
               .searchPrayers('', userId ?? '');
         } on HttpException catch (e, s) {
           final user =
-              Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+              Provider.of<UserProviderV2>(context, listen: false).currentUser;
           BeStilDialog.showErrorDialog(
               context, StringUtils.getErrorMessage(e), user, s);
         } catch (e, s) {
           final user =
-              Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+              Provider.of<UserProviderV2>(context, listen: false).currentUser;
           BeStilDialog.showErrorDialog(
               context, StringUtils.getErrorMessage(e), user, s);
         }
@@ -135,7 +135,7 @@ class _AddUpdateState extends State<AddUpdate> {
       });
     } catch (e, s) {
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
@@ -172,7 +172,7 @@ class _AddUpdateState extends State<AddUpdate> {
             code: 'custom', message: 'You can not save empty prayers');
         final s = StackTrace.fromString(e.stacktrace ?? '');
         final user =
-            Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+            Provider.of<UserProviderV2>(context, listen: false).currentUser;
         final userName = (user.firstName ?? '') + ' ' + (user.lastName ?? '');
         BeStilDialog.showErrorDialog(
             context, StringUtils.getErrorMessage(e), user, s);
@@ -229,13 +229,13 @@ class _AddUpdateState extends State<AddUpdate> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }

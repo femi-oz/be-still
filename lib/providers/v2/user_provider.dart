@@ -12,6 +12,9 @@ class UserProviderV2 with ChangeNotifier {
   UserDataModel _selectedUser = UserDataModel();
   UserDataModel get selectedUser => _selectedUser;
 
+  UserDataModel _currentUser = UserDataModel();
+  UserDataModel get currentUser => _currentUser;
+
   List<UserDataModel> _allUsers = <UserDataModel>[];
   List<UserDataModel> get allUsers => _allUsers;
 
@@ -57,7 +60,7 @@ class UserProviderV2 with ChangeNotifier {
 
   Future setCurrentUser(bool isLocalAuth) async {
     try {
-      _selectedUser = await _userService.getUserById(_firebaseUserId ?? '');
+      _currentUser = await _userService.getUserById(_firebaseUserId ?? '');
       notifyListeners();
     } catch (e) {
       rethrow;

@@ -521,7 +521,7 @@ class PrayerProviderV2 with ChangeNotifier {
 
   void flush() {
     prayerStream.cancel();
-    followedPrayerStream.cancel();
+    // followedPrayerStream.cancel();
     prayerTimeStream.cancel();
   }
 }
