@@ -1,3 +1,4 @@
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
@@ -53,7 +54,9 @@ class LocalNotification {
       final scheduledDate = tz.TZDateTime.from(
           _localNotifications[i].scheduleDate ?? DateTime.now(), location);
       await setLocalNotification(
-        title: _localNotifications[i].title ?? '',
+        title: _localNotifications[i].type == NotificationType.reminder
+            ? 'Reminder to pray'
+            : '',
         description: _localNotifications[i].message ?? '',
         scheduledDate: scheduledDate,
         payload: _localNotifications[i].prayerId,

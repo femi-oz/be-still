@@ -68,7 +68,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
     final notificationText = reminder.frequency == Frequency.weekly
         ? '${reminder.frequency}, ${LocalNotification.daysOfWeek[reminder.scheduleDate?.weekday ?? 0]}, ${reminder.scheduleDate?.hour}:${reminder.scheduleDate?.minute} ${DateFormat('a').format(reminder.scheduleDate ?? DateTime.now())}'
         : reminder.frequency == Frequency.one_time
-            ? '$reminder.frequency,  ${reminder.scheduleDate?.month} ${reminder.scheduleDate?.day}$suffix, ${reminder.scheduleDate?.year} ${reminder.scheduleDate?.hour}:${reminder.scheduleDate?.minute} ${DateFormat('a').format(reminder.scheduleDate ?? DateTime.now())}'
+            ? '${reminder.frequency},  ${LocalNotification.months[(reminder.scheduleDate?.month ?? 0) - 1]} ${reminder.scheduleDate?.day}$suffix, ${reminder.scheduleDate?.year} ${reminder.scheduleDate?.hour}:${(reminder.scheduleDate?.minute ?? 0) < 10 ? '0' + (reminder.scheduleDate?.minute.toString() ?? '') : reminder.scheduleDate?.minute} ${DateFormat('a').format(reminder.scheduleDate ?? DateTime.now())}'
             : '$selectedFrequency, ${reminder.scheduleDate?.hour}:${reminder.scheduleDate?.minute} ${DateFormat('a').format(reminder.scheduleDate ?? DateTime.now())}';
     reminder.message = notificationText;
     return reminder.message ?? '';

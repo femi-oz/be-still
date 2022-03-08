@@ -20,10 +20,10 @@ class PrayerServiceV2 {
 
   final CollectionReference<Map<String, dynamic>>
       _prayerDataCollectionReference =
-      FirebaseFirestore.instance.collection('prayers_v2');
+      FirebaseFirestore.instance.collection('prayers');
 
   final CollectionReference<Map<String, dynamic>> _userDataCollectionReference =
-      FirebaseFirestore.instance.collection('users_v2');
+      FirebaseFirestore.instance.collection('users');
 
   final CollectionReference<Map<String, dynamic>>
       _messageTemplateCollectionReference =
@@ -225,7 +225,7 @@ class PrayerServiceV2 {
     } else {
       _prayerDataCollectionReference
           .doc(prayerId)
-          .update({'status': Status.active});
+          .update({'status': Status.active, 'isAnswered': false});
     }
   }
 

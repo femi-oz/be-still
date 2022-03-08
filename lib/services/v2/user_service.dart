@@ -16,7 +16,7 @@ class UserServiceV2 {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   final CollectionReference<Map<String, dynamic>> _userDataCollectionReference =
-      FirebaseFirestore.instance.collection("users_v2");
+      FirebaseFirestore.instance.collection("users");
 
   Stream<List<UserDataModel>> getAllUsers() {
     try {
