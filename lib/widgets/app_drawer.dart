@@ -1,12 +1,10 @@
 import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/providers/auth_provider.dart';
-import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/auth_provider.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -15,6 +13,7 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/initial_tutorial.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -53,7 +52,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
   String _shareUri = '';
 
   _launchHelpURL() async {
-    final _userProvider = Provider.of<UserProvider>(context, listen: false);
+    final _userProvider = Provider.of<UserProviderV2>(context, listen: false);
 
     try {
       if (await canLaunch('https://www.bestillapp.com/help')) {
@@ -70,7 +69,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
   }
 
   _launchURL(url) async {
-    final _userProvider = Provider.of<UserProvider>(context, listen: false);
+    final _userProvider = Provider.of<UserProviderV2>(context, listen: false);
     try {
       if (Platform.isAndroid) {
         await AppAvailability.checkAvailability(
@@ -98,15 +97,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
   }
 
   closeAllStreams() {
-    Provider.of<GroupProvider>(context, listen: false).flush();
-    Provider.of<NotificationProvider>(context, listen: false).flush();
-    Provider.of<PrayerProvider>(context, listen: false).flush();
-    Provider.of<GroupPrayerProvider>(context, listen: false).flush();
+    Provider.of<GroupProviderV2>(context, listen: false).flush();
+    Provider.of<NotificationProviderV2>(context, listen: false).flush();
+    Provider.of<PrayerProviderV2>(context, listen: false).flush();
   }
 
   _openLogoutConfirmation(BuildContext context) {
     final _authProvider =
-        Provider.of<AuthenticationProvider>(context, listen: false);
+        Provider.of<AuthenticationProviderV2>(context, listen: false);
 
     final dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
@@ -189,14 +187,16 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   GestureDetector(
                     onTap: () async {
                       final userId =
-                          Provider.of<UserProvider>(context, listen: false)
-                              .currentUser
-                              .id;
+                          Provider.of<UserProviderV2>(context, listen: false)
+                              .currentUser;
                       await _authProvider.signOut();
-                      Provider.of<NotificationProvider>(context, listen: false)
+                      Provider.of<NotificationProviderV2>(context,
+                              listen: false)
                           .cancelLocalNotifications();
-                      Provider.of<UserProvider>(context, listen: false)
-                          .removePushToken(userId ?? '');
+                      Provider.of<UserProviderV2>(context, listen: false)
+                          .removePushToken(
+                              FirebaseAuth.instance.currentUser?.uid ?? '',
+                              userId.devices ?? []);
                       closeAllStreams();
                       Navigator.pushReplacement(
                         context,
