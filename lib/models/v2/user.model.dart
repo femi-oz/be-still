@@ -9,6 +9,7 @@ class UserDataModel {
   DateTime? dateOfBirth;
   List<DeviceModel>? devices;
   List<String>? prayers;
+  List<String>? groups;
   String? churchName;
   String? churchEmail;
   String? churchPhone;
@@ -38,6 +39,7 @@ class UserDataModel {
       this.dateOfBirth,
       this.devices,
       this.prayers,
+      this.groups,
       this.churchName,
       this.churchEmail,
       this.churchPhone,
@@ -77,6 +79,12 @@ class UserDataModel {
         prayers!.add(v);
       });
     }
+    if (json['groups'] != null) {
+      groups = <String>[];
+      json['groups'].forEach((v) {
+        groups!.add(v);
+      });
+    }
     churchName = json['churchName'];
     churchEmail = json['churchEmail'];
     churchPhone = json['churchPhone'];
@@ -111,6 +119,9 @@ class UserDataModel {
     }
     if (this.prayers != null) {
       data['prayers'] = this.prayers!.map((v) => v).toList();
+    }
+    if (this.groups != null) {
+      data['groups'] = this.groups!.map((v) => v).toList();
     }
     data['churchName'] = this.churchName;
     data['churchEmail'] = this.churchEmail;

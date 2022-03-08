@@ -3,13 +3,11 @@ import 'dart:io';
 import 'package:be_still/enums/request_status.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/user_role.dart';
-import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/v2/follower.model.dart';
 import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/models/v2/group_user.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/request.model.dart';
-import 'package:be_still/services/v2/prayer_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
@@ -21,12 +19,16 @@ class GroupServiceV2 {
 
   final CollectionReference<Map<String, dynamic>>
       _groupDataCollectionReference =
-      FirebaseFirestore.instance.collection("groups_v2");
+      FirebaseFirestore.instance.collection("groups");
+
   final CollectionReference<Map<String, dynamic>>
       _prayerDataCollectionReference =
-      FirebaseFirestore.instance.collection("prayers_v2");
+      FirebaseFirestore.instance.collection("prayers");
 
-  Future<void> createGroup(
+  final CollectionReference<Map<String, dynamic>> _userDataCollectionReference =
+      FirebaseFirestore.instance.collection("users");
+
+  Future<bool> createGroup(
       {required String name,
       required String purpose,
       required bool requireAdminApproval,
@@ -36,6 +38,7 @@ class GroupServiceV2 {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
+
       final doc = GroupDataModel(
         name: name,
         purpose: purpose,
@@ -43,39 +46,71 @@ class GroupServiceV2 {
         location: location,
         organization: organization,
         requests: [],
-        type: type,
         users: [
           GroupUserDataModel(
-            enableNotificationForUpdates: true,
-            notifyMeOfFlaggedPrayers: true,
-            notifyWhenNewMemberJoins: true,
-            role: GroupUserRole.admin,
-            userId: _firebaseAuth.currentUser?.uid,
-            status: Status.active,
-            createdBy: _firebaseAuth.currentUser?.uid,
-            modifiedBy: _firebaseAuth.currentUser?.uid,
-            createdDate: DateTime.now(),
-            modifiedDate: DateTime.now(),
-          )
+              enableNotificationForUpdates: true,
+              notifyMeOfFlaggedPrayers: true,
+              notifyWhenNewMemberJoins: true,
+              role: GroupUserRole.admin,
+              enableNotificationForNewPrayers: true,
+              userId: _firebaseAuth.currentUser?.uid,
+              status: Status.active,
+              createdBy: _firebaseAuth.currentUser?.uid,
+              modifiedBy: _firebaseAuth.currentUser?.uid,
+              createdDate: DateTime.now(),
+              modifiedDate: DateTime.now())
         ],
+        type: type,
         status: Status.active,
         createdBy: _firebaseAuth.currentUser?.uid,
         modifiedBy: _firebaseAuth.currentUser?.uid,
         createdDate: DateTime.now(),
         modifiedDate: DateTime.now(),
       ).toJson();
-      await _groupDataCollectionReference.add(doc);
+
+      final group = await _groupDataCollectionReference.add(doc);
+      await _userDataCollectionReference
+          .doc(_firebaseAuth.currentUser?.uid)
+          .set({'groups': group.id});
+      return true;
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
-  Stream<List<GroupDataModel>> getUserGroups() {
+  Future<bool> editGroup(
+      {required String groupId,
+      required String name,
+      required String purpose,
+      required bool requireAdminApproval,
+      required String organization,
+      required String location,
+      required String type}) async {
+    try {
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
+      await _groupDataCollectionReference.doc(groupId).update({
+        'purpose': purpose,
+        'name': name,
+        'organization': organization,
+        'location': location,
+        'type': type,
+        'requireAdminApproval': requireAdminApproval,
+        'modifiedBy': _firebaseAuth.currentUser?.uid,
+        'modifiedDate': DateTime.now()
+      });
+      return true;
+    } catch (e) {
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
+  Stream<List<GroupDataModel>> getUserGroups(List<String> userGroupsId) {
     try {
       if (_firebaseAuth.currentUser == null)
         return Stream.error(StringUtils.unathorized);
       return _groupDataCollectionReference
-          .where('users.userId', isEqualTo: _firebaseAuth.currentUser?.uid)
+          .where(FieldPath.documentId, whereIn: userGroupsId)
           .where('status', isNotEqualTo: Status.deleted)
           .snapshots()
           .map((event) => event.docs
@@ -233,30 +268,6 @@ class GroupServiceV2 {
     }
   }
 
-  Future<void> editGroup(
-      {required String groupId,
-      required String name,
-      required String purpose,
-      required bool requireAdminApproval,
-      required String organization,
-      required String location,
-      required String type}) async {
-    try {
-      await _groupDataCollectionReference.doc(groupId).update({
-        'purpose': purpose,
-        'name': name,
-        'organization': organization,
-        'location': location,
-        'type': type,
-        'requireAdminApproval': requireAdminApproval,
-        'modifiedBy': _firebaseAuth.currentUser?.uid,
-        'modifiedDate': DateTime.now()
-      });
-    } catch (e) {
-      StringUtils.getErrorMessage(e);
-    }
-  }
-
   Future<void> denyJoinRequest(
       {required String groupId,
       required String requestId,
@@ -274,7 +285,7 @@ class GroupServiceV2 {
           .doc(groupId)
           .update({'requests': requestToUpdate});
     } catch (e) {
-      StringUtils.getErrorMessage(e);
+      throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
@@ -301,7 +312,7 @@ class GroupServiceV2 {
           .update({'users': groupUsers});
       removePrayerFromUserList(userId);
     } catch (e) {
-      StringUtils.getErrorMessage(e);
+      throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
@@ -334,7 +345,7 @@ class GroupServiceV2 {
         'modifiedDate': DateTime.now()
       });
     } catch (e) {
-      StringUtils.getErrorMessage(e);
+      throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 

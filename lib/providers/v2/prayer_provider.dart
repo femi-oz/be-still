@@ -138,7 +138,7 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> setPrayerTimePrayers(String userId) async {
+  Future<void> setPrayerTimePrayers() async {
     try {
       await setPrayers();
 

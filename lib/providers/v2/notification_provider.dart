@@ -372,7 +372,7 @@ class NotificationProviderV2 with ChangeNotifier {
         final member = members.firstWhere((element) => element.userId == id);
         if (type == NotificationType.prayer ||
             type == NotificationType.prayer_updates) {
-          if (member.enableNotificationFormNewPrayers ?? false) {
+          if (member.enableNotificationForNewPrayers ?? false) {
             final userTokens =
                 await Provider.of<UserProviderV2>(context, listen: false)
                     .returnUserToken(id);

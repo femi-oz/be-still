@@ -238,7 +238,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if ((message.entityId ?? '').isNotEmpty) {
         if (message.type == NotificationType.prayer_time) {
           await Provider.of<PrayerProviderV2>(context, listen: false)
-              .setPrayerTimePrayers(message.entityId ?? '');
+              .setPrayerTimePrayers();
           AppController appController = Get.find();
           appController.setCurrentPage(2, false, 0);
           Provider.of<MiscProviderV2>(context, listen: false)

@@ -5,7 +5,7 @@ class GroupUserDataModel {
   bool? enableNotificationForUpdates;
   bool? notifyMeOfFlaggedPrayers;
   bool? notifyWhenNewMemberJoins;
-  bool? enableNotificationFormNewPrayers;
+  bool? enableNotificationForNewPrayers;
   String? createdBy;
   String? modifiedBy;
   DateTime? createdDate;
@@ -19,7 +19,7 @@ class GroupUserDataModel {
       this.enableNotificationForUpdates,
       this.notifyMeOfFlaggedPrayers,
       this.notifyWhenNewMemberJoins,
-      this.enableNotificationFormNewPrayers,
+      this.enableNotificationForNewPrayers,
       this.createdBy,
       this.modifiedBy,
       this.createdDate,
@@ -33,7 +33,7 @@ class GroupUserDataModel {
     enableNotificationForUpdates = json['enableNotificationForUpdates'];
     notifyMeOfFlaggedPrayers = json['notifyMeOfFlaggedPrayers'];
     notifyWhenNewMemberJoins = json['notifyWhenNewMemberJoins'];
-    enableNotificationFormNewPrayers = json['enableNotificationFormNewPrayers'];
+    enableNotificationForNewPrayers = json['enableNotificationForNewPrayers'];
     createdBy = json['createdBy'];
     modifiedBy = json['modifiedBy'];
     createdDate = json['createdDate'];
@@ -49,8 +49,8 @@ class GroupUserDataModel {
     data['enableNotificationForUpdates'] = this.enableNotificationForUpdates;
     data['notifyMeOfFlaggedPrayers'] = this.notifyMeOfFlaggedPrayers;
     data['notifyWhenNewMemberJoins'] = this.notifyWhenNewMemberJoins;
-    data['enableNotificationFormNewPrayers'] =
-        this.enableNotificationFormNewPrayers;
+    data['enableNotificationForNewPrayers'] =
+        this.enableNotificationForNewPrayers;
     data['createdBy'] = this.createdBy;
     data['modifiedBy'] = this.modifiedBy;
     data['createdDate'] = this.createdDate;

@@ -47,12 +47,12 @@ class GroupProviderV2 with ChangeNotifier {
   String _groupJoinId = '';
   String get groupJoinId => _groupJoinId;
 
-  Future<void> setUserGroups(String userId) async {
+  Future<void> setUserGroups(List<String> userGroupsId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       groupUserStream = _groupService
-          .getUserGroups()
+          .getUserGroups(userGroupsId)
           .asBroadcastStream()
           .listen((userGroups) {
         _userGroups = userGroups;
@@ -178,7 +178,7 @@ class GroupProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> createGroup(
+  Future<bool> createGroup(
       String name,
       String purpose,
       String fullName,
@@ -190,7 +190,7 @@ class GroupProviderV2 with ChangeNotifier {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
 
-      _groupService.createGroup(
+      return await _groupService.createGroup(
           name: name,
           purpose: purpose,
           requireAdminApproval: requireAdminApproval,
@@ -202,7 +202,7 @@ class GroupProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> editGroup(
+  Future<bool> editGroup(
       String groupId,
       String name,
       String purpose,
@@ -213,7 +213,7 @@ class GroupProviderV2 with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      await _groupService.editGroup(
+      return await _groupService.editGroup(
           groupId: groupId,
           name: name,
           purpose: purpose,
