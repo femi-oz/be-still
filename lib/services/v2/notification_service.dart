@@ -30,7 +30,7 @@ class NotificationServiceV2 {
       FirebaseFirestore.instance.collection("local_notifications");
 
   final CollectionReference<Map<String, dynamic>> _userDataCollectionReference =
-      FirebaseFirestore.instance.collection("users_v2");
+      FirebaseFirestore.instance.collection("users");
 
   UserServiceV2 _userService = locator<UserServiceV2>();
 

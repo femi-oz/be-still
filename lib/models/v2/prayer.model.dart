@@ -56,7 +56,7 @@ class PrayerDataModel {
     isFavorite = json['isFavorite'];
     userId = json['userId'];
     groupId = json['groupId'];
-    snoozeEndDate = json['snoozeEndDate'].toDate();
+    snoozeEndDate = json['snoozeEndDate']?.toDate();
     snoozeFrequency = json['snoozeFrequency'];
     snoozeDuration = json['snoozeDuration'];
     if (json['updates'] != null) {
@@ -79,8 +79,8 @@ class PrayerDataModel {
     }
     createdBy = json['createdBy'];
     modifiedBy = json['modifiedBy'];
-    createdDate = json['createdDate'].toDate();
-    modifiedDate = json['modifiedDate'].toDate();
+    createdDate = json['createdDate']?.toDate();
+    modifiedDate = json['modifiedDate']?.toDate();
     status = json['status'];
   }
 

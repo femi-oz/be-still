@@ -66,7 +66,7 @@ class UserDataModel {
     firstName = json['firstName'];
     lastName = json['lastName'];
     email = json['email'];
-    dateOfBirth = json['dateOfBirth'].toDate();
+    dateOfBirth = json['dateOfBirth']?.toDate();
     if (json['devices'] != null) {
       devices = <DeviceModel>[];
       json['devices'].forEach((v) {
@@ -102,8 +102,8 @@ class UserDataModel {
     includeAnsweredPrayerAutoDelete = json['includeAnsweredPrayerAutoDelete'];
     createdBy = json['createdBy'];
     modifiedBy = json['modifiedBy'];
-    createdDate = json['createdDate'].toDate();
-    modifiedDate = json['modifiedDate'].toDate();
+    createdDate = json['createdDate']?.toDate();
+    modifiedDate = json['modifiedDate']?.toDate();
     status = json['status'];
   }
 
@@ -149,12 +149,12 @@ class UserDataModel {
   }
 
   Map<String, dynamic> toJson2() {
-    return {
-      'id': id,
-      'firstName': firstName,
-      'lastName': lastName,
-      'email': email,
-    };
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['firstName'] = this.firstName;
+    data['lastName'] = this.lastName;
+    data['email'] = this.email;
+    return data;
   }
 }
 

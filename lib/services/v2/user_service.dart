@@ -50,7 +50,7 @@ class UserServiceV2 {
         includeAnsweredPrayerAutoDelete: false,
         archiveSortBy: SortType.date,
         autoPlayMusic: true,
-        churchEmail: '',
+        churchEmail: '', groups: [],
         churchName: '',
         churchPhone: '',
         churchWebFormUrl: '',

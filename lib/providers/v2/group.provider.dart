@@ -289,7 +289,7 @@ class GroupProviderV2 with ChangeNotifier {
   }
 
   Future acceptRequest(
-    String groupId,
+    GroupDataModel group,
     List<RequestModel> currentRequests,
     RequestModel request,
   ) async {
@@ -297,49 +297,39 @@ class GroupProviderV2 with ChangeNotifier {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       return await _groupService.acceptJoinRequest(
-          groupId: groupId, currentRequests: currentRequests, request: request);
+          group: group, request: request);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future requestToJoinGroup(
-    String groupId,
-    String message,
-    List<RequestModel> currentRequests,
-  ) async {
+  Future requestToJoinGroup(String groupId, String message) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       return await _groupService.requestToJoinGroup(
-          groupId: groupId, currentRequests: currentRequests, message: message);
+          groupId: groupId, message: message);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future autoJoinGroup(
-    String groupId,
-    String message,
-    List<GroupUserDataModel> currentUsers,
-  ) async {
+  Future autoJoinGroup(GroupDataModel group, String message) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      return await _groupService.autoJoinGroup(
-          groupId: groupId, currentUsers: currentUsers, message: message);
+      return await _groupService.autoJoinGroup(group: group, message: message);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future denyRequest(
-      String groupId, List<RequestModel> requests, String requestId) async {
+  Future denyRequest(GroupDataModel group, String requestId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       return await _groupService.denyJoinRequest(
-          groupId: groupId, requestId: requestId, requests: requests);
+          group: group, requestId: requestId);
     } catch (e) {
       rethrow;
     }

@@ -48,6 +48,7 @@ class GroupServiceV2 {
         requests: [],
         users: [
           GroupUserDataModel(
+              id: Uuid().v1(),
               enableNotificationForUpdates: true,
               notifyMeOfFlaggedPrayers: true,
               notifyWhenNewMemberJoins: true,
@@ -71,7 +72,9 @@ class GroupServiceV2 {
       final group = await _groupDataCollectionReference.add(doc);
       await _userDataCollectionReference
           .doc(_firebaseAuth.currentUser?.uid)
-          .set({'groups': group.id});
+          .update({
+        'groups': FieldValue.arrayUnion([group.id])
+      });
       return true;
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -109,9 +112,10 @@ class GroupServiceV2 {
     try {
       if (_firebaseAuth.currentUser == null)
         return Stream.error(StringUtils.unathorized);
+      if (userGroupsId.isEmpty) return Stream.value([]);
       return _groupDataCollectionReference
+          .where('status', isEqualTo: Status.active)
           .where(FieldPath.documentId, whereIn: userGroupsId)
-          .where('status', isNotEqualTo: Status.deleted)
           .snapshots()
           .map((event) => event.docs
               .map((e) => GroupDataModel.fromJson(e.data()))
@@ -135,27 +139,24 @@ class GroupServiceV2 {
 
   Future<void> requestToJoinGroup({
     required String groupId,
-    required List<RequestModel> currentRequests,
     required String message,
   }) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      final docId = Uuid().v1();
-      currentRequests = currentRequests
-        ..add(RequestModel(
-          id: docId,
-          userId: _firebaseAuth.currentUser?.uid,
-          status: Status.active,
-          createdBy: _firebaseAuth.currentUser?.uid,
-          createdDate: DateTime.now(),
-          modifiedBy: _firebaseAuth.currentUser?.uid,
-          modifiedDate: DateTime.now(),
-        ));
+      final request = RequestModel(
+        id: Uuid().v1(),
+        userId: _firebaseAuth.currentUser?.uid,
+        status: Status.active,
+        createdBy: _firebaseAuth.currentUser?.uid,
+        createdDate: DateTime.now(),
+        modifiedBy: _firebaseAuth.currentUser?.uid,
+        modifiedDate: DateTime.now(),
+      ).toJson();
 
-      await _groupDataCollectionReference
-          .doc(groupId)
-          .update({"requests": currentRequests.map((e) => e.toJson())});
+      await _groupDataCollectionReference.doc(groupId).update({
+        "requests": FieldValue.arrayUnion([request])
+      });
       //todo send push notification
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -163,24 +164,29 @@ class GroupServiceV2 {
   }
 
   Future<void> acceptJoinRequest(
-      {required String groupId,
-      required List<RequestModel> currentRequests,
-      required RequestModel request}) async {
+      {required GroupDataModel group, required RequestModel request}) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      currentRequests[currentRequests.indexOf(request)] = RequestModel(
-          id: request.id,
+      final user = GroupUserDataModel(
+          id: request.userId,
+          role: GroupUserRole.member,
           userId: request.userId,
-          status: request.status,
-          createdBy: request.createdBy,
-          createdDate: request.createdDate,
+          status: Status.active,
+          enableNotificationForUpdates: true,
+          notifyMeOfFlaggedPrayers: true,
+          notifyWhenNewMemberJoins: true,
+          enableNotificationForNewPrayers: true,
+          createdBy: _firebaseAuth.currentUser?.uid,
+          createdDate: DateTime.now(),
           modifiedBy: _firebaseAuth.currentUser?.uid,
           modifiedDate: DateTime.now());
-
-      await _groupDataCollectionReference
-          .doc(groupId)
-          .update({"requests": currentRequests.map((e) => e.toJson())});
+      group = group..users?.add(user);
+      group = group..requests?.where((e) => e.id == request.id);
+      await _groupDataCollectionReference.doc(group.id).update(group.toJson());
+      await _userDataCollectionReference.doc(request.userId).set({
+        'groups': FieldValue.arrayUnion([group.id])
+      });
       //todo send push notification
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -188,32 +194,33 @@ class GroupServiceV2 {
   }
 
   Future<void> autoJoinGroup({
-    required String groupId,
-    required List<GroupUserDataModel> currentUsers,
+    required GroupDataModel group,
     required String message,
   }) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      final docId = Uuid().v1();
-      currentUsers = currentUsers
-        ..add(GroupUserDataModel(
-          id: docId,
-          userId: _firebaseAuth.currentUser?.uid,
-          role: GroupUserRole.member,
-          enableNotificationForUpdates: true,
-          notifyMeOfFlaggedPrayers: true,
-          notifyWhenNewMemberJoins: true,
-          status: Status.active,
-          createdBy: _firebaseAuth.currentUser?.uid,
-          createdDate: DateTime.now(),
-          modifiedBy: _firebaseAuth.currentUser?.uid,
-          modifiedDate: DateTime.now(),
-        ));
+      final user = GroupUserDataModel(
+        id: Uuid().v1(),
+        userId: _firebaseAuth.currentUser?.uid,
+        role: GroupUserRole.member,
+        enableNotificationForUpdates: true,
+        notifyMeOfFlaggedPrayers: true,
+        notifyWhenNewMemberJoins: true,
+        status: Status.active,
+        createdBy: _firebaseAuth.currentUser?.uid,
+        createdDate: DateTime.now(),
+        modifiedBy: _firebaseAuth.currentUser?.uid,
+        modifiedDate: DateTime.now(),
+      );
 
-      await _groupDataCollectionReference
-          .doc(groupId)
-          .update({"users": currentUsers.map((e) => e.toJson())});
+      group = group..users?.add(user);
+      await _groupDataCollectionReference.doc(group.id).update(group.toJson());
+      await _userDataCollectionReference
+          .doc(_firebaseAuth.currentUser?.uid)
+          .set({
+        'groups': FieldValue.arrayUnion([group.id])
+      });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -226,6 +233,8 @@ class GroupServiceV2 {
       _groupDataCollectionReference
           .doc(groupId)
           .update({'status': Status.deleted});
+      //remove all followed prayers from user lists
+
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -269,21 +278,10 @@ class GroupServiceV2 {
   }
 
   Future<void> denyJoinRequest(
-      {required String groupId,
-      required String requestId,
-      required List<RequestModel> requests}) async {
+      {required GroupDataModel group, required String requestId}) async {
     try {
-      List<RequestModel> requestToUpdate =
-          requests.where((element) => element.id == requestId).toList();
-      requestToUpdate.map((e) {
-        e.status = RequestStatus.denied;
-        e.modifiedBy = _firebaseAuth.currentUser?.uid;
-        e.modifiedDate = DateTime.now();
-      });
-
-      await _groupDataCollectionReference
-          .doc(groupId)
-          .update({'requests': requestToUpdate});
+      group = group..requests?.where((e) => e.id == requestId);
+      await _groupDataCollectionReference.doc(group.id).update(group.toJson());
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

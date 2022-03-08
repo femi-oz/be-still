@@ -181,7 +181,7 @@ class UserService {
   //new data structure
 
   final CollectionReference<Map<String, dynamic>> _userDataCollectionReference =
-      FirebaseFirestore.instance.collection("users_v2");
+      FirebaseFirestore.instance.collection("users");
 
   Future<void> createUser({
     required String uid,

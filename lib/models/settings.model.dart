@@ -113,8 +113,8 @@ class SettingsModel {
     final int emailUpdateFrequencyMins = data['EmailUpdateFrequencySecs'] ?? 0;
     final int archiveAutoDeleteMins = data['ArchiveAutoDeleteMins'] ?? 30;
     final int defaultSnoozeDuration = data['DefaultSnoozeDurationValue'] ?? 15;
-    final DateTime createdOn = data['CreatedOn'].toDate() ?? DateTime.now();
-    final DateTime modifiedOn = data['ModifiedOn'].toDate() ?? DateTime.now();
+    final DateTime createdOn = data['CreatedOn']?.toDate() ?? DateTime.now();
+    final DateTime modifiedOn = data['ModifiedOn']?.toDate() ?? DateTime.now();
     return SettingsModel(
         id: id,
         userId: userId,

@@ -48,9 +48,9 @@ class PushNotificationModel {
         groupId = snapshot['GroupId'] ?? '',
         sender = snapshot['Sender'] ?? '',
         createdBy = snapshot['CreatedBy'] ?? '',
-        createdOn = snapshot['CreatedOn'].toDate() ?? DateTime.now(),
+        createdOn = snapshot['CreatedOn']?.toDate() ?? DateTime.now(),
         modifiedBy = snapshot['ModifiedBy'] ?? '',
-        modifiedOn = snapshot['ModifiedOn'].toDate() ?? DateTime.now();
+        modifiedOn = snapshot['ModifiedOn']?.toDate() ?? DateTime.now();
 
   Map<String, dynamic> toJson() {
     return {
@@ -138,7 +138,7 @@ class LocalNotificationModel {
         userId = snapshot['UserId'] ?? '',
         entityId = snapshot['EntityId'] ?? '',
         description = snapshot['Description'] ?? '',
-        scheduledDate = snapshot['ScheduledDate'].toDate() ?? DateTime.now(),
+        scheduledDate = snapshot['ScheduledDate']?.toDate() ?? DateTime.now(),
         title = snapshot['Title'] ?? '',
         type = snapshot['Type'] ?? '',
         frequency = snapshot['Frequency'] ?? '',
@@ -243,9 +243,9 @@ class MessageModel {
         email = snapshot['Email'] ?? '',
         senderId = snapshot['SenderId'] ?? '',
         createdBy = snapshot['CreatedBy'] ?? '',
-        createdOn = snapshot['CreatedOn'].toDate() ?? DateTime.now(),
+        createdOn = snapshot['CreatedOn']?.toDate() ?? DateTime.now(),
         modifiedBy = snapshot['ModifiedBy'] ?? '',
-        modifiedOn = snapshot['ModifiedOn'].toDate() ?? DateTime.now();
+        modifiedOn = snapshot['ModifiedOn']?.toDate() ?? DateTime.now();
 
   Map<String, dynamic> toJson() {
     return {

@@ -55,9 +55,9 @@ class SharingSettingsModel {
     final String churchEmail = data["ChurchEmail"] ?? '';
     final String webFormlink = data["WebFormLink"] ?? '';
     final String createdBy = data["CreatedBy"];
-    final DateTime createdOn = data["CreatedOn"].toDate() ?? DateTime.now();
+    final DateTime createdOn = data["CreatedOn"]?.toDate() ?? DateTime.now();
     final String modifiedBy = data["ModifiedBy"];
-    final DateTime modifiedOn = data["ModifiedOn"].toDate() ?? DateTime.now();
+    final DateTime modifiedOn = data["ModifiedOn"]?.toDate() ?? DateTime.now();
     return SharingSettingsModel(
         id: id,
         userId: userId,
