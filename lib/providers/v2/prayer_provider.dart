@@ -65,27 +65,12 @@ class PrayerProviderV2 with ChangeNotifier {
   Future<void> setPrayers() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-// todo: merge user prayers and prayers current user is following
-      // followedPrayerStream = _prayerService
-      //     .getUserFollowedPrayers()
-      //     .asBroadcastStream()
-      //     .listen((data) {
-      //   _followedPrayers = data
-      //       .where((element) => (element.followers ?? <FollowerModel>[]).any(
-      //           (element) => element.userId == _firebaseAuth.currentUser?.uid))
-      //       .toList();
-
-      //   notifyListeners();
-      // });
-
-      prayerStream = _prayerService.getUserPrayers().asBroadcastStream().listen(
-        (data) {
-          _prayers = data;
-          // _prayers = [..._userPrayers, ..._followedPrayers];
-          filterPrayers();
-          notifyListeners();
-        },
-      );
+      prayerStream =
+          _prayerService.getUserPrayers().asBroadcastStream().listen((event) {
+        _prayers = event;
+        filterPrayers();
+        notifyListeners();
+      });
     } catch (e) {
       rethrow;
     }
@@ -352,9 +337,7 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> markPrayerAsAnswered(
-    String prayerId,
-  ) async {
+  Future<void> markPrayerAsAnswered(String prayerId) async {
     try {
       await _prayerService.markPrayerAsAnswered(prayerId: prayerId);
     } catch (e) {
@@ -362,9 +345,7 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> unMarkPrayerAsAnswered(
-    String prayerId,
-  ) async {
+  Future<void> unMarkPrayerAsAnswered(String prayerId) async {
     try {
       await _prayerService.unMarkPrayerAsAnswered(prayerId: prayerId);
     } catch (e) {
@@ -427,7 +408,7 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> filterPrayers() async {
+  void filterPrayers() {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       List<PrayerDataModel> prayers = _prayers.toList();
