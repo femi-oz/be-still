@@ -157,11 +157,12 @@ class PrayerServiceV2 {
     }
   }
 
-  Future<void> snoozePrayer({required String prayerId}) async {
+  Future<void> snoozePrayer(
+      {required String prayerId, required snoozeEndDate}) async {
     try {
-      _prayerDataCollectionReference
-          .doc(prayerId)
-          .update({'status': Status.snoozed});
+      _prayerDataCollectionReference.doc(prayerId).update(
+        {'status': Status.snoozed, 'snoozeEndDate': snoozeEndDate},
+      );
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -449,7 +450,7 @@ class PrayerServiceV2 {
 
       snoozedPrayers.docs.forEach((element) {
         element.reference
-            .update({'status': Status.active, 'snoozeEndDate': null});
+            .update({'status': Status.active, 'snoozeEndDate': DateTime.now()});
       });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));

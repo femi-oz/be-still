@@ -313,7 +313,7 @@ class NotificationProviderV2 with ChangeNotifier {
     DateTime scheduledDate,
     String notificationId,
     String message,
-    String localNotificationId,
+    int localNotificationId,
     String type,
     String status,
   ) async {

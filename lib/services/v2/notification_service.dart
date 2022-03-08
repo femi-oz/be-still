@@ -205,7 +205,7 @@ class NotificationServiceV2 {
   Future<void> updateLocalNotification({
     required String notificationId,
     required String message,
-    required String localNotificationId,
+    required int localNotificationId,
     required String type,
     required DateTime scheduleDate,
     required String status,

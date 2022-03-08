@@ -4,21 +4,19 @@ import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/notification.model.dart';
-import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
+import 'package:be_still/models/v2/notification_message.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
-import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -98,50 +96,25 @@ class _ReminderPickerState extends State<ReminderPicker> {
   }
 
   void clearSearch() async {
-    final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    await Provider.of<MiscProvider>(context, listen: false)
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    await Provider.of<MiscProviderV2>(context, listen: false)
         .setSearchMode(false);
-    await Provider.of<MiscProvider>(context, listen: false).setSearchQuery('');
-    await Provider.of<PrayerProvider>(context, listen: false)
-        .searchPrayers('', userId ?? '');
-    await Provider.of<GroupPrayerProvider>(context, listen: false)
+    await Provider.of<MiscProviderV2>(context, listen: false)
+        .setSearchQuery('');
+    await Provider.of<PrayerProviderV2>(context, listen: false)
         .searchPrayers('', userId ?? '');
   }
 
   storeNotification({
     required String notificationText,
-    required String userId,
-    required String title,
-    required String description,
-    required String frequency,
     required tz.TZDateTime scheduledDate,
-    required String prayerid,
-    required String selectedDay,
-    required String period,
-    required String selectedHour,
-    required String selectedMinute,
-    required String selectedYear,
   }) async {
-    await Provider.of<NotificationProvider>(context, listen: false)
+    await Provider.of<NotificationProviderV2>(context, listen: false)
         .addLocalNotification(
       LocalNotification.localNotificationID,
-      prayerid,
       notificationText,
-      userId,
-      prayerid,
-      title,
-      description,
-      frequency,
       widget.type,
       scheduledDate,
-      selectedDay,
-      period,
-      selectedHour,
-      selectedMinute,
-      selectedYear,
-      selectedMonth,
-      selectedDayOfMonth.toString(),
     );
     BeStilDialog.hideLoading(context);
     setState(() {});
@@ -168,20 +141,14 @@ class _ReminderPickerState extends State<ReminderPicker> {
     String selectedYear,
   ) async {
     try {
-      await Provider.of<NotificationProvider>(context, listen: false)
+      await Provider.of<NotificationProviderV2>(context, listen: false)
           .updateLocalNotification(
-        selectedFrequency,
         scheduledDate,
-        selectedDay,
-        selectedPeriod,
-        selectedHour,
-        selectedMinute,
         widget.reminder?.id ?? '',
-        userId,
         notificationText,
-        selectedYear,
-        selectedMonth,
-        selectedDayOfMonth.toString(),
+        widget.reminder?.localNotificationId ?? 0,
+        widget.reminder?.type ?? '',
+        widget.reminder?.status ?? '',
       );
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -254,8 +221,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
               ? (hour - 12).toString()
               : '$hour ';
       BeStilDialog.showLoading(context);
-      final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+      final userId = FirebaseAuth.instance.currentUser?.uid;
       var suffix = "th";
       var digit = selectedDayOfMonth % 10;
       if ((digit > 0 && digit < 4) &&
@@ -283,7 +249,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
         selectedDayOfMonth,
         selectedFrequency == Frequency.one_time,
       );
-      final payload = NotificationMessage(
+      final payload = NotificationMessageModel(
           entityId: widget.entityId,
           type: widget.type,
           isGroup: widget.isGroup);
@@ -314,19 +280,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
       else
         await storeNotification(
           notificationText: notificationText,
-          userId: userId ?? '',
-          title: title,
-          description: description,
-          frequency: selectedFrequency,
           scheduledDate: scheduleDate,
-          prayerid: widget.type == NotificationType.prayer_time
-              ? ''
-              : widget.entityId,
-          selectedDay: LocalNotification.daysOfWeek[selectedDayOfWeek],
-          period: selectedPeriod,
-          selectedHour: _selectedHourString,
-          selectedMinute: _selectedMinuteString,
-          selectedYear: selectedYear.toString(),
         );
       clearSearch();
     } on HttpException catch (e, s) {
@@ -346,7 +300,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
 
   _deleteReminder() async {
     try {
-      await Provider.of<NotificationProvider>(context, listen: false)
+      await Provider.of<NotificationProviderV2>(context, listen: false)
           .deleteLocalNotification(widget.reminder?.id ?? '',
               widget.reminder?.localNotificationId ?? 0);
       setState(() {});

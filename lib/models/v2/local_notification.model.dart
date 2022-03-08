@@ -36,11 +36,11 @@ class LocalNotificationDataModel {
     localNotificationId = json['localNotificationId'];
     type = json['type'];
     frequency = json['frequency'];
-    scheduleDate = json['scheduleDate'];
+    scheduleDate = json['scheduleDate'].toDate();
     createdBy = json['createdBy'];
     modifiedBy = json['modifiedBy'];
-    createdDate = json['createdDate'];
-    modifiedDate = json['modifiedDate'];
+    createdDate = json['createdDate'].toDate();
+    modifiedDate = json['modifiedDate'].toDate();
     status = json['status'];
   }
 

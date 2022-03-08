@@ -86,7 +86,7 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
       default:
     }
     var e = selectedDuration * (minutes);
-    var _snoozeEndDate = DateTime.now().add(new Duration(minutes: e));
+    final _snoozeEndDate = DateTime.now().add(new Duration(minutes: e));
     try {
       var notifications =
           Provider.of<NotificationProvider>(context, listen: false)
@@ -99,10 +99,10 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
           await Provider.of<NotificationProvider>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       await Provider.of<PrayerProviderV2>(context, listen: false).snoozePrayer(
-        userId ?? '',
-        widget.prayerData?.id ?? '',
-        selectedDuration,
-      );
+          userId ?? '',
+          widget.prayerData?.id ?? '',
+          selectedDuration,
+          _snoozeEndDate);
       clearSearch();
 
       BeStilDialog.hideLoading(context);
