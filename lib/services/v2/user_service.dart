@@ -20,8 +20,9 @@ class UserServiceV2 {
 
   Stream<List<UserDataModel>> getAllUsers() {
     try {
-      return _userDataCollectionReference.snapshots().map((event) =>
-          event.docs.map((e) => UserDataModel.fromJson(e.data())).toList());
+      return _userDataCollectionReference.snapshots().map((event) => event.docs
+          .map((e) => UserDataModel.fromJson(e.data(), e.id))
+          .toList());
     } catch (e) {
       throw StringUtils.getErrorMessage(e);
     }
@@ -78,7 +79,7 @@ class UserServiceV2 {
     try {
       final doc = await _userDataCollectionReference.doc(userId).get();
       if (doc.exists)
-        return UserDataModel.fromJson(doc.data()!);
+        return UserDataModel.fromJson(doc.data()!, doc.id);
       else
         throw HttpException(StringUtils.documentDoesNotExist);
     } catch (e) {
@@ -91,7 +92,7 @@ class UserServiceV2 {
       return _userDataCollectionReference
           .doc(userId)
           .snapshots()
-          .map((event) => UserDataModel.fromJson(event.data()!));
+          .map((event) => UserDataModel.fromJson(event.data()!, event.id));
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

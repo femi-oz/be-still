@@ -228,7 +228,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                         onPressMore: () => showModalBottomSheet(
                                           context: context,
                                           barrierColor:
-                                              Provider.of<ThemeProvider>(
+                                              Provider.of<ThemeProviderV2>(
                                                           context,
                                                           listen: false)
                                                       .isDarkModeEnabled
@@ -237,7 +237,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                                   : Color(0xFF021D3C)
                                                       .withOpacity(0.7),
                                           backgroundColor:
-                                              Provider.of<ThemeProvider>(
+                                              Provider.of<ThemeProviderV2>(
                                                           context,
                                                           listen: false)
                                                       .isDarkModeEnabled

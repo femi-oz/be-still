@@ -33,8 +33,8 @@ class GroupDataModel {
       this.modifiedDate,
       this.status});
 
-  GroupDataModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+  GroupDataModel.fromJson(Map<String, dynamic> json, String did) {
+    id = did;
     purpose = json['purpose'];
     name = json['name'];
     organization = json['organization'];

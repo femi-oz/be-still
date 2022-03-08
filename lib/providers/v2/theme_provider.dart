@@ -3,7 +3,7 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:flutter/material.dart';
 
-class ThemeProvider with ChangeNotifier {
+class ThemeProviderV2 with ChangeNotifier {
   Settings darkThemePref = Settings();
 
   bool _isDarkMode = false;

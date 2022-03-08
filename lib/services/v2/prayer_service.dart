@@ -40,7 +40,7 @@ class PrayerServiceV2 {
       final userDoc = await _userDataCollectionReference
           .doc(_firebaseAuth.currentUser?.uid)
           .get();
-      final user = UserDataModel.fromJson(userDoc.data()!);
+      final user = UserDataModel.fromJson(userDoc.data()!, userDoc.id);
 
       final doc = PrayerDataModel(
         id: '',
@@ -81,7 +81,7 @@ class PrayerServiceV2 {
           .where('status', isNotEqualTo: Status.deleted)
           .snapshots()
           .map((event) => event.docs
-              .map((e) => PrayerDataModel.fromJson(e.data()))
+              .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
               .toList());
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -97,7 +97,7 @@ class PrayerServiceV2 {
           .where('status', isNotEqualTo: Status.deleted)
           .snapshots()
           .map((event) => event.docs
-              .map((e) => PrayerDataModel.fromJson(e.data()))
+              .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
               .toList());
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -113,7 +113,7 @@ class PrayerServiceV2 {
           .where('status', isNotEqualTo: Status.deleted)
           .snapshots()
           .map((event) => event.docs
-              .map((e) => PrayerDataModel.fromJson(e.data()))
+              .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
               .toList());
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -125,7 +125,8 @@ class PrayerServiceV2 {
       return _prayerDataCollectionReference
           .doc(prayerId)
           .snapshots()
-          .map<PrayerDataModel>((doc) => PrayerDataModel.fromJson(doc.data()!));
+          .map<PrayerDataModel>(
+              (doc) => PrayerDataModel.fromJson(doc.data()!, doc.id));
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -465,7 +466,7 @@ class PrayerServiceV2 {
           .get();
 
       archivedPrayers.docs.forEach((prayer) {
-        final mappedPrayer = PrayerDataModel.fromJson(prayer.data());
+        final mappedPrayer = PrayerDataModel.fromJson(prayer.data(), prayer.id);
         if ((mappedPrayer.followers ?? []).isNotEmpty &&
             (mappedPrayer.followers ?? []).any((element) =>
                 element.userId == _firebaseAuth.currentUser?.uid)) {

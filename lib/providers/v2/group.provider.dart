@@ -83,7 +83,7 @@ class GroupProviderV2 with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      return _groupService.getGroup(groupId).then((userGroup) {
+      await _groupService.getGroup(groupId).then((userGroup) {
         _currentGroup = userGroup;
         notifyListeners();
       });

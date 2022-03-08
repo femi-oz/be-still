@@ -61,8 +61,8 @@ class UserDataModel {
       this.modifiedDate,
       this.status});
 
-  UserDataModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+  UserDataModel.fromJson(Map<String, dynamic> json, String did) {
+    id = did;
     firstName = json['firstName'];
     lastName = json['lastName'];
     email = json['email'];

@@ -46,8 +46,8 @@ class PrayerDataModel {
       this.modifiedDate,
       this.status});
 
-  PrayerDataModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+  PrayerDataModel.fromJson(Map<String, dynamic> json, String did) {
+    id = did;
     description = json['description'];
     creatorName = json['creatorName'];
     isAnswered = json['isAnswered'];

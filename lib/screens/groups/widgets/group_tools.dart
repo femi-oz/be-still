@@ -3,13 +3,11 @@ import 'dart:io';
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/user_role.dart';
-import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/models/v2/group_user.model.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
-import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -37,10 +35,10 @@ class _GroupToolsState extends State<GroupTools> {
   Future<void> onEditTap(GroupDataModel groupData) async {
     try {
       AppController appController = Get.find();
-      appController.setCurrentPage(12, true, 3);
       Provider.of<GroupProviderV2>(context, listen: false).setEditMode(true);
       await Provider.of<GroupProviderV2>(context, listen: false)
           .setCurrentGroupById(groupData.id ?? '');
+      appController.setCurrentPage(12, true, 3);
       Navigator.pop(context);
     } on HttpException catch (e, s) {
       final user =
@@ -266,11 +264,8 @@ class _GroupToolsState extends State<GroupTools> {
 
   @override
   Widget build(BuildContext context) {
-    final _user =
-        Provider.of<UserProviderV2>(context, listen: false).currentUser;
-
-    var currentGroupUser = (widget.group.users ?? [])
-        .firstWhere((element) => element.userId == _user.id);
+    final currentGroupUser = (widget.group.users ?? []).firstWhere(
+        (element) => element.userId == FirebaseAuth.instance.currentUser?.uid);
     return Container(
         padding: EdgeInsets.only(left: 40),
         height: double.infinity,

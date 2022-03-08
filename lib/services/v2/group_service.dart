@@ -120,7 +120,7 @@ class GroupServiceV2 {
           .where(FieldPath.documentId, whereIn: userGroupsId)
           .snapshots()
           .map((event) => event.docs
-              .map((e) => GroupDataModel.fromJson(e.data()))
+              .map((e) => GroupDataModel.fromJson(e.data(), e.id))
               .toList());
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -135,7 +135,7 @@ class GroupServiceV2 {
           .doc(_firebaseAuth.currentUser?.uid)
           .get();
       List<String> userGroupsId =
-          UserDataModel.fromJson(user.data()!).groups ?? [];
+          UserDataModel.fromJson(user.data()!, user.id).groups ?? [];
       if (userGroupsId.isEmpty) return Future.value([]);
       final chunks = partition(userGroupsId, 10);
       final querySnapshots = await Future.wait(chunks.map((chunk) {
@@ -145,7 +145,7 @@ class GroupServiceV2 {
             .get();
       }).toList());
       final list = querySnapshots.expand((e) => e.docs).toList();
-      return list.map((e) => GroupDataModel.fromJson(e.data())).toList();
+      return list.map((e) => GroupDataModel.fromJson(e.data(), e.id)).toList();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -157,7 +157,7 @@ class GroupServiceV2 {
         return Future.error(StringUtils.unathorized);
       final doc = await _groupDataCollectionReference.doc(groupId).get();
       if (!doc.exists) return Future.error(StringUtils.documentDoesNotExist);
-      return GroupDataModel.fromJson(doc.data()!);
+      return GroupDataModel.fromJson(doc.data()!, doc.id);
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -296,7 +296,7 @@ class GroupServiceV2 {
           .where('status', isNotEqualTo: Status.deleted)
           .snapshots()
           .map((event) => event.docs
-              .map((e) => GroupDataModel.fromJson(e.data()))
+              .map((e) => GroupDataModel.fromJson(e.data(), e.id))
               .toList());
     } catch (e) {
       throw StringUtils.getErrorMessage(e);
@@ -348,7 +348,7 @@ class GroupServiceV2 {
 
     for (final prayer in prayers.docs) {
       final followers =
-          (PrayerDataModel.fromJson(prayer.data()).followers ?? [])
+          (PrayerDataModel.fromJson(prayer.data(), prayer.id).followers ?? [])
               .where((element) => element.userId != userId);
       prayer.reference.update({'': followers});
     }
