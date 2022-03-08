@@ -47,6 +47,7 @@ class UserServiceV2 {
         allowEmergencyCalls: true,
         archiveAutoDeleteMinutes: 0,
         defaultSnoozeFrequency: IntervalRange.thirtyMinutes,
+        defaultSnoozeDuration: 0,
         includeAnsweredPrayerAutoDelete: false,
         archiveSortBy: SortType.date,
         autoPlayMusic: true,
@@ -110,13 +111,13 @@ class UserServiceV2 {
   }
 
   Future<void> updateUserSettings({
-    required DocumentReference userReference,
-    required String newEmail,
     required String key,
     required String value,
   }) async {
     try {
-      userReference.update({key: value});
+      _userDataCollectionReference
+          .doc(_firebaseAuth.currentUser?.uid ?? '')
+          .update({key: value});
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

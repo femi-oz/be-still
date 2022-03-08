@@ -155,8 +155,8 @@ class _EntryScreenState extends State<EntryScreen> {
       //     .setSettings(userId ?? '');
       // await Provider.of<SettingsProvider>(context, listen: false)
       //     .setSharingSettings(userId ?? '');
-      // await Provider.of<NotificationProvider>(context, listen: false)
-      //     .setPrayerTimeNotifications(userId ?? '');
+      await Provider.of<NotificationProviderV2>(context, listen: false)
+          .setPrayerTimeNotifications(userId ?? '');
       // await Provider.of<SettingsProvider>(context, listen: false)
       //     .setGroupSettings(userId??'');
       // await Provider.of<SettingsProvider>(context, listen: false)
