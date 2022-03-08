@@ -1,6 +1,7 @@
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
@@ -33,11 +34,14 @@ class LocalNotification {
       (i) => DateFormat('MMM').format(DateTime(DateTime.now().year, i + 1)));
 
   static Future<void> setNotificationsOnNewDevice(context) async {
-    final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+
+    await Provider.of<NotificationProviderV2>(context, listen: false)
+        .setLocalNotifications(userId ?? '');
+
     final _localNotifications =
-        await Provider.of<NotificationProvider>(context, listen: false)
-            .getLocalNotificationsFuture(userId);
+        Provider.of<NotificationProviderV2>(context, listen: false)
+            .localNotifications;
     //set notification in new device
 
     // The device's timezone.
@@ -48,10 +52,12 @@ class LocalNotification {
     //set notification in new device
     for (int i = 0; i < _localNotifications.length; i++) {
       final scheduledDate = tz.TZDateTime.from(
-          _localNotifications[i].scheduledDate ?? DateTime.now(), location);
+          _localNotifications[i].scheduleDate ?? DateTime.now(), location);
       await setLocalNotification(
-        title: _localNotifications[i].title ?? '',
-        description: _localNotifications[i].description ?? '',
+        title: _localNotifications[i].type == NotificationType.reminder
+            ? 'Reminder to pray'
+            : '',
+        description: _localNotifications[i].message ?? '',
         scheduledDate: scheduledDate,
         payload: _localNotifications[i].payload,
         frequency: _localNotifications[i].frequency ?? '',
@@ -73,7 +79,7 @@ class LocalNotification {
       localNotificationID = localNotificationId;
     else {
       final localNots =
-          Provider.of<NotificationProvider>(context, listen: false)
+          Provider.of<NotificationProviderV2>(context, listen: false)
               .localNotifications;
       final allIds = localNots.map((e) => e.localNotificationId).toList();
 

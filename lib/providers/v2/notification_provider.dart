@@ -290,16 +290,20 @@ class NotificationProviderV2 with ChangeNotifier {
   }
 
   Future<void> addLocalNotification(
+    String prayerId,
     int localId,
     String message,
     String type,
+    String frequency,
     DateTime scheduledDate,
   ) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       await _notificationService.storeLocalNotifications(
+          prayerId: prayerId,
           message: message,
           type: type,
+          frequency: frequency,
           localNotificationId: localId,
           scheduleDate: scheduledDate);
       await setLocalNotifications(_firebaseAuth.currentUser?.uid ?? '');

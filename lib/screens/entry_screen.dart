@@ -172,9 +172,9 @@ class _EntryScreenState extends State<EntryScreen> {
       // await Provider.of<NotificationProvider>(context, listen: false)
       //     .setUserNotifications(userId ?? '');
 
-      // // get all local notifications
-      // await Provider.of<NotificationProvider>(context, listen: false)
-      //     .setLocalNotifications(userId ?? '');
+      // get all local notifications
+      await Provider.of<NotificationProviderV2>(context, listen: false)
+          .setLocalNotifications(userId ?? '');
       // await Provider.of<GroupProvider>(context, listen: false)
       //     .setAllGroups(userId ?? '');
     } on HttpException catch (e, s) {

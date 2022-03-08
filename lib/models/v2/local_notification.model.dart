@@ -3,6 +3,7 @@ class LocalNotificationDataModel {
   String? userId;
   String? prayerId;
   String? message;
+  String? payload;
   int? localNotificationId;
   String? type;
   String? frequency;
@@ -18,6 +19,7 @@ class LocalNotificationDataModel {
       this.userId,
       this.prayerId,
       this.message,
+      this.payload,
       this.localNotificationId,
       this.type,
       this.frequency,
@@ -33,6 +35,7 @@ class LocalNotificationDataModel {
     userId = json['userId'];
     prayerId = json['prayerId'];
     message = json['message'];
+    payload = json['payload'];
     localNotificationId = json['localNotificationId'];
     type = json['type'];
     frequency = json['frequency'];
@@ -50,6 +53,7 @@ class LocalNotificationDataModel {
     data['userId'] = this.userId;
     data['prayerId'] = this.prayerId;
     data['message'] = this.message;
+    data['payload'] = this.payload;
     data['localNotificationId'] = this.localNotificationId;
     data['type'] = this.type;
     data['frequency'] = this.frequency;

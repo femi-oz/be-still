@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:be_still/enums/status.dart';
+import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/flavor_config.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/message_template.dart';
@@ -68,8 +69,10 @@ class NotificationServiceV2 {
   }
 
   Future<void> storeLocalNotifications({
+    required String prayerId,
     required String message,
     required String type,
+    required String frequency,
     required int localNotificationId,
     required DateTime scheduleDate,
   }) async {
@@ -79,6 +82,8 @@ class NotificationServiceV2 {
         status: Status.active,
         localNotificationId: localNotificationId,
         scheduleDate: scheduleDate,
+        frequency: frequency,
+        prayerId: prayerId,
         type: type,
         userId: _firebaseAuth.currentUser?.uid,
         modifiedBy: _firebaseAuth.currentUser?.uid,
@@ -86,7 +91,10 @@ class NotificationServiceV2 {
         createdDate: DateTime.now(),
         modifiedDate: DateTime.now(),
       ).toJson();
-      _localNotificationCollectionReference.add(doc);
+      _localNotificationCollectionReference.add(doc).then((value) =>
+          _localNotificationCollectionReference
+              .doc(value.id)
+              .update({'id': value.id}));
     } catch (e) {
       StringUtils.getErrorMessage(e);
     }

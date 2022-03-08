@@ -73,13 +73,14 @@ class _ReminderPickerState extends State<ReminderPicker> {
       selectedHour = widget.reminder?.scheduleDate?.hour ?? 0;
 
       selectedMinute = widget.reminder?.scheduleDate?.minute ?? 0;
-      selectedDayOfWeek = LocalNotification.daysOfWeek
-          .indexOf((widget.reminder?.scheduleDate?.weekday ?? '').toString());
+      selectedDayOfWeek = LocalNotification.daysOfWeek.indexOf(LocalNotification
+          .daysOfWeek[widget.reminder?.scheduleDate?.weekday ?? 0]);
       selectedPeriod = DateFormat('a')
           .format(widget.reminder?.scheduleDate ?? DateTime.now());
       selectedFrequency = widget.reminder?.frequency ?? '';
       selectedYear = widget.reminder?.scheduleDate?.year ?? 0;
-      selectedMonth = (widget.reminder?.scheduleDate?.month ?? '').toString();
+      selectedMonth = LocalNotification
+          .months[(widget.reminder?.scheduleDate?.month ?? 0) - 1];
       selectedDayOfMonth = widget.reminder?.scheduleDate?.day ?? 0;
     } else {
       selectedHour = DateTime.now().hour == 0 ? 12 : DateTime.now().hour;
@@ -107,13 +108,16 @@ class _ReminderPickerState extends State<ReminderPicker> {
 
   storeNotification({
     required String notificationText,
+    required String frequency,
     required tz.TZDateTime scheduledDate,
   }) async {
     await Provider.of<NotificationProviderV2>(context, listen: false)
         .addLocalNotification(
+      widget.prayerData?.id ?? '',
       LocalNotification.localNotificationID,
       notificationText,
       widget.type,
+      frequency,
       scheduledDate,
     );
     BeStilDialog.hideLoading(context);
@@ -279,9 +283,9 @@ class _ReminderPickerState extends State<ReminderPicker> {
         );
       else
         await storeNotification(
-          notificationText: notificationText,
-          scheduledDate: scheduleDate,
-        );
+            notificationText: notificationText,
+            scheduledDate: scheduleDate,
+            frequency: selectedFrequency);
       clearSearch();
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);

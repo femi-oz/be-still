@@ -50,6 +50,7 @@ class _PrayerCardState extends State<PrayerCard> {
     final res = reminders.any(
       (reminder) => reminder.prayerId == widget.prayerData.id,
     );
+
     return res;
   }
 
