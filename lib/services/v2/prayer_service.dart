@@ -225,7 +225,7 @@ class PrayerServiceV2 {
     } else {
       _prayerDataCollectionReference
           .doc(prayerId)
-          .update({'status': Status.active});
+          .update({'status': Status.active, 'isAnswered': false});
     }
   }
 

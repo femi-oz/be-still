@@ -622,16 +622,14 @@ class _PrayerCardState extends State<PrayerCard> {
           if (showOption)
             _buildSlideItem(
                 AppIcons.bestill_answered,
-                widget.prayerData.status == Status.answered
-                    ? 'Unmark'
-                    : 'Answered',
-                () => widget.prayerData.status == Status.answered
+                widget.prayerData.isAnswered == true ? 'Unmark' : 'Answered',
+                () => widget.prayerData.isAnswered == true
                     ? _unMarkAsAnswered()
                     : _onMarkAsAnswered(),
                 !isOwner && !isAdmin),
           if (!isGroupPrayer)
             widget.prayerData.status == Status.archived ||
-                    (widget.prayerData.status == Status.answered)
+                    (widget.prayerData.isAnswered == true)
                 ? _buildSlideItem(
                     AppIcons.bestill_snooze, 'Snooze', () => null, true)
                 : _buildSlideItem(
