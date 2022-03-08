@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
@@ -82,28 +80,28 @@ class _SplashScreenState extends State<SplashScreen>
     try {
       _getPermissions();
       final message =
-          Provider.of<NotificationProvider>(context, listen: false).message;
+          Provider.of<NotificationProviderV2>(context, listen: false).message;
       if ((message.entityId ?? '').isNotEmpty) {
         WidgetsBinding.instance?.addPostFrameCallback((_) async {
           if (message.type == NotificationType.prayer_time) {
-            await Provider.of<PrayerProvider>(context, listen: false)
+            await Provider.of<PrayerProviderV2>(context, listen: false)
                 .setPrayerTimePrayers(message.entityId ?? '');
             AppController appController = Get.find();
             appController.setCurrentPage(2, false, 0);
-            Provider.of<MiscProvider>(context, listen: false)
+            Provider.of<MiscProviderV2>(context, listen: false)
                 .setLoadStatus(true);
             Navigator.of(context).pushNamedAndRemoveUntil(
                 EntryScreen.routeName, (Route<dynamic> route) => false);
           }
           if (message.type == NotificationType.prayer) {
-            Provider.of<PrayerProvider>(context, listen: false)
+            Provider.of<PrayerProviderV2>(context, listen: false)
                 .setCurrentPrayerId(message.entityId ?? '');
           }
         });
-        Provider.of<NotificationProvider>(context, listen: false)
+        Provider.of<NotificationProviderV2>(context, listen: false)
             .clearMessage();
       } else {
-        Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
+        Provider.of<MiscProviderV2>(context, listen: false).setLoadStatus(true);
         Navigator.of(context).pushNamedAndRemoveUntil(
             EntryScreen.routeName, (Route<dynamic> route) => false);
       }
@@ -126,7 +124,7 @@ class _SplashScreenState extends State<SplashScreen>
       } else {
         if (Settings.rememberMe) {
           if (isLoggedIn) {
-            await Provider.of<UserProvider>(context, listen: false)
+            await Provider.of<UserProviderV2>(context, listen: false)
                 .setCurrentUser(false);
             await setRouteDestination();
           } else {

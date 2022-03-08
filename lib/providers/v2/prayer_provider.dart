@@ -20,6 +20,7 @@ class PrayerProviderV2 with ChangeNotifier {
   final userId = FirebaseAuth.instance.currentUser?.uid;
   late StreamSubscription<List<PrayerDataModel>> prayerStream;
   late StreamSubscription<List<PrayerDataModel>> followedPrayerStream;
+  late StreamSubscription<List<PrayerDataModel>> prayerTimeStream;
 
   PrayerType _currentPrayerType = PrayerType.userPrayers;
   PrayerType get currentPrayerType => _currentPrayerType;
@@ -126,30 +127,35 @@ class PrayerProviderV2 with ChangeNotifier {
 
   Future<void> setPrayerTimePrayers(String userId) async {
     try {
-      await setPrayers();
+      // setPrayers();
+      prayerTimeStream =
+          _prayerService.getUserPrayers().asBroadcastStream().listen(
+        (data) {
+          data.sort((a, b) => (b.modifiedDate ?? DateTime.now())
+              .compareTo(a.modifiedDate ?? DateTime.now()));
 
-      _prayers.sort((a, b) => (b.modifiedDate ?? DateTime.now())
-          .compareTo(a.modifiedDate ?? DateTime.now()));
+          _filteredPrayerTimeList = data
+              .where((e) =>
+                  (e.status ?? '').toLowerCase() == Status.active.toLowerCase())
+              .toList();
+          var favoritePrayers =
+              data.where((PrayerDataModel e) => e.isFavorite ?? false).toList();
 
-      _filteredPrayerTimeList = _prayers
-          .where((e) =>
-              (e.status ?? '').toLowerCase() == Status.active.toLowerCase())
-          .toList();
-      var favoritePrayers =
-          _prayers.where((PrayerDataModel e) => e.isFavorite ?? false).toList();
-
-      _filteredPrayerTimeList = [
-        ...favoritePrayers,
-        ..._filteredPrayerTimeList
-      ];
-      List<PrayerDataModel> _distinct = [];
-      var idSet = <String>{};
-      for (var e in _filteredPrayerTimeList) {
-        if (idSet.add(e.id ?? '')) {
-          _distinct.add(e);
-        }
-      }
-      _filteredPrayerTimeList = _distinct;
+          _filteredPrayerTimeList = [
+            ...favoritePrayers,
+            ..._filteredPrayerTimeList
+          ];
+          List<PrayerDataModel> _distinct = [];
+          var idSet = <String>{};
+          for (var e in _filteredPrayerTimeList) {
+            if (idSet.add(e.id ?? '')) {
+              _distinct.add(e);
+            }
+          }
+          _filteredPrayerTimeList = _distinct;
+          notifyListeners();
+        },
+      );
     } catch (e) {
       rethrow;
     }
@@ -516,5 +522,6 @@ class PrayerProviderV2 with ChangeNotifier {
   void flush() {
     prayerStream.cancel();
     followedPrayerStream.cancel();
+    prayerTimeStream.cancel();
   }
 }
