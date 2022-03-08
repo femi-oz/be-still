@@ -120,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     if (Settings.rememberMe && Settings.lastUser.isNotEmpty) {
-      var userInfo = jsonDecode(Settings.lastUser);
+      final userInfo = jsonDecode(Settings.lastUser);
       _usernameController.text = userInfo['email'];
       _passwordController.text = Settings.userPassword;
     }
@@ -321,7 +321,7 @@ class _LoginScreenState extends State<LoginScreen> {
         password: _passwordController.text,
       );
       await Provider.of<UserProviderV2>(context, listen: false)
-          .setCurrentUser(false);
+          .setCurrentUser();
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
 
@@ -367,7 +367,7 @@ class _LoginScreenState extends State<LoginScreen> {
       isLoading = true;
       if (isAuth) {
         await Provider.of<UserProviderV2>(context, listen: false)
-            .setCurrentUser(false);
+            .setCurrentUser();
         BeStilDialog.hideLoading(context);
         isLoading = false;
 

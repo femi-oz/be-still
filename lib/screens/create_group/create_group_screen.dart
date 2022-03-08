@@ -66,49 +66,39 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
       final fullName =
           '${(_user.firstName ?? '') + ' ' + (_user.lastName ?? '')}';
-
+      bool isCompleted = false;
       if (!isEdit) {
-        final isCreated =
-            await Provider.of<GroupProviderV2>(context, listen: false)
-                .createGroup(
-                    _groupNameController.text,
-                    _descriptionController.text,
-                    fullName,
-                    _organizationController.text,
-                    _locationController.text,
-                    GroupType.private,
-                    _requireAdminApproval);
-        if (isCreated) {
-          await Provider.of<PrayerProviderV2>(context, listen: false)
-              .setGroupPrayers(group.id ?? '');
-          setState(() {
-            newGroupId = group.id ?? '';
-            _step++;
-          });
-        }
-        BeStilDialog.hideLoading(context);
+        isCompleted = await Provider.of<GroupProviderV2>(context, listen: false)
+            .createGroup(
+                _groupNameController.text,
+                _descriptionController.text,
+                fullName,
+                _organizationController.text,
+                _locationController.text,
+                GroupType.private,
+                _requireAdminApproval);
       } else {
-        final isEdited =
-            await Provider.of<GroupProviderV2>(context, listen: false)
-                .editGroup(
-                    group.id ?? '',
-                    _groupNameController.text,
-                    _descriptionController.text,
-                    _requireAdminApproval,
-                    _organizationController.text,
-                    _locationController.text,
-                    group.type ?? GroupType.private);
-        if (isEdited) {
-          await Provider.of<PrayerProviderV2>(context, listen: false)
-              .setGroupPrayers(group.id ?? '');
-
-          setState(() {
-            newGroupId = group.id ?? '';
-            _step++;
-          });
-        }
-        BeStilDialog.hideLoading(context);
+        isCompleted = await Provider.of<GroupProviderV2>(context, listen: false)
+            .editGroup(
+                group.id ?? '',
+                _groupNameController.text,
+                _descriptionController.text,
+                _requireAdminApproval,
+                _organizationController.text,
+                _locationController.text,
+                group.type ?? GroupType.private);
       }
+      if (isCompleted) {
+        await Provider.of<PrayerProviderV2>(context, listen: false)
+            .setGroupPrayers(group.id ?? '');
+        await Provider.of<GroupProviderV2>(context, listen: false)
+            .setUserGroups();
+        setState(() {
+          newGroupId = group.id ?? '';
+          _step++;
+        });
+      }
+      BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;

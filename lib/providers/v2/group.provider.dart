@@ -47,15 +47,13 @@ class GroupProviderV2 with ChangeNotifier {
   String _groupJoinId = '';
   String get groupJoinId => _groupJoinId;
 
-  Future<void> setUserGroups(List<String> userGroupsId) async {
+  Future<void> setUserGroups() async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      groupUserStream = _groupService
-          .getUserGroups(userGroupsId)
-          .asBroadcastStream()
-          .listen((userGroups) {
+      await _groupService.getUserGroupsFuture().then((userGroups) {
         _userGroups = userGroups;
+        notifyListeners();
       });
     } catch (e) {
       rethrow;

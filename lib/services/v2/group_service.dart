@@ -8,10 +8,12 @@ import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/models/v2/group_user.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/request.model.dart';
+import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:quiver/iterables.dart';
 import 'package:uuid/uuid.dart';
 
 class GroupServiceV2 {
@@ -120,6 +122,30 @@ class GroupServiceV2 {
           .map((event) => event.docs
               .map((e) => GroupDataModel.fromJson(e.data()))
               .toList());
+    } catch (e) {
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
+  Future<List<GroupDataModel>> getUserGroupsFuture() async {
+    try {
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
+      final user = await _userDataCollectionReference
+          .doc(_firebaseAuth.currentUser?.uid)
+          .get();
+      List<String> userGroupsId =
+          UserDataModel.fromJson(user.data()!).groups ?? [];
+      if (userGroupsId.isEmpty) return Future.value([]);
+      final chunks = partition(userGroupsId, 10);
+      final querySnapshots = await Future.wait(chunks.map((chunk) {
+        return _groupDataCollectionReference
+            .where('status', isEqualTo: Status.active)
+            .where(FieldPath.documentId, whereIn: chunk)
+            .get();
+      }).toList());
+      final list = querySnapshots.expand((e) => e.docs).toList();
+      return list.map((e) => GroupDataModel.fromJson(e.data())).toList();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

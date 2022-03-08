@@ -74,13 +74,24 @@ class UserServiceV2 {
     }
   }
 
-  Future<UserDataModel> getUserById(String userId) async {
+  Future<UserDataModel> getUserByIdFuture(String userId) async {
     try {
       final doc = await _userDataCollectionReference.doc(userId).get();
       if (doc.exists)
         return UserDataModel.fromJson(doc.data()!);
       else
         throw HttpException(StringUtils.documentDoesNotExist);
+    } catch (e) {
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
+  Stream<UserDataModel> getUserById(String userId) {
+    try {
+      return _userDataCollectionReference
+          .doc(userId)
+          .snapshots()
+          .map((event) => UserDataModel.fromJson(event.data()!));
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

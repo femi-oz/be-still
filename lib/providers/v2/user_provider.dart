@@ -15,12 +15,11 @@ class UserProviderV2 with ChangeNotifier {
   List<UserDataModel> _allUsers = <UserDataModel>[];
   List<UserDataModel> get allUsers => _allUsers;
 
-  Future<void> getUserById() async {
+  Future<void> setCurrentUser() async {
     try {
-      return _userService.getUserById(_firebaseUserId ?? '').then((event) {
+      await _userService.getUserByIdFuture(_firebaseUserId ?? '').then((event) {
         _currentUser = event;
         notifyListeners();
-        return event;
       });
     } catch (e) {
       rethrow;
@@ -29,7 +28,9 @@ class UserProviderV2 with ChangeNotifier {
 
   Future<UserDataModel> getUserDataById(String userId) async {
     try {
-      return _userService.getUserById(_firebaseUserId ?? '').then((event) {
+      return _userService
+          .getUserByIdFuture(_firebaseUserId ?? '')
+          .then((event) {
         return event;
       });
     } catch (e) {
@@ -39,7 +40,7 @@ class UserProviderV2 with ChangeNotifier {
 
   Future<List<String>> returnUserToken(String userId) async {
     try {
-      return await _userService.getUserById(userId).then((value) {
+      return await _userService.getUserByIdFuture(userId).then((value) {
         return (value.devices ?? []).map((e) => e.token ?? '').toList();
       });
     } catch (e) {
@@ -64,15 +65,6 @@ class UserProviderV2 with ChangeNotifier {
         : _allUsers.firstWhere((element) => element.id == userId);
     final userName = (user.firstName ?? '') + ' ' + (user.lastName ?? '');
     return userName;
-  }
-
-  Future setCurrentUser(bool isLocalAuth) async {
-    try {
-      _currentUser = await _userService.getUserById(_firebaseUserId ?? '');
-      notifyListeners();
-    } catch (e) {
-      rethrow;
-    }
   }
 
   Future updateEmail(String newEmail, String userId) async {

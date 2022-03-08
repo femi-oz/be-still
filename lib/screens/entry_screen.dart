@@ -151,7 +151,7 @@ class _EntryScreenState extends State<EntryScreen> {
       await Provider.of<DevotionalProviderV2>(context, listen: false)
           .getBibles();
       await Provider.of<GroupProviderV2>(context, listen: false)
-          .setUserGroups(user.groups ?? <String>[]);
+          .setUserGroups();
       //load settings
       // await Provider.of<SettingsProvider>(context, listen: false)
       //     .setPrayerSettings(userId ?? '');
