@@ -1,5 +1,5 @@
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/providers/misc_provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
 
 import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
@@ -31,9 +31,9 @@ class _PrayerTimeState extends State<PrayerTime> {
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
       try {
         var userId = FirebaseAuth.instance.currentUser?.uid;
-        await Provider.of<MiscProvider>(context, listen: false)
+        await Provider.of<MiscProviderV2>(context, listen: false)
             .setSearchMode(false);
-        await Provider.of<MiscProvider>(context, listen: false)
+        await Provider.of<MiscProviderV2>(context, listen: false)
             .setSearchQuery('');
         Provider.of<PrayerProviderV2>(context, listen: false)
             .searchPrayers('', userId ?? '');

@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
+import 'package:be_still/models/v2/device.model.dart';
 import 'package:be_still/providers/v2/auth_provider.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
 import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
@@ -97,8 +99,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
   }
 
   closeAllStreams() {
-    Provider.of<GroupProviderV2>(context, listen: false).flush();
-    Provider.of<NotificationProviderV2>(context, listen: false).flush();
+    // Provider.of<GroupProviderV2>(context, listen: false).flush();
+    // Provider.of<NotificationProviderV2>(context, listen: false).flush();
     Provider.of<PrayerProviderV2>(context, listen: false).flush();
   }
 
@@ -186,7 +188,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      final userId =
+                      final userId = FirebaseAuth.instance.currentUser?.uid;
+                      final user =
                           Provider.of<UserProviderV2>(context, listen: false)
                               .currentUser;
                       await _authProvider.signOut();
@@ -195,8 +198,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           .cancelLocalNotifications();
                       Provider.of<UserProviderV2>(context, listen: false)
                           .removePushToken(
-                              FirebaseAuth.instance.currentUser?.uid ?? '',
-                              userId.devices ?? []);
+                              Provider.of<MiscProviderV2>(context,
+                                      listen: false)
+                                  .deviceId,
+                              user.devices ?? <DeviceModel>[]);
                       closeAllStreams();
                       Navigator.pushReplacement(
                         context,

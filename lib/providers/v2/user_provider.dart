@@ -70,7 +70,15 @@ class UserProviderV2 with ChangeNotifier {
   Future updateEmail(String newEmail, String userId) async {
     try {
       await _userService.updateEmail(newEmail: newEmail);
-      // setCurrentUser(false);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future updateUserSettings(String key, String value) async {
+    try {
+      await _userService.updateUserSettings(key: key, value: value);
+      await setCurrentUser();
     } catch (e) {
       rethrow;
     }
@@ -79,7 +87,7 @@ class UserProviderV2 with ChangeNotifier {
   Future updatePassword(String newPassword) async {
     try {
       await _userService.updatePassword(newPassword);
-      // setCurrentUser(false);
+      //await setCurrentUser(false);
     } catch (e) {
       rethrow;
     }

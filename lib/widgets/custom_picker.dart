@@ -1,4 +1,4 @@
-import 'package:be_still/models/duration.model.dart';
+import 'package:be_still/models/v2/duration.model.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +7,7 @@ class CustomPicker extends StatefulWidget {
   final Function onChange;
   final int selected;
   final bool hideActionuttons;
-  final List<LookUp> lookup;
+  final List<LookUpV2> lookup;
 
   @override
   CustomPicker(
@@ -17,7 +17,7 @@ class CustomPicker extends StatefulWidget {
 
 class _CustomPickerState extends State<CustomPicker> {
   double itemExtent = 30.0;
-  LookUp selectedInterval = LookUp(text: '', value: 0);
+  LookUpV2 selectedInterval = LookUpV2(text: '', value: 0);
   @override
   Widget build(BuildContext context) {
     int selectedIndex =

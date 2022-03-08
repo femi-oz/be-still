@@ -1,5 +1,4 @@
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/device.model.dart';
 import 'package:be_still/providers/v2/devotional_provider.dart';
@@ -138,20 +137,15 @@ class _EntryScreenState extends State<EntryScreen> {
         Settings.enableLocalAuth = false;
 
       final userId = FirebaseAuth.instance.currentUser?.uid;
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
 
-      Provider.of<PrayerProviderV2>(context, listen: false)
-          .checkPrayerValidity(userId ?? '');
+      if ((userId ?? '').isNotEmpty)
+        Provider.of<PrayerProviderV2>(context, listen: false)
+            .checkPrayerValidity(userId ?? '');
+      Provider.of<MiscProviderV2>(context, listen: false).setDeviceId();
       await _getPrayers();
-      await Provider.of<PrayerProviderV2>(context, listen: false)
-          .setPrayerTimePrayers();
-      await Provider.of<DevotionalProviderV2>(context, listen: false)
-          .getDevotionals();
-      await Provider.of<DevotionalProviderV2>(context, listen: false)
-          .getBibles();
-      await Provider.of<GroupProviderV2>(context, listen: false)
-          .setUserGroups();
+      await _getActivePrayers();
+      await _getDevotionals();
+      await _getBibles();
       //load settings
       // await Provider.of<SettingsProvider>(context, listen: false)
       //     .setPrayerSettings(userId ?? '');
@@ -159,12 +153,14 @@ class _EntryScreenState extends State<EntryScreen> {
       //     .setSettings(userId ?? '');
       // await Provider.of<SettingsProvider>(context, listen: false)
       //     .setSharingSettings(userId ?? '');
-      // await Provider.of<NotificationProvider>(context, listen: false)
-      //     .setPrayerTimeNotifications(userId ?? '');
+      await Provider.of<NotificationProviderV2>(context, listen: false)
+          .setPrayerTimeNotifications(userId ?? '');
       // await Provider.of<SettingsProvider>(context, listen: false)
       //     .setGroupSettings(userId??'');
       // await Provider.of<SettingsProvider>(context, listen: false)
       //     .setGroupPreferenceSettings(userId ?? '');
+      // await Provider.of<GroupProvider>(context, listen: false)
+      //     .setUserGroups(userId ?? '');
       // await Provider.of<GroupPrayerProvider>(context, listen: false)
       //     .setFollowedPrayerByUserId(userId ?? '');
 
@@ -193,6 +189,24 @@ class _EntryScreenState extends State<EntryScreen> {
     }
   }
 
+  Future<void> _getActivePrayers() async {
+    try {
+      final _userId = FirebaseAuth.instance.currentUser?.uid;
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .setPrayerTimePrayers();
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    }
+  }
+
   Future<void> _getPrayers() async {
     try {
       final _user =
@@ -208,6 +222,40 @@ class _EntryScreenState extends State<EntryScreen> {
         await Provider.of<PrayerProviderV2>(context, listen: false)
             .setPrayers();
       }
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    }
+  }
+
+  Future<void> _getDevotionals() async {
+    try {
+      await Provider.of<DevotionalProviderV2>(context, listen: false)
+          .getDevotionals();
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    }
+  }
+
+  Future<void> _getBibles() async {
+    try {
+      await Provider.of<DevotionalProviderV2>(context, listen: false)
+          .getBibles();
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;

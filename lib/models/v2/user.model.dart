@@ -15,6 +15,7 @@ class UserDataModel {
   String? churchPhone;
   String? churchWebFormUrl;
   String? defaultSnoozeFrequency;
+  int? defaultSnoozeDuration;
   String? archiveSortBy;
   int? archiveAutoDeleteMinutes;
   bool? doNotDisturb;
@@ -45,6 +46,7 @@ class UserDataModel {
       this.churchPhone,
       this.churchWebFormUrl,
       this.defaultSnoozeFrequency,
+      this.defaultSnoozeDuration,
       this.archiveSortBy,
       this.archiveAutoDeleteMinutes,
       this.doNotDisturb,
@@ -90,6 +92,7 @@ class UserDataModel {
     churchPhone = json['churchPhone'];
     churchWebFormUrl = json['churchWebFormUrl'];
     defaultSnoozeFrequency = json['defaultSnoozeFrequency'];
+    defaultSnoozeDuration = json['defaultSnoozeDuration'];
     archiveSortBy = json['archiveSortBy'];
     archiveAutoDeleteMinutes = json['archiveAutoDeleteMinutes'];
     doNotDisturb = json['doNotDisturb'];
@@ -128,6 +131,7 @@ class UserDataModel {
     data['churchPhone'] = this.churchPhone;
     data['churchWebFormUrl'] = this.churchWebFormUrl;
     data['defaultSnoozeFrequency'] = this.defaultSnoozeFrequency;
+    data['defaultSnoozeDuration'] = this.defaultSnoozeDuration;
     data['archiveSortBy'] = this.archiveSortBy;
     data['archiveAutoDeleteMinutes'] = this.archiveAutoDeleteMinutes;
     data['doNotDisturb'] = this.doNotDisturb;

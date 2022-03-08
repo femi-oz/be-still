@@ -1,5 +1,4 @@
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/save_options.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -8,7 +7,6 @@ import 'package:be_still/models/v2/update.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
-import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -23,7 +21,6 @@ import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
-import 'package:uuid/uuid.dart';
 
 class AddPrayer extends StatefulWidget {
   static const routeName = '/app-prayer';

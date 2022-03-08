@@ -3,11 +3,10 @@ import 'dart:io';
 
 import 'package:be_still/enums/theme_mode.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/settings.model.dart';
-import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/auth_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/providers/v2/auth_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/local_notification.dart';
@@ -15,7 +14,6 @@ import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_edit_field.dart';
 import 'package:package_info/package_info.dart';
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
@@ -29,11 +27,10 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class GeneralSettings extends StatefulWidget {
-  final SettingsModel settings;
   final scaffoldKey;
 
   @override
-  GeneralSettings(this.settings, this.scaffoldKey);
+  GeneralSettings(this.scaffoldKey);
 
   @override
   _GeneralSettingsState createState() => _GeneralSettingsState();
@@ -233,7 +230,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       LocalNotification.setNotificationsOnNewDevice(context);
     } else {
       Settings.enabledReminderPermission = false;
-      Provider.of<NotificationProvider>(context, listen: false)
+      Provider.of<NotificationProviderV2>(context, listen: false)
           .cancelLocalNotifications();
     }
     setState(() {});
@@ -245,9 +242,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     Settings.setenableLocalAuth = false;
   }
 
-  void _updateEmail(UserModel user) async {
+  void _updateEmail(UserDataModel user) async {
     try {
-      await Provider.of<UserProvider>(context, listen: false)
+      await Provider.of<UserProviderV2>(context, listen: false)
           .updateEmail(_newEmail.text, user.id ?? '');
       final newUser = user..email = _newEmail.text.trim();
       Settings.lastUser = jsonEncode(newUser.toJson2());
@@ -257,7 +254,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       );
       _newEmail.clear();
       Future.delayed(Duration(seconds: 2), () async {
-        await Provider.of<AuthenticationProvider>(context, listen: false)
+        await Provider.of<AuthenticationProviderV2>(context, listen: false)
             .signOut();
         _setDefaults();
         Navigator.pushReplacement(
@@ -289,7 +286,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
   void _updatePassword() async {
     try {
-      await Provider.of<UserProvider>(context, listen: false)
+      await Provider.of<UserProviderV2>(context, listen: false)
           .updatePassword(_newPassword.text);
       _newPassword.clear();
       _newConfirmPassword.clear();
@@ -323,7 +320,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               _newEmail.text.trim().toLowerCase() &&
           type == _ModalType.email) return;
       BeStilDialog.showLoading(context);
-      await Provider.of<AuthenticationProvider>(context, listen: false)
+      await Provider.of<AuthenticationProviderV2>(context, listen: false)
           .signIn(email: _user.email, password: _currentPassword.text);
       _currentPassword.clear();
       Future.delayed(Duration(milliseconds: 300), () async {
@@ -372,7 +369,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   ];
 
   Widget build(BuildContext context) {
-    final _currentUser = Provider.of<UserProvider>(context).currentUser;
+    final _currentUser = Provider.of<UserProviderV2>(context).currentUser;
     final _themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
       decoration: BoxDecoration(
@@ -473,7 +470,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   void _update(_ModalType type, ctx) {
-    var _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    var _user = Provider.of<UserProviderV2>(context, listen: false).currentUser;
     final _formKey = GlobalKey<FormState>();
     bool _autoValidate = false;
     _newEmail.text = _user.email ?? '';

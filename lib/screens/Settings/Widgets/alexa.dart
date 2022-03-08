@@ -1,7 +1,7 @@
 import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/enums/time_range.dart';
-import 'package:be_still/models/duration.model.dart';
 import 'package:be_still/models/settings.model.dart';
+import 'package:be_still/models/v2/duration.model.dart';
 import 'package:be_still/providers/settings_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
@@ -40,11 +40,11 @@ class _AlexaSettingsState extends State<AlexaSettings> {
     }
   }
 
-  List<LookUp> prayerTimeInterval = [
-    LookUp(text: SecondsInterval.ten, value: 10),
-    LookUp(text: SecondsInterval.twenty, value: 20),
-    LookUp(text: SecondsInterval.thirty, value: 30),
-    LookUp(text: SecondsInterval.fourty, value: 40),
+  List<LookUpV2> prayerTimeInterval = [
+    LookUpV2(text: SecondsInterval.ten, value: 10),
+    LookUpV2(text: SecondsInterval.twenty, value: 20),
+    LookUpV2(text: SecondsInterval.thirty, value: 30),
+    LookUpV2(text: SecondsInterval.fourty, value: 40),
   ];
 
   @override
