@@ -223,7 +223,7 @@ class NotificationServiceV2 {
     required String status,
   }) async {
     try {
-      await _notificationCollectionReference.doc(notificationId).update({
+      _notificationCollectionReference.doc(notificationId).update({
         'message': message,
         'localNotificationId': localNotificationId,
         'type': type,

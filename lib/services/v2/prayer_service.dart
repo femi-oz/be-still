@@ -62,7 +62,7 @@ class PrayerServiceV2 {
         modifiedDate: DateTime.now(),
         snoozeEndDate: DateTime.now(),
       ).toJson();
-      await _prayerDataCollectionReference.add(doc).then((value) {
+      _prayerDataCollectionReference.add(doc).then((value) {
         _prayerDataCollectionReference.doc(value.id).update({'id': value.id});
       });
       //todo send push notification if group
@@ -286,7 +286,7 @@ class PrayerServiceV2 {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      await _prayerDataCollectionReference.doc(prayerId).update({
+      _prayerDataCollectionReference.doc(prayerId).update({
         "tags": FieldValue.arrayRemove([currentTag.toJson()])
       });
     } catch (e) {
@@ -382,7 +382,7 @@ class PrayerServiceV2 {
           modifiedBy: _firebaseAuth.currentUser?.uid,
           modifiedDate: DateTime.now());
       deleteUpdate(prayerId: prayerId, currentUpdate: update);
-      await _prayerDataCollectionReference.doc(prayerId).update({
+      _prayerDataCollectionReference.doc(prayerId).update({
         'updates': FieldValue.arrayUnion([newUpdate.toJson()])
       });
     } catch (e) {
@@ -407,7 +407,7 @@ class PrayerServiceV2 {
 
   Future<void> unMarkPrayerAsAnswered({required String prayerId}) async {
     try {
-      await _prayerDataCollectionReference.doc(prayerId).update({
+      _prayerDataCollectionReference.doc(prayerId).update({
         'isAnswered': false,
         'modifiedOn': DateTime.now(),
       });
@@ -433,7 +433,7 @@ class PrayerServiceV2 {
     required UpdateModel currentUpdate,
   }) async {
     try {
-      await _prayerDataCollectionReference.doc(prayerId).update({
+      _prayerDataCollectionReference.doc(prayerId).update({
         'updates': FieldValue.arrayRemove([currentUpdate.toJson()])
       });
     } catch (e) {

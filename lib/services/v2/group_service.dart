@@ -107,7 +107,7 @@ class GroupServiceV2 {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      await _groupDataCollectionReference.doc(groupId).update({
+      _groupDataCollectionReference.doc(groupId).update({
         'purpose': purpose,
         'name': name,
         'organization': organization,

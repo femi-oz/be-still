@@ -53,7 +53,7 @@ class SettingsServiceV2 {
       required bool enableSharingViaEmail,
       required bool enableSharingViaText}) async {
     try {
-      await userReference.update({
+      userReference.update({
         'enableSharingViaEmail': enableSharingViaEmail,
         'enableSharingViaText': enableSharingViaText,
         'modifiedBy': _firebaseAuth.currentUser?.uid,
