@@ -1,4 +1,5 @@
 import 'package:be_still/controllers/app_controller.dart';
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/save_options.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -7,6 +8,7 @@ import 'package:be_still/models/v2/update.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -169,9 +171,6 @@ class _AddPrayerState extends State<AddPrayer> {
     if (appController.previousPage == 0 || appController.previousPage == 7) {
       appController.setCurrentPage(0, true, 1);
     } else {
-      final groupPrayerId =
-          (Provider.of<PrayerProviderV2>(context, listen: false)
-              .currentPrayerId);
       final groupId =
           (Provider.of<GroupProviderV2>(context, listen: false).currentGroup)
                   .id ??
@@ -208,8 +207,8 @@ class _AddPrayerState extends State<AddPrayer> {
         final user =
             Provider.of<UserProviderV2>(context, listen: false).currentUser;
         final s = StackTrace.fromString(e.stacktrace ?? '');
-        // BeStilDialog.showErrorDialog(
-        //     context, StringUtils.getErrorMessage(e), user, s);
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.getErrorMessage(e), user, s);
       } else {
         final userName =
             '${_user.firstName?.capitalizeFirst} ${_user.lastName?.capitalizeFirst}';
@@ -235,15 +234,9 @@ class _AddPrayerState extends State<AddPrayer> {
                 Provider.of<PrayerProviderV2>(context, listen: false)
                     .currentPrayerId;
 
-            // await Provider.of<NotificationProviderV2>(context, listen: false)
-            //     .sendPrayerNotification(
-            //   prayerId,
-            //   prayerId,
-            //   NotificationType.prayer,
-            //   selected?.id ?? '',
-            //   context,
-            //   _descriptionController.text,
-            // );
+            await Provider.of<NotificationProviderV2>(context, listen: false)
+                .sendPrayerNotification(prayerId, NotificationType.prayer,
+                    selected?.id ?? '', _descriptionController.text);
           }
 
           if (contactList.length > 0) {

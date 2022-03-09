@@ -132,6 +132,18 @@ class PrayerServiceV2 {
     }
   }
 
+  Future<PrayerDataModel> getPrayerFuture(String prayerId) {
+    try {
+      return _prayerDataCollectionReference
+          .doc(prayerId)
+          .get()
+          .then<PrayerDataModel>(
+              (doc) => PrayerDataModel.fromJson(doc.data()!, doc.id));
+    } catch (e) {
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
   Future<void> editPrayer(
       {required String prayerId, required String description}) async {
     try {

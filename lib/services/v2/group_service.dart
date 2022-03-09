@@ -417,7 +417,7 @@ class GroupServiceV2 {
         }
         return e.toJson();
       }).toList();
-      await _groupDataCollectionReference
+      _groupDataCollectionReference
           .doc(group.id)
           .update({'users': mappedUsers});
     } catch (e) {

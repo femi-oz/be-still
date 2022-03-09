@@ -343,45 +343,10 @@ class NotificationProviderV2 with ChangeNotifier {
   }
 
   Future sendPrayerNotification(
-      String? prayerId,
-      String? groupPrayerId,
-      String? type,
-      String? selectedGroupId,
-      BuildContext context,
-      String? prayerDetail,
-      List<GroupUserDataModel> members,
-      List<String> followers) async {
+      String prayerId, String type, String groupId, String message) async {
     try {
-      List<String> _ids = [];
-      final _user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-
-      if (type == NotificationType.prayer ||
-          type == NotificationType.prayer_updates) {
-        _ids = members.map((e) => e.userId ?? '').toList();
-      } else {
-        _ids = followers;
-      }
-
-      _ids.removeWhere((e) => e == _user.id);
-
-      for (final id in _ids) {
-        final member = members.firstWhere((element) => element.userId == id);
-        if (type == NotificationType.prayer ||
-            type == NotificationType.prayer_updates) {
-          if (member.enableNotificationForNewPrayers ?? false) {
-            final userTokens =
-                await Provider.of<UserProviderV2>(context, listen: false)
-                    .returnUserToken(id);
-            final name = ((_user.firstName ?? '').capitalizeFirst ?? '') +
-                ' ' +
-                ((_user.lastName ?? '').capitalizeFirst ?? '');
-
-            sendPushNotification(prayerDetail?.capitalizeFirst ?? '',
-                type ?? '', name, userTokens);
-          }
-        }
-      }
+      _notificationService.sendPrayerNotification(
+          message: message, type: type, groupId: groupId, prayerId: prayerId);
     } catch (e) {
       rethrow;
     }
