@@ -6,17 +6,13 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/v2/device.model.dart';
-import 'package:be_still/models/v2/group_user.model.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/notification.model.dart';
 import 'package:be_still/models/v2/notification_message.model.dart';
-
-import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:be_still/services/v2/notification_service.dart';
