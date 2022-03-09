@@ -320,8 +320,8 @@ class _LoginScreenState extends State<LoginScreen> {
         email: _usernameController.text,
         password: _passwordController.text,
       );
-      await Provider.of<UserProviderV2>(context, listen: false)
-          .setCurrentUser();
+      // await Provider.of<UserProviderV2>(context, listen: false)
+      //     .setCurrentUser();
       final user = await Provider.of<UserProviderV2>(context, listen: false)
           .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
 

@@ -259,7 +259,7 @@ class PrayerServiceV2 {
       currentFollowers[currentFollowers.indexOf(user)] = user;
       await _prayerDataCollectionReference
           .doc(prayerId)
-          .update({'followers': currentFollowers});
+          .update({'followers': FieldValue.arrayUnion(currentFollowers)});
     } else {
       _prayerDataCollectionReference
           .doc(prayerId)

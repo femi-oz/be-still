@@ -4,9 +4,9 @@ import 'dart:io';
 import 'package:be_still/enums/theme_mode.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/user.model.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/v2/auth_provider.dart';
 import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/theme_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/local_notification.dart';
@@ -370,7 +370,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserProviderV2>(context).currentUser;
-    final _themeProvider = Provider.of<ThemeProvider>(context);
+    final _themeProvider = Provider.of<ThemeProviderV2>(context);
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(

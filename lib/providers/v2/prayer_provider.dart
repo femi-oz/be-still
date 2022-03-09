@@ -106,7 +106,7 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  void setCurrentPrayerId(String prayerId) {
+  Future setCurrentPrayerId(String prayerId) async {
     _currentPrayerId = prayerId;
     notifyListeners();
   }
@@ -542,7 +542,7 @@ class PrayerProviderV2 with ChangeNotifier {
 
   void flush() {
     prayerStream.cancel();
-    followedPrayerStream.cancel();
+    // followedPrayerStream.cancel();
     groupPrayerStream.cancel();
     prayerTimeStream.cancel();
   }

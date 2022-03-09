@@ -8,10 +8,10 @@ import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/models/v2/update.model.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
 import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/theme_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -531,14 +531,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
     Navigator.pop(context);
     showModalBottomSheet(
         context: context,
-        barrierColor:
-            Provider.of<ThemeProvider>(context, listen: false).isDarkModeEnabled
-                ? AppColors.backgroundColor[0].withOpacity(0.5)
-                : Color(0xFF021D3C).withOpacity(0.7),
-        backgroundColor:
-            Provider.of<ThemeProvider>(context, listen: false).isDarkModeEnabled
-                ? AppColors.backgroundColor[0].withOpacity(0.5)
-                : Color(0xFF021D3C).withOpacity(0.7),
+        barrierColor: Provider.of<ThemeProviderV2>(context, listen: false)
+                .isDarkModeEnabled
+            ? AppColors.backgroundColor[0].withOpacity(0.5)
+            : Color(0xFF021D3C).withOpacity(0.7),
+        backgroundColor: Provider.of<ThemeProviderV2>(context, listen: false)
+                .isDarkModeEnabled
+            ? AppColors.backgroundColor[0].withOpacity(0.5)
+            : Color(0xFF021D3C).withOpacity(0.7),
         isScrollControlled: true,
         builder: (BuildContext context) {
           return SharePrayer(
@@ -624,7 +624,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
             child: Container(
               padding: EdgeInsets.only(left: 20),
               decoration: BoxDecoration(
-                color: Provider.of<ThemeProvider>(context, listen: false)
+                color: Provider.of<ThemeProviderV2>(context, listen: false)
                         .isDarkModeEnabled
                     ? Colors.transparent
                     : AppColors.white,
@@ -636,7 +636,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
               child: TextButton.icon(
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(
-                    Provider.of<ThemeProvider>(context, listen: false)
+                    Provider.of<ThemeProviderV2>(context, listen: false)
                             .isDarkModeEnabled
                         ? Colors.transparent
                         : AppColors.white,
@@ -666,7 +666,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       children: <Widget>[
                         LongButton(
                             textColor: AppColors.lightBlue3,
-                            backgroundColor: Provider.of<ThemeProvider>(context,
+                            backgroundColor: Provider.of<ThemeProviderV2>(
+                                        context,
                                         listen: false)
                                     .isDarkModeEnabled
                                 ? AppColors.backgroundColor[0].withOpacity(0.7)
@@ -685,7 +686,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                 : _share()),
                         LongButton(
                           textColor: AppColors.lightBlue3,
-                          backgroundColor: Provider.of<ThemeProvider>(context,
+                          backgroundColor: Provider.of<ThemeProviderV2>(context,
                                       listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
@@ -748,7 +749,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         ),
                         LongButton(
                           textColor: AppColors.lightBlue3,
-                          backgroundColor: Provider.of<ThemeProvider>(context,
+                          backgroundColor: Provider.of<ThemeProviderV2>(context,
                                       listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
@@ -781,7 +782,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         ),
                         LongButton(
                           textColor: AppColors.lightBlue3,
-                          backgroundColor: Provider.of<ThemeProvider>(context,
+                          backgroundColor: Provider.of<ThemeProviderV2>(context,
                                       listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
@@ -847,7 +848,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         ),
                         LongButton(
                           textColor: AppColors.lightBlue3,
-                          backgroundColor: Provider.of<ThemeProvider>(context,
+                          backgroundColor: Provider.of<ThemeProviderV2>(context,
                                       listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
@@ -895,7 +896,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         ),
                         LongButton(
                           textColor: AppColors.lightBlue3,
-                          backgroundColor: Provider.of<ThemeProvider>(context,
+                          backgroundColor: Provider.of<ThemeProviderV2>(context,
                                       listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
@@ -913,7 +914,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         ),
                         LongButton(
                           textColor: AppColors.lightBlue3,
-                          backgroundColor: Provider.of<ThemeProvider>(context,
+                          backgroundColor: Provider.of<ThemeProviderV2>(context,
                                       listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
@@ -935,7 +936,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           textColor: AppColors.lightBlue3,
                           hasIcon: true,
                           isDisabled: !isOwner && !isAdmin,
-                          backgroundColor: Provider.of<ThemeProvider>(context,
+                          backgroundColor: Provider.of<ThemeProviderV2>(context,
                                       listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
@@ -954,7 +955,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         ),
                         LongButton(
                           textColor: AppColors.lightBlue3,
-                          backgroundColor: Provider.of<ThemeProvider>(context,
+                          backgroundColor: Provider.of<ThemeProviderV2>(context,
                                       listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
@@ -969,7 +970,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         if (isGroupPrayer)
                           LongButton(
                             textColor: AppColors.lightBlue3,
-                            backgroundColor: Provider.of<ThemeProvider>(context,
+                            backgroundColor: Provider.of<ThemeProviderV2>(
+                                        context,
                                         listen: false)
                                     .isDarkModeEnabled
                                 ? AppColors.backgroundColor[0].withOpacity(0.7)
@@ -983,7 +985,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         if (isGroupPrayer)
                           LongButton(
                               textColor: AppColors.lightBlue3,
-                              backgroundColor: Provider.of<ThemeProvider>(
+                              backgroundColor: Provider.of<ThemeProviderV2>(
                                           context,
                                           listen: false)
                                       .isDarkModeEnabled

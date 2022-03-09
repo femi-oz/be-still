@@ -242,9 +242,8 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
   }
 
   Widget _buildMenu() {
-    return SizedBox.shrink();
-    // return PrayerGroupMenu(
-    //     context, hasReminder, reminder, () => updateUI(), widget.prayerData);
+    return PrayerGroupMenu(
+        context, hasReminder, reminder, () => updateUI(), widget.prayerData);
   }
 
   updateUI() {

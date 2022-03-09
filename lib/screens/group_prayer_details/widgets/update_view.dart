@@ -1,13 +1,16 @@
 import 'dart:io';
 
-import 'package:be_still/models/group.model.dart';
-import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/enums/status.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
+import 'package:be_still/models/v2/tag.model.dart';
+import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:contacts_service/contacts_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
@@ -21,7 +24,7 @@ class UpdateView extends StatefulWidget {
 
   @override
   UpdateView(this.prayerData);
-  final CombineGroupPrayerStream? prayerData;
+  final PrayerDataModel? prayerData;
   @override
   _UpdateView createState() => _UpdateView();
 }
@@ -50,8 +53,7 @@ class _UpdateView extends State<UpdateView> {
   _openShareModal(BuildContext context, String phoneNumber, String email,
       String identifier) async {
     try {
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .getContacts();
+      await Provider.of<PrayerProvider>(context, listen: false).getContacts();
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
@@ -67,7 +69,7 @@ class _UpdateView extends State<UpdateView> {
     var updatedPhone = '';
     var updatedEmail = '';
     localContacts =
-        Provider.of<GroupPrayerProvider>(context, listen: false).localContacts;
+        Provider.of<PrayerProviderV2>(context, listen: false).localContacts;
     var latestContact =
         localContacts.where((element) => element.identifier == identifier);
 
@@ -244,9 +246,10 @@ class _UpdateView extends State<UpdateView> {
   Widget build(BuildContext context) {
     // final prayerData = Provider.of<GroupPrayerProvider>(context).currentPrayer;
     var updates = widget.prayerData?.updates ?? [];
-    updates.sort((a, b) => (b.modifiedOn ?? DateTime.now())
-        .compareTo(a.modifiedOn ?? DateTime.now()));
-    updates = updates.where((element) => element.deleteStatus != -1).toList();
+    updates.sort((a, b) => (b.modifiedDate ?? DateTime.now())
+        .compareTo(a.modifiedDate ?? DateTime.now()));
+    updates =
+        updates.where((element) => element.status != Status.deleted).toList();
     return Container(
       child: SingleChildScrollView(
         child: Container(
@@ -254,26 +257,30 @@ class _UpdateView extends State<UpdateView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              widget.prayerData?.prayer?.groupId != '0'
+              widget.prayerData?.groupId != '0'
                   ? Container(
                       margin: EdgeInsets.only(bottom: 15),
                       child: Text(
-                        widget.prayerData?.prayer?.creatorName ?? '',
+                        widget.prayerData?.creatorName ?? '',
                         style: AppTextStyles.regularText18b.copyWith(
-                            color: AppColors.prayerPrimaryColor,
+                            color: AppColors.lightBlue4,
                             fontWeight: FontWeight.w500),
                         textAlign: TextAlign.left,
                       ),
                     )
                   : Container(),
               for (int i = 0; i < updates.length; i++)
-                _buildDetail('', updates[i].modifiedOn, updates[i].description,
-                    widget.prayerData?.tags, context),
+                _buildDetail(
+                    '',
+                    updates[i].modifiedDate,
+                    updates[i].description,
+                    widget.prayerData?.tags ?? <TagModel>[],
+                    context),
               _buildDetail(
                   'Initial Prayer | ',
-                  widget.prayerData?.prayer?.createdOn ?? DateTime.now(),
-                  widget.prayerData?.prayer?.description,
-                  widget.prayerData?.tags,
+                  widget.prayerData?.createdDate ?? DateTime.now(),
+                  widget.prayerData?.description,
+                  widget.prayerData?.tags ?? <TagModel>[],
                   context),
             ],
           ),
@@ -282,8 +289,9 @@ class _UpdateView extends State<UpdateView> {
     );
   }
 
-  Widget _buildDetail(time, modifiedOn, description, tags, context) {
-    final _currentUser = Provider.of<UserProvider>(context).currentUser;
+  Widget _buildDetail(
+      time, modifiedOn, description, List<TagModel> tags, context) {
+    final _currentUserId = FirebaseAuth.instance.currentUser?.uid;
 
     return Container(
       child: Column(
@@ -345,11 +353,14 @@ class _UpdateView extends State<UpdateView> {
                             targetString: tags[i].displayName,
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                if (tags[i].userId == _currentUser.id)
-                                  _openShareModal(context, tags[i].phoneNumber,
-                                      tags[i].email, tags[i].identifier);
+                                if (tags[i].userId == _currentUserId)
+                                  _openShareModal(
+                                      context,
+                                      tags[i].phoneNumber ?? '',
+                                      tags[i].email ?? '',
+                                      tags[i].contactIdentifier ?? '');
                               },
-                            style: tags[i].userId == _currentUser.id
+                            style: tags[i].userId == _currentUserId
                                 ? AppTextStyles.regularText15.copyWith(
                                     color: AppColors.lightBlue2,
                                     decoration: TextDecoration.underline)
