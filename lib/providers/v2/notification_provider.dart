@@ -25,19 +25,14 @@ import 'package:flutter/material.dart';
 class NotificationProviderV2 with ChangeNotifier {
   NotificationServiceV2 _notificationService = locator<NotificationServiceV2>();
   UserServiceV2 _userService = locator<UserServiceV2>();
-  GroupServiceV2 _groupService = locator<GroupServiceV2>();
-  PrayerServiceV2 _prayerService = locator<PrayerServiceV2>();
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  NotificationProviderV2._();
-  factory NotificationProviderV2() => _instance;
 
-  static final NotificationProviderV2 _instance = NotificationProviderV2._();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
   late StreamSubscription<List<NotificationModel>> userNotificationStream;
-  late StreamSubscription<List<LocalNotificationDataModel>>
-      localNotificationStream;
+
   late StreamSubscription<List<LocalNotificationDataModel>> prayerTimeStream;
 
   List<NotificationModel> _notifications = [];
@@ -205,14 +200,14 @@ class NotificationProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> setLocalNotifications(String userId) async {
+  Future<void> setLocalNotifications() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      localNotificationStream = _notificationService
-          .getUserLocalNotification()
-          .asBroadcastStream()
-          .listen((notifications) {
+      _notificationService.getLocalNotifications().then((notifications) {
         _localNotifications = notifications;
+        _prayerTimeNotifications = notifications
+            .where((e) => e.type == NotificationType.prayer_time)
+            .toList();
         _deletePastReminder(notifications);
         notifyListeners();
       });
@@ -235,23 +230,6 @@ class NotificationProviderV2 with ChangeNotifier {
             reminderToDelete[i].localNotificationId ?? 0);
       }
       notifyListeners();
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<void> setPrayerTimeNotifications(userId) async {
-    try {
-      if (_firebaseAuth.currentUser == null) return null;
-      prayerTimeStream = _notificationService
-          .getUserLocalNotification()
-          .asBroadcastStream()
-          .listen((notifications) {
-        _prayerTimeNotifications = notifications
-            .where((e) => e.type == NotificationType.prayer_time)
-            .toList();
-        notifyListeners();
-      });
     } catch (e) {
       rethrow;
     }
@@ -301,7 +279,7 @@ class NotificationProviderV2 with ChangeNotifier {
           frequency: frequency,
           localNotificationId: localId,
           scheduleDate: scheduledDate);
-      await setLocalNotifications(_firebaseAuth.currentUser?.uid ?? '');
+      await setLocalNotifications();
       notifyListeners();
     } catch (e) {
       rethrow;
@@ -325,7 +303,7 @@ class NotificationProviderV2 with ChangeNotifier {
           type: type,
           scheduleDate: scheduledDate,
           status: status);
-      await setLocalNotifications(_firebaseAuth.currentUser?.uid ?? '');
+      await setLocalNotifications();
       notifyListeners();
     } catch (e) {
       rethrow;
@@ -348,13 +326,11 @@ class NotificationProviderV2 with ChangeNotifier {
       String prayerId, String type, String groupId, String message) async {
     try {
       _notificationService.sendPrayerNotification(
-          message: message,
-          type: type,
-          groupId: groupId,
-          prayerId: prayerId,
-          userService: _userService,
-          groupService: _groupService,
-          prayerService: _prayerService);
+        message: message,
+        type: type,
+        groupId: groupId,
+        prayerId: prayerId,
+      );
     } catch (e) {
       rethrow;
     }
@@ -366,7 +342,6 @@ class NotificationProviderV2 with ChangeNotifier {
 
   void flush() {
     userNotificationStream.cancel();
-    localNotificationStream.cancel();
     prayerTimeStream.cancel();
     resetValues();
   }

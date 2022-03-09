@@ -249,21 +249,21 @@ class NotificationProvider with ChangeNotifier {
     }
   }
 
-  Future<void> setLocalNotifications(userId) async {
-    try {
-      if (_firebaseAuth.currentUser == null) return null;
-      localNotificationStream = _notificationService
-          .getLocalNotifications(userId)
-          .asBroadcastStream()
-          .listen((notifications) {
-        _localNotifications = notifications;
-        _deletePastReminder(notifications);
-        notifyListeners();
-      });
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // Future<void> setLocalNotifications(userId) async {
+  //   try {
+  //     if (_firebaseAuth.currentUser == null) return null;
+  //     localNotificationStream = _notificationService
+  //         .getLocalNotifications(userId)
+  //         .asBroadcastStream()
+  //         .listen((notifications) {
+  //       _localNotifications = notifications;
+  //       _deletePastReminder(notifications);
+  //       notifyListeners();
+  //     });
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
   Future<List<LocalNotificationModel>> getLocalNotificationsFuture(
       userId) async {
@@ -292,22 +292,22 @@ class NotificationProvider with ChangeNotifier {
     }
   }
 
-  Future<void> setPrayerTimeNotifications(userId) async {
-    try {
-      if (_firebaseAuth.currentUser == null) return null;
-      prayerTimeStream = _notificationService
-          .getLocalNotifications(userId)
-          .asBroadcastStream()
-          .listen((notifications) {
-        _prayerTimeNotifications = notifications
-            .where((e) => e.type == NotificationType.prayer_time)
-            .toList();
-        notifyListeners();
-      });
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // Future<void> setPrayerTimeNotifications(userId) async {
+  //   try {
+  //     if (_firebaseAuth.currentUser == null) return null;
+  //     prayerTimeStream = _notificationService
+  //         .getLocalNotifications(userId)
+  //         .asBroadcastStream()
+  //         .listen((notifications) {
+  //       _prayerTimeNotifications = notifications
+  //           .where((e) => e.type == NotificationType.prayer_time)
+  //           .toList();
+  //       notifyListeners();
+  //     });
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
   Future updateNotification(String notificationId) async {
     try {
@@ -386,7 +386,7 @@ class NotificationProvider with ChangeNotifier {
         selectedMonth,
         selectedDayOfMonth,
       );
-      await setLocalNotifications(userId);
+      // await setLocalNotifications(userId);
       notifyListeners();
     } catch (e) {
       rethrow;
@@ -422,7 +422,7 @@ class NotificationProvider with ChangeNotifier {
         selectedMonth,
         selectedDayOfMonth,
       );
-      await setLocalNotifications(userId);
+      // await setLocalNotifications(userId);
       notifyListeners();
     } catch (e) {
       rethrow;

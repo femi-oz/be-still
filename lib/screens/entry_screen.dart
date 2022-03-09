@@ -156,6 +156,7 @@ class _EntryScreenState extends State<EntryScreen> {
       }
       await Provider.of<PrayerProviderV2>(context, listen: false)
           .setPrayerTimePrayers();
+
       await Provider.of<GroupProviderV2>(context, listen: false)
           .setUserGroups();
       await Provider.of<DevotionalProviderV2>(context, listen: false)
@@ -169,8 +170,7 @@ class _EntryScreenState extends State<EntryScreen> {
       //     .setSettings(userId ?? '');
       // await Provider.of<SettingsProvider>(context, listen: false)
       //     .setSharingSettings(userId ?? '');
-      await Provider.of<NotificationProviderV2>(context, listen: false)
-          .setPrayerTimeNotifications(userId ?? '');
+
       // await Provider.of<SettingsProvider>(context, listen: false)
       //     .setGroupSettings(userId??'');
       // await Provider.of<SettingsProvider>(context, listen: false)
@@ -188,7 +188,8 @@ class _EntryScreenState extends State<EntryScreen> {
 
       // get all local notifications
       await Provider.of<NotificationProviderV2>(context, listen: false)
-          .setLocalNotifications(userId ?? '');
+          .setLocalNotifications();
+
       // await Provider.of<GroupProvider>(context, listen: false)
       //     .setAllGroups(userId ?? '');
     } on HttpException catch (e, s) {

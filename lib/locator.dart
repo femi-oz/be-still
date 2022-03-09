@@ -28,10 +28,10 @@ void setupLocator() {
   locator.registerLazySingleton(() => DevotionalService());
   locator.registerLazySingleton(() => LogService());
 // ------------------------------------------------------------------
+  locator.registerLazySingleton(() => NotificationServiceV2());
   locator.registerLazySingleton(() => AuthenticationServiceV2());
   locator.registerLazySingleton(() => PrayerServiceV2());
   locator.registerLazySingleton(() => UserServiceV2());
   locator.registerLazySingleton(() => GroupServiceV2());
-  locator.registerLazySingleton(() => NotificationServiceV2());
   locator.registerLazySingleton(() => DevotionalServiceV2());
 }

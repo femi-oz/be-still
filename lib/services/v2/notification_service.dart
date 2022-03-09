@@ -37,10 +37,6 @@ class NotificationServiceV2 {
   final CollectionReference<Map<String, dynamic>> _userDataCollectionReference =
       FirebaseFirestore.instance.collection("users");
 
-  // final _userService = locator<UserServiceV2>();
-  // final _groupService = locator<GroupServiceV2>();
-  // final _prayerService = locator<PrayerServiceV2>();
-
   Future<void> addNotification({
     required String message,
     required String senderName,
@@ -74,17 +70,17 @@ class NotificationServiceV2 {
     required String type,
     required String groupId,
     required String prayerId,
-    required UserServiceV2 userService,
-    required GroupServiceV2 groupService,
-    required PrayerServiceV2 prayerService,
   }) async {
     try {
+      final _userService = locator<UserServiceV2>();
+      final _groupService = locator<GroupServiceV2>();
+      final _prayerService = locator<PrayerServiceV2>();
       List<String> _ids = [];
-      final _user = await userService
+      final _user = await _userService
           .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
 
-      final group = await groupService.getGroup(groupId);
-      final prayer = await prayerService.getPrayerFuture(groupId);
+      final group = await _groupService.getGroup(groupId);
+      final prayer = await _prayerService.getPrayerFuture(groupId);
 
       if (type == NotificationType.prayer ||
           type == NotificationType.prayer_updates) {
@@ -101,7 +97,7 @@ class NotificationServiceV2 {
         if (type == NotificationType.prayer ||
             type == NotificationType.prayer_updates) {
           if (member.enableNotificationForNewPrayers ?? false) {
-            final userTokens = await userService.getUserByIdFuture(id).then(
+            final userTokens = await _userService.getUserByIdFuture(id).then(
                 (value) =>
                     (value.devices ?? []).map((e) => e.token ?? '').toList());
             final name = ((_user.firstName ?? '').capitalizeFirst ?? '') +
@@ -152,6 +148,21 @@ class NotificationServiceV2 {
               .update({'id': value.id}));
     } catch (e) {
       StringUtils.getErrorMessage(e);
+    }
+  }
+
+  Future<List<LocalNotificationDataModel>> getLocalNotifications() {
+    try {
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
+      return _localNotificationCollectionReference
+          .where('UserId', isEqualTo: _firebaseAuth.currentUser?.uid)
+          .get()
+          .then((e) => e.docs
+              .map((doc) => LocalNotificationDataModel.fromJson(doc.data()))
+              .toList());
+    } catch (e) {
+      throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
@@ -254,15 +265,6 @@ class NotificationServiceV2 {
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
-  }
-
-  Stream<List<LocalNotificationDataModel>> getUserLocalNotification() {
-    return _localNotificationCollectionReference
-        .where('userId', isEqualTo: _firebaseAuth.currentUser?.uid)
-        .snapshots()
-        .map((event) => event.docs
-            .map((e) => LocalNotificationDataModel.fromJson(e.data()))
-            .toList());
   }
 
   Future<void> updateLocalNotification({

@@ -142,6 +142,8 @@ class PrayerProviderV2 with ChangeNotifier {
   Future<void> setPrayerTimePrayers() async {
     try {
       // setPrayers();
+
+      _prayerService.getPrayerFollowers();
       prayerTimeStream =
           _prayerService.getUserPrayers().asBroadcastStream().listen(
         (data) {
@@ -305,11 +307,9 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> archivePrayer(
-      String prayerId, List<FollowerModel> followers, bool isAdmin) async {
+  Future<void> archivePrayer(String prayerId) async {
     try {
-      await _prayerService.archivePrayer(
-          currentFollowers: followers, isAdmin: isAdmin, prayerId: prayerId);
+      await _prayerService.archivePrayer(prayerId: prayerId);
     } catch (e) {
       rethrow;
     }
@@ -532,7 +532,13 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> unFollowPrayer() async {}
+  Future<void> followPrayer(String prayerId, String groupId) async {
+    _prayerService.followPrayer(prayerId: prayerId, groupId: groupId);
+  }
+
+  Future<void> unFollowPrayer(String prayerId, String groupId) async {
+    _prayerService.unFollowPrayer(prayerId: prayerId, groupId: groupId);
+  }
 
   void flush() {
     prayerStream.cancel();

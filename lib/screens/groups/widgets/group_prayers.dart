@@ -2,11 +2,9 @@ import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/status.dart';
-import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/Prayer/Widgets/group_prayer_card.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -16,6 +14,7 @@ import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -43,17 +42,14 @@ class _GroupPrayersState extends State<GroupPrayers> {
   @override
   void didChangeDependencies() async {
     if (_isInit) {
-      final _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+      final _userId = FirebaseAuth.instance.currentUser?.uid;
 
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
         try {
           final group =
-              Provider.of<GroupProvider>(context, listen: false).currentGroup;
-          await Provider.of<MiscProvider>(context, listen: false)
-              .setPageTitle((group.group?.name ?? '').toUpperCase());
-          await Provider.of<GroupPrayerProvider>(context, listen: false)
-              .setHiddenPrayer(_user.id ?? '');
+              Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
+          await Provider.of<MiscProviderV2>(context, listen: false)
+              .setPageTitle((group.name ?? '').toUpperCase());
         } on HttpException catch (e, s) {
           final user =
               Provider.of<UserProviderV2>(context, listen: false).currentUser;
@@ -72,7 +68,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
   }
 
   String get message {
-    final filterOption = Provider.of<GroupPrayerProvider>(context).filterOption;
+    final filterOption = Provider.of<PrayerProviderV2>(context).filterOption;
 
     if (filterOption.toLowerCase() == Status.active.toLowerCase()) {
       return 'You do not have any active prayers.';
@@ -89,20 +85,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
 
   @override
   Widget build(BuildContext context) {
-    var data = Provider.of<GroupPrayerProvider>(context).filteredPrayers;
-
-    final _hiddenPrayers =
-        Provider.of<GroupPrayerProvider>(context, listen: false).hiddenPrayers;
-    data.forEach((element) {
-      _hiddenPrayers.forEach((x) {
-        if ((element.groupPrayer?.prayerId ?? '').contains(x.prayerId ?? '')) {
-          data = data
-              .where((y) =>
-                  y.groupPrayer?.prayerId != element.groupPrayer?.prayerId)
-              .toList();
-        }
-      });
-    });
+    var data = Provider.of<PrayerProviderV2>(context).filteredPrayers;
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -153,11 +136,9 @@ class _GroupPrayersState extends State<GroupPrayers> {
                                   .map((e) => GestureDetector(
                                       onTap: () async {
                                         try {
-                                          Provider.of<GroupPrayerProvider>(
-                                                  context,
+                                          Provider.of<PrayerProviderV2>(context,
                                                   listen: false)
-                                              .setCurrentPrayerId(
-                                                  e.groupPrayer?.id ?? '');
+                                              .setCurrentPrayerId(e.id ?? '');
                                           AppController appController =
                                               Get.find();
                                           appController.setCurrentPage(
@@ -205,7 +186,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
                     child: LongButton(
                       onPress: () {
                         try {
-                          Provider.of<PrayerProvider>(context, listen: false)
+                          Provider.of<PrayerProviderV2>(context, listen: false)
                               .setEditMode(false, true);
 
                           AppController appController = Get.find();

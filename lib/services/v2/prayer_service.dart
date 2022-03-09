@@ -4,6 +4,7 @@ import 'package:be_still/enums/status.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/message_template.dart';
+import 'package:be_still/models/v2/followed_prayer.model.dart';
 import 'package:be_still/models/v2/follower.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
@@ -66,11 +67,6 @@ class PrayerServiceV2 {
         snoozeEndDate: DateTime.now(),
       ).toJson();
       _prayerDataCollectionReference.add(doc).then((value) {
-        // _notificationService.sendPrayerNotification(
-        //     prayerId: value.id,
-        //     type: NotificationType.prayer,
-        //     groupId: groupId ?? '',
-        //     message: description);
         if (contacts?.isNotEmpty ?? false) {
           for (final contact in (contacts ?? [])) {
             if (description.contains(contact.displayName ?? '')) {
@@ -82,13 +78,13 @@ class PrayerServiceV2 {
             }
           }
         }
-        // if (isGroup ?? false) {
-        //   _notificationService.sendPrayerNotification(
-        //       message: description,
-        //       type: NotificationType.prayer,
-        //       groupId: groupId ?? '',
-        //       prayerId: value.id);
-        // }
+        if (isGroup ?? false) {
+          _notificationService.sendPrayerNotification(
+              message: description,
+              type: NotificationType.prayer,
+              groupId: groupId ?? '',
+              prayerId: value.id);
+        }
       });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -217,30 +213,35 @@ class PrayerServiceV2 {
 
   Future<void> archivePrayer({
     required String prayerId,
-    required List<FollowerModel> currentFollowers,
-    required bool isAdmin,
   }) async {
     try {
-      if (currentFollowers.isNotEmpty &&
-          currentFollowers.any(
-              (element) => element.userId == _firebaseAuth.currentUser?.uid) &&
-          !isAdmin) {
-        FollowerModel user = currentFollowers.firstWhere(
-            (element) => element.userId == _firebaseAuth.currentUser?.uid);
-        user = currentFollowers[currentFollowers.indexOf(user)]
-          ..prayerStatus = Status.archived;
-        currentFollowers[currentFollowers.indexOf(user)] = user;
-        await _prayerDataCollectionReference
-            .doc(prayerId)
-            .update({'followers': currentFollowers});
-      } else {
-        _prayerDataCollectionReference
-            .doc(prayerId)
-            .update({'status': Status.archived});
-      }
+      // if (currentFollowers.isNotEmpty &&
+      //     currentFollowers.any(
+      //         (element) => element.userId == _firebaseAuth.currentUser?.uid) &&
+      //     !isAdmin) {
+      //   FollowerModel user = currentFollowers.firstWhere(
+      //       (element) => element.userId == _firebaseAuth.currentUser?.uid);
+      //   user = currentFollowers[currentFollowers.indexOf(user)]
+      //     ..prayerStatus = Status.archived;
+      //   currentFollowers[currentFollowers.indexOf(user)] = user;
+      //   await _prayerDataCollectionReference
+      //       .doc(prayerId)
+      //       .update({'followers': FieldValue.arrayUnion(elements)});
+      // } else {
+      //   _prayerDataCollectionReference
+      //       .doc(prayerId)
+      //       .update({'status': Status.archived});
+      // }
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
+  }
+
+  Future<void> getPrayerFollowers() async {
+    await _userDataCollectionReference
+        .where('prayers', arrayContains: '1')
+        .get()
+        .then((value) => print(value));
   }
 
   Future<void> unArchivePrayer(
@@ -522,5 +523,27 @@ class PrayerServiceV2 {
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
+  }
+
+  Future followPrayer(
+      {required String prayerId, required String groupId}) async {
+    final userPrayer =
+        FollowedPrayer(prayerId: prayerId, groupId: groupId).toJson();
+    await _userDataCollectionReference
+        .doc(FirebaseAuth.instance.currentUser?.uid)
+        .update({
+      'prayers': FieldValue.arrayUnion([userPrayer])
+    });
+  }
+
+  Future unFollowPrayer(
+      {required String prayerId, required String groupId}) async {
+    final userPrayer =
+        FollowedPrayer(prayerId: prayerId, groupId: groupId).toJson();
+    await _userDataCollectionReference
+        .doc(FirebaseAuth.instance.currentUser?.uid)
+        .update({
+      'prayers': FieldValue.arrayRemove([userPrayer])
+    });
   }
 }

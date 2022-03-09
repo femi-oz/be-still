@@ -504,8 +504,6 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
       await Provider.of<PrayerProviderV2>(context, listen: false).archivePrayer(
         widget.prayerData?.id ?? '',
-        prayerData?.followers ?? <FollowerModel>[],
-        isAdmin,
       );
       clearSearch();
 

@@ -35,10 +35,8 @@ class LocalNotification {
       (i) => DateFormat('MMM').format(DateTime(DateTime.now().year, i + 1)));
 
   static Future<void> setNotificationsOnNewDevice(context) async {
-    final userId = FirebaseAuth.instance.currentUser?.uid ?? '';
-
     await Provider.of<NotificationProviderV2>(context, listen: false)
-        .setLocalNotifications(userId);
+        .setLocalNotifications();
     final _localNotifications =
         Provider.of<NotificationProviderV2>(context, listen: false)
             .localNotifications;

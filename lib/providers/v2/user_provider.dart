@@ -17,7 +17,7 @@ class UserProviderV2 with ChangeNotifier {
 
   Future<void> setCurrentUser() async {
     try {
-      await _userService.getUserByIdFuture(_firebaseUserId ?? '').then((event) {
+      await _userService.getUserById(_firebaseUserId ?? '').then((event) {
         _currentUser = event;
         notifyListeners();
       });
