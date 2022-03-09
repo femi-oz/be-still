@@ -58,7 +58,7 @@ class _MyListSettingsState extends State<MyListSettings> {
 
   @override
   deactivate() {
-    widget.onDispose(selectedDuration, selectedInterval, widget.settings.id);
+    widget.onDispose(selectedDuration, selectedInterval);
     super.deactivate();
   }
 
@@ -89,7 +89,6 @@ class _MyListSettingsState extends State<MyListSettings> {
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<UserProviderV2>(context);
-    final userId = FirebaseAuth.instance.currentUser?.uid;
     final snoozeDurationController = FixedExtentScrollController(
         initialItem: snoozeDuration.contains(selectedDuration)
             ? snoozeDuration.indexOf(selectedDuration)

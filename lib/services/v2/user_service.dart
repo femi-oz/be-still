@@ -46,7 +46,7 @@ class UserServiceV2 {
         dateOfBirth: dateOfBirth,
         allowEmergencyCalls: true,
         archiveAutoDeleteMinutes: 0,
-        defaultSnoozeFrequency: IntervalRange.thirtyMinutes,
+        defaultSnoozeFrequency: 'Minutes',
         defaultSnoozeDuration: 0,
         includeAnsweredPrayerAutoDelete: false,
         archiveSortBy: SortType.date,
@@ -112,7 +112,7 @@ class UserServiceV2 {
 
   Future<void> updateUserSettings({
     required String key,
-    required String value,
+    required dynamic value,
   }) async {
     try {
       _userDataCollectionReference

@@ -75,7 +75,7 @@ class UserProviderV2 with ChangeNotifier {
     }
   }
 
-  Future updateUserSettings(String key, String value) async {
+  Future updateUserSettings(String key, dynamic value) async {
     try {
       await _userService.updateUserSettings(key: key, value: value);
       setCurrentUser(false);

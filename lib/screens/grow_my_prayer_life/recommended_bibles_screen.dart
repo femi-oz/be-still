@@ -14,14 +14,14 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class RecommenededBibles extends StatefulWidget {
+class RecommendedBibles extends StatefulWidget {
   static const routeName = 'recommended-bible';
 
   @override
-  _RecommenededBiblesState createState() => _RecommenededBiblesState();
+  _RecommendedBiblesState createState() => _RecommendedBiblesState();
 }
 
-class _RecommenededBiblesState extends State<RecommenededBibles> {
+class _RecommendedBiblesState extends State<RecommendedBibles> {
   final _scrollController = new ScrollController();
 
   @override

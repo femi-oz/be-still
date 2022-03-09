@@ -271,35 +271,26 @@ class _EntryScreenState extends State<EntryScreen> {
     }
   }
 
-  // void _setDefaultSnooze(selectedDuration, selectedInterval, settingsId) async {
-  //   try {
-  //     final userId = FirebaseAuth.instance.currentUser?.uid;
-  //     await Provider.of<UserProviderV2>(context, listen: false)
-  //         .updateSettings(
-  //       userId ?? '',
-  //       key: SettingsKey.defaultSnoozeDuration,
-  //       value: selectedDuration,
-  //       settingsId: settingsId,
-  //     );
-  //     await Provider.of<SettingsProvider>(context, listen: false)
-  //         .updateSettings(
-  //       userId ?? '',
-  //       key: SettingsKey.defaultSnoozeFrequency,
-  //       value: selectedInterval,
-  //       settingsId: settingsId,
-  //     );
-  //   } on HttpException catch (e, s) {
-  //     final user =
-  //         Provider.of<UserProviderV2>(context, listen: false).currentUser;
-  //     BeStilDialog.showErrorDialog(
-  //         context, StringUtils.getErrorMessage(e), user, s);
-  //   } catch (e, s) {
-  //     final user =
-  //         Provider.of<UserProviderV2>(context, listen: false).currentUser;
-  //     BeStilDialog.showErrorDialog(
-  //         context, StringUtils.getErrorMessage(e), user, s);
-  //   }
-  // }
+  void _setDefaultSnooze(selectedDuration, selectedInterval) async {
+    try {
+      await Provider.of<UserProviderV2>(context, listen: false)
+          .updateUserSettings(
+              SettingsKey.defaultSnoozeDuration, selectedDuration);
+      await Provider.of<UserProviderV2>(context, listen: false)
+          .updateUserSettings(
+              SettingsKey.defaultSnoozeFrequency, selectedInterval);
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    }
+  }
 
   GlobalKey _keyButton = GlobalKey();
   GlobalKey _keyButton2 = GlobalKey();
@@ -507,7 +498,7 @@ class _EntryScreenState extends State<EntryScreen> {
             padding: 6,
             key: _keyButton6),
         TabNavigationItem(
-          page: SettingsScreen(() {}), //4
+          page: SettingsScreen(_setDefaultSnooze), //4
           icon: Icon(
             Icons.more_horiz,
             size: 22,
@@ -527,7 +518,7 @@ class _EntryScreenState extends State<EntryScreen> {
             title: "More",
             padding: 7),
         TabNavigationItem(
-            page: RecommenededBibles(), //6
+            page: RecommendedBibles(), //6
             icon: Icon(
               Icons.more_horiz,
               size: 20,
