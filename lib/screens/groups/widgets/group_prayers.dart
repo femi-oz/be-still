@@ -85,7 +85,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
 
   @override
   Widget build(BuildContext context) {
-    var data = Provider.of<PrayerProviderV2>(context).groupPrayers;
+    var data = Provider.of<PrayerProviderV2>(context).filteredGroupPrayers;
 
     return WillPopScope(
       onWillPop: _onWillPop,

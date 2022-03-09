@@ -67,7 +67,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
     await Provider.of<MiscProviderV2>(context, listen: false)
         .setSearchQuery(value);
     await Provider.of<PrayerProviderV2>(context, listen: false)
-        .searchPrayers(value, userId ?? '');
+        .searchGroupPrayers(value, userId ?? '');
   }
 
   void _clearGroupSearchField() async {
@@ -221,6 +221,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       label: 'Search',
                       padding: 5.0,
                       showSuffix: false,
+                      isGroup: widget.isGroup,
                       textInputAction: TextInputAction.done,
                       isSearch: true,
                       textkey: _searchKey,

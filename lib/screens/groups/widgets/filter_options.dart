@@ -1,11 +1,10 @@
 import 'dart:io';
 
 import 'package:be_still/enums/status.dart';
-import 'package:be_still/models/group.model.dart';
-import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/models/v2/group.model.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -25,19 +24,17 @@ class _GroupPrayerFiltersState extends State<GroupPrayerFilters> {
     try {
       errorMessage = '';
 
-      Provider.of<GroupPrayerProvider>(context, listen: false)
+      Provider.of<PrayerProviderV2>(context, listen: false)
           .setPrayerFilterOptions(status);
-      Provider.of<GroupPrayerProvider>(context, listen: false).filterPrayers();
-      final group = ((Provider.of<GroupProvider>(context, listen: false)
-                          .currentGroup
-                          .group ??
-                      GroupModel.defaultValue())
-                  .name ??
-              '')
-          .toUpperCase();
+      Provider.of<PrayerProviderV2>(context, listen: false).filterPrayers();
+      final group =
+          ((Provider.of<GroupProviderV2>(context, listen: false).currentGroup)
+                      .name ??
+                  '')
+              .toUpperCase();
       String heading =
           '${status == Status.active ? '$group (ACTIVE)' : "$group (${status.toUpperCase()})"}';
-      await Provider.of<MiscProvider>(context, listen: false)
+      await Provider.of<MiscProviderV2>(context, listen: false)
           .setPageTitle(heading);
       setState(() {});
       Navigator.of(context).pop();
@@ -56,7 +53,7 @@ class _GroupPrayerFiltersState extends State<GroupPrayerFilters> {
   }
 
   Widget build(BuildContext context) {
-    var status = Provider.of<GroupPrayerProvider>(context).filterOption;
+    var status = Provider.of<PrayerProviderV2>(context).filterOption;
     return Container(
       padding: EdgeInsets.only(top: 30),
       child: Column(

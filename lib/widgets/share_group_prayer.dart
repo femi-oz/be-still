@@ -1,8 +1,8 @@
-import 'package:be_still/models/group.model.dart';
-import 'package:be_still/models/notification.model.dart';
-import 'package:be_still/providers/settings_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/models/v2/local_notification.model.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/theme_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/group_prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -15,9 +15,9 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ShareGroupPrayer extends StatefulWidget {
-  final CombineGroupPrayerStream prayerData;
+  final PrayerDataModel prayerData;
   final bool hasReminder;
-  final LocalNotificationModel? reminder;
+  final LocalNotificationDataModel? reminder;
   ShareGroupPrayer({
     required this.prayerData,
     required this.hasReminder,
@@ -33,11 +33,12 @@ class _ShareGroupPrayerState extends State<ShareGroupPrayer> {
   String _textUpdatesToString = '';
 
   _emailLink([bool isChurch = false]) async {
-    final _user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    final _churchEmail = Provider.of<SettingsProvider>(context, listen: false)
-        .sharingSettings
+    final _user =
+        Provider.of<UserProviderV2>(context, listen: false).currentUser;
+    final _churchEmail = Provider.of<UserProviderV2>(context, listen: false)
+        .currentUser
         .churchEmail;
-    final _prayer = widget.prayerData.prayer?.description ?? ''.capitalizeFirst;
+    final _prayer = widget.prayerData.description ?? ''.capitalizeFirst;
     final firstName = _user.firstName ?? ''.capitalizeFirst;
     final lastName = _user.lastName ?? ''.capitalizeFirst;
     final _footerText =
@@ -48,13 +49,13 @@ https://www.bestillapp.com.''';
           ? '''I am sharing with you the following prayer request from my Be Still app: 
 
 $_emailUpdatesToString
-${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer?.createdOn ?? DateTime.now())}
+${DateFormat('dd MMMM yyyy').format(widget.prayerData.createdDate ?? DateTime.now())}
 $_prayer   
 
 $_footerText'''
           : '''I am sharing with you the following prayer request from my Be Still app: 
 
-${DateFormat('dd MMMM yyyy').format(widget.prayerData.prayer?.createdOn ?? DateTime.now())}
+${DateFormat('dd MMMM yyyy').format(widget.prayerData.createdDate ?? DateTime.now())}
 $_prayer   
 
 $_footerText''',
@@ -67,16 +68,16 @@ $_footerText''',
   }
 
   _textLink([bool isChurch = false]) async {
-    final _churchPhone = Provider.of<SettingsProvider>(context, listen: false)
-        .sharingSettings
+    final _churchPhone = Provider.of<UserProviderV2>(context, listen: false)
+        .currentUser
         .churchPhone;
-    final _prayer = widget.prayerData.prayer?.description;
+    final _prayer = widget.prayerData.description;
     final _footerText =
         "This prayer need has been shared with you from the Be Still app, which allows you to create a prayer list for yourself or a group of friends. \n\nhttps://www.bestillapp.com";
 
     await sendSMS(
             message:
-                "Please pray for $_prayer (${DateFormat('dd MMM yyyy').format(widget.prayerData.prayer?.createdOn ?? DateTime.now())}) ${_textUpdatesToString != '' ? ' $_textUpdatesToString \n\n' : '\n\n'}$_footerText",
+                "Please pray for $_prayer (${DateFormat('dd MMM yyyy').format(widget.prayerData.createdDate ?? DateTime.now())}) ${_textUpdatesToString != '' ? ' $_textUpdatesToString \n\n' : '\n\n'}$_footerText",
             recipients: isChurch ? [_churchPhone ?? ''] : [])
         .catchError((onError) {
       print(onError);
@@ -86,12 +87,12 @@ $_footerText''',
   initState() {
     var emailUpdates = [];
     (widget.prayerData.updates ?? []).forEach((u) => emailUpdates.add(
-        '''${DateFormat('dd MMMM yyyy').format(u.createdOn ?? DateTime.now())}
+        '''${DateFormat('dd MMMM yyyy').format(u.createdDate ?? DateTime.now())}
 ${u.description}
 '''));
     var textUpdates = [];
     (widget.prayerData.updates ?? []).forEach((u) => textUpdates.add(
-        '${u.description} (${DateFormat('dd MMM yyyy').format(u.createdOn ?? DateTime.now())})'));
+        '${u.description} (${DateFormat('dd MMM yyyy').format(u.createdDate ?? DateTime.now())})'));
 
     _emailUpdatesToString = emailUpdates.join(" ");
     _textUpdatesToString = textUpdates.join(" ");
@@ -111,7 +112,7 @@ ${u.description}
             child: Container(
               padding: EdgeInsets.only(left: 20),
               decoration: BoxDecoration(
-                color: Provider.of<ThemeProvider>(context, listen: false)
+                color: Provider.of<ThemeProviderV2>(context, listen: false)
                         .isDarkModeEnabled
                     ? Colors.transparent
                     : AppColors.white,
@@ -123,7 +124,7 @@ ${u.description}
               child: TextButton.icon(
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(
-                    Provider.of<ThemeProvider>(context, listen: false)
+                    Provider.of<ThemeProviderV2>(context, listen: false)
                             .isDarkModeEnabled
                         ? Colors.transparent
                         : AppColors.white,
@@ -138,12 +139,12 @@ ${u.description}
                   showModalBottomSheet(
                     context: context,
                     barrierColor:
-                        Provider.of<ThemeProvider>(context, listen: false)
+                        Provider.of<ThemeProviderV2>(context, listen: false)
                                 .isDarkModeEnabled
                             ? AppColors.backgroundColor[0].withOpacity(0.5)
                             : Color(0xFF021D3C).withOpacity(0.7),
                     backgroundColor:
-                        Provider.of<ThemeProvider>(context, listen: false)
+                        Provider.of<ThemeProviderV2>(context, listen: false)
                                 .isDarkModeEnabled
                             ? AppColors.backgroundColor[0].withOpacity(0.5)
                             : Color(0xFF021D3C).withOpacity(0.7),
@@ -175,7 +176,7 @@ ${u.description}
                   LongButton(
                     textColor: AppColors.lightBlue3,
                     backgroundColor:
-                        Provider.of<ThemeProvider>(context, listen: false)
+                        Provider.of<ThemeProviderV2>(context, listen: false)
                                 .isDarkModeEnabled
                             ? AppColors.backgroundColor[0].withOpacity(0.7)
                             : AppColors.white,
@@ -186,7 +187,7 @@ ${u.description}
                   LongButton(
                     textColor: AppColors.lightBlue3,
                     backgroundColor:
-                        Provider.of<ThemeProvider>(context, listen: false)
+                        Provider.of<ThemeProviderV2>(context, listen: false)
                                 .isDarkModeEnabled
                             ? AppColors.backgroundColor[0].withOpacity(0.7)
                             : AppColors.white,
@@ -197,7 +198,7 @@ ${u.description}
                   LongButton(
                     textColor: AppColors.lightBlue3,
                     backgroundColor:
-                        Provider.of<ThemeProvider>(context, listen: false)
+                        Provider.of<ThemeProviderV2>(context, listen: false)
                                 .isDarkModeEnabled
                             ? AppColors.backgroundColor[0].withOpacity(0.7)
                             : AppColors.white,
@@ -209,7 +210,7 @@ ${u.description}
                   LongButton(
                     textColor: AppColors.lightBlue3,
                     backgroundColor:
-                        Provider.of<ThemeProvider>(context, listen: false)
+                        Provider.of<ThemeProviderV2>(context, listen: false)
                                 .isDarkModeEnabled
                             ? AppColors.backgroundColor[0].withOpacity(0.7)
                             : AppColors.white,
@@ -221,7 +222,7 @@ ${u.description}
                   LongButton(
                     textColor: AppColors.lightBlue3,
                     backgroundColor:
-                        Provider.of<ThemeProvider>(context, listen: false)
+                        Provider.of<ThemeProviderV2>(context, listen: false)
                                 .isDarkModeEnabled
                             ? AppColors.backgroundColor[0].withOpacity(0.7)
                             : AppColors.white,

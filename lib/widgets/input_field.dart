@@ -12,6 +12,7 @@ class CustomInput extends StatefulWidget {
   final String label;
   final Color? color;
   final bool isPassword;
+  final bool isGroup;
   final TextEditingController controller;
   final bool showSuffix;
   final TextInputAction textInputAction;
@@ -36,6 +37,7 @@ class CustomInput extends StatefulWidget {
     required this.label,
     this.color,
     this.isPassword = false,
+    this.isGroup = false,
     required this.controller,
     this.textkey,
     this.showSuffix = true,
@@ -138,8 +140,12 @@ class _CustomInputState extends State<CustomInput> {
     final userId = FirebaseAuth.instance.currentUser?.uid;
     await Provider.of<MiscProviderV2>(context, listen: false)
         .setSearchQuery(value);
-    await Provider.of<PrayerProviderV2>(context, listen: false)
-        .searchPrayers(value, userId ?? '');
+
+    widget.isGroup
+        ? await Provider.of<PrayerProviderV2>(context, listen: false)
+            .searchGroupPrayers(value, userId ?? '')
+        : await Provider.of<PrayerProviderV2>(context, listen: false)
+            .searchPrayers(value, userId ?? '');
   }
 
   String? _validatorFn(String value) {
