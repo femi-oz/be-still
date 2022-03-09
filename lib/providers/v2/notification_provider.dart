@@ -9,6 +9,9 @@ import 'package:be_still/models/v2/device.model.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/notification.model.dart';
 import 'package:be_still/models/v2/notification_message.model.dart';
+import 'package:be_still/services/v2/group_service.dart';
+import 'package:be_still/services/v2/prayer_service.dart';
+import 'package:be_still/services/v2/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
@@ -21,6 +24,9 @@ import 'package:flutter/material.dart';
 
 class NotificationProviderV2 with ChangeNotifier {
   NotificationServiceV2 _notificationService = locator<NotificationServiceV2>();
+  UserServiceV2 _userService = locator<UserServiceV2>();
+  GroupServiceV2 _groupService = locator<GroupServiceV2>();
+  PrayerServiceV2 _prayerService = locator<PrayerServiceV2>();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   NotificationProviderV2._();
   factory NotificationProviderV2() => _instance;
@@ -115,7 +121,7 @@ class NotificationProviderV2 with ChangeNotifier {
   Future init(List<DeviceModel> userDevices) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      _notificationService.init(userDevices);
+      _userService.addPushToken(userDevices);
       notifyListeners();
     } catch (e) {
       rethrow;
@@ -342,7 +348,13 @@ class NotificationProviderV2 with ChangeNotifier {
       String prayerId, String type, String groupId, String message) async {
     try {
       _notificationService.sendPrayerNotification(
-          message: message, type: type, groupId: groupId, prayerId: prayerId);
+          message: message,
+          type: type,
+          groupId: groupId,
+          prayerId: prayerId,
+          userService: _userService,
+          groupService: _groupService,
+          prayerService: _prayerService);
     } catch (e) {
       rethrow;
     }

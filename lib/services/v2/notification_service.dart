@@ -7,6 +7,7 @@ import 'package:be_still/flavor_config.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/message_template.dart';
 import 'package:be_still/models/v2/device.model.dart';
+import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/message.model.dart';
 import 'package:be_still/models/v2/notification.model.dart';
@@ -36,19 +37,9 @@ class NotificationServiceV2 {
   final CollectionReference<Map<String, dynamic>> _userDataCollectionReference =
       FirebaseFirestore.instance.collection("users");
 
-  UserServiceV2 _userService = locator<UserServiceV2>();
-  GroupServiceV2 _groupService = locator<GroupServiceV2>();
-  PrayerServiceV2 _prayerService = locator<PrayerServiceV2>();
-
-  init(List<DeviceModel> userDevices) async {
-    try {
-      if (_firebaseAuth.currentUser == null)
-        return Future.error(StringUtils.unathorized);
-      _userService.addPushToken(userDevices);
-    } catch (e) {
-      throw HttpException(StringUtils.getErrorMessage(e));
-    }
-  }
+  // final _userService = locator<UserServiceV2>();
+  // final _groupService = locator<GroupServiceV2>();
+  // final _prayerService = locator<PrayerServiceV2>();
 
   Future<void> addNotification({
     required String message,
@@ -83,14 +74,17 @@ class NotificationServiceV2 {
     required String type,
     required String groupId,
     required String prayerId,
+    required UserServiceV2 userService,
+    required GroupServiceV2 groupService,
+    required PrayerServiceV2 prayerService,
   }) async {
     try {
       List<String> _ids = [];
-      final _user = await _userService
+      final _user = await userService
           .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
 
-      final group = await _groupService.getGroup(groupId);
-      final prayer = await _prayerService.getPrayerFuture(groupId);
+      final group = await groupService.getGroup(groupId);
+      final prayer = await prayerService.getPrayerFuture(groupId);
 
       if (type == NotificationType.prayer ||
           type == NotificationType.prayer_updates) {
@@ -107,7 +101,7 @@ class NotificationServiceV2 {
         if (type == NotificationType.prayer ||
             type == NotificationType.prayer_updates) {
           if (member.enableNotificationForNewPrayers ?? false) {
-            final userTokens = await _userService.getUserByIdFuture(id).then(
+            final userTokens = await userService.getUserByIdFuture(id).then(
                 (value) =>
                     (value.devices ?? []).map((e) => e.token ?? '').toList());
             final name = ((_user.firstName ?? '').capitalizeFirst ?? '') +

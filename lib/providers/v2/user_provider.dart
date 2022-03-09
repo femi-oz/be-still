@@ -84,11 +84,7 @@ class UserProviderV2 with ChangeNotifier {
     }
   }
 
-<<<<<<< .mine
-  Future updateUserSettings(String key, dynamic value) async {
-=======
   Future<void> updatePassword(String newPassword) async {
->>>>>>> .theirs
     try {
       await _userService.updatePassword(newPassword);
       //await setCurrentUser(false);

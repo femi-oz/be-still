@@ -66,11 +66,11 @@ class PrayerServiceV2 {
         snoozeEndDate: DateTime.now(),
       ).toJson();
       _prayerDataCollectionReference.add(doc).then((value) {
-        _notificationService.sendPrayerNotification(
-            prayerId: value.id,
-            type: NotificationType.prayer,
-            groupId: groupId ?? '',
-            message: description);
+        // _notificationService.sendPrayerNotification(
+        //     prayerId: value.id,
+        //     type: NotificationType.prayer,
+        //     groupId: groupId ?? '',
+        //     message: description);
         if (contacts?.isNotEmpty ?? false) {
           for (final contact in (contacts ?? [])) {
             if (description.contains(contact.displayName ?? '')) {
@@ -82,13 +82,13 @@ class PrayerServiceV2 {
             }
           }
         }
-        if (isGroup ?? false) {
-          _notificationService.sendPrayerNotification(
-              message: description,
-              type: NotificationType.prayer,
-              groupId: groupId ?? '',
-              prayerId: value.id);
-        }
+        // if (isGroup ?? false) {
+        //   _notificationService.sendPrayerNotification(
+        //       message: description,
+        //       type: NotificationType.prayer,
+        //       groupId: groupId ?? '',
+        //       prayerId: value.id);
+        // }
       });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
