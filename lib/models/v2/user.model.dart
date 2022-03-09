@@ -1,4 +1,5 @@
 import 'package:be_still/models/v2/device.model.dart';
+import 'package:be_still/models/v2/followed_prayer.model.dart';
 import 'package:flutter/services.dart';
 
 class UserDataModel {
@@ -8,7 +9,8 @@ class UserDataModel {
   String? email;
   DateTime? dateOfBirth;
   List<DeviceModel>? devices;
-  List<String>? prayers;
+  List<FollowedPrayer>? prayers;
+  List<String>? groups;
   String? churchName;
   String? churchEmail;
   String? churchPhone;
@@ -39,6 +41,7 @@ class UserDataModel {
       this.dateOfBirth,
       this.devices,
       this.prayers,
+      this.groups,
       this.churchName,
       this.churchEmail,
       this.churchPhone,
@@ -61,12 +64,12 @@ class UserDataModel {
       this.modifiedDate,
       this.status});
 
-  UserDataModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+  UserDataModel.fromJson(Map<String, dynamic> json, String did) {
+    id = did;
     firstName = json['firstName'];
     lastName = json['lastName'];
     email = json['email'];
-    dateOfBirth = json['dateOfBirth'].toDate();
+    dateOfBirth = json['dateOfBirth']?.toDate();
     if (json['devices'] != null) {
       devices = <DeviceModel>[];
       json['devices'].forEach((v) {
@@ -74,9 +77,15 @@ class UserDataModel {
       });
     }
     if (json['prayers'] != null) {
-      prayers = <String>[];
+      prayers = <FollowedPrayer>[];
       json['prayers'].forEach((v) {
-        prayers!.add(v);
+        prayers!.add(new FollowedPrayer.fromJson(v));
+      });
+    }
+    if (json['groups'] != null) {
+      groups = <String>[];
+      json['groups'].forEach((v) {
+        groups!.add(v);
       });
     }
     churchName = json['churchName'];
@@ -97,8 +106,8 @@ class UserDataModel {
     includeAnsweredPrayerAutoDelete = json['includeAnsweredPrayerAutoDelete'];
     createdBy = json['createdBy'];
     modifiedBy = json['modifiedBy'];
-    createdDate = json['createdDate'].toDate();
-    modifiedDate = json['modifiedDate'].toDate();
+    createdDate = json['createdDate']?.toDate();
+    modifiedDate = json['modifiedDate']?.toDate();
     status = json['status'];
   }
 
@@ -113,7 +122,10 @@ class UserDataModel {
       data['devices'] = this.devices!.map((v) => v.toJson()).toList();
     }
     if (this.prayers != null) {
-      data['prayers'] = this.prayers!.map((v) => v).toList();
+      data['prayers'] = this.prayers!.map((v) => v.toJson()).toList();
+    }
+    if (this.groups != null) {
+      data['groups'] = this.groups!.map((v) => v).toList();
     }
     data['churchName'] = this.churchName;
     data['churchEmail'] = this.churchEmail;
@@ -142,12 +154,12 @@ class UserDataModel {
   }
 
   Map<String, dynamic> toJson2() {
-    return {
-      'id': id,
-      'firstName': firstName,
-      'lastName': lastName,
-      'email': email,
-    };
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['firstName'] = this.firstName;
+    data['lastName'] = this.lastName;
+    data['email'] = this.email;
+    return data;
   }
 }
 

@@ -169,9 +169,6 @@ class _AddPrayerState extends State<AddPrayer> {
     if (appController.previousPage == 0 || appController.previousPage == 7) {
       appController.setCurrentPage(0, true, 1);
     } else {
-      final groupPrayerId =
-          (Provider.of<PrayerProviderV2>(context, listen: false)
-              .currentPrayerId);
       final groupId =
           (Provider.of<GroupProviderV2>(context, listen: false).currentGroup)
                   .id ??
@@ -208,60 +205,18 @@ class _AddPrayerState extends State<AddPrayer> {
         final user =
             Provider.of<UserProviderV2>(context, listen: false).currentUser;
         final s = StackTrace.fromString(e.stacktrace ?? '');
-        // BeStilDialog.showErrorDialog(
-        //     context, StringUtils.getErrorMessage(e), user, s);
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.getErrorMessage(e), user, s);
       } else {
-        final userName =
-            '${_user.firstName?.capitalizeFirst} ${_user.lastName?.capitalizeFirst}';
         if (!Provider.of<PrayerProviderV2>(context, listen: false).isEdit) {
           if ((selected?.name ?? '').isEmpty ||
               (selected?.name) == 'My Prayers') {
             await Provider.of<PrayerProviderV2>(context, listen: false)
-                .addPrayer(
-              '',
-              _descriptionController.text,
-              false,
-            );
+                .addPrayer('', _descriptionController.text, false, contactList);
           } else {
-            await Provider.of<GroupProviderV2>(context, listen: false)
-                .setCurrentGroupById(selected?.id ?? '');
             await Provider.of<PrayerProviderV2>(context, listen: false)
-                .addPrayer(
-              _descriptionController.text,
-              (selected?.id ?? ''),
-              true,
-            );
-            final prayerId =
-                Provider.of<PrayerProviderV2>(context, listen: false)
-                    .currentPrayerId;
-
-            // await Provider.of<NotificationProviderV2>(context, listen: false)
-            //     .sendPrayerNotification(
-            //   prayerId,
-            //   prayerId,
-            //   NotificationType.prayer,
-            //   selected?.id ?? '',
-            //   context,
-            //   _descriptionController.text,
-            // );
-          }
-
-          if (contactList.length > 0) {
-            for (final contact in contactList) {
-              if (_descriptionController.text
-                  .contains(contact.displayName ?? '')) {
-                if ((selected?.name ?? '').isEmpty ||
-                    (selected?.name) == 'My Prayers') {
-                  await Provider.of<PrayerProviderV2>(context, listen: false)
-                      .addPrayerTag(contactList, _user.firstName ?? '',
-                          _descriptionController.text, '');
-                } else {
-                  // await Provider.of<GroupPrayerProvider>(context, listen: false)
-                  //     .addPrayerTag(
-                  //         contactList, _user, _descriptionController.text, '');
-                }
-              }
-            }
+                .addPrayer((selected?.id ?? ''), _descriptionController.text,
+                    true, contactList);
           }
 
           AppController appController = Get.find();
@@ -372,8 +327,6 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   void _onTextChange(String val, {Backup? backup}) {
-    final userId = FirebaseAuth.instance.currentUser?.uid;
-
     try {
       final cursorPos = (backup == null ? _descriptionController : backup.ctrl)
           .selection
@@ -595,13 +548,13 @@ class _AddPrayerState extends State<AddPrayer> {
                         } on HttpException catch (e, s) {
                           final user = Provider.of<UserProviderV2>(context,
                                   listen: false)
-                              .selectedUser;
+                              .currentUser;
                           BeStilDialog.showErrorDialog(
                               context, StringUtils.getErrorMessage(e), user, s);
                         } catch (e, s) {
                           final user = Provider.of<UserProviderV2>(context,
                                   listen: false)
-                              .selectedUser;
+                              .currentUser;
                           BeStilDialog.showErrorDialog(
                               context, StringUtils.getErrorMessage(e), user, s);
                         }

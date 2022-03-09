@@ -189,7 +189,7 @@ class _AddUpdateState extends State<AddUpdate> {
             if (_descriptionController.text
                 .contains(contact.displayName ?? '')) {
               final user = Provider.of<UserProviderV2>(context, listen: false)
-                  .selectedUser;
+                  .currentUser;
               final userName =
                   (user.firstName ?? '') + ' ' + (user.lastName ?? '');
               await Provider.of<PrayerProviderV2>(context, listen: false)

@@ -1,4 +1,5 @@
 import 'package:be_still/enums/message-template.dart';
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -32,7 +33,10 @@ class PrayerServiceV2 {
   final _notificationService = locator<NotificationServiceV2>();
 
   Future<void> createPrayer(
-      {String? groupId, required String description, bool? isGroup}) async {
+      {String? groupId,
+      required String description,
+      bool? isGroup,
+      List<Contact>? contacts}) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
@@ -40,10 +44,9 @@ class PrayerServiceV2 {
       final userDoc = await _userDataCollectionReference
           .doc(_firebaseAuth.currentUser?.uid)
           .get();
-      final user = UserDataModel.fromJson(userDoc.data()!);
+      final user = UserDataModel.fromJson(userDoc.data()!, userDoc.id);
 
       final doc = PrayerDataModel(
-        id: '',
         description: description,
         creatorName: (user.firstName ?? '') + ' ' + (user.lastName ?? ''),
         isAnswered: false,
@@ -62,10 +65,31 @@ class PrayerServiceV2 {
         modifiedDate: DateTime.now(),
         snoozeEndDate: DateTime.now(),
       ).toJson();
-      await _prayerDataCollectionReference.add(doc).then((value) {
-        _prayerDataCollectionReference.doc(value.id).update({'id': value.id});
+      _prayerDataCollectionReference.add(doc).then((value) {
+        _notificationService.sendPrayerNotification(
+            prayerId: value.id,
+            type: NotificationType.prayer,
+            groupId: groupId ?? '',
+            message: description);
+        if (contacts?.isNotEmpty ?? false) {
+          for (final contact in (contacts ?? [])) {
+            if (description.contains(contact.displayName ?? '')) {
+              createPrayerTag(
+                  contactData: contacts ?? [],
+                  username: '${user.firstName} ${user.lastName}'.sentenceCase(),
+                  description: description,
+                  prayerId: value.id);
+            }
+          }
+        }
+        if (isGroup ?? false) {
+          _notificationService.sendPrayerNotification(
+              message: description,
+              type: NotificationType.prayer,
+              groupId: groupId ?? '',
+              prayerId: value.id);
+        }
       });
-      //todo send push notification if group
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -81,7 +105,7 @@ class PrayerServiceV2 {
           .where('status', isNotEqualTo: Status.deleted)
           .snapshots()
           .map((event) => event.docs
-              .map((e) => PrayerDataModel.fromJson(e.data()))
+              .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
               .toList());
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -97,7 +121,7 @@ class PrayerServiceV2 {
           .where('status', isNotEqualTo: Status.deleted)
           .snapshots()
           .map((event) => event.docs
-              .map((e) => PrayerDataModel.fromJson(e.data()))
+              .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
               .toList());
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -113,7 +137,7 @@ class PrayerServiceV2 {
           .where('status', isNotEqualTo: Status.deleted)
           .snapshots()
           .map((event) => event.docs
-              .map((e) => PrayerDataModel.fromJson(e.data()))
+              .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
               .toList());
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -125,7 +149,20 @@ class PrayerServiceV2 {
       return _prayerDataCollectionReference
           .doc(prayerId)
           .snapshots()
-          .map<PrayerDataModel>((doc) => PrayerDataModel.fromJson(doc.data()!));
+          .map<PrayerDataModel>(
+              (doc) => PrayerDataModel.fromJson(doc.data()!, doc.id));
+    } catch (e) {
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
+  Future<PrayerDataModel> getPrayerFuture(String prayerId) {
+    try {
+      return _prayerDataCollectionReference
+          .doc(prayerId)
+          .get()
+          .then<PrayerDataModel>(
+              (doc) => PrayerDataModel.fromJson(doc.data()!, doc.id));
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -285,7 +322,7 @@ class PrayerServiceV2 {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      await _prayerDataCollectionReference.doc(prayerId).update({
+      _prayerDataCollectionReference.doc(prayerId).update({
         "tags": FieldValue.arrayRemove([currentTag.toJson()])
       });
     } catch (e) {
@@ -381,7 +418,7 @@ class PrayerServiceV2 {
           modifiedBy: _firebaseAuth.currentUser?.uid,
           modifiedDate: DateTime.now());
       deleteUpdate(prayerId: prayerId, currentUpdate: update);
-      await _prayerDataCollectionReference.doc(prayerId).update({
+      _prayerDataCollectionReference.doc(prayerId).update({
         'updates': FieldValue.arrayUnion([newUpdate.toJson()])
       });
     } catch (e) {
@@ -406,7 +443,7 @@ class PrayerServiceV2 {
 
   Future<void> unMarkPrayerAsAnswered({required String prayerId}) async {
     try {
-      await _prayerDataCollectionReference.doc(prayerId).update({
+      _prayerDataCollectionReference.doc(prayerId).update({
         'isAnswered': false,
         'modifiedOn': DateTime.now(),
       });
@@ -432,7 +469,7 @@ class PrayerServiceV2 {
     required UpdateModel currentUpdate,
   }) async {
     try {
-      await _prayerDataCollectionReference.doc(prayerId).update({
+      _prayerDataCollectionReference.doc(prayerId).update({
         'updates': FieldValue.arrayRemove([currentUpdate.toJson()])
       });
     } catch (e) {
@@ -465,7 +502,7 @@ class PrayerServiceV2 {
           .get();
 
       archivedPrayers.docs.forEach((prayer) {
-        final mappedPrayer = PrayerDataModel.fromJson(prayer.data());
+        final mappedPrayer = PrayerDataModel.fromJson(prayer.data(), prayer.id);
         if ((mappedPrayer.followers ?? []).isNotEmpty &&
             (mappedPrayer.followers ?? []).any((element) =>
                 element.userId == _firebaseAuth.currentUser?.uid)) {

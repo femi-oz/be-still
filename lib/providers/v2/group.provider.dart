@@ -1,19 +1,16 @@
 import 'dart:async';
 
 import 'package:be_still/locator.dart';
-import 'package:be_still/models/v2/follower.model.dart';
 import 'package:be_still/models/v2/group.model.dart';
-import 'package:be_still/models/v2/group_user.model.dart';
+import 'package:be_still/models/v2/notification.model.dart';
 import 'package:be_still/models/v2/request.model.dart';
 import 'package:be_still/services/v2/group_service.dart';
-import 'package:be_still/services/v2/notification_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class GroupProviderV2 with ChangeNotifier {
   GroupServiceV2 _groupService = locator<GroupServiceV2>();
-  NotificationServiceV2 _notificationService = locator<NotificationServiceV2>();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
 //search params
@@ -47,15 +44,13 @@ class GroupProviderV2 with ChangeNotifier {
   String _groupJoinId = '';
   String get groupJoinId => _groupJoinId;
 
-  Future<void> setUserGroups(String userId) async {
+  Future<void> setUserGroups() async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      groupUserStream = _groupService
-          .getUserGroups()
-          .asBroadcastStream()
-          .listen((userGroups) {
+      await _groupService.getUserGroupsFuture().then((userGroups) {
         _userGroups = userGroups;
+        notifyListeners();
       });
     } catch (e) {
       rethrow;
@@ -85,7 +80,7 @@ class GroupProviderV2 with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      return _groupService.getGroup(groupId).then((userGroup) {
+      await _groupService.getGroup(groupId).then((userGroup) {
         _currentGroup = userGroup;
         notifyListeners();
       });
@@ -178,7 +173,7 @@ class GroupProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> createGroup(
+  Future<bool> createGroup(
       String name,
       String purpose,
       String fullName,
@@ -190,19 +185,22 @@ class GroupProviderV2 with ChangeNotifier {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
 
-      _groupService.createGroup(
+      final isCompleted = await _groupService.createGroup(
           name: name,
           purpose: purpose,
           requireAdminApproval: requireAdminApproval,
           organization: organization,
           location: location,
           type: type);
+
+      await setUserGroups();
+      return isCompleted;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> editGroup(
+  Future<bool> editGroup(
       String groupId,
       String name,
       String purpose,
@@ -213,7 +211,7 @@ class GroupProviderV2 with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      await _groupService.editGroup(
+      final isCompleted = await _groupService.editGroup(
           groupId: groupId,
           name: name,
           purpose: purpose,
@@ -221,32 +219,28 @@ class GroupProviderV2 with ChangeNotifier {
           organization: organization,
           location: location,
           type: type);
+      await setUserGroups();
+      return isCompleted;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> leaveGroup(
-      String groupId, List<GroupUserDataModel> users, String userId) async {
+  Future<void> leaveGroup(String groupId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      return await _groupService.leaveGroup(
-          groupId: groupId, users: users, userId: userId);
+      return await _groupService.removeGroupUser(
+          userId: _firebaseAuth.currentUser?.uid ?? '', groupId: groupId);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> deleteGroup(String groupId, List<RequestModel> requests) async {
+  Future<void> deleteGroup(
+      String groupId, List<NotificationModel> notifications) async {
     try {
-      if (_firebaseAuth.currentUser == null)
-        return Future.error(StringUtils.unathorized);
-
-      for (final req in requests) {
-        await _notificationService.cancelPushNotification(req.id ?? '');
-      }
-      return await _groupService.deleteGroup(groupId);
+      return await _groupService.deleteGroup(groupId, notifications);
     } catch (e) {
       rethrow;
     }
@@ -269,77 +263,58 @@ class GroupProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> deleteGroupUser(
-    String groupId,
-    String userId,
-    List<GroupUserDataModel> groupUsers,
-    List<FollowerModel> followers,
-  ) async {
+  Future<void> removeGroupUser(String userId, String groupId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      return await _groupService.deleteGroupUser(
-          userId: userId,
-          groupId: groupId,
-          groupUsers: groupUsers,
-          followers: followers);
+      return await _groupService.removeGroupUser(
+          userId: userId, groupId: groupId);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future acceptRequest(
-    String groupId,
-    List<RequestModel> currentRequests,
+  Future<void> acceptRequest(
+    GroupDataModel group,
     RequestModel request,
   ) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       return await _groupService.acceptJoinRequest(
-          groupId: groupId, currentRequests: currentRequests, request: request);
+          group: group, request: request);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future requestToJoinGroup(
-    String groupId,
-    String message,
-    List<RequestModel> currentRequests,
-  ) async {
+  Future<void> requestToJoinGroup(String groupId, String message) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       return await _groupService.requestToJoinGroup(
-          groupId: groupId, currentRequests: currentRequests, message: message);
+          groupId: groupId, message: message);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future autoJoinGroup(
-    String groupId,
-    String message,
-    List<GroupUserDataModel> currentUsers,
-  ) async {
+  Future<void> autoJoinGroup(GroupDataModel group, String message) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      return await _groupService.autoJoinGroup(
-          groupId: groupId, currentUsers: currentUsers, message: message);
+      return await _groupService.autoJoinGroup(group: group, message: message);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future denyRequest(
-      String groupId, List<RequestModel> requests, String requestId) async {
+  Future<void> denyRequest(GroupDataModel group, String requestId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       return await _groupService.denyJoinRequest(
-          groupId: groupId, requestId: requestId, requests: requests);
+          group: group, requestId: requestId);
     } catch (e) {
       rethrow;
     }
@@ -363,20 +338,13 @@ class GroupProviderV2 with ChangeNotifier {
     }
   }
 
-  Future updateGroupSettings(
-    String groupId,
-    bool enableNotificationForUpdates,
-    bool notifyMeofFlaggedPrayers,
-    bool notifyWhenNewMemberJoins,
-  ) async {
+  Future<void> updateGroupUserSettings(
+      GroupDataModel group, String key, dynamic value) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      await _groupService.updateGroupSettings(
-          groupId: groupId,
-          enableNotificationForUpdates: enableNotificationForUpdates,
-          notifyMeofFlaggedPrayers: notifyMeofFlaggedPrayers,
-          notifyWhenNewMemberJoins: notifyWhenNewMemberJoins);
+      await _groupService.updateGroupUserSettings(group, key, value);
+      await setUserGroups();
     } catch (e) {
       rethrow;
     }

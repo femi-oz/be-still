@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/notification.model.dart';

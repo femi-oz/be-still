@@ -2,7 +2,7 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class SettingsService {
+class SettingsServiceV2 {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   Future<void> updateSettings({
@@ -53,7 +53,7 @@ class SettingsService {
       required bool enableSharingViaEmail,
       required bool enableSharingViaText}) async {
     try {
-      await userReference.update({
+      userReference.update({
         'enableSharingViaEmail': enableSharingViaEmail,
         'enableSharingViaText': enableSharingViaText,
         'modifiedBy': _firebaseAuth.currentUser?.uid,

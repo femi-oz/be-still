@@ -2,6 +2,7 @@ import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
+import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/notification.model.dart';
@@ -189,7 +190,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       await Provider.of<UserProvider>(context, listen: false)
           .getUserById(admin.userId ?? '');
       final adminData =
-          Provider.of<UserProvider>(context, listen: false).selectedUser;
+          Provider.of<UserProvider>(context, listen: false).currentUser;
       _sendNotification(group.group?.id ?? '', [adminData.pushToken ?? ''],
           adminData.id ?? '', group.group?.name ?? '');
       clearSearch();
@@ -652,14 +653,14 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                 final user = Provider.of<UserProviderV2>(
                                         context,
                                         listen: false)
-                                    .selectedUser;
+                                    .currentUser;
                                 BeStilDialog.showErrorDialog(context,
                                     StringUtils.getErrorMessage(e), user, s);
                               } catch (e, s) {
                                 final user = Provider.of<UserProviderV2>(
                                         context,
                                         listen: false)
-                                    .selectedUser;
+                                    .currentUser;
                                 BeStilDialog.showErrorDialog(context,
                                     StringUtils.getErrorMessage(e), user, s);
                               }
@@ -703,14 +704,14 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                 final user = Provider.of<UserProviderV2>(
                                         context,
                                         listen: false)
-                                    .selectedUser;
+                                    .currentUser;
                                 BeStilDialog.showErrorDialog(context,
                                     StringUtils.getErrorMessage(e), user, s);
                               } catch (e, s) {
                                 final user = Provider.of<UserProviderV2>(
                                         context,
                                         listen: false)
-                                    .selectedUser;
+                                    .currentUser;
                                 BeStilDialog.showErrorDialog(context,
                                     StringUtils.getErrorMessage(e), user, s);
                               }

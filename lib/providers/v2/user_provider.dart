@@ -9,20 +9,29 @@ class UserProviderV2 with ChangeNotifier {
   UserServiceV2 _userService = locator<UserServiceV2>();
   final _firebaseUserId = FirebaseAuth.instance.currentUser?.uid;
 
-  UserDataModel _selectedUser = UserDataModel();
-  UserDataModel get selectedUser => _selectedUser;
-
   UserDataModel _currentUser = UserDataModel();
   UserDataModel get currentUser => _currentUser;
 
   List<UserDataModel> _allUsers = <UserDataModel>[];
   List<UserDataModel> get allUsers => _allUsers;
 
-  Future getUserById() async {
+  Future<void> setCurrentUser() async {
     try {
-      return _userService.getUserById(_firebaseUserId ?? '').then((event) {
-        _selectedUser = event;
+      await _userService.getUserByIdFuture(_firebaseUserId ?? '').then((event) {
+        _currentUser = event;
         notifyListeners();
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<UserDataModel> getUserDataById(String userId) async {
+    try {
+      return _userService
+          .getUserByIdFuture(_firebaseUserId ?? '')
+          .then((event) {
+        return event;
       });
     } catch (e) {
       rethrow;
@@ -31,7 +40,7 @@ class UserProviderV2 with ChangeNotifier {
 
   Future<List<String>> returnUserToken(String userId) async {
     try {
-      return await _userService.getUserById(userId).then((value) {
+      return await _userService.getUserByIdFuture(userId).then((value) {
         return (value.devices ?? []).map((e) => e.token ?? '').toList();
       });
     } catch (e) {
@@ -39,7 +48,7 @@ class UserProviderV2 with ChangeNotifier {
     }
   }
 
-  Future setAllUsers() async {
+  Future<void> setAllUsers() async {
     try {
       _userService.getAllUsers().asBroadcastStream().listen((users) {
         _allUsers = users.where((e) => e.id != _firebaseUserId).toList();
@@ -52,22 +61,13 @@ class UserProviderV2 with ChangeNotifier {
 
   String getPrayerCreatorName(String userId) {
     final user = userId == _firebaseUserId
-        ? selectedUser
+        ? currentUser
         : _allUsers.firstWhere((element) => element.id == userId);
     final userName = (user.firstName ?? '') + ' ' + (user.lastName ?? '');
     return userName;
   }
 
-  Future setCurrentUser(bool isLocalAuth) async {
-    try {
-      _currentUser = await _userService.getUserById(_firebaseUserId ?? '');
-      notifyListeners();
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future updateEmail(String newEmail, String userId) async {
+  Future<void> updateEmail(String newEmail, String userId) async {
     try {
       await _userService.updateEmail(newEmail: newEmail);
     } catch (e) {
@@ -75,27 +75,39 @@ class UserProviderV2 with ChangeNotifier {
     }
   }
 
-  Future updateUserSettings(String key, dynamic value) async {
+  Future<void> updateUserSettings(String key, dynamic value) async {
     try {
       await _userService.updateUserSettings(key: key, value: value);
-      setCurrentUser(false);
+      await setCurrentUser();
     } catch (e) {
       rethrow;
     }
   }
 
-  Future updatePassword(String newPassword) async {
+<<<<<<< .mine
+  Future updateUserSettings(String key, dynamic value) async {
+=======
+  Future<void> updatePassword(String newPassword) async {
+>>>>>>> .theirs
     try {
       await _userService.updatePassword(newPassword);
-      // setCurrentUser(false);
+      //await setCurrentUser(false);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future removePushToken(String deviceId, List<DeviceModel> devices) async {
+  Future<void> removePushToken() async {
     try {
-      await _userService.deletePushToken(deviceId: deviceId, devices: devices);
+      await _userService.deletePushToken();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> addPushToken(List<DeviceModel> userDevices) async {
+    try {
+      await _userService.addPushToken(userDevices);
     } catch (e) {
       rethrow;
     }

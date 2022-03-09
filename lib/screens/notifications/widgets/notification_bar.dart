@@ -55,14 +55,14 @@ class NotificationBarState extends State<NotificationBar> {
 
                   final user =
                       Provider.of<UserProviderV2>(context, listen: false)
-                          .selectedUser;
+                          .currentUser;
                   BeStilDialog.showErrorDialog(
                       context, StringUtils.getErrorMessage(e), user, s);
                 } catch (e, s) {
                   BeStilDialog.hideLoading(context);
                   final user =
                       Provider.of<UserProviderV2>(context, listen: false)
-                          .selectedUser;
+                          .currentUser;
                   BeStilDialog.showErrorDialog(
                       context, StringUtils.getErrorMessage(e), user, s);
                 }

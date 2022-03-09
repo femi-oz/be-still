@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/flavor_config.dart';
@@ -10,10 +11,13 @@ import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/message.model.dart';
 import 'package:be_still/models/v2/notification.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
+import 'package:be_still/services/v2/group_service.dart';
+import 'package:be_still/services/v2/prayer_service.dart';
 import 'package:be_still/services/v2/user_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get_utils/src/extensions/string_extensions.dart';
 
 class NotificationServiceV2 {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -30,9 +34,11 @@ class NotificationServiceV2 {
       FirebaseFirestore.instance.collection("local_notifications");
 
   final CollectionReference<Map<String, dynamic>> _userDataCollectionReference =
-      FirebaseFirestore.instance.collection("users_v2");
+      FirebaseFirestore.instance.collection("users");
 
   UserServiceV2 _userService = locator<UserServiceV2>();
+  GroupServiceV2 _groupService = locator<GroupServiceV2>();
+  PrayerServiceV2 _prayerService = locator<PrayerServiceV2>();
 
   init(List<DeviceModel> userDevices) async {
     try {
@@ -49,6 +55,8 @@ class NotificationServiceV2 {
     required String senderName,
     required List<String> tokens,
     required String type,
+    required String groupId,
+    required String prayerId,
   }) async {
     try {
       final doc = NotificationModel(
@@ -56,6 +64,8 @@ class NotificationServiceV2 {
         status: Status.active,
         tokens: tokens,
         type: type,
+        groupId: groupId,
+        prayerId: prayerId,
         userId: _firebaseAuth.currentUser?.uid,
         modifiedBy: _firebaseAuth.currentUser?.uid,
         createdBy: _firebaseAuth.currentUser?.uid,
@@ -63,6 +73,57 @@ class NotificationServiceV2 {
         modifiedDate: DateTime.now(),
       ).toJson();
       _notificationCollectionReference.add(doc);
+    } catch (e) {
+      StringUtils.getErrorMessage(e);
+    }
+  }
+
+  Future<void> sendPrayerNotification({
+    required String message,
+    required String type,
+    required String groupId,
+    required String prayerId,
+  }) async {
+    try {
+      List<String> _ids = [];
+      final _user = await _userService
+          .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
+
+      final group = await _groupService.getGroup(groupId);
+      final prayer = await _prayerService.getPrayerFuture(groupId);
+
+      if (type == NotificationType.prayer ||
+          type == NotificationType.prayer_updates) {
+        _ids = (group.users ?? []).map((e) => e.userId ?? '').toList();
+      } else {
+        _ids = (prayer.followers ?? []).map((e) => e.userId ?? '').toList();
+      }
+
+      _ids.removeWhere((e) => e == _user.id);
+
+      for (final id in _ids) {
+        final member =
+            (group.users ?? []).firstWhere((element) => element.userId == id);
+        if (type == NotificationType.prayer ||
+            type == NotificationType.prayer_updates) {
+          if (member.enableNotificationForNewPrayers ?? false) {
+            final userTokens = await _userService.getUserByIdFuture(id).then(
+                (value) =>
+                    (value.devices ?? []).map((e) => e.token ?? '').toList());
+            final name = ((_user.firstName ?? '').capitalizeFirst ?? '') +
+                ' ' +
+                ((_user.lastName ?? '').capitalizeFirst ?? '');
+
+            addNotification(
+                message: message.capitalizeFirst ?? '',
+                senderName: name,
+                groupId: groupId,
+                prayerId: prayerId,
+                tokens: userTokens,
+                type: type);
+          }
+        }
+      }
     } catch (e) {
       StringUtils.getErrorMessage(e);
     }
@@ -219,7 +280,7 @@ class NotificationServiceV2 {
     required String status,
   }) async {
     try {
-      await _notificationCollectionReference.doc(notificationId).update({
+      _notificationCollectionReference.doc(notificationId).update({
         'message': message,
         'localNotificationId': localNotificationId,
         'type': type,

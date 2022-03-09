@@ -318,7 +318,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       await Provider.of<UserProvider>(context, listen: false)
           .getUserById(receiverId); //requestor
       UserModel requestor =
-          Provider.of<UserProvider>(context, listen: false).selectedUser;
+          Provider.of<UserProvider>(context, listen: false).currentUser;
       final admin =
           Provider.of<UserProvider>(context, listen: false).currentUser; //admin
       final groupData = await Provider.of<GroupProvider>(context, listen: false)
@@ -353,7 +353,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       await Provider.of<UserProvider>(context, listen: false)
           .getUserById(receiverId); //requestor
       final requestor =
-          Provider.of<UserProvider>(context, listen: false).selectedUser;
+          Provider.of<UserProvider>(context, listen: false).currentUser;
       final admin =
           Provider.of<UserProvider>(context, listen: false).currentUser; //admin
       final groupData = await Provider.of<GroupProvider>(context, listen: false)

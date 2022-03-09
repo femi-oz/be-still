@@ -57,10 +57,11 @@ class PrayerSettingsModel {
     final bool enableBackgroundMusic =
         snapshot['EnableBackgroundMusic'] ?? false;
     final String createdBy = snapshot["CreatedBy"] ?? '';
-    final DateTime createdOn = snapshot["CreatedOn"].toDate() ?? DateTime.now();
+    final DateTime createdOn =
+        snapshot["CreatedOn"]?.toDate() ?? DateTime.now();
     final String modifiedBy = snapshot["ModifiedBy"] ?? '';
     final DateTime modifiedOn =
-        snapshot["ModifiedOn"].toDate() ?? DateTime.now();
+        snapshot["ModifiedOn"]?.toDate() ?? DateTime.now();
     return PrayerSettingsModel(
         id: id,
         userId: userId,

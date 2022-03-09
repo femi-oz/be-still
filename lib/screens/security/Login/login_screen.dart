@@ -120,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     if (Settings.rememberMe && Settings.lastUser.isNotEmpty) {
-      var userInfo = jsonDecode(Settings.lastUser);
+      final userInfo = jsonDecode(Settings.lastUser);
       _usernameController.text = userInfo['email'];
       _passwordController.text = Settings.userPassword;
     }
@@ -238,7 +238,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if ((message.entityId ?? '').isNotEmpty) {
         if (message.type == NotificationType.prayer_time) {
           await Provider.of<PrayerProviderV2>(context, listen: false)
-              .setPrayerTimePrayers(message.entityId ?? '');
+              .setPrayerTimePrayers();
           AppController appController = Get.find();
           appController.setCurrentPage(2, false, 0);
           Provider.of<MiscProviderV2>(context, listen: false)
@@ -321,9 +321,9 @@ class _LoginScreenState extends State<LoginScreen> {
         password: _passwordController.text,
       );
       await Provider.of<UserProviderV2>(context, listen: false)
-          .setCurrentUser(false);
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+          .setCurrentUser();
+      final user = await Provider.of<UserProviderV2>(context, listen: false)
+          .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
 
       Settings.lastUser = jsonEncode(user.toJson2());
       Settings.userPassword = _passwordController.text;
@@ -367,7 +367,7 @@ class _LoginScreenState extends State<LoginScreen> {
       isLoading = true;
       if (isAuth) {
         await Provider.of<UserProviderV2>(context, listen: false)
-            .setCurrentUser(false);
+            .setCurrentUser();
         BeStilDialog.hideLoading(context);
         isLoading = false;
 

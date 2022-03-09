@@ -727,7 +727,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                     final user = Provider.of<UserProviderV2>(
                                             context,
                                             listen: false)
-                                        .selectedUser;
+                                        .currentUser;
                                     BeStilDialog.showErrorDialog(
                                         context,
                                         StringUtils.getErrorMessage(e),
@@ -738,7 +738,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                     final user = Provider.of<UserProviderV2>(
                                             context,
                                             listen: false)
-                                        .selectedUser;
+                                        .currentUser;
                                     BeStilDialog.showErrorDialog(
                                         context,
                                         StringUtils.getErrorMessage(e),

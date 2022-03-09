@@ -32,7 +32,7 @@ class DevotionalService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Stream.error(StringUtils.unathorized);
-      var devotionals = _devotionalCollectionReference.snapshots();
+      final devotionals = _devotionalCollectionReference.snapshots();
       return devotionals.map((e) =>
           e.docs.map((e) => DevotionalModel.fromData(e.data(), e.id)).toList());
     } catch (e) {

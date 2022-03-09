@@ -85,7 +85,7 @@ class _SplashScreenState extends State<SplashScreen>
         WidgetsBinding.instance?.addPostFrameCallback((_) async {
           if (message.type == NotificationType.prayer_time) {
             await Provider.of<PrayerProviderV2>(context, listen: false)
-                .setPrayerTimePrayers(message.entityId ?? '');
+                .setPrayerTimePrayers();
             AppController appController = Get.find();
             appController.setCurrentPage(2, false, 0);
             Provider.of<MiscProviderV2>(context, listen: false)
@@ -125,7 +125,7 @@ class _SplashScreenState extends State<SplashScreen>
         if (Settings.rememberMe) {
           if (isLoggedIn) {
             await Provider.of<UserProviderV2>(context, listen: false)
-                .setCurrentUser(false);
+                .setCurrentUser();
             await setRouteDestination();
           } else {
             Navigator.of(context).pushNamedAndRemoveUntil(

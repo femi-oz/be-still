@@ -167,7 +167,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
                                               Provider.of<UserProviderV2>(
                                                       context,
                                                       listen: false)
-                                                  .selectedUser;
+                                                  .currentUser;
                                           BeStilDialog.showErrorDialog(
                                               context,
                                               StringUtils.getErrorMessage(e),
@@ -178,7 +178,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
                                               Provider.of<UserProviderV2>(
                                                       context,
                                                       listen: false)
-                                                  .selectedUser;
+                                                  .currentUser;
                                           BeStilDialog.showErrorDialog(
                                               context,
                                               StringUtils.getErrorMessage(e),
@@ -213,13 +213,13 @@ class _GroupPrayersState extends State<GroupPrayers> {
                         } on HttpException catch (e, s) {
                           final user = Provider.of<UserProviderV2>(context,
                                   listen: false)
-                              .selectedUser;
+                              .currentUser;
                           BeStilDialog.showErrorDialog(
                               context, StringUtils.getErrorMessage(e), user, s);
                         } catch (e, s) {
                           final user = Provider.of<UserProviderV2>(context,
                                   listen: false)
-                              .selectedUser;
+                              .currentUser;
                           BeStilDialog.showErrorDialog(
                               context, StringUtils.getErrorMessage(e), user, s);
                         }

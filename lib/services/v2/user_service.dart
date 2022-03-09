@@ -20,8 +20,9 @@ class UserServiceV2 {
 
   Stream<List<UserDataModel>> getAllUsers() {
     try {
-      return _userDataCollectionReference.snapshots().map((event) =>
-          event.docs.map((e) => UserDataModel.fromJson(e.data())).toList());
+      return _userDataCollectionReference.snapshots().map((event) => event.docs
+          .map((e) => UserDataModel.fromJson(e.data(), e.id))
+          .toList());
     } catch (e) {
       throw StringUtils.getErrorMessage(e);
     }
@@ -52,13 +53,12 @@ class UserServiceV2 {
         archiveSortBy: SortType.date,
         autoPlayMusic: true,
         churchEmail: '',
+        groups: [],
         churchName: '',
         churchPhone: '',
         churchWebFormUrl: '',
-        devices: [
-          DeviceModel(id: await deviceId(), token: token)
-        ], // update token on login where deviceId == deviceId
-        prayers: [''],
+        devices: [DeviceModel(id: await deviceId(), token: token)],
+        prayers: [],
         enableBackgroundMusic: true,
         enableSharingViaEmail: true,
         enableSharingViaText: true,
@@ -66,7 +66,8 @@ class UserServiceV2 {
         doNotDisturb: true,
         createdBy: uid,
         modifiedBy: uid,
-        createdDate: DateTime.now(), modifiedDate: DateTime.now(),
+        createdDate: DateTime.now(),
+        modifiedDate: DateTime.now(),
         status: Status.active,
       ).toJson();
       _userDataCollectionReference.doc(uid).set(doc);
@@ -75,13 +76,24 @@ class UserServiceV2 {
     }
   }
 
-  Future<UserDataModel> getUserById(String userId) async {
+  Future<UserDataModel> getUserByIdFuture(String userId) async {
     try {
       final doc = await _userDataCollectionReference.doc(userId).get();
       if (doc.exists)
-        return UserDataModel.fromJson(doc.data()!);
+        return UserDataModel.fromJson(doc.data()!, doc.id);
       else
         throw HttpException(StringUtils.documentDoesNotExist);
+    } catch (e) {
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
+  Stream<UserDataModel> getUserById(String userId) {
+    try {
+      return _userDataCollectionReference
+          .doc(userId)
+          .snapshots()
+          .map((event) => UserDataModel.fromJson(event.data()!, event.id));
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -126,23 +138,23 @@ class UserServiceV2 {
   Future<void> addPushToken(List<DeviceModel> userDevices) async {
     try {
       final id = await deviceId();
-      var devices = DeviceModel();
+      DeviceModel device = DeviceModel();
       final messaging = FirebaseMessaging.instance;
       final newToken = await messaging.getToken();
       if (userDevices.any((element) => element.id == id)) {
         userDevices = userDevices.map((element) {
           if (element.id == id) {
             element = element..token = newToken;
-            devices = DeviceModel(id: element.id, token: newToken);
+            device = DeviceModel(id: element.id, token: newToken);
           }
           return element;
         }).toList();
       } else {
         userDevices.add(DeviceModel(id: await deviceId(), token: newToken));
-        devices = DeviceModel(id: await deviceId(), token: newToken);
+        device = DeviceModel(id: await deviceId(), token: newToken);
       }
       _userDataCollectionReference.doc(_firebaseAuth.currentUser?.uid).update({
-        'devices': FieldValue.arrayUnion([devices.toJson()])
+        'devices': FieldValue.arrayUnion([device.toJson()])
       });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -164,17 +176,23 @@ class UserServiceV2 {
     }
   }
 
-  Future<void> deletePushToken(
-      {required String deviceId, required List<DeviceModel> devices}) async {
+  Future<void> deletePushToken() async {
     try {
-      devices.removeWhere((element) => element.id == deviceId);
-      _userDataCollectionReference
-          .doc(_firebaseAuth.currentUser?.uid ?? '')
-          .update({
-        'devices': devices,
-        'modifiedBy': _firebaseAuth.currentUser?.uid,
-        'modifiedDate': DateTime.now()
-      });
+      final devices = await _userDataCollectionReference
+              .doc(_firebaseAuth.currentUser?.uid)
+              .get()
+              .then((value) =>
+                  UserDataModel.fromJson(value.data()!, value.id).devices) ??
+          [];
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      batch.update(
+          _userDataCollectionReference
+              .doc(_firebaseAuth.currentUser?.uid ?? ''),
+          {
+            'devices': FieldValue.arrayRemove(devices),
+            'modifiedBy': _firebaseAuth.currentUser?.uid,
+            'modifiedDate': DateTime.now()
+          });
     } catch (e) {
       StringUtils.getErrorMessage(e);
     }

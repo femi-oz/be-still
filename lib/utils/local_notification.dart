@@ -1,6 +1,7 @@
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -34,11 +35,10 @@ class LocalNotification {
       (i) => DateFormat('MMM').format(DateTime(DateTime.now().year, i + 1)));
 
   static Future<void> setNotificationsOnNewDevice(context) async {
-    final userId = FirebaseAuth.instance.currentUser?.uid;
+    final userId = FirebaseAuth.instance.currentUser?.uid ?? '';
 
     await Provider.of<NotificationProviderV2>(context, listen: false)
-        .setLocalNotifications(userId ?? '');
-
+        .setLocalNotifications(userId);
     final _localNotifications =
         Provider.of<NotificationProviderV2>(context, listen: false)
             .localNotifications;
@@ -59,7 +59,7 @@ class LocalNotification {
             : '',
         description: _localNotifications[i].message ?? '',
         scheduledDate: scheduledDate,
-        payload: _localNotifications[i].payload,
+        payload: _localNotifications[i].prayerId,
         frequency: _localNotifications[i].frequency ?? '',
         context: context,
       );

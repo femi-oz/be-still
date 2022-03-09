@@ -53,9 +53,9 @@ class UserModel {
     final churchId = data['ChurchId'] ?? '';
     final dateOfBirth = '';
     final createdBy = data['CreatedBy'] ?? '';
-    final createdOn = data['CreatedOn'].toDate() ?? DateTime.now();
+    final createdOn = data['CreatedOn']?.toDate() ?? DateTime.now();
     final modifiedBy = data['ModifiedBy'] ?? '';
-    final modifiedOn = data['ModifiedOn'].toDate() ?? DateTime.now();
+    final modifiedOn = data['ModifiedOn']?.toDate() ?? DateTime.now();
 
     return UserModel(
         id: id,

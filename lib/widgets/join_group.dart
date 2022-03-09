@@ -1,4 +1,5 @@
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/providers/group_provider.dart';
 import 'package:be_still/providers/notification_provider.dart';

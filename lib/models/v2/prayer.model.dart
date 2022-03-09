@@ -46,8 +46,8 @@ class PrayerDataModel {
       this.modifiedDate,
       this.status});
 
-  PrayerDataModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+  PrayerDataModel.fromJson(Map<String, dynamic> json, String did) {
+    id = did;
     description = json['description'];
     creatorName = json['creatorName'];
     isAnswered = json['isAnswered'];
@@ -56,7 +56,7 @@ class PrayerDataModel {
     isFavorite = json['isFavorite'];
     userId = json['userId'];
     groupId = json['groupId'];
-    snoozeEndDate = json['snoozeEndDate'].toDate();
+    snoozeEndDate = json['snoozeEndDate']?.toDate();
     snoozeFrequency = json['snoozeFrequency'];
     snoozeDuration = json['snoozeDuration'];
     if (json['updates'] != null) {
@@ -79,8 +79,8 @@ class PrayerDataModel {
     }
     createdBy = json['createdBy'];
     modifiedBy = json['modifiedBy'];
-    createdDate = json['createdDate'].toDate();
-    modifiedDate = json['modifiedDate'].toDate();
+    createdDate = json['createdDate']?.toDate();
+    modifiedDate = json['modifiedDate']?.toDate();
     status = json['status'];
   }
 

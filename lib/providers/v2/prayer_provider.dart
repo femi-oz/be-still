@@ -19,6 +19,7 @@ class PrayerProviderV2 with ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final userId = FirebaseAuth.instance.currentUser?.uid;
   late StreamSubscription<List<PrayerDataModel>> prayerStream;
+  late StreamSubscription<List<PrayerDataModel>> groupPrayerStream;
   late StreamSubscription<List<PrayerDataModel>> followedPrayerStream;
   late StreamSubscription<List<PrayerDataModel>> prayerTimeStream;
 
@@ -28,14 +29,26 @@ class PrayerProviderV2 with ChangeNotifier {
   Iterable<Contact> _localContacts = [];
   Iterable<Contact> get localContacts => _localContacts;
 
-  List<PrayerDataModel> _filteredPrayers = [];
-  List<PrayerDataModel> get filteredPrayers => _filteredPrayers;
-
   List<PrayerDataModel> get filteredPrayerTimeList => _filteredPrayerTimeList;
   List<PrayerDataModel> _filteredPrayerTimeList = [];
 
+  //======================= user prayers =================================
+
   List<PrayerDataModel> _prayers = [];
   List<PrayerDataModel> get prayers => _prayers;
+
+  List<PrayerDataModel> _filteredPrayers = [];
+  List<PrayerDataModel> get filteredPrayers => _filteredPrayers;
+
+  //======================= group prayers =================================
+
+  List<PrayerDataModel> _groupPrayers = [];
+  List<PrayerDataModel> get groupPrayers => _groupPrayers;
+
+  List<PrayerDataModel> _filteredGroupPrayers = [];
+  List<PrayerDataModel> get filteredGroupPrayers => _filteredGroupPrayers;
+
+  //=======================================================================
 
   List<PrayerDataModel> _followedPrayers = [];
   List<PrayerDataModel> get followedPrayers => _followedPrayers;
@@ -66,27 +79,28 @@ class PrayerProviderV2 with ChangeNotifier {
   Future<void> setPrayers() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-// todo: merge user prayers and prayers current user is following
-      // followedPrayerStream = _prayerService
-      //     .getUserFollowedPrayers()
-      //     .asBroadcastStream()
-      //     .listen((data) {
-      //   _followedPrayers = data
-      //       .where((element) => (element.followers ?? <FollowerModel>[]).any(
-      //           (element) => element.userId == _firebaseAuth.currentUser?.uid))
-      //       .toList();
+      prayerStream =
+          _prayerService.getUserPrayers().asBroadcastStream().listen((event) {
+        _prayers = event;
+        filterPrayers();
+        notifyListeners();
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
 
-      //   notifyListeners();
-      // });
-
-      prayerStream = _prayerService.getUserPrayers().asBroadcastStream().listen(
-        (data) {
-          _prayers = data;
-          // _prayers = [..._userPrayers, ..._followedPrayers];
-          filterPrayers();
-          notifyListeners();
-        },
-      );
+  Future<void> setGroupPrayers(String groupId) async {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      groupPrayerStream = _prayerService
+          .getGroupPrayers(groupId)
+          .asBroadcastStream()
+          .listen((event) {
+        _groupPrayers = event;
+        filterPrayers();
+        notifyListeners();
+      });
     } catch (e) {
       rethrow;
     }
@@ -125,7 +139,7 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> setPrayerTimePrayers(String userId) async {
+  Future<void> setPrayerTimePrayers() async {
     try {
       // setPrayers();
       prayerTimeStream =
@@ -225,11 +239,14 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> addPrayer(
-      String groupId, String prayerDesc, bool isGroup) async {
+  Future<void> addPrayer(String groupId, String prayerDesc, bool isGroup,
+      List<Contact> contacts) async {
     try {
       await _prayerService.createPrayer(
-          groupId: groupId, description: prayerDesc, isGroup: isGroup);
+          groupId: groupId,
+          description: prayerDesc,
+          isGroup: isGroup,
+          contacts: contacts);
     } catch (e) {
       rethrow;
     }
@@ -358,9 +375,7 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> markPrayerAsAnswered(
-    String prayerId,
-  ) async {
+  Future<void> markPrayerAsAnswered(String prayerId) async {
     try {
       await _prayerService.markPrayerAsAnswered(prayerId: prayerId);
     } catch (e) {
@@ -368,9 +383,7 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> unMarkPrayerAsAnswered(
-    String prayerId,
-  ) async {
+  Future<void> unMarkPrayerAsAnswered(String prayerId) async {
     try {
       await _prayerService.unMarkPrayerAsAnswered(prayerId: prayerId);
     } catch (e) {
@@ -433,7 +446,7 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> filterPrayers() async {
+  void filterPrayers() {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       List<PrayerDataModel> prayers = _prayers.toList();
@@ -519,9 +532,12 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
+  Future<void> unFollowPrayer() async {}
+
   void flush() {
     prayerStream.cancel();
-    // followedPrayerStream.cancel();
+    followedPrayerStream.cancel();
+    groupPrayerStream.cancel();
     prayerTimeStream.cancel();
   }
 }

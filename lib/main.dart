@@ -16,6 +16,7 @@ import 'package:be_still/providers/v2/devotional_provider.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/theme_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/services/log_service.dart';
 import 'package:be_still/utils/settings.dart' as st;
@@ -67,6 +68,7 @@ void main() async {
           ChangeNotifierProvider(create: (ctx) => NotificationProviderV2()),
           ChangeNotifierProvider(create: (ctx) => MiscProviderV2()),
           ChangeNotifierProvider(create: (ctx) => DevotionalProviderV2()),
+          ChangeNotifierProvider(create: (ctx) => ThemeProviderV2()),
         ],
         child: MyApp(),
       ),

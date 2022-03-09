@@ -6,17 +6,13 @@ import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/v2/device.model.dart';
-import 'package:be_still/models/v2/group_user.model.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/notification.model.dart';
 import 'package:be_still/models/v2/notification_message.model.dart';
-
-import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:be_still/services/v2/notification_service.dart';
@@ -120,16 +116,6 @@ class NotificationProviderV2 with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       _notificationService.init(userDevices);
-      notifyListeners();
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future disablePushNotifications(String notificationId) async {
-    try {
-      if (_firebaseAuth.currentUser == null) return null;
-      _notificationService.cancelPushNotification(notificationId);
       notifyListeners();
     } catch (e) {
       rethrow;
@@ -265,7 +251,7 @@ class NotificationProviderV2 with ChangeNotifier {
     }
   }
 
-  Future updateNotification(String notificationId) async {
+  Future cancelNotification(String notificationId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       return await _notificationService.cancelPushNotification(notificationId);
@@ -275,15 +261,18 @@ class NotificationProviderV2 with ChangeNotifier {
   }
 
   Future sendPushNotification(
-    String message,
-    String type,
-    String senderName,
-    List<String> tokens,
-  ) async {
+      String message, String type, String senderName, List<String> tokens,
+      {String? groupId, String? prayerId}) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       await _notificationService.addNotification(
-          senderName: senderName, message: message, tokens: tokens, type: type);
+        groupId: groupId ?? '',
+        prayerId: prayerId ?? '',
+        senderName: senderName,
+        message: message,
+        tokens: tokens,
+        type: type,
+      );
     } catch (e) {
       rethrow;
     }
@@ -350,45 +339,10 @@ class NotificationProviderV2 with ChangeNotifier {
   }
 
   Future sendPrayerNotification(
-      String? prayerId,
-      String? groupPrayerId,
-      String? type,
-      String? selectedGroupId,
-      BuildContext context,
-      String? prayerDetail,
-      List<GroupUserDataModel> members,
-      List<String> followers) async {
+      String prayerId, String type, String groupId, String message) async {
     try {
-      List<String> _ids = [];
-      final _user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-
-      if (type == NotificationType.prayer ||
-          type == NotificationType.prayer_updates) {
-        _ids = members.map((e) => e.userId ?? '').toList();
-      } else {
-        _ids = followers;
-      }
-
-      _ids.removeWhere((e) => e == _user.id);
-
-      for (final id in _ids) {
-        final member = members.firstWhere((element) => element.userId == id);
-        if (type == NotificationType.prayer ||
-            type == NotificationType.prayer_updates) {
-          if (member.enableNotificationFormNewPrayers ?? false) {
-            final userTokens =
-                await Provider.of<UserProviderV2>(context, listen: false)
-                    .returnUserToken(id);
-            final name = ((_user.firstName ?? '').capitalizeFirst ?? '') +
-                ' ' +
-                ((_user.lastName ?? '').capitalizeFirst ?? '');
-
-            sendPushNotification(prayerDetail?.capitalizeFirst ?? '',
-                type ?? '', name, userTokens);
-          }
-        }
-      }
+      _notificationService.sendPrayerNotification(
+          message: message, type: type, groupId: groupId, prayerId: prayerId);
     } catch (e) {
       rethrow;
     }

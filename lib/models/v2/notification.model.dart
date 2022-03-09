@@ -1,6 +1,8 @@
 class NotificationModel {
   String? id;
   String? userId;
+  String? groupId;
+  String? prayerId;
   String? message;
   List<String>? tokens;
   String? type;
@@ -13,6 +15,8 @@ class NotificationModel {
   NotificationModel(
       {this.id,
       this.userId,
+      this.groupId,
+      this.prayerId,
       this.message,
       this.tokens,
       this.type,
@@ -25,13 +29,15 @@ class NotificationModel {
   NotificationModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     userId = json['userId'];
+    groupId = json['groupId'];
+    prayerId = json['prayerId'];
     message = json['message'];
     tokens = json['tokens'].cast<String>();
     type = json['type'];
     createdBy = json['createdBy'];
     modifiedBy = json['modifiedBy'];
-    createdDate = json['createdDate'];
-    modifiedDate = json['modifiedDate'];
+    createdDate = json['createdDate']?.toDate();
+    modifiedDate = json['modifiedDate']?.toDate();
     status = json['status'];
   }
 
@@ -39,6 +45,8 @@ class NotificationModel {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['userId'] = this.userId;
+    data['groupId'] = this.groupId;
+    data['prayerId'] = this.prayerId;
     data['message'] = this.message;
     data['tokens'] = this.tokens;
     data['type'] = this.type;

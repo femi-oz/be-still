@@ -117,7 +117,7 @@ class _PrayerListState extends State<PrayerList> {
       final searchQuery =
           Provider.of<MiscProviderV2>(context, listen: false).searchQuery;
       await Provider.of<PrayerProviderV2>(context, listen: false)
-          .setPrayerTimePrayers(_user.id ?? '');
+          .setPrayerTimePrayers();
       if (searchQuery.isNotEmpty) {
         Provider.of<PrayerProviderV2>(context, listen: false)
             .searchPrayers(searchQuery, _user.id ?? '');
@@ -235,7 +235,7 @@ class _PrayerListState extends State<PrayerList> {
                                               Provider.of<UserProviderV2>(
                                                       context,
                                                       listen: false)
-                                                  .selectedUser;
+                                                  .currentUser;
                                           BeStilDialog.showErrorDialog(
                                               context,
                                               StringUtils.getErrorMessage(e),
@@ -247,7 +247,7 @@ class _PrayerListState extends State<PrayerList> {
                                               Provider.of<UserProviderV2>(
                                                       context,
                                                       listen: false)
-                                                  .selectedUser;
+                                                  .currentUser;
                                           BeStilDialog.showErrorDialog(
                                               context,
                                               StringUtils.getErrorMessage(e),
@@ -257,9 +257,9 @@ class _PrayerListState extends State<PrayerList> {
                                       },
                                       text: 'Add New Prayer',
                                       backgroundColor: AppColors
-                                          .addprayerBgColor
+                                          .addPrayerBgColor
                                           .withOpacity(0.9),
-                                      textColor: AppColors.addprayerTextColor,
+                                      textColor: AppColors.addPrayerTextColor,
                                       icon: AppIcons.bestill_add_btn,
                                     ),
                                   ),
@@ -305,7 +305,7 @@ class _PrayerListState extends State<PrayerList> {
                                                                   UserProviderV2>(
                                                               context,
                                                               listen: false)
-                                                          .selectedUser;
+                                                          .currentUser;
                                                       BeStilDialog.showErrorDialog(
                                                           context,
                                                           StringUtils
@@ -320,7 +320,7 @@ class _PrayerListState extends State<PrayerList> {
                                                                   UserProviderV2>(
                                                               context,
                                                               listen: false)
-                                                          .selectedUser;
+                                                          .currentUser;
                                                       BeStilDialog.showErrorDialog(
                                                           context,
                                                           StringUtils
@@ -332,10 +332,10 @@ class _PrayerListState extends State<PrayerList> {
                                                   },
                                                   text: 'Add New Prayer',
                                                   backgroundColor: AppColors
-                                                      .addprayerBgColor
+                                                      .addPrayerBgColor
                                                       .withOpacity(0.9),
                                                   textColor: AppColors
-                                                      .addprayerTextColor,
+                                                      .addPrayerTextColor,
                                                   icon:
                                                       AppIcons.bestill_add_btn,
                                                 ),

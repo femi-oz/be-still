@@ -1,5 +1,4 @@
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/device.model.dart';
 import 'package:be_still/providers/v2/devotional_provider.dart';
@@ -29,7 +28,6 @@ import 'package:be_still/utils/info_modal.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_drawer.dart';
-import 'package:be_still/widgets/join_group.dart';
 import 'package:cron/cron.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -144,10 +142,25 @@ class _EntryScreenState extends State<EntryScreen> {
         Provider.of<PrayerProviderV2>(context, listen: false)
             .checkPrayerValidity(userId ?? '');
       Provider.of<MiscProviderV2>(context, listen: false).setDeviceId();
-      await _getPrayers();
-      await _getActivePrayers();
-      await _getDevotionals();
-      await _getBibles();
+
+      final searchQuery =
+          Provider.of<MiscProviderV2>(context, listen: false).searchQuery;
+
+      if (searchQuery.isNotEmpty) {
+        Provider.of<PrayerProviderV2>(context, listen: false)
+            .searchPrayers(searchQuery, userId ?? '');
+      } else {
+        await Provider.of<PrayerProviderV2>(context, listen: false)
+            .setPrayers();
+      }
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .setPrayerTimePrayers();
+      await Provider.of<GroupProviderV2>(context, listen: false)
+          .setUserGroups();
+      await Provider.of<DevotionalProviderV2>(context, listen: false)
+          .getDevotionals();
+      await Provider.of<DevotionalProviderV2>(context, listen: false)
+          .getBibles();
       //load settings
       // await Provider.of<SettingsProvider>(context, listen: false)
       //     .setPrayerSettings(userId ?? '');
@@ -161,8 +174,7 @@ class _EntryScreenState extends State<EntryScreen> {
       //     .setGroupSettings(userId??'');
       // await Provider.of<SettingsProvider>(context, listen: false)
       //     .setGroupPreferenceSettings(userId ?? '');
-      // await Provider.of<GroupProvider>(context, listen: false)
-      //     .setUserGroups(userId ?? '');
+
       // await Provider.of<GroupPrayerProvider>(context, listen: false)
       //     .setFollowedPrayerByUserId(userId ?? '');
 
@@ -178,86 +190,6 @@ class _EntryScreenState extends State<EntryScreen> {
           .setLocalNotifications(userId ?? '');
       // await Provider.of<GroupProvider>(context, listen: false)
       //     .setAllGroups(userId ?? '');
-    } on HttpException catch (e, s) {
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    } catch (e, s) {
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    }
-  }
-
-  Future<void> _getActivePrayers() async {
-    try {
-      final _userId = FirebaseAuth.instance.currentUser?.uid;
-      await Provider.of<PrayerProviderV2>(context, listen: false)
-          .setPrayerTimePrayers(_userId ?? '');
-    } on HttpException catch (e, s) {
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    } catch (e, s) {
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    }
-  }
-
-  Future<void> _getPrayers() async {
-    try {
-      final _user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      final searchQuery =
-          Provider.of<MiscProviderV2>(context, listen: false).searchQuery;
-      await Provider.of<PrayerProviderV2>(context, listen: false)
-          .setPrayerTimePrayers(_user.id ?? '');
-      if (searchQuery.isNotEmpty) {
-        Provider.of<PrayerProviderV2>(context, listen: false)
-            .searchPrayers(searchQuery, _user.id ?? '');
-      } else {
-        await Provider.of<PrayerProviderV2>(context, listen: false)
-            .setPrayers();
-      }
-    } on HttpException catch (e, s) {
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    } catch (e, s) {
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    }
-  }
-
-  Future<void> _getDevotionals() async {
-    try {
-      await Provider.of<DevotionalProviderV2>(context, listen: false)
-          .getDevotionals();
-    } on HttpException catch (e, s) {
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    } catch (e, s) {
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    }
-  }
-
-  Future<void> _getBibles() async {
-    try {
-      await Provider.of<DevotionalProviderV2>(context, listen: false)
-          .getBibles();
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
@@ -397,7 +329,7 @@ class _EntryScreenState extends State<EntryScreen> {
               }
             } catch (e, s) {
               final user = Provider.of<UserProviderV2>(context, listen: false)
-                  .selectedUser;
+                  .currentUser;
               BeStilDialog.showErrorDialog(
                   context, StringUtils.getErrorMessage(e), user, s);
             }
