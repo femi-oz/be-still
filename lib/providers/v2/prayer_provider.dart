@@ -239,11 +239,14 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> addPrayer(
-      String groupId, String prayerDesc, bool isGroup) async {
+  Future<void> addPrayer(String groupId, String prayerDesc, bool isGroup,
+      List<Contact> contacts) async {
     try {
       await _prayerService.createPrayer(
-          groupId: groupId, description: prayerDesc, isGroup: isGroup);
+          groupId: groupId,
+          description: prayerDesc,
+          isGroup: isGroup,
+          contacts: contacts);
     } catch (e) {
       rethrow;
     }

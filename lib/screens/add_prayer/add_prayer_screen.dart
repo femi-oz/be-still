@@ -1,5 +1,4 @@
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/save_options.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -8,7 +7,6 @@ import 'package:be_still/models/v2/update.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
-import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -210,42 +208,15 @@ class _AddPrayerState extends State<AddPrayer> {
         BeStilDialog.showErrorDialog(
             context, StringUtils.getErrorMessage(e), user, s);
       } else {
-        final userName =
-            '${_user.firstName?.capitalizeFirst} ${_user.lastName?.capitalizeFirst}';
         if (!Provider.of<PrayerProviderV2>(context, listen: false).isEdit) {
           if ((selected?.name ?? '').isEmpty ||
               (selected?.name) == 'My Prayers') {
             await Provider.of<PrayerProviderV2>(context, listen: false)
-                .addPrayer(
-              '',
-              _descriptionController.text,
-              false,
-            );
+                .addPrayer('', _descriptionController.text, false, contactList);
           } else {
             await Provider.of<PrayerProviderV2>(context, listen: false)
-                .addPrayer(
-              _descriptionController.text,
-              (selected?.id ?? ''),
-              true,
-            );
-          }
-
-          if (contactList.length > 0) {
-            for (final contact in contactList) {
-              if (_descriptionController.text
-                  .contains(contact.displayName ?? '')) {
-                if ((selected?.name ?? '').isEmpty ||
-                    (selected?.name) == 'My Prayers') {
-                  await Provider.of<PrayerProviderV2>(context, listen: false)
-                      .addPrayerTag(contactList, _user.firstName ?? '',
-                          _descriptionController.text, '');
-                } else {
-                  // await Provider.of<GroupPrayerProvider>(context, listen: false)
-                  //     .addPrayerTag(
-                  //         contactList, _user, _descriptionController.text, '');
-                }
-              }
-            }
+                .addPrayer((selected?.id ?? ''), _descriptionController.text,
+                    true, contactList);
           }
 
           AppController appController = Get.find();
@@ -356,8 +327,6 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   void _onTextChange(String val, {Backup? backup}) {
-    final userId = FirebaseAuth.instance.currentUser?.uid;
-
     try {
       final cursorPos = (backup == null ? _descriptionController : backup.ctrl)
           .selection

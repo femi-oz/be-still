@@ -33,7 +33,10 @@ class PrayerServiceV2 {
   final _notificationService = locator<NotificationServiceV2>();
 
   Future<void> createPrayer(
-      {String? groupId, required String description, bool? isGroup}) async {
+      {String? groupId,
+      required String description,
+      bool? isGroup,
+      List<Contact>? contacts}) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
@@ -63,15 +66,30 @@ class PrayerServiceV2 {
         snoozeEndDate: DateTime.now(),
       ).toJson();
       _prayerDataCollectionReference.add(doc).then((value) {
-        _prayerDataCollectionReference.doc(value.id).update({'id': value.id});
         _notificationService.sendPrayerNotification(
             prayerId: value.id,
             type: NotificationType.prayer,
             groupId: groupId ?? '',
             message: description);
+        if (contacts?.isNotEmpty ?? false) {
+          for (final contact in (contacts ?? [])) {
+            if (description.contains(contact.displayName ?? '')) {
+              createPrayerTag(
+                  contactData: contacts ?? [],
+                  username: '${user.firstName} ${user.lastName}'.sentenceCase(),
+                  description: description,
+                  prayerId: value.id);
+            }
+          }
+        }
+        if (isGroup ?? false) {
+          _notificationService.sendPrayerNotification(
+              message: description,
+              type: NotificationType.prayer,
+              groupId: groupId ?? '',
+              prayerId: value.id);
+        }
       });
-
-      //todo send push notification if group
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
