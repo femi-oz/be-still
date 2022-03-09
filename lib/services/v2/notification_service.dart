@@ -49,6 +49,8 @@ class NotificationServiceV2 {
     required String senderName,
     required List<String> tokens,
     required String type,
+    required String groupId,
+    required String prayerId,
   }) async {
     try {
       final doc = NotificationModel(
@@ -56,6 +58,8 @@ class NotificationServiceV2 {
         status: Status.active,
         tokens: tokens,
         type: type,
+        groupId: groupId,
+        prayerId: prayerId,
         userId: _firebaseAuth.currentUser?.uid,
         modifiedBy: _firebaseAuth.currentUser?.uid,
         createdBy: _firebaseAuth.currentUser?.uid,

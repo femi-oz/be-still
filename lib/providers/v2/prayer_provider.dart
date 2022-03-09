@@ -529,6 +529,8 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
+  Future<void> unFollowPrayer() async {}
+
   void flush() {
     prayerStream.cancel();
     // followedPrayerStream.cancel();

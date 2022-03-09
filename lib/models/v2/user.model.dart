@@ -1,4 +1,5 @@
 import 'package:be_still/models/v2/device.model.dart';
+import 'package:be_still/models/v2/followed_prayer.model.dart';
 import 'package:flutter/services.dart';
 
 class UserDataModel {
@@ -8,7 +9,7 @@ class UserDataModel {
   String? email;
   DateTime? dateOfBirth;
   List<DeviceModel>? devices;
-  List<String>? prayers;
+  List<FollowedPrayer>? prayers;
   List<String>? groups;
   String? churchName;
   String? churchEmail;
@@ -76,9 +77,9 @@ class UserDataModel {
       });
     }
     if (json['prayers'] != null) {
-      prayers = <String>[];
+      prayers = <FollowedPrayer>[];
       json['prayers'].forEach((v) {
-        prayers!.add(v);
+        prayers!.add(new FollowedPrayer.fromJson(v));
       });
     }
     if (json['groups'] != null) {
@@ -121,7 +122,7 @@ class UserDataModel {
       data['devices'] = this.devices!.map((v) => v.toJson()).toList();
     }
     if (this.prayers != null) {
-      data['prayers'] = this.prayers!.map((v) => v).toList();
+      data['prayers'] = this.prayers!.map((v) => v.toJson()).toList();
     }
     if (this.groups != null) {
       data['groups'] = this.groups!.map((v) => v).toList();

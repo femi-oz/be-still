@@ -2,7 +2,7 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class SettingsService {
+class SettingsServiceV2 {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   Future<void> updateSettings({

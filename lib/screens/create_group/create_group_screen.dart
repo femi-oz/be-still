@@ -67,16 +67,18 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       final fullName =
           '${(_user.firstName ?? '') + ' ' + (_user.lastName ?? '')}';
       bool isCompleted = false;
+
       if (!isEdit) {
         isCompleted = await Provider.of<GroupProviderV2>(context, listen: false)
             .createGroup(
-                _groupNameController.text,
-                _descriptionController.text,
-                fullName,
-                _organizationController.text,
-                _locationController.text,
-                GroupType.private,
-                _requireAdminApproval);
+          _groupNameController.text,
+          _descriptionController.text,
+          fullName,
+          _organizationController.text,
+          _locationController.text,
+          GroupType.private,
+          _requireAdminApproval,
+        );
       } else {
         isCompleted = await Provider.of<GroupProviderV2>(context, listen: false)
             .editGroup(
@@ -91,8 +93,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       if (isCompleted) {
         await Provider.of<PrayerProviderV2>(context, listen: false)
             .setGroupPrayers(group.id ?? '');
-        await Provider.of<GroupProviderV2>(context, listen: false)
-            .setUserGroups();
         setState(() {
           newGroupId = group.id ?? '';
           _step++;

@@ -188,20 +188,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      final userId = FirebaseAuth.instance.currentUser?.uid;
-                      final user =
-                          Provider.of<UserProviderV2>(context, listen: false)
-                              .currentUser;
                       await _authProvider.signOut();
                       Provider.of<NotificationProviderV2>(context,
                               listen: false)
                           .cancelLocalNotifications();
                       Provider.of<UserProviderV2>(context, listen: false)
-                          .removePushToken(
-                              Provider.of<MiscProviderV2>(context,
-                                      listen: false)
-                                  .deviceId,
-                              user.devices ?? <DeviceModel>[]);
+                          .removePushToken();
                       closeAllStreams();
                       Navigator.pushReplacement(
                         context,

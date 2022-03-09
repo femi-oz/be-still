@@ -61,7 +61,7 @@ class _GroupToolsState extends State<GroupTools> {
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
 
       await Provider.of<GroupProviderV2>(context, listen: false)
-          .leaveGroup(group.id ?? '', group.users ?? [], _userId);
+          .leaveGroup(group.id ?? '');
 
       final userName =
           '${(_user.firstName ?? '').capitalizeFirst} ${(_user.lastName ?? '').capitalizeFirst}';

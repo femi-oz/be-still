@@ -126,16 +126,6 @@ class NotificationProviderV2 with ChangeNotifier {
     }
   }
 
-  Future disablePushNotifications(String notificationId) async {
-    try {
-      if (_firebaseAuth.currentUser == null) return null;
-      _notificationService.cancelPushNotification(notificationId);
-      notifyListeners();
-    } catch (e) {
-      rethrow;
-    }
-  }
-
   Future<void> clearMessage() async {
     try {
       _message = NotificationMessageModel.defaultValue();
@@ -265,7 +255,7 @@ class NotificationProviderV2 with ChangeNotifier {
     }
   }
 
-  Future updateNotification(String notificationId) async {
+  Future cancelNotification(String notificationId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       return await _notificationService.cancelPushNotification(notificationId);
@@ -275,15 +265,18 @@ class NotificationProviderV2 with ChangeNotifier {
   }
 
   Future sendPushNotification(
-    String message,
-    String type,
-    String senderName,
-    List<String> tokens,
-  ) async {
+      String message, String type, String senderName, List<String> tokens,
+      {String? groupId, String? prayerId}) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       await _notificationService.addNotification(
-          senderName: senderName, message: message, tokens: tokens, type: type);
+        groupId: groupId ?? '',
+        prayerId: prayerId ?? '',
+        senderName: senderName,
+        message: message,
+        tokens: tokens,
+        type: type,
+      );
     } catch (e) {
       rethrow;
     }
