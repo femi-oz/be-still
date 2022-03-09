@@ -1,4 +1,5 @@
 import 'package:be_still/enums/message-template.dart';
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -43,7 +44,6 @@ class PrayerServiceV2 {
       final user = UserDataModel.fromJson(userDoc.data()!, userDoc.id);
 
       final doc = PrayerDataModel(
-        id: '',
         description: description,
         creatorName: (user.firstName ?? '') + ' ' + (user.lastName ?? ''),
         isAnswered: false,
@@ -64,7 +64,13 @@ class PrayerServiceV2 {
       ).toJson();
       _prayerDataCollectionReference.add(doc).then((value) {
         _prayerDataCollectionReference.doc(value.id).update({'id': value.id});
+        _notificationService.sendPrayerNotification(
+            prayerId: value.id,
+            type: NotificationType.prayer,
+            groupId: groupId ?? '',
+            message: description);
       });
+
       //todo send push notification if group
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));

@@ -222,21 +222,12 @@ class _AddPrayerState extends State<AddPrayer> {
               false,
             );
           } else {
-            await Provider.of<GroupProviderV2>(context, listen: false)
-                .setCurrentGroupById(selected?.id ?? '');
             await Provider.of<PrayerProviderV2>(context, listen: false)
                 .addPrayer(
               _descriptionController.text,
               (selected?.id ?? ''),
               true,
             );
-            final prayerId =
-                Provider.of<PrayerProviderV2>(context, listen: false)
-                    .currentPrayerId;
-
-            await Provider.of<NotificationProviderV2>(context, listen: false)
-                .sendPrayerNotification(prayerId, NotificationType.prayer,
-                    selected?.id ?? '', _descriptionController.text);
           }
 
           if (contactList.length > 0) {
