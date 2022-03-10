@@ -99,14 +99,16 @@ class _CustomDrawerState extends State<CustomDrawer> {
   }
 
   closeAllStreams() {
-    // Provider.of<GroupProviderV2>(context, listen: false).flush();
-    // Provider.of<NotificationProviderV2>(context, listen: false).flush();
+    Provider.of<GroupProviderV2>(context, listen: false).flush();
+    Provider.of<NotificationProviderV2>(context, listen: false).flush();
     Provider.of<PrayerProviderV2>(context, listen: false).flush();
   }
 
   _openLogoutConfirmation(BuildContext context) {
     final _authProvider =
         Provider.of<AuthenticationProviderV2>(context, listen: false);
+    final user =
+        Provider.of<UserProviderV2>(context, listen: false).currentUser;
 
     final dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
@@ -193,7 +195,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                               listen: false)
                           .cancelLocalNotifications();
                       Provider.of<UserProviderV2>(context, listen: false)
-                          .removePushToken();
+                          .removePushToken(user.devices ?? []);
                       closeAllStreams();
                       Navigator.pushReplacement(
                         context,

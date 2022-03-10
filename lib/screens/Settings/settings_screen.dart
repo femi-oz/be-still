@@ -1,7 +1,7 @@
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/theme_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/Settings/Widgets/general.dart';
 import 'package:be_still/screens/Settings/Widgets/groups.dart';
@@ -138,7 +138,7 @@ class SettingsTabState extends State<SettingsTab>
                     blurRadius: 5.0,
                   ),
                 ],
-                color: !Provider.of<ThemeProvider>(context).isDarkModeEnabled
+                color: !Provider.of<ThemeProviderV2>(context).isDarkModeEnabled
                     ? Color(0xFFFFFFFF)
                     : Color(0xFF005780),
               ),
@@ -146,7 +146,7 @@ class SettingsTabState extends State<SettingsTab>
               child: new TabBar(
                 indicatorColor: Colors.transparent,
                 unselectedLabelColor:
-                    !Provider.of<ThemeProvider>(context).isDarkModeEnabled
+                    !Provider.of<ThemeProviderV2>(context).isDarkModeEnabled
                         ? Color(0xFF718B92)
                         : Color(0xB3FFFFFF),
                 labelColor: AppColors.actveTabMenu,

@@ -2,20 +2,21 @@ import 'dart:async';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/notification.model.dart';
-import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/models/v2/device.model.dart';
+import 'package:be_still/models/v2/group.model.dart';
+import 'package:be_still/models/v2/notification.model.dart';
+import 'package:be_still/models/v2/user.model.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/notifications/widgets/notification_bar.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
@@ -42,7 +43,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     try {
       BeStilDialog.showLoading(context, '');
 
-      await Provider.of<NotificationProvider>(context, listen: false)
+      await Provider.of<NotificationProviderV2>(context, listen: false)
           .setUserNotifications(userId ?? '');
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
@@ -232,8 +233,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   Future deleteNotification(String id) async {
     try {
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .updateNotification(id);
+      await Provider.of<NotificationProviderV2>(context, listen: false)
+          .clearMessage();
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
@@ -247,15 +248,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
-  gotoGroup(PushNotificationModel? notification) async {
+  gotoGroup(NotificationModel? notification) async {
     BeStilDialog.showLoading(context);
 
     try {
-      final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      await Provider.of<GroupProvider>(context, listen: false)
-          .setCurrentGroupById(notification?.groupId ?? '', userId ?? '');
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
+      await Provider.of<GroupProviderV2>(context, listen: false)
+          .setCurrentGroupById(notification?.groupId ?? '');
+      await Provider.of<PrayerProviderV2>(context, listen: false)
           .setGroupPrayers(notification?.groupId ?? '');
       deleteNotification(notification?.id ?? '');
       BeStilDialog.hideLoading(context);
@@ -279,17 +278,23 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
-  gotoPrayer(PushNotificationModel notification) async {
+  String getSenderName(String userId) {
+    Provider.of<UserProviderV2>(context, listen: false).getUserDataById(userId);
+    final user =
+        Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+    final senderName = (user.firstName ?? '') + ' ' + (user.lastName ?? '');
+    return senderName;
+  }
+
+  gotoPrayer(NotificationModel notification) async {
     BeStilDialog.showLoading(context);
     try {
-      var userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
       if ((notification.groupId ?? '').isNotEmpty)
-        await Provider.of<GroupProvider>(context, listen: false)
-            .setCurrentGroupById(notification.groupId ?? '', userId ?? '');
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
+        await Provider.of<GroupProviderV2>(context, listen: false)
+            .setCurrentGroupById(notification.groupId ?? '');
+      await Provider.of<PrayerProviderV2>(context, listen: false)
           .setGroupPrayers(notification.groupId ?? '');
-      Provider.of<GroupPrayerProvider>(context, listen: false)
+      Provider.of<PrayerProviderV2>(context, listen: false)
           .setCurrentPrayerId(notification.prayerId ?? '');
       await deleteNotification(notification.id ?? '');
 
@@ -315,18 +320,20 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       String groupId, String notificationId, String receiverId) async {
     BeStilDialog.showLoading(context);
     try {
-      await Provider.of<UserProvider>(context, listen: false)
-          .getUserById(receiverId); //requestor
-      UserModel requestor =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      final admin =
-          Provider.of<UserProvider>(context, listen: false).currentUser; //admin
-      final groupData = await Provider.of<GroupProvider>(context, listen: false)
-          .getGroupFuture(groupId, admin.id ?? ''); //group
-      final groupRequest = (groupData.groupRequests ?? [])
-          .firstWhere((e) => e.userId == requestor.id);
-      await Provider.of<GroupProvider>(context, listen: false)
-          .denyRequest(groupId, groupRequest.id ?? '');
+      await Provider.of<UserProviderV2>(context, listen: false)
+          .getUserDataById(receiverId); //requestor
+      await Provider.of<GroupProviderV2>(context, listen: false)
+          .setCurrentGroupById(groupId);
+      UserDataModel requestor =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      final admin = Provider.of<UserProviderV2>(context, listen: false)
+          .currentUser; //admin
+      final groupData = Provider.of<GroupProviderV2>(context, listen: false)
+          .currentGroup; //group
+      final groupRequest =
+          (groupData.requests ?? []).firstWhere((e) => e.userId == receiverId);
+      await Provider.of<GroupProviderV2>(context, listen: false)
+          .denyRequest(groupData, groupRequest.id ?? '');
       deleteNotification(notificationId);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
@@ -350,34 +357,37 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       String notificationId, String receiverId) async {
     BeStilDialog.showLoading(context);
     try {
-      await Provider.of<UserProvider>(context, listen: false)
-          .getUserById(receiverId); //requestor
+      await Provider.of<UserProviderV2>(context, listen: false)
+          .getUserDataById(receiverId); //requestor
+      await Provider.of<GroupProviderV2>(context, listen: false)
+          .setCurrentGroupById(groupId); //requestor
       final requestor =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      final admin =
-          Provider.of<UserProvider>(context, listen: false).currentUser; //admin
-      final groupData = await Provider.of<GroupProvider>(context, listen: false)
-          .getGroupFuture(groupId, admin.id ?? ''); //group
-      final groupRequest = (groupData.groupRequests ?? [])
-          .firstWhere((e) => e.userId == requestor.id);
-      await Provider.of<GroupProvider>(context, listen: false).acceptRequest(
-          groupId,
-          senderId,
-          groupRequest.id ?? '',
-          (requestor.firstName ?? '') + ' ' + (requestor.lastName ?? ''));
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      final admin = Provider.of<UserProviderV2>(context, listen: false)
+          .currentUser; //admin
+      final groupData = Provider.of<GroupProviderV2>(context, listen: false)
+          .currentGroup; //group
+      final adminName = (admin.firstName ?? '') + ' ' + (admin.lastName ?? '');
+      List<String> tokens = [];
+      requestor.devices ??
+          <DeviceModel>[].forEach((element) {
+            tokens.add(element.token ?? '');
+          });
+
+      final groupRequest =
+          (groupData.requests ?? []).firstWhere((e) => e.userId == receiverId);
+      await Provider.of<GroupProviderV2>(context, listen: false)
+          .acceptRequest(groupData, groupRequest);
       await deleteNotification(notificationId);
 
-      await Provider.of<NotificationProvider>(context, listen: false)
+      await Provider.of<NotificationProviderV2>(context, listen: false)
           .sendPushNotification(
               'Your request to join this group has been accepted.',
               NotificationType.accept_request,
-              '${(groupData.group?.name?.sentenceCase() ?? '')}',
-              admin.id ?? '',
-              receiverId,
-              'Request Accepted',
-              '',
-              groupData.group?.id ?? '',
-              [requestor.pushToken ?? '']);
+              adminName.sentenceCase(),
+              tokens,
+              prayerId: '',
+              groupId: groupId);
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();
     } on HttpException catch (e, s) {
@@ -398,7 +408,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    final userId = FirebaseAuth.instance.currentUser?.uid;
     return SafeArea(
       child: Scaffold(
         appBar: NotificationBar(),
@@ -418,7 +428,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           ),
           child: RefreshIndicator(
             key: refreshKey,
-            onRefresh: () => getNotifications(user.id ?? ''),
+            onRefresh: () => getNotifications(userId),
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               child: _buildPanel(),
@@ -430,19 +440,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   String? groupName(String id) {
-    final allGroups = Provider.of<GroupProvider>(context).allGroups;
-    final groupName = (allGroups
-                .firstWhere(
-                  (element) => element.group?.id == id,
-                  orElse: () => CombineGroupUserStream.defaultValue(),
-                )
-                .group ??
-            GroupModel.defaultValue())
-        .name;
+    final allGroups = Provider.of<GroupProviderV2>(context).allGroups;
+    final groupName = (allGroups.firstWhere(
+      (element) => element.id == id,
+      orElse: () => GroupDataModel(),
+    )).name;
     return groupName;
   }
 
-  Widget _buildRequestPanel(List<PushNotificationModel> requests) {
+  Widget _buildRequestPanel(List<NotificationModel> requests) {
     return Container(
       margin: EdgeInsets.only(bottom: 10.0),
       child: custom.ExpansionTile(
@@ -463,9 +469,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         ),
         initiallyExpanded: true,
         children: <Widget>[
-          ...requests.map((PushNotificationModel notification) {
-            final userId = Provider.of<UserProvider>(context).currentUser.id;
-
+          ...requests.map((NotificationModel notification) {
             return Column(
               children: [
                 SizedBox(height: 10),
@@ -531,7 +535,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                           children: <Widget>[
                                             Text(
                                               DateFormat('MM.dd.yyyy').format(
-                                                  notification.createdOn ??
+                                                  notification.createdDate ??
                                                       DateTime.now()),
                                               style: AppTextStyles
                                                   .regularText15b
@@ -584,8 +588,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     );
   }
 
-  Widget _buildUserLeftPanel(List<PushNotificationModel> leftGroup) {
-    final userId = Provider.of<UserProvider>(context).currentUser.id;
+  Widget _buildUserLeftPanel(List<NotificationModel> leftGroup) {
     return Container(
         margin: EdgeInsets.only(bottom: 10.0),
         child: custom.ExpansionTile(
@@ -677,7 +680,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                   Text(
                                                     DateFormat('MM.dd.yyyy')
                                                         .format(notification
-                                                                .createdOn ??
+                                                                .createdDate ??
                                                             DateTime.now()),
                                                     style: AppTextStyles
                                                         .regularText15b
@@ -730,8 +733,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             ]));
   }
 
-  Widget _buildUserJoinPanel(List<PushNotificationModel> joinGroup) {
-    final userId = Provider.of<UserProvider>(context).currentUser.id;
+  Widget _buildUserJoinPanel(List<NotificationModel> joinGroup) {
     return Container(
         margin: EdgeInsets.only(bottom: 10.0),
         child: custom.ExpansionTile(
@@ -823,7 +825,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                   Text(
                                                     DateFormat('MM.dd.yyyy')
                                                         .format(notification
-                                                                .createdOn ??
+                                                                .createdDate ??
                                                             DateTime.now()),
                                                     style: AppTextStyles
                                                         .regularText15b
@@ -876,8 +878,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             ]));
   }
 
-  Widget _buildRequestAcceptedPanel(
-      List<PushNotificationModel> requestAccepted) {
+  Widget _buildRequestAcceptedPanel(List<NotificationModel> requestAccepted) {
     return Container(
         margin: EdgeInsets.only(bottom: 10.0),
         child: custom.ExpansionTile(
@@ -898,9 +899,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             ),
             initiallyExpanded: true,
             children: <Widget>[
-              ...requestAccepted.map((PushNotificationModel notification) {
-                final userId =
-                    Provider.of<UserProvider>(context).currentUser.id;
+              ...requestAccepted.map((NotificationModel notification) {
                 return Column(
                   children: [
                     SizedBox(height: 10),
@@ -946,12 +945,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
-                                              notification.sender != ''
+                                              getSenderName(
+                                                          notification.userId ??
+                                                              '') !=
+                                                      ''
                                                   ? Expanded(
                                                       child: Text(
-                                                        notification.sender
-                                                                ?.sentenceCase() ??
-                                                            '',
+                                                        getSenderName(notification
+                                                                    .userId ??
+                                                                '')
+                                                            .sentenceCase(),
                                                         style: AppTextStyles
                                                             .regularText15b
                                                             .copyWith(
@@ -970,7 +973,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                   Text(
                                                     DateFormat('MM.dd.yyyy')
                                                         .format(notification
-                                                                .createdOn ??
+                                                                .createdDate ??
                                                             DateTime.now()),
                                                     style: AppTextStyles
                                                         .regularText15b
@@ -1024,7 +1027,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   Widget _buildInapproriateContentPanel(
-      List<PushNotificationModel> inappropriateContent) {
+      List<NotificationModel> inappropriateContent) {
     return Container(
         margin: EdgeInsets.only(bottom: 10.0),
         child: custom.ExpansionTile(
@@ -1045,9 +1048,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             ),
             initiallyExpanded: true,
             children: <Widget>[
-              ...inappropriateContent.map((PushNotificationModel notification) {
-                final userId =
-                    Provider.of<UserProvider>(context).currentUser.id;
+              ...inappropriateContent.map((NotificationModel notification) {
                 return Column(
                   children: [
                     SizedBox(height: 10),
@@ -1089,11 +1090,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: <Widget>[
-                                            notification.sender != ''
+                                            getSenderName(notification.userId ??
+                                                        '') !=
+                                                    ''
                                                 ? Expanded(
                                                     child: Text(
-                                                        notification.sender ??
-                                                            '',
+                                                        getSenderName(
+                                                            notification
+                                                                    .userId ??
+                                                                ''),
                                                         style: AppTextStyles
                                                             .regularText15b
                                                             .copyWith(
@@ -1111,7 +1116,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                 Text(
                                                   DateFormat('MM.dd.yyyy')
                                                       .format(notification
-                                                              .createdOn ??
+                                                              .createdDate ??
                                                           DateTime.now()),
                                                   style: AppTextStyles
                                                       .regularText15b
@@ -1163,7 +1168,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             ]));
   }
 
-  Widget _buildNewPrayersPanel(List<PushNotificationModel> newPrayers) {
+  Widget _buildNewPrayersPanel(List<NotificationModel> newPrayers) {
     return Container(
         margin: EdgeInsets.only(bottom: 10.0),
         child: custom.ExpansionTile(
@@ -1184,9 +1189,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             ),
             initiallyExpanded: true,
             children: <Widget>[
-              ...newPrayers.map((PushNotificationModel notification) {
-                final userId =
-                    Provider.of<UserProvider>(context).currentUser.id;
+              ...newPrayers.map((NotificationModel notification) {
                 return Column(
                   children: [
                     SizedBox(height: 10),
@@ -1234,7 +1237,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
-                                              notification.sender != ''
+                                              getSenderName(
+                                                          notification.userId ??
+                                                              '') !=
+                                                      ''
                                                   ? Expanded(
                                                       child: Text(
                                                         (groupName(notification
@@ -1260,7 +1266,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                   Text(
                                                     DateFormat('MM.dd.yyyy')
                                                         .format(notification
-                                                                .createdOn ??
+                                                                .createdDate ??
                                                             DateTime.now()),
                                                     style: AppTextStyles
                                                         .regularText15b
@@ -1288,7 +1294,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                       width: MediaQuery.of(context).size.width *
                                           0.8,
                                       child: Text(
-                                        '${notification.sender} added a new prayer to the group.',
+                                        '${getSenderName(notification.userId ?? '')} added a new prayer to the group.',
                                         style: AppTextStyles.regularText16b
                                             .copyWith(
                                           color: AppColors.lightBlue4,
@@ -1310,8 +1316,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             ]));
   }
 
-  Widget _buildEditedPrayersPanel(List<PushNotificationModel> editedPrayers) {
-    final userId = Provider.of<UserProvider>(context).currentUser.id;
+  Widget _buildEditedPrayersPanel(List<NotificationModel> editedPrayers) {
     return Container(
         margin: EdgeInsets.only(bottom: 10.0),
         child: custom.ExpansionTile(
@@ -1380,11 +1385,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
-                                              notification.sender != ''
+                                              getSenderName(
+                                                          notification.userId ??
+                                                              '') !=
+                                                      ''
                                                   ? Expanded(
                                                       child: Text(
-                                                        notification.sender ??
-                                                            '',
+                                                        getSenderName(
+                                                            notification
+                                                                    .userId ??
+                                                                ''),
                                                         style: AppTextStyles
                                                             .regularText15b
                                                             .copyWith(
@@ -1428,7 +1438,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                   Text(
                                                     DateFormat('MM.dd.yyyy')
                                                         .format(notification
-                                                                .createdOn ??
+                                                                .createdDate ??
                                                             DateTime.now()),
                                                     style: AppTextStyles
                                                         .regularText15b
@@ -1481,9 +1491,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             ]));
   }
 
-  Widget _buildArchivedPrayersPanel(
-      List<PushNotificationModel> archivedPrayers) {
-    final userId = Provider.of<UserProvider>(context).currentUser.id;
+  Widget _buildArchivedPrayersPanel(List<NotificationModel> archivedPrayers) {
     return Container(
         margin: EdgeInsets.only(bottom: 10.0),
         child: custom.ExpansionTile(
@@ -1552,11 +1560,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
-                                              notification.sender != ''
+                                              getSenderName(
+                                                          notification.userId ??
+                                                              '') !=
+                                                      ''
                                                   ? Expanded(
                                                       child: Text(
-                                                        notification.sender ??
-                                                            '',
+                                                        getSenderName(
+                                                            notification
+                                                                    .userId ??
+                                                                ''),
                                                         style: AppTextStyles
                                                             .regularText15b
                                                             .copyWith(
@@ -1600,7 +1613,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                   Text(
                                                     DateFormat('MM.dd.yyyy')
                                                         .format(notification
-                                                                .createdOn ??
+                                                                .createdDate ??
                                                             DateTime.now()),
                                                     style: AppTextStyles
                                                         .regularText15b
@@ -1653,9 +1666,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             ]));
   }
 
-  Widget _buildAnsweredPrayersPanel(
-      List<PushNotificationModel> answeredPrayers) {
-    final userId = Provider.of<UserProvider>(context).currentUser.id;
+  Widget _buildAnsweredPrayersPanel(List<NotificationModel> answeredPrayers) {
     return Container(
         margin: EdgeInsets.only(bottom: 10.0),
         child: custom.ExpansionTile(
@@ -1724,11 +1735,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
-                                              notification.sender != ''
+                                              getSenderName(
+                                                          notification.userId ??
+                                                              '') !=
+                                                      ''
                                                   ? Expanded(
                                                       child: Text(
-                                                        notification.sender ??
-                                                            '',
+                                                        getSenderName(
+                                                            notification
+                                                                    .userId ??
+                                                                ''),
                                                         style: AppTextStyles
                                                             .regularText15b
                                                             .copyWith(
@@ -1772,7 +1788,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                   Text(
                                                     DateFormat('MM.dd.yyyy')
                                                         .format(notification
-                                                                .createdOn ??
+                                                                .createdDate ??
                                                             DateTime.now()),
                                                     style: AppTextStyles
                                                         .regularText15b
@@ -1825,7 +1841,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             ]));
   }
 
-  Widget _buildPrayerUpdatesPanel(List<PushNotificationModel> prayerUpdates) {
+  Widget _buildPrayerUpdatesPanel(List<NotificationModel> prayerUpdates) {
     return Container(
         margin: EdgeInsets.only(bottom: 10.0),
         child: custom.ExpansionTile(
@@ -1846,9 +1862,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             ),
             initiallyExpanded: true,
             children: <Widget>[
-              ...prayerUpdates.map((PushNotificationModel notification) {
-                final userId =
-                    Provider.of<UserProvider>(context).currentUser.id;
+              ...prayerUpdates.map((NotificationModel notification) {
                 return Column(
                   children: [
                     SizedBox(height: 10),
@@ -1896,11 +1910,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
-                                              notification.sender != ''
+                                              getSenderName(
+                                                          notification.userId ??
+                                                              '') !=
+                                                      ''
                                                   ? Expanded(
                                                       child: Text(
-                                                        notification.sender ??
-                                                            '',
+                                                        getSenderName(
+                                                            notification
+                                                                    .userId ??
+                                                                ''),
                                                         style: AppTextStyles
                                                             .regularText15b
                                                             .copyWith(
@@ -1944,7 +1963,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                   Text(
                                                     DateFormat('MM.dd.yyyy')
                                                         .format(notification
-                                                                .createdOn ??
+                                                                .createdDate ??
                                                             DateTime.now()),
                                                     style: AppTextStyles
                                                         .regularText15b
@@ -1998,23 +2017,23 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   Widget _buildPanel() {
-    final requests = Provider.of<NotificationProvider>(context).requests;
-    final newPrayers = Provider.of<NotificationProvider>(context).newPrayers;
+    final requests = Provider.of<NotificationProviderV2>(context).requests;
+    final newPrayers = Provider.of<NotificationProviderV2>(context).newPrayers;
     final requestAccepted =
-        Provider.of<NotificationProvider>(context).requestAccepted;
+        Provider.of<NotificationProviderV2>(context).requestAccepted;
     final editedPrayers =
-        Provider.of<NotificationProvider>(context).editedPrayers;
+        Provider.of<NotificationProviderV2>(context).editedPrayers;
     final archivedPrayers =
-        Provider.of<NotificationProvider>(context).archivedPrayers;
+        Provider.of<NotificationProviderV2>(context).archivedPrayers;
     final answeredPrayers =
-        Provider.of<NotificationProvider>(context).answeredPrayers;
+        Provider.of<NotificationProviderV2>(context).answeredPrayers;
     final inappropriateContent =
-        Provider.of<NotificationProvider>(context).inappropriateContent;
+        Provider.of<NotificationProviderV2>(context).inappropriateContent;
     final prayerUpdates =
-        Provider.of<NotificationProvider>(context).prayerUpdates;
-    final leftGroup = Provider.of<NotificationProvider>(context).leftGroup;
-    final joinGroup = Provider.of<NotificationProvider>(context).joinGroup;
-    final data = Provider.of<NotificationProvider>(context).notifications;
+        Provider.of<NotificationProviderV2>(context).prayerUpdates;
+    final leftGroup = Provider.of<NotificationProviderV2>(context).leftGroup;
+    final joinGroup = Provider.of<NotificationProviderV2>(context).joinGroup;
+    final data = Provider.of<NotificationProviderV2>(context).notifications;
 
     return Container(
       child: Column(

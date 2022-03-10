@@ -1,14 +1,11 @@
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/models/v2/group_user.model.dart';
-import 'package:be_still/models/v2/request.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/notification_provider.dart';
-import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -635,8 +632,11 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                               .addPushToken(_currentUser.devices ?? [])
                         });
                   } else {
+                    final user =
+                        Provider.of<UserProviderV2>(context, listen: false)
+                            .currentUser;
                     await Provider.of<UserProviderV2>(context, listen: false)
-                        .removePushToken();
+                        .removePushToken(user.devices ?? []);
                   }
                 } on HttpException catch (e, s) {
                   BeStilDialog.hideLoading(context);
@@ -662,15 +662,30 @@ class _GroupsSettingsState extends State<GroupsSettings> {
               children: <Widget>[
                 ..._groups.map((GroupDataModel group) {
                   bool isAdmin = (group.users ?? [])
-                          .firstWhere((g) => g.userId == _currentUser.id)
+                          .firstWhere(
+                            (g) =>
+                                g.userId ==
+                                FirebaseAuth.instance.currentUser?.uid,
+                            orElse: () => GroupUserDataModel(),
+                          )
                           .role ==
                       GroupUserRole.admin;
                   bool isModerator = (group.users ?? [])
-                          .firstWhere((g) => g.userId == _currentUser.id)
+                          .firstWhere(
+                            (g) =>
+                                g.userId ==
+                                FirebaseAuth.instance.currentUser?.uid,
+                            orElse: () => GroupUserDataModel(),
+                          )
                           .role ==
                       GroupUserRole.moderator;
                   bool isMember = (group.users ?? [])
-                          .firstWhere((g) => g.userId == _currentUser.id)
+                          .firstWhere(
+                            (g) =>
+                                g.userId ==
+                                FirebaseAuth.instance.currentUser?.uid,
+                            orElse: () => GroupUserDataModel(),
+                          )
                           .role ==
                       GroupUserRole.member;
 
@@ -902,10 +917,13 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       value,
                                     ),
                                 value: (group.users ?? [])
-                                        .firstWhere((e) =>
-                                            e.userId ==
-                                            FirebaseAuth
-                                                .instance.currentUser?.uid)
+                                        .firstWhere(
+                                          (e) =>
+                                              e.userId ==
+                                              FirebaseAuth
+                                                  .instance.currentUser?.uid,
+                                          orElse: () => GroupUserDataModel(),
+                                        )
                                         .enableNotificationForNewPrayers ??
                                     false),
                             CustomToggle(

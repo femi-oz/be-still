@@ -215,6 +215,9 @@ class PrayerServiceV2 {
     required String prayerId,
   }) async {
     try {
+      _prayerDataCollectionReference
+          .doc(prayerId)
+          .update({'status': Status.archived});
       // if (currentFollowers.isNotEmpty &&
       //     currentFollowers.any(
       //         (element) => element.userId == _firebaseAuth.currentUser?.uid) &&

@@ -1,5 +1,5 @@
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/providers/notification_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,7 +24,7 @@ class _SettingsAppBarState extends State<SettingsAppBar> {
   @override
   Widget build(BuildContext context) {
     final notifications =
-        Provider.of<NotificationProvider>(context).notifications;
+        Provider.of<NotificationProviderV2>(context).notifications;
     return AppBar(
       leading: Container(),
       flexibleSpace: Container(

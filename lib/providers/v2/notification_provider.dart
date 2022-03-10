@@ -246,12 +246,13 @@ class NotificationProviderV2 with ChangeNotifier {
 
   Future sendPushNotification(
       String message, String type, String senderName, List<String> tokens,
-      {String? groupId, String? prayerId}) async {
+      {String? groupId, String? prayerId, String? receiverId}) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       await _notificationService.addNotification(
         groupId: groupId ?? '',
         prayerId: prayerId ?? '',
+        receiverId: receiverId ?? '',
         senderName: senderName,
         message: message,
         tokens: tokens,
@@ -342,7 +343,7 @@ class NotificationProviderV2 with ChangeNotifier {
 
   void flush() {
     userNotificationStream.cancel();
-    prayerTimeStream.cancel();
+    // prayerTimeStream.cancel();
     resetValues();
   }
 }

@@ -7,16 +7,20 @@ import 'package:flutter/cupertino.dart';
 
 class UserProviderV2 with ChangeNotifier {
   UserServiceV2 _userService = locator<UserServiceV2>();
-  final _firebaseUserId = FirebaseAuth.instance.currentUser?.uid;
 
   UserDataModel _currentUser = UserDataModel();
   UserDataModel get currentUser => _currentUser;
+
+  UserDataModel _selectedUser = UserDataModel();
+  UserDataModel get selectedUser => _selectedUser;
 
   List<UserDataModel> _allUsers = <UserDataModel>[];
   List<UserDataModel> get allUsers => _allUsers;
 
   Future<void> setCurrentUser() async {
     try {
+      final _firebaseUserId = FirebaseAuth.instance.currentUser?.uid;
+
       await _userService.getUserByIdFuture(_firebaseUserId ?? '').then((event) {
         _currentUser = event;
         notifyListeners();
@@ -28,10 +32,10 @@ class UserProviderV2 with ChangeNotifier {
 
   Future<UserDataModel> getUserDataById(String userId) async {
     try {
-      return _userService
-          .getUserByIdFuture(_firebaseUserId ?? '')
-          .then((event) {
-        return event;
+      return _userService.getUserByIdFuture(userId).then((user) {
+        _selectedUser = user;
+        notifyListeners();
+        return user;
       });
     } catch (e) {
       rethrow;
@@ -50,6 +54,8 @@ class UserProviderV2 with ChangeNotifier {
 
   Future<void> setAllUsers() async {
     try {
+      final _firebaseUserId = FirebaseAuth.instance.currentUser?.uid;
+
       _userService.getAllUsers().asBroadcastStream().listen((users) {
         _allUsers = users.where((e) => e.id != _firebaseUserId).toList();
         notifyListeners();
@@ -60,6 +66,8 @@ class UserProviderV2 with ChangeNotifier {
   }
 
   String getPrayerCreatorName(String userId) {
+    final _firebaseUserId = FirebaseAuth.instance.currentUser?.uid;
+
     final user = userId == _firebaseUserId
         ? currentUser
         : _allUsers.firstWhere((element) => element.id == userId);
@@ -93,9 +101,9 @@ class UserProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> removePushToken() async {
+  Future<void> removePushToken(List<DeviceModel> devices) async {
     try {
-      await _userService.deletePushToken();
+      await _userService.deletePushToken(devices);
     } catch (e) {
       rethrow;
     }

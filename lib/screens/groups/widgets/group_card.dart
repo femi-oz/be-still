@@ -2,25 +2,27 @@ import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/user_role.dart';
-import 'package:be_still/models/group.model.dart';
-import 'package:be_still/models/group_settings_model.dart';
-import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/models/v2/device.model.dart';
+import 'package:be_still/models/v2/group.model.dart';
+import 'package:be_still/models/v2/group_user.model.dart';
+import 'package:be_still/models/v2/user.model.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class GroupCard extends StatefulWidget {
-  final CombineGroupUserStream groupData;
+  final GroupDataModel groupData;
 
   GroupCard(this.groupData) : super();
 
@@ -34,24 +36,31 @@ class _GroupCardState extends State<GroupCard> {
     super.initState();
   }
 
-  _requestToJoinGroup(CombineGroupUserStream groupData, String userId,
-      String userName, UserModel admin) async {
+  _requestToJoinGroup(GroupDataModel groupData, String userId, String userName,
+      UserDataModel admin) async {
     const title = 'Group Request';
     try {
       BeStilDialog.showLoading(context);
-      await Provider.of<GroupProvider>(context, listen: false)
-          .joinRequest(groupData.group?.id ?? '', userId, userName);
-      await Provider.of<NotificationProvider>(context, listen: false)
+      List<String> tokens = [];
+      final devices = admin.devices ?? <DeviceModel>[];
+      tokens = devices.map((e) => e.token ?? '').toList();
+      String adminDataId = (groupData.users ?? <GroupUserDataModel>[])
+              .firstWhere((element) => element.role == GroupUserRole.admin)
+              .userId ??
+          '';
+      await Provider.of<GroupProviderV2>(context, listen: false)
+          .requestToJoinGroup(groupData.id ?? '',
+              '$userName has requested to join your group', adminDataId);
+
+      await Provider.of<NotificationProviderV2>(context, listen: false)
           .sendPushNotification(
               '$userName has requested to join your group',
               NotificationType.request,
-              groupData.group?.name?.sentenceCase() ?? '',
-              userId,
-              admin.id ?? '',
-              title,
-              '',
-              groupData.group?.id ?? '',
-              [admin.pushToken ?? '']);
+              groupData.name?.sentenceCase() ?? '',
+              tokens,
+              prayerId: '',
+              receiverId: adminDataId,
+              groupId: groupData.id);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppController appController = Get.find();
@@ -71,31 +80,27 @@ class _GroupCardState extends State<GroupCard> {
     }
   }
 
-  Future<void> _joinGroup(CombineGroupUserStream groupData, String userId,
-      String userName, UserModel admin) async {
+  Future<void> _joinGroup(GroupDataModel groupData, String userId,
+      String userName, UserDataModel admin) async {
     BeStilDialog.showLoading(context);
     try {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      const title = 'Someone joined your group';
+      List<String> tokens = [];
+      final devices = admin.devices ?? <DeviceModel>[];
+      tokens = devices.map((e) => e.token ?? '').toList();
 
-      await Provider.of<GroupProvider>(context, listen: false).autoJoinGroup(
-          groupData.group?.id ?? '',
-          user.id ?? '',
-          ((user.firstName ?? '').capitalizeFirst ?? '') +
-              ' ' +
-              ((user.lastName ?? '').capitalizeFirst ?? ''));
-      await Provider.of<NotificationProvider>(context, listen: false)
+      await Provider.of<GroupProviderV2>(context, listen: false).autoJoinGroup(
+        groupData,
+        '$userName has joined your group',
+      );
+
+      await Provider.of<NotificationProviderV2>(context, listen: false)
           .sendPushNotification(
-              '$userName has joined your group',
-              NotificationType.join_group,
-              userName,
-              userId,
-              admin.id ?? '',
-              title,
-              '',
-              groupData.group?.id ?? '',
-              [admin.pushToken ?? '']);
+              '$userName has requested to join your group',
+              NotificationType.request,
+              groupData.name?.sentenceCase() ?? '',
+              tokens,
+              prayerId: '',
+              groupId: groupData.id);
 
       Navigator.of(context).pop();
       AppController appController = Get.find();
@@ -134,13 +139,12 @@ class _GroupCardState extends State<GroupCard> {
     setState(() {
       isPressed = true;
     });
-    final admin = (widget.groupData.groupUsers ?? [])
+    final admin = (widget.groupData.users ?? [])
         .firstWhere((e) => e.role == GroupUserRole.admin);
-
-    await Provider.of<UserProvider>(context, listen: false)
-        .getUserById(admin.userId ?? '');
-    UserModel adminData =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
+    await Provider.of<UserProviderV2>(context, listen: false)
+        .getUserDataById(admin.userId ?? '');
+    UserDataModel adminData =
+        Provider.of<UserProviderV2>(context, listen: false).selectedUser;
 
     FocusScope.of(context).unfocus();
     AlertDialog dialog = AlertDialog(
@@ -184,10 +188,7 @@ class _GroupCardState extends State<GroupCard> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      ((widget.groupData.group ?? GroupModel.defaultValue())
-                                  .name ??
-                              '')
-                          .toUpperCase(),
+                      ((widget.groupData).name ?? '').toUpperCase(),
                       style: AppTextStyles.boldText20,
                       textAlign: TextAlign.center,
                     ),
@@ -223,7 +224,7 @@ class _GroupCardState extends State<GroupCard> {
                             ),
                             Flexible(
                               child: Text(
-                                '${this.widget.groupData.group?.location}',
+                                '${this.widget.groupData.location}',
                                 style: AppTextStyles.regularText15.copyWith(
                                   color: AppColors.textFieldText,
                                 ),
@@ -242,13 +243,10 @@ class _GroupCardState extends State<GroupCard> {
                               style: AppTextStyles.regularText15,
                             ),
                             Text(
-                              ((this.widget.groupData.group ??
-                                                  GroupModel.defaultValue())
-                                              .organization ??
-                                          '')
+                              ((this.widget.groupData).organization ?? '')
                                       .isEmpty
                                   ? '-'
-                                  : '${this.widget.groupData.group?.organization}',
+                                  : '${this.widget.groupData.organization}',
                               style: AppTextStyles.regularText15.copyWith(
                                 color: AppColors.textFieldText,
                               ),
@@ -279,12 +277,11 @@ class _GroupCardState extends State<GroupCard> {
                     Column(
                       children: [
                         Text(
-                          (this.widget.groupData.groupUsers ?? []).length > 1 ||
-                                  (this.widget.groupData.groupUsers ?? [])
-                                          .length ==
+                          (this.widget.groupData.users ?? []).length > 1 ||
+                                  (this.widget.groupData.users ?? []).length ==
                                       0
-                              ? '${(this.widget.groupData.groupUsers ?? []).length} current members'
-                              : '${(this.widget.groupData.groupUsers ?? []).length} current member',
+                              ? '${(this.widget.groupData.users ?? []).length} current members'
+                              : '${(this.widget.groupData.users ?? []).length} current member',
                           style: AppTextStyles.regularText15.copyWith(
                             color: AppColors.textFieldText,
                           ),
@@ -302,13 +299,9 @@ class _GroupCardState extends State<GroupCard> {
                     ),
                     SizedBox(height: 30.0),
                     Text(
-                      ((this.widget.groupData.group ??
-                                          GroupModel.defaultValue())
-                                      .description ??
-                                  '')
-                              .isEmpty
+                      ((this.widget.groupData).purpose ?? '').isEmpty
                           ? 'N/A'
-                          : this.widget.groupData.group?.description ?? '',
+                          : this.widget.groupData.purpose ?? '',
                       style: AppTextStyles.regularText15.copyWith(
                         color: AppColors.textFieldText,
                       ),
@@ -316,10 +309,7 @@ class _GroupCardState extends State<GroupCard> {
                     ),
                     SizedBox(height: 30.0),
                     isRequestSent ||
-                            !((widget.groupData.groupSettings ??
-                                        GroupSettings.defaultValue())
-                                    .requireAdminApproval ??
-                                false)
+                            !((widget.groupData).requireAdminApproval ?? false)
                         ? Container()
                         : Text(
                             'Would you like to request to join?',
@@ -360,9 +350,7 @@ class _GroupCardState extends State<GroupCard> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
-                                        !((widget.groupData.groupSettings ??
-                                                        GroupSettings
-                                                            .defaultValue())
+                                        !((widget.groupData)
                                                     .requireAdminApproval ??
                                                 false)
                                             ? 'JOIN'
@@ -373,29 +361,25 @@ class _GroupCardState extends State<GroupCard> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  if (!((widget.groupData.groupSettings ??
-                                              GroupSettings.defaultValue())
+                                  if (!((widget.groupData)
                                           .requireAdminApproval ??
                                       false)) {
                                     _joinGroup(
                                       this.widget.groupData,
-                                      Provider.of<UserProvider>(context,
-                                                  listen: false)
-                                              .currentUser
-                                              .id ??
+                                      FirebaseAuth.instance.currentUser?.uid ??
                                           '',
-                                      '${(Provider.of<UserProvider>(context, listen: false).currentUser.firstName?.capitalizeFirst ?? '') + ' ' + (Provider.of<UserProvider>(context, listen: false).currentUser.lastName?.capitalizeFirst ?? '')}',
+                                      '${(Provider.of<UserProviderV2>(context, listen: false).currentUser.firstName?.capitalizeFirst ?? '') + ' ' + (Provider.of<UserProviderV2>(context, listen: false).currentUser.lastName?.capitalizeFirst ?? '')}',
                                       adminData,
                                     );
                                   } else {
                                     _requestToJoinGroup(
                                       this.widget.groupData,
-                                      Provider.of<UserProvider>(context,
+                                      Provider.of<UserProviderV2>(context,
                                                   listen: false)
                                               .currentUser
                                               .id ??
                                           '',
-                                      '${(Provider.of<UserProvider>(context, listen: false).currentUser.firstName?.capitalizeFirst ?? '') + ' ' + (Provider.of<UserProvider>(context, listen: false).currentUser.lastName?.capitalizeFirst ?? '')}',
+                                      '${(Provider.of<UserProviderV2>(context, listen: false).currentUser.firstName?.capitalizeFirst ?? '') + ' ' + (Provider.of<UserProviderV2>(context, listen: false).currentUser.lastName?.capitalizeFirst ?? '')}',
                                       adminData,
                                     );
                                   }
@@ -422,17 +406,18 @@ class _GroupCardState extends State<GroupCard> {
 
   bool get isRequestSent {
     final currentUser =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
-    return (widget.groupData.groupRequests ?? [])
-        .any((element) => element.userId == currentUser.id);
+        Provider.of<UserProviderV2>(context, listen: false).currentUser;
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    return (widget.groupData.requests ?? [])
+        .any((element) => element.userId == userId);
   }
 
   @override
   Widget build(BuildContext context) {
     var currentUser =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
+        Provider.of<UserProviderV2>(context, listen: false).currentUser;
     return GestureDetector(
-      onTap: (widget.groupData.groupUsers ?? [])
+      onTap: (widget.groupData.users ?? [])
               .map((e) => e.userId)
               .contains(currentUser.id)
           ? null
@@ -441,18 +426,16 @@ class _GroupCardState extends State<GroupCard> {
         margin: EdgeInsets.symmetric(vertical: 7.0),
         decoration: BoxDecoration(
           color: Settings.isDarkMode
-              ? AppColors.darkBlue.withOpacity(
-                  (widget.groupData.groupUsers ?? [])
-                          .map((e) => e.userId)
-                          .contains(currentUser.id)
-                      ? 0.5
-                      : 1)
-              : AppColors.lightBlue4.withOpacity(
-                  (widget.groupData.groupUsers ?? [])
-                          .map((e) => e.userId)
-                          .contains(currentUser.id)
-                      ? 0.5
-                      : 1),
+              ? AppColors.darkBlue.withOpacity((widget.groupData.users ?? [])
+                      .map((e) => e.userId)
+                      .contains(currentUser.id)
+                  ? 0.5
+                  : 1)
+              : AppColors.lightBlue4.withOpacity((widget.groupData.users ?? [])
+                      .map((e) => e.userId)
+                      .contains(currentUser.id)
+                  ? 0.5
+                  : 1),
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(10),
             topLeft: Radius.circular(10),
@@ -478,12 +461,10 @@ class _GroupCardState extends State<GroupCard> {
                   Container(
                     width: MediaQuery.of(context).size.width * 0.4,
                     child: Text(
-                      (this.widget.groupData.group ?? GroupModel.defaultValue())
-                              .name ??
-                          ''.toUpperCase(),
+                      (this.widget.groupData).name ?? ''.toUpperCase(),
                       style: TextStyle(
                           color: AppColors.lightBlue3.withOpacity(
-                              (widget.groupData.groupUsers ?? [])
+                              (widget.groupData.users ?? [])
                                       .map((e) => e.userId)
                                       .contains(currentUser.id)
                                   ? 0.5
@@ -494,10 +475,10 @@ class _GroupCardState extends State<GroupCard> {
                     ),
                   ),
                   Text(
-                    '${this.widget.groupData.group?.location}'.toUpperCase(),
+                    '${this.widget.groupData.location}'.toUpperCase(),
                     style: TextStyle(
                         color: AppColors.lightBlue4.withOpacity(
-                            (widget.groupData.groupUsers ?? [])
+                            (widget.groupData.users ?? [])
                                     .map((e) => e.userId)
                                     .contains(currentUser.id)
                                 ? 0.5

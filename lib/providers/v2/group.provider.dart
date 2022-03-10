@@ -91,6 +91,7 @@ class GroupProviderV2 with ChangeNotifier {
 
   Future<void> searchAllGroups(String searchQuery, String userId) async {
     try {
+      setAllGroups(userId);
       _searchQuery = searchQuery;
       _isAdvanceSearch = false;
       if (_firebaseAuth.currentUser == null)
@@ -237,6 +238,14 @@ class GroupProviderV2 with ChangeNotifier {
     }
   }
 
+  emptyGroupList() {
+    try {
+      _filteredAllGroups = [];
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> deleteGroup(
       String groupId, List<NotificationModel> notifications) async {
     try {
@@ -288,12 +297,13 @@ class GroupProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> requestToJoinGroup(String groupId, String message) async {
+  Future<void> requestToJoinGroup(
+      String groupId, String message, String adminId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       return await _groupService.requestToJoinGroup(
-          groupId: groupId, message: message);
+          groupId: groupId, message: message, adminId: adminId);
     } catch (e) {
       rethrow;
     }
@@ -352,7 +362,7 @@ class GroupProviderV2 with ChangeNotifier {
 
   flush() {
     allGroupsStream.cancel();
-    groupUserStream.cancel();
+    // groupUserStream.cancel();
     resetValues();
   }
 

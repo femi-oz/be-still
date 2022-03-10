@@ -1,11 +1,11 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/models/notification.model.dart';
+import 'package:be_still/models/v2/notification_message.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
-import 'package:be_still/providers/auth_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/providers/v2/auth_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/theme_provider.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/screens/splash/splash_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -54,9 +54,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       ]);
       WidgetsBinding.instance?.addObserver(this);
       WidgetsBinding.instance?.addPostFrameCallback((_) {
-        Provider.of<ThemeProvider>(context, listen: false).setDefaultTheme();
+        Provider.of<ThemeProviderV2>(context, listen: false).setDefaultTheme();
       });
-      Provider.of<NotificationProvider>(context, listen: false)
+      Provider.of<NotificationProviderV2>(context, listen: false)
           .initLocal(context);
       _initializeFlutterFireFuture = _initializeFlutterFire();
 
@@ -174,25 +174,26 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               DateTime.fromMillisecondsSinceEpoch(Settings.backgroundTime);
 
           if (DateTime.now().difference(backgroundTime) > Duration(hours: 48)) {
-            await Provider.of<AuthenticationProvider>(context, listen: false)
+            await Provider.of<AuthenticationProviderV2>(context, listen: false)
                 .signOut();
             await NavigationService.instance.navigateTo(LoginScreen.routeName);
           }
 
           print(
-              'message -- didChangeAppLifecycleState before ===> ${Provider.of<NotificationProvider>(context, listen: false).message}');
+              'message -- didChangeAppLifecycleState before ===> ${Provider.of<NotificationProviderV2>(context, listen: false).message}');
 
-          await Provider.of<NotificationProvider>(context, listen: false)
+          await Provider.of<NotificationProviderV2>(context, listen: false)
               .initLocal(context);
           print(
-              'message -- didChangeAppLifecycleState after ===> ${Provider.of<NotificationProvider>(context, listen: false).message}');
+              'message -- didChangeAppLifecycleState after ===> ${Provider.of<NotificationProviderV2>(context, listen: false).message}');
 
           var message =
-              Provider.of<NotificationProvider>(context, listen: false).message;
+              Provider.of<NotificationProviderV2>(context, listen: false)
+                  .message;
           if ((message.entityId ?? '').isNotEmpty) {
             print('AppLifecycleState resume ===> ${message.entityId}');
             await gotoPage(message);
-            Provider.of<NotificationProvider>(context, listen: false)
+            Provider.of<NotificationProviderV2>(context, listen: false)
                 .clearMessage();
           }
           // do check, route, clear message
@@ -216,7 +217,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
   }
 
-  gotoPage(NotificationMessage message) async {
+  gotoPage(NotificationMessageModel message) async {
     try {
       if (message.type == NotificationType.prayer_time) {
         AppController appController = Get.find();
@@ -227,7 +228,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           AppController appController = Get.find();
           appController.setCurrentPage(9, false, 0);
         } else {
-          Provider.of<PrayerProvider>(context, listen: false)
+          Provider.of<PrayerProviderV2>(context, listen: false)
               .setCurrentPrayerId(message.entityId ?? '');
           AppController appController = Get.find();
           appController.setCurrentPage(7, false, 0);
@@ -241,7 +242,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeProvider>(
+    return Consumer<ThemeProviderV2>(
       builder: (ctx, theme, _) => FutureBuilder(
         future: _initializeFlutterFireFuture,
         builder: (contect, snapshot) => GetMaterialApp(

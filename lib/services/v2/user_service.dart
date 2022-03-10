@@ -176,14 +176,14 @@ class UserServiceV2 {
     }
   }
 
-  Future<void> deletePushToken() async {
+  Future<void> deletePushToken(List<DeviceModel> devices) async {
     try {
-      final devices = await _userDataCollectionReference
-              .doc(_firebaseAuth.currentUser?.uid)
-              .get()
-              .then((value) =>
-                  UserDataModel.fromJson(value.data()!, value.id).devices) ??
-          [];
+      // final devices = await _userDataCollectionReference
+      //         .doc(_firebaseAuth.currentUser?.uid)
+      //         .get()
+      //         .then((value) =>
+      //             UserDataModel.fromJson(value.data()!, value.id).devices) ??
+      //     [];
       WriteBatch batch = FirebaseFirestore.instance.batch();
       batch.update(
           _userDataCollectionReference

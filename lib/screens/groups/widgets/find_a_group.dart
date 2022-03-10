@@ -1,11 +1,10 @@
 import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/groups/Widgets/find_a_group_tools.dart';
-import 'package:be_still/screens/groups/Widgets/group_card.dart';
+import 'package:be_still/screens/groups/widgets/group_card.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -32,7 +31,7 @@ class _FindAGroupState extends State<FindAGroup> {
   @override
   void initState() {
     try {
-      Provider.of<GroupProvider>(context, listen: false).emptyGroupList();
+      Provider.of<GroupProviderV2>(context, listen: false).emptyGroupList();
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
@@ -50,8 +49,8 @@ class _FindAGroupState extends State<FindAGroup> {
   void _searchGroup(String val) async {
     try {
       final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      await Provider.of<GroupProvider>(context, listen: false)
+          Provider.of<UserProviderV2>(context, listen: false).currentUser.id;
+      await Provider.of<GroupProviderV2>(context, listen: false)
           .searchAllGroups(val, userId ?? '');
     } on HttpException catch (e, s) {
       final user =
@@ -75,10 +74,8 @@ class _FindAGroupState extends State<FindAGroup> {
 
   @override
   Widget build(BuildContext context) {
-    var _filteredGroups = Provider.of<GroupProvider>(context)
-        .filteredAllGroups
-        .where((g) => (g.groupUsers ?? []).length > 0)
-        .toList();
+    var _filteredGroups =
+        Provider.of<GroupProviderV2>(context).filteredAllGroups.toList();
     var matchText = _filteredGroups.length > 1 ? 'Groups' : 'Group';
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),

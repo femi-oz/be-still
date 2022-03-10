@@ -44,6 +44,7 @@ class NotificationServiceV2 {
     required String type,
     required String groupId,
     required String prayerId,
+    required String receiverId,
   }) async {
     try {
       final doc = NotificationModel(
@@ -53,7 +54,7 @@ class NotificationServiceV2 {
         type: type,
         groupId: groupId,
         prayerId: prayerId,
-        userId: _firebaseAuth.currentUser?.uid,
+        userId: receiverId,
         modifiedBy: _firebaseAuth.currentUser?.uid,
         createdBy: _firebaseAuth.currentUser?.uid,
         createdDate: DateTime.now(),
@@ -108,6 +109,7 @@ class NotificationServiceV2 {
                 message: message.capitalizeFirst ?? '',
                 senderName: name,
                 groupId: groupId,
+                receiverId: id,
                 prayerId: prayerId,
                 tokens: userTokens,
                 type: type);

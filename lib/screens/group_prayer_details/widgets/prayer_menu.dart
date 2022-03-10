@@ -490,10 +490,10 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                   e.type == NotificationType.reminder)
               .toList();
 
-      notifications.forEach((e) async =>
-          await Provider.of<NotificationProviderV2>(context, listen: false)
-              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
-      _sendPrayerNotification(NotificationType.archived_prayers);
+      // notifications.forEach((e) async =>
+      //     await Provider.of<NotificationProviderV2>(context, listen: false)
+      //         .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
+      // _sendPrayerNotification(NotificationType.archived_prayers);
 
       await Provider.of<PrayerProviderV2>(context, listen: false).archivePrayer(
         widget.prayerData?.id ?? '',
