@@ -401,8 +401,8 @@ class _GroupCardState extends State<GroupCard> {
 
   bool get isRequestSent {
     final userId = FirebaseAuth.instance.currentUser?.uid;
-    return (widget.groupData.requests ?? []).any((element) =>
-        element.userId == userId && element.status == RequestStatus.pending);
+    return (widget.groupData.requests ?? [])
+        .any((element) => element.status != RequestStatus.pending);
   }
 
   @override

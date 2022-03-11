@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:be_still/enums/notification_type.dart';
@@ -277,14 +278,6 @@ class GroupServiceV2 {
       //     createdBy: _firebaseAuth.currentUser?.uid,
       //     createdOn: DateTime.now());
 
-      final requestToUpdate = (group.requests ?? []).firstWhere(
-          (element) => element.id == request.id,
-          orElse: () => RequestModel());
-      requestToUpdate.status = RequestStatus.denied;
-      requestToUpdate.modifiedBy = _firebaseAuth.currentUser?.uid;
-      requestToUpdate.modifiedDate = DateTime.now();
-      final requests = requestToUpdate;
-
       group = group..users?.add(user);
       group = group..requests?.where((e) => e.id == request.id);
       WriteBatch batch = FirebaseFirestore.instance.batch();
@@ -292,7 +285,7 @@ class GroupServiceV2 {
         'users': FieldValue.arrayUnion([user.toJson()])
       });
       batch.update(_groupDataCollectionReference.doc(group.id), {
-        'requests': FieldValue.arrayUnion([requests.toJson()])
+        'requests': FieldValue.arrayRemove([request.toJson()])
       });
       batch.update(_userDataCollectionReference.doc(request.userId), {
         'groups': FieldValue.arrayUnion([group.id])
@@ -426,26 +419,9 @@ class GroupServiceV2 {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-
-      // final requests = GroupRequestModel(
-      //     id: request.id,
-      //     userId: request.userId,
-      //     groupId: group.id,
-      //     status: RequestStatus.denied,
-      //     createdBy: _firebaseAuth.currentUser?.uid,
-      //     createdOn: DateTime.now());
-
-      final requestToUpdate = (group.requests ?? []).firstWhere(
-          (element) => element.id == request.id,
-          orElse: () => RequestModel());
-      requestToUpdate.status = RequestStatus.denied;
-      requestToUpdate.modifiedBy = _firebaseAuth.currentUser?.uid;
-      requestToUpdate.modifiedDate = DateTime.now();
-      final requests = requestToUpdate;
       group = group..requests?.where((e) => e.id == request.id);
-
       _groupDataCollectionReference.doc(group.id).update({
-        'requests': FieldValue.arrayUnion([requests.toJson()])
+        'requests': FieldValue.arrayRemove([request.toJson()])
       });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
