@@ -58,7 +58,23 @@ class PrayerServiceV2 {
         groupId: groupId,
         followers: [],
         status: Status.active,
-        tags: [],
+        tags: (contacts ?? [])
+            .map((contact) => TagModel(
+                  displayName: contact.displayName ?? '',
+                  contactIdentifier: contact.identifier ?? '',
+                  phoneNumber: (contact.phones ?? []).length > 0
+                      ? (contact.phones ?? []).toList()[0].value ?? ''
+                      : '',
+                  email: (contact.emails ?? []).length > 0
+                      ? (contact.emails ?? []).toList()[0].value ?? ''
+                      : '',
+                  status: Status.active,
+                  createdBy: _firebaseAuth.currentUser?.uid,
+                  createdDate: DateTime.now(),
+                  modifiedBy: _firebaseAuth.currentUser?.uid,
+                  modifiedDate: DateTime.now(),
+                ))
+            .toList(),
         updates: [],
         createdBy: _firebaseAuth.currentUser?.uid,
         modifiedBy: _firebaseAuth.currentUser?.uid,
@@ -67,17 +83,6 @@ class PrayerServiceV2 {
         snoozeEndDate: DateTime.now(),
       ).toJson();
       _prayerDataCollectionReference.add(doc).then((value) {
-        if (contacts?.isNotEmpty ?? false) {
-          for (final contact in (contacts ?? [])) {
-            if (description.contains(contact.displayName ?? '')) {
-              createPrayerTag(
-                  contactData: contacts ?? [],
-                  username: '${user.firstName} ${user.lastName}'.sentenceCase(),
-                  description: description,
-                  prayerId: value.id);
-            }
-          }
-        }
         if (isGroup ?? false) {
           _notificationService.sendPrayerNotification(
               message: description,
@@ -85,6 +90,11 @@ class PrayerServiceV2 {
               groupId: groupId ?? '',
               prayerId: value.id);
         }
+
+        sendTagMessageToUsers(
+            contactData: contacts ?? [],
+            description: description,
+            username: (user.firstName ?? '') + ' ' + (user.lastName ?? ''));
       });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));

@@ -322,14 +322,8 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
   @override
   Widget build(BuildContext context) {
     final _userId = FirebaseAuth.instance.currentUser?.uid;
-    var tags = '';
-    final eTags =
-        (widget.prayerData.tags ?? []).map((e) => e.displayName).toSet();
-    (widget.prayerData.tags ?? [])
-        .retainWhere((x) => eTags.remove(x.displayName) && x.userId == _userId);
-    (widget.prayerData.tags ?? []).forEach((element) {
-      tags += ' ' + (element.displayName ?? '');
-    });
+    final tags =
+        (widget.prayerData.tags ?? []).map((e) => e.displayName ?? '').toList();
 
     bool isOwner = widget.prayerData.createdBy == _userId;
     final isActivePrayer =
@@ -510,7 +504,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
                                                           EdgeInsets.symmetric(
                                                               vertical: 3),
                                                       child: Text(
-                                                        tags,
+                                                        tags.join(', '),
                                                         style: TextStyle(
                                                           color: AppColors.red,
                                                           fontSize: 10,

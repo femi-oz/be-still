@@ -345,7 +345,7 @@ class _PrayerListState extends State<PrayerList> {
                                       return GestureDetector(
                                           onTap: () => onTapCard(prayers[i]),
                                           child: PrayerCard(
-                                            prayerData: prayers[i],
+                                            prayer: prayers[i],
                                             timeago: DateFormatter(
                                                     (prayers[i]).modifiedDate ??
                                                         DateTime.now())
