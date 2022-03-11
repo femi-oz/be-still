@@ -132,23 +132,6 @@ class GroupServiceV2 {
     }
   }
 
-  // Stream<List<GroupDataModel>> getUserGroups(List<String> userGroupsId) {
-  //   try {
-  //     if (_firebaseAuth.currentUser == null)
-  //       return Stream.error(StringUtils.unathorized);
-  //     if (userGroupsId.isEmpty) return Stream.value([]);
-  //     return _groupDataCollectionReference
-  //         .where('status', isEqualTo: Status.active)
-  //         .where(FieldPath.documentId, whereIn: userGroupsId)
-  //         .snapshots()
-  //         .map((event) => event.docs
-  //             .map((e) => GroupDataModel.fromJson(e.data(), e.id))
-  //             .toList());
-  //   } catch (e) {
-  //     throw HttpException(StringUtils.getErrorMessage(e));
-  //   }
-  // }
-
   Future<List<GroupDataModel>> getUserGroupsFuture() async {
     try {
       if (_firebaseAuth.currentUser == null)
