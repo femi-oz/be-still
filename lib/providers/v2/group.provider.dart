@@ -296,13 +296,17 @@ class GroupProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> requestToJoinGroup(
-      String groupId, String message, String adminId) async {
+  Future<void> requestToJoinGroup(String groupId, String message,
+      String receiverId, List<String> tokens) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       return await _groupService.requestToJoinGroup(
-          groupId: groupId, message: message, adminId: adminId);
+        groupId: groupId,
+        message: message,
+        receiverId: receiverId,
+        tokens: tokens,
+      );
     } catch (e) {
       rethrow;
     }
@@ -318,12 +322,12 @@ class GroupProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> denyRequest(GroupDataModel group, String requestId) async {
+  Future<void> denyRequest(GroupDataModel group, RequestModel request) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       return await _groupService.denyJoinRequest(
-          group: group, requestId: requestId);
+          group: group, request: request);
     } catch (e) {
       rethrow;
     }

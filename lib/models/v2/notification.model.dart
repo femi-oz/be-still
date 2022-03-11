@@ -1,6 +1,7 @@
 class NotificationModel {
   String? id;
-  String? userId;
+  String? receiverId;
+  String? senderId;
   String? groupId;
   String? prayerId;
   String? message;
@@ -14,7 +15,8 @@ class NotificationModel {
 
   NotificationModel(
       {this.id,
-      this.userId,
+      this.receiverId,
+      this.senderId,
       this.groupId,
       this.prayerId,
       this.message,
@@ -28,7 +30,8 @@ class NotificationModel {
 
   NotificationModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    userId = json['userId'];
+    senderId = json['senderId'];
+    receiverId = json['receiverId'];
     groupId = json['groupId'];
     prayerId = json['prayerId'];
     message = json['message'];
@@ -44,7 +47,8 @@ class NotificationModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['userId'] = this.userId;
+    data['receiverId'] = this.receiverId;
+    data['senderId'] = this.senderId;
     data['groupId'] = this.groupId;
     data['prayerId'] = this.prayerId;
     data['message'] = this.message;

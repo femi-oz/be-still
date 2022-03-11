@@ -54,7 +54,8 @@ class NotificationServiceV2 {
         type: type,
         groupId: groupId,
         prayerId: prayerId,
-        userId: receiverId,
+        receiverId: receiverId,
+        senderId: _firebaseAuth.currentUser?.uid,
         modifiedBy: _firebaseAuth.currentUser?.uid,
         createdBy: _firebaseAuth.currentUser?.uid,
         createdDate: DateTime.now(),
@@ -173,7 +174,8 @@ class NotificationServiceV2 {
   Stream<List<NotificationModel>> getUserPushNotifications() {
     try {
       return _notificationCollectionReference
-          .where('userId', isEqualTo: _firebaseAuth.currentUser?.uid)
+          .where('receiverId', isEqualTo: _firebaseAuth.currentUser?.uid)
+          .where('status', isNotEqualTo: Status.inactive)
           .snapshots()
           .map((event) => event.docs
               .map((e) => NotificationModel.fromJson(e.data()))
