@@ -5,6 +5,7 @@ import 'package:be_still/enums/status.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/theme_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/Prayer/Widgets/group_prayer_card.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -206,10 +207,12 @@ class _GroupPrayersState extends State<GroupPrayers> {
                         }
                       },
                       text: 'Add New Prayer',
-                      backgroundColor: Settings.isDarkMode
+                      backgroundColor: Provider.of<ThemeProviderV2>(context)
+                              .isDarkModeEnabled
                           ? AppColors.backgroundColor[1]
                           : AppColors.lightBlue3,
-                      textColor: Settings.isDarkMode
+                      textColor: Provider.of<ThemeProviderV2>(context)
+                              .isDarkModeEnabled
                           ? AppColors.lightBlue3
                           : Colors.white,
                       icon: AppIcons.bestill_add,

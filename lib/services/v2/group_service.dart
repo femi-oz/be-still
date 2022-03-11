@@ -37,7 +37,7 @@ class GroupServiceV2 {
       _notificationCollectionReference =
       FirebaseFirestore.instance.collection("notifications");
 
-  Future<bool> createGroup(
+  Future<String> createGroup(
       {required String name,
       required String purpose,
       required bool requireAdminApproval,
@@ -47,8 +47,10 @@ class GroupServiceV2 {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
+      final groupId = Uuid().v1();
 
       final doc = GroupDataModel(
+        id: groupId,
         name: name,
         purpose: purpose,
         requireAdminApproval: requireAdminApproval,
@@ -77,22 +79,20 @@ class GroupServiceV2 {
         createdDate: DateTime.now(),
         modifiedDate: DateTime.now(),
       ).toJson();
-
       WriteBatch batch = FirebaseFirestore.instance.batch();
-      final groupId = Uuid().v1();
       batch.set(_groupDataCollectionReference.doc(groupId), doc);
       batch.update(
           _userDataCollectionReference.doc(_firebaseAuth.currentUser?.uid), {
         'groups': FieldValue.arrayUnion([groupId])
       });
       batch.commit();
-      return true;
+      return groupId;
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
-  Future<bool> editGroup(
+  Future<void> editGroup(
       {required String groupId,
       required String name,
       required String purpose,
@@ -127,7 +127,6 @@ class GroupServiceV2 {
         // add each to group
         // send notification that they joined
       }
-      return true;
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -186,12 +185,12 @@ class GroupServiceV2 {
     }
   }
 
-  Stream<List<GroupDataModel>> getGroups() {
+  Future<List<GroupDataModel>> getGroups() {
     try {
       return _groupDataCollectionReference
           .where('status', isNotEqualTo: Status.deleted)
-          .snapshots()
-          .map((event) => event.docs
+          .get()
+          .then((event) => event.docs
               .map((e) => GroupDataModel.fromJson(e.data(), e.id))
               .toList());
     } catch (e) {
@@ -208,7 +207,7 @@ class GroupServiceV2 {
         return Future.error(StringUtils.unathorized);
       final request = RequestModel(
         id: Uuid().v1(),
-        userId: adminId,
+        userId: _firebaseAuth.currentUser?.uid,
         status: Status.active,
         createdBy: _firebaseAuth.currentUser?.uid,
         createdDate: DateTime.now(),
@@ -246,7 +245,9 @@ class GroupServiceV2 {
       group = group..users?.add(user);
       group = group..requests?.where((e) => e.id == request.id);
       WriteBatch batch = FirebaseFirestore.instance.batch();
-      batch.update(_groupDataCollectionReference.doc(group.id), group.toJson());
+      batch.update(_groupDataCollectionReference.doc(group.id), {
+        'users': FieldValue.arrayUnion([user.toJson()])
+      });
       batch.update(_userDataCollectionReference.doc(request.userId), {
         'groups': FieldValue.arrayUnion([group.id])
       });

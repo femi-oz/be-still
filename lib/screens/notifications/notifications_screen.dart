@@ -234,7 +234,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   Future deleteNotification(String id) async {
     try {
       await Provider.of<NotificationProviderV2>(context, listen: false)
-          .clearMessage();
+          .cancelNotification(id);
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
@@ -360,7 +360,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       await Provider.of<UserProviderV2>(context, listen: false)
           .getUserDataById(receiverId); //requestor
       await Provider.of<GroupProviderV2>(context, listen: false)
-          .setCurrentGroupById(groupId); //requestor
+          .setCurrentGroupById(groupId);
       final requestor =
           Provider.of<UserProviderV2>(context, listen: false).selectedUser;
       final admin = Provider.of<UserProviderV2>(context, listen: false)
@@ -387,7 +387,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               adminName.sentenceCase(),
               tokens,
               prayerId: '',
-              groupId: groupId);
+              groupId: groupId,
+              receiverId: groupRequest.userId);
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();
     } on HttpException catch (e, s) {
@@ -440,7 +441,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   String? groupName(String id) {
-    final allGroups = Provider.of<GroupProviderV2>(context).allGroups;
+    final allGroups =
+        Provider.of<GroupProviderV2>(context, listen: false).allGroups;
     final groupName = (allGroups.firstWhere(
       (element) => element.id == id,
       orElse: () => GroupDataModel(),

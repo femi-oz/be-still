@@ -171,7 +171,6 @@ class _GroupScreenState extends State<GroupScreen> {
                                 ...data.map((e) {
                                   final _userId =
                                       FirebaseAuth.instance.currentUser?.uid;
-                                  ;
 
                                   bool isAdmin = (e.users ?? [])
                                       .where(

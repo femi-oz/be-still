@@ -23,7 +23,6 @@ class GroupProviderV2 with ChangeNotifier {
   bool _isAdvanceSearch = false;
   //search params end
 
-  late StreamSubscription<List<GroupDataModel>> groupUserStream;
   late StreamSubscription<List<GroupDataModel>> allGroupsStream;
 
   List<GroupDataModel> _userGroups = [];
@@ -52,6 +51,7 @@ class GroupProviderV2 with ChangeNotifier {
         _userGroups = userGroups;
         notifyListeners();
       });
+      setAllGroups(_firebaseAuth.currentUser?.uid ?? '');
     } catch (e) {
       rethrow;
     }
@@ -61,8 +61,7 @@ class GroupProviderV2 with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      allGroupsStream =
-          _groupService.getGroups().asBroadcastStream().listen((groups) {
+      _groupService.getGroups().then((groups) {
         _allGroups = groups;
         if (_isAdvanceSearch)
           advanceSearchAllGroups(
@@ -174,7 +173,7 @@ class GroupProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<bool> createGroup(
+  Future<String> createGroup(
       String name,
       String purpose,
       String fullName,
@@ -186,7 +185,7 @@ class GroupProviderV2 with ChangeNotifier {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
 
-      final isCompleted = await _groupService.createGroup(
+      final groupId = await _groupService.createGroup(
           name: name,
           purpose: purpose,
           requireAdminApproval: requireAdminApproval,
@@ -195,13 +194,13 @@ class GroupProviderV2 with ChangeNotifier {
           type: type);
 
       await setUserGroups();
-      return isCompleted;
+      return groupId;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<bool> editGroup(
+  Future<String> editGroup(
       String groupId,
       String name,
       String purpose,
@@ -212,7 +211,7 @@ class GroupProviderV2 with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      final isCompleted = await _groupService.editGroup(
+      await _groupService.editGroup(
           groupId: groupId,
           name: name,
           purpose: purpose,
@@ -221,7 +220,7 @@ class GroupProviderV2 with ChangeNotifier {
           location: location,
           type: type);
       await setUserGroups();
-      return isCompleted;
+      return groupId;
     } catch (e) {
       rethrow;
     }
@@ -361,7 +360,7 @@ class GroupProviderV2 with ChangeNotifier {
   }
 
   flush() {
-    allGroupsStream.cancel();
+    // allGroupsStream.cancel();
     // groupUserStream.cancel();
     resetValues();
   }

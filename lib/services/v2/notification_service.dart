@@ -60,7 +60,9 @@ class NotificationServiceV2 {
         createdDate: DateTime.now(),
         modifiedDate: DateTime.now(),
       ).toJson();
-      _notificationCollectionReference.add(doc);
+      _notificationCollectionReference.add(doc).then((value) {
+        _notificationCollectionReference.doc(value.id).update({'id': value.id});
+      });
     } catch (e) {
       StringUtils.getErrorMessage(e);
     }

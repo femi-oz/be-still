@@ -628,7 +628,6 @@ class _LoginScreenState extends State<LoginScreen> {
             onTextchanged: (i) {
               isFormValid = _usernameController.text.isNotEmpty &&
                   _passwordController.text.isNotEmpty;
-              print(Settings.lastUser);
               if (Settings.lastUser.isNotEmpty) {
                 if (_usernameController.text !=
                     jsonDecode(Settings.lastUser)['email']) _setDefaults();
