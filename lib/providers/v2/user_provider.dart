@@ -70,7 +70,8 @@ class UserProviderV2 with ChangeNotifier {
 
     final user = userId == _firebaseUserId
         ? currentUser
-        : _allUsers.firstWhere((element) => element.id == userId);
+        : _allUsers.firstWhere((element) => element.id == userId,
+            orElse: () => UserDataModel());
     final userName = (user.firstName ?? '') + ' ' + (user.lastName ?? '');
     return userName;
   }

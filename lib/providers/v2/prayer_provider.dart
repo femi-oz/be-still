@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/locator.dart';
+import 'package:be_still/models/v2/followed_prayer.model.dart';
 import 'package:be_still/models/v2/follower.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/models/v2/update.model.dart';
 import 'package:be_still/services/v2/prayer_service.dart';
+import 'package:be_still/services/v2/user_service.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,6 +18,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 class PrayerProviderV2 with ChangeNotifier {
   PrayerServiceV2 _prayerService = locator<PrayerServiceV2>();
+  UserServiceV2 _userService = locator<UserServiceV2>();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final userId = FirebaseAuth.instance.currentUser?.uid;
   late StreamSubscription<List<PrayerDataModel>> prayerStream;
@@ -53,8 +56,8 @@ class PrayerProviderV2 with ChangeNotifier {
   List<PrayerDataModel> _followedPrayers = [];
   List<PrayerDataModel> get followedPrayers => _followedPrayers;
 
-  List<PrayerDataModel> _userPrayers = [];
-  List<PrayerDataModel> get userPrayers => _userPrayers;
+  List<FollowedPrayer> _userPrayers = [];
+  List<FollowedPrayer> get userPrayers => _userPrayers;
 
   String _filterOption = Status.active;
   String get filterOption => _filterOption;
@@ -79,9 +82,33 @@ class PrayerProviderV2 with ChangeNotifier {
   Future<void> setPrayers() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
+
+      await _userService
+          .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '')
+          .then((value) {
+        _userPrayers = value.prayers ?? <FollowedPrayer>[];
+      });
+
+      if (_userPrayers.length > 0) {
+        followedPrayerStream = _prayerService
+            .getUserFollowedPrayers()
+            .asBroadcastStream()
+            .listen((event) {
+          _followedPrayers = event;
+          _userPrayers.forEach((element) {
+            _followedPrayers =
+                event.where((e) => e.id == element.prayerId).toList();
+          });
+          notifyListeners();
+        });
+      } else {
+        _followedPrayers = [];
+      }
+
       prayerStream =
           _prayerService.getUserPrayers().asBroadcastStream().listen((event) {
-        _prayers = event;
+        _prayers = [...followedPrayers, ...event];
+        // _prayers = event;
         filterPrayers();
         notifyListeners();
       });
@@ -98,7 +125,7 @@ class PrayerProviderV2 with ChangeNotifier {
           .asBroadcastStream()
           .listen((event) {
         _groupPrayers = event;
-        filterPrayers();
+        filterGroupPrayers();
         notifyListeners();
       });
     } catch (e) {
@@ -143,7 +170,6 @@ class PrayerProviderV2 with ChangeNotifier {
     try {
       // setPrayers();
 
-      _prayerService.getPrayerFollowers();
       prayerTimeStream =
           _prayerService.getUserPrayers().asBroadcastStream().listen(
         (data) {
@@ -181,9 +207,9 @@ class PrayerProviderV2 with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       if (searchQuery == '') {
-        filterPrayers();
+        filterGroupPrayers();
       } else {
-        filterPrayers();
+        filterGroupPrayers();
 
         List<PrayerDataModel> filteredGroupPrayers = _filteredGroupPrayers
             .where((PrayerDataModel data) => (data.description ?? '')
@@ -484,29 +510,79 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
+  void filterGroupPrayers() {
+    if (_firebaseAuth.currentUser == null) return null;
+    List<PrayerDataModel> groupPrayers = _groupPrayers.toList();
+    List<PrayerDataModel> activeGroupPrayers = [];
+    List<PrayerDataModel> answeredGroupPrayers = [];
+    List<PrayerDataModel> archivedGroupPrayers = [];
+    List<PrayerDataModel> allGroupPrayers = [];
+
+    if (_filterOption == Status.all) {
+      allGroupPrayers = groupPrayers;
+    }
+
+    if (_filterOption == Status.active) {
+      activeGroupPrayers = groupPrayers
+          .where((PrayerDataModel data) =>
+              (data.status ?? '').toLowerCase() == Status.active.toLowerCase())
+          .toList();
+    }
+
+    if (_filterOption == Status.answered) {
+      answeredGroupPrayers = groupPrayers
+          .where((PrayerDataModel data) =>
+              (data.status == Status.archived) &&
+              (data.isAnswered ?? false) == true)
+          .toList();
+    }
+
+    if (_filterOption == Status.archived) {
+      archivedGroupPrayers = groupPrayers
+          .where((PrayerDataModel data) => data.status == Status.archived)
+          .toList();
+    }
+
+    _filteredGroupPrayers = [
+      ...allGroupPrayers,
+      ...activeGroupPrayers,
+      ...archivedGroupPrayers,
+      ...answeredGroupPrayers
+    ];
+
+    _filteredGroupPrayers.sort((a, b) => (b.modifiedDate ?? DateTime.now())
+        .compareTo(a.modifiedDate ?? DateTime.now()));
+
+    List<PrayerDataModel> _groupDistinct = [];
+    var idSet = <String>{};
+
+    for (var e in _filteredGroupPrayers) {
+      if (idSet.add(e.id ?? '')) {
+        _groupDistinct.add(e);
+      }
+    }
+
+    _filteredGroupPrayers = _groupDistinct;
+    notifyListeners();
+  }
+
   void filterPrayers() {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       List<PrayerDataModel> prayers = _prayers.toList();
-      List<PrayerDataModel> groupPrayers = _groupPrayers.toList();
       List<PrayerDataModel> activePrayers = [];
-      List<PrayerDataModel> activeGroupPrayers = [];
       List<PrayerDataModel> answeredPrayers = [];
-      List<PrayerDataModel> answeredGroupPrayers = [];
       List<PrayerDataModel> snoozedPrayers = [];
       List<PrayerDataModel> favoritePrayers = [];
       List<PrayerDataModel> archivedPrayers = [];
-      List<PrayerDataModel> archivedGroupPrayers = [];
       List<PrayerDataModel> followingPrayers = [];
       List<PrayerDataModel> allPrayers = [];
-      List<PrayerDataModel> allGroupPrayers = [];
       if (_filterOption == Status.all) {
         favoritePrayers = prayers
             .where((PrayerDataModel data) =>
                 (data.isFavorite ?? false) && (data.status != Status.active))
             .toList();
         allPrayers = prayers;
-        allGroupPrayers = groupPrayers;
       }
 
       if (_filterOption == Status.active) {
@@ -521,11 +597,6 @@ class PrayerProviderV2 with ChangeNotifier {
                 (data.status ?? '').toLowerCase() ==
                 Status.active.toLowerCase())
             .toList();
-        activeGroupPrayers = groupPrayers
-            .where((PrayerDataModel data) =>
-                (data.status ?? '').toLowerCase() ==
-                Status.active.toLowerCase())
-            .toList();
       }
       if (_filterOption == Status.answered) {
         answeredPrayers = prayers
@@ -533,17 +604,9 @@ class PrayerProviderV2 with ChangeNotifier {
                 (data.status == Status.archived) &&
                 (data.isAnswered ?? false) == true)
             .toList();
-        answeredGroupPrayers = groupPrayers
-            .where((PrayerDataModel data) =>
-                (data.status == Status.archived) &&
-                (data.isAnswered ?? false) == true)
-            .toList();
       }
       if (_filterOption == Status.archived) {
         archivedPrayers = prayers
-            .where((PrayerDataModel data) => data.status == Status.archived)
-            .toList();
-        archivedGroupPrayers = groupPrayers
             .where((PrayerDataModel data) => data.status == Status.archived)
             .toList();
       }
@@ -558,10 +621,7 @@ class PrayerProviderV2 with ChangeNotifier {
       }
       if (_filterOption == Status.following) {
         followingPrayers = prayers
-            .where((PrayerDataModel data) =>
-                (data.isGroup ?? false) &&
-                (data.followers?.any((element) => element.userId == userId) ??
-                    false))
+            .where((PrayerDataModel data) => (data.isGroup ?? false))
             .toList();
       }
       _filteredPrayers = [
@@ -572,32 +632,20 @@ class PrayerProviderV2 with ChangeNotifier {
         ...answeredPrayers,
         ...followingPrayers
       ];
-      _filteredGroupPrayers = [
-        ...allGroupPrayers,
-        ...activeGroupPrayers,
-        ...archivedGroupPrayers,
-        ...answeredGroupPrayers
-      ];
+
       _filteredPrayers.sort((a, b) => (b.modifiedDate ?? DateTime.now())
           .compareTo(a.modifiedDate ?? DateTime.now()));
-      _filteredGroupPrayers.sort((a, b) => (b.modifiedDate ?? DateTime.now())
-          .compareTo(a.modifiedDate ?? DateTime.now()));
+
       _filteredPrayers = [...favoritePrayers, ..._filteredPrayers];
       List<PrayerDataModel> _distinct = [];
-      List<PrayerDataModel> _groupDistinct = [];
       var idSet = <String>{};
       for (var e in _filteredPrayers) {
         if (idSet.add(e.id ?? '')) {
           _distinct.add(e);
         }
       }
-      for (var e in _filteredGroupPrayers) {
-        if (idSet.add(e.id ?? '')) {
-          _groupDistinct.add(e);
-        }
-      }
+
       _filteredPrayers = _distinct;
-      _filteredGroupPrayers = _groupDistinct;
       notifyListeners();
     } catch (e) {
       rethrow;
@@ -606,10 +654,12 @@ class PrayerProviderV2 with ChangeNotifier {
 
   Future<void> followPrayer(String prayerId, String groupId) async {
     _prayerService.followPrayer(prayerId: prayerId, groupId: groupId);
+    await setPrayers();
   }
 
   Future<void> unFollowPrayer(String prayerId, String groupId) async {
     _prayerService.unFollowPrayer(prayerId: prayerId, groupId: groupId);
+    await setPrayers();
   }
 
   void flush() {

@@ -240,13 +240,6 @@ class PrayerServiceV2 {
     }
   }
 
-  Future<void> getPrayerFollowers() async {
-    await _userDataCollectionReference
-        .where('prayers', arrayContains: '1')
-        .get()
-        .then((value) => print(value));
-  }
-
   Future<void> unArchivePrayer(
       {required String prayerId,
       required List<FollowerModel> currentFollowers,
