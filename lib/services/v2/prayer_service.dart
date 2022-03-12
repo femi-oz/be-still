@@ -525,10 +525,19 @@ class PrayerServiceV2 {
       {required String prayerId, required String groupId}) async {
     final userPrayer =
         FollowedPrayer(prayerId: prayerId, groupId: groupId).toJson();
+    final followers = FollowerModel(
+            userId: FirebaseAuth.instance.currentUser?.uid,
+            status: Status.active,
+            id: groupId)
+        .toJson();
     await _userDataCollectionReference
         .doc(FirebaseAuth.instance.currentUser?.uid)
         .update({
       'prayers': FieldValue.arrayUnion([userPrayer])
+    });
+
+    await _prayerDataCollectionReference.doc(prayerId).update({
+      'followers': FieldValue.arrayUnion([followers])
     });
   }
 
@@ -536,10 +545,17 @@ class PrayerServiceV2 {
       {required String prayerId, required String groupId}) async {
     final userPrayer =
         FollowedPrayer(prayerId: prayerId, groupId: groupId).toJson();
+    final followers = FollowerModel(
+        userId: FirebaseAuth.instance.currentUser?.uid,
+        status: Status.active,
+        id: groupId);
     await _userDataCollectionReference
         .doc(FirebaseAuth.instance.currentUser?.uid)
         .update({
       'prayers': FieldValue.arrayRemove([userPrayer])
+    });
+    await _prayerDataCollectionReference.doc(prayerId).update({
+      'followers': FieldValue.arrayRemove([followers])
     });
   }
 }
