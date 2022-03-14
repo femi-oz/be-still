@@ -401,10 +401,12 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> deletePrayer(String prayerId) async {
+  Future<void> deletePrayer(
+      String prayerId, List<FollowerModel> followers) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      await _prayerService.deletePrayer(prayerId: prayerId);
+      await _prayerService.deletePrayer(
+          prayerId: prayerId, followers: followers);
     } catch (e) {
       rethrow;
     }

@@ -124,13 +124,7 @@ class PrayerServiceV2 {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      // return _prayerDataCollectionReference
-      //     .where('isGroup', isEqualTo: true)
-      //     .where('status', isNotEqualTo: Status.deleted)
-      //     .snapshots()
-      //     .map((event) => event.docs
-      //         .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
-      //         .toList());
+
       if (userGroupsId.isEmpty) return Future.value([]);
       final chunks = partition(userGroupsId, 10);
       final querySnapshots = await Future.wait(chunks.map((chunk) {
@@ -469,13 +463,21 @@ class PrayerServiceV2 {
     }
   }
 
-  Future<void> deletePrayer({required String prayerId}) async {
+  Future<void> deletePrayer(
+      {required String prayerId,
+      required List<FollowerModel> followers}) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      _prayerDataCollectionReference
-          .doc(prayerId)
-          .update({'status': Status.deleted});
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      batch.update(_prayerDataCollectionReference.doc(prayerId),
+          {'status': Status.deleted});
+      followers.forEach((follower) {
+        batch.update(_userDataCollectionReference.doc(follower.userId), {
+          'followers': FieldValue.arrayRemove([follower.toJson()])
+        });
+      });
+      batch.commit();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

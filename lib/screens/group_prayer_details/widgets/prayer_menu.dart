@@ -236,8 +236,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       //     await Provider.of<NotificationProvider>(context, listen: false)
       //         .updateNotification(e.id ?? ''));
       await Provider.of<PrayerProviderV2>(context, listen: false).deletePrayer(
-        widget.prayerData?.id ?? '',
-      );
+          widget.prayerData?.id ?? '', widget.prayerData?.followers ?? []);
       clearSearch();
 
       // _deleteFollowedPrayers();
