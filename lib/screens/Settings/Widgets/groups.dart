@@ -883,7 +883,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   value,
                                   group.organization ?? '',
                                   group.location ?? '',
-                                  group.type ?? '');
+                                  group.type ?? '',
+                                  _currentUser.groups ?? []);
                             },
                             value: group.requireAdminApproval ?? false,
                           ),
@@ -911,10 +912,10 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                     'Enable alerts for new prayers in this group?',
                                 onChange: (value) =>
                                     _groupProvider.updateGroupUserSettings(
-                                      group,
-                                      'enableNotificationForNewPrayers',
-                                      value,
-                                    ),
+                                        group,
+                                        'enableNotificationForNewPrayers',
+                                        value,
+                                        _currentUser.groups ?? []),
                                 value: (group.users ?? [])
                                         .firstWhere(
                                           (e) =>
@@ -931,10 +932,10 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   'Enable alerts for prayer updates in this group?',
                               onChange: (value) =>
                                   _groupProvider.updateGroupUserSettings(
-                                group,
-                                'enableNotificationForUpdates',
-                                value,
-                              ),
+                                      group,
+                                      'enableNotificationForUpdates',
+                                      value,
+                                      _currentUser.groups ?? []),
                               value: (group.users ?? [])
                                       .firstWhere((e) =>
                                           e.userId ==

@@ -1,9 +1,7 @@
 import 'dart:io';
-
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/request_status.dart';
-import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/v2/device.model.dart';
 import 'package:be_still/models/v2/group.model.dart';
@@ -37,9 +35,8 @@ class _GroupCardState extends State<GroupCard> {
     super.initState();
   }
 
-  _requestToJoinGroup(GroupDataModel groupData, String userId, String userName,
-      UserDataModel admin) async {
-    const title = 'Group Request';
+  Future<void> _requestToJoinGroup(GroupDataModel groupData, String userId,
+      String userName, UserDataModel admin) async {
     try {
       BeStilDialog.showLoading(context);
       List<String> tokens = [];

@@ -71,14 +71,14 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       if (!isEdit) {
         groupId = await Provider.of<GroupProviderV2>(context, listen: false)
             .createGroup(
-          _groupNameController.text,
-          _descriptionController.text,
-          fullName,
-          _organizationController.text,
-          _locationController.text,
-          GroupType.private,
-          _requireAdminApproval,
-        );
+                _groupNameController.text,
+                _descriptionController.text,
+                fullName,
+                _organizationController.text,
+                _locationController.text,
+                GroupType.private,
+                _requireAdminApproval,
+                _user.groups ?? []);
       } else {
         groupId = await Provider.of<GroupProviderV2>(context, listen: false)
             .editGroup(
@@ -88,7 +88,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                 _requireAdminApproval,
                 _organizationController.text,
                 _locationController.text,
-                group.type ?? GroupType.private);
+                group.type ?? GroupType.private,
+                _user.groups ?? []);
       }
       if (groupId.isNotEmpty) {
         await Provider.of<PrayerProviderV2>(context, listen: false)

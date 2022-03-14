@@ -1,12 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
-
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/request_status.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/locator.dart';
-import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/models/v2/group_user.model.dart';
 import 'package:be_still/models/v2/notification.model.dart';
@@ -135,15 +132,16 @@ class GroupServiceV2 {
     }
   }
 
-  Future<List<GroupDataModel>> getUserGroupsFuture() async {
+  Future<List<GroupDataModel>> getUserGroupsFuture(
+      List<String> userGroupsId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      final user = await _userDataCollectionReference
-          .doc(_firebaseAuth.currentUser?.uid)
-          .get();
-      List<String> userGroupsId =
-          UserDataModel.fromJson(user.data()!, user.id).groups ?? [];
+      // final user = await _userDataCollectionReference
+      //     .doc(_firebaseAuth.currentUser?.uid)
+      //     .get();
+      // List<String> userGroupsId =
+      //     UserDataModel.fromJson(user.data()!, user.id).groups ?? [];
       if (userGroupsId.isEmpty) return Future.value([]);
       final chunks = partition(userGroupsId, 10);
       final querySnapshots = await Future.wait(chunks.map((chunk) {
@@ -214,6 +212,7 @@ class GroupServiceV2 {
         status: Status.active,
         tokens: tokens,
         isSent: 0,
+        senderId: _firebaseAuth.currentUser?.uid,
         type: NotificationType.request,
         groupId: groupId,
         prayerId: '',

@@ -1,9 +1,12 @@
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/v2/device.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/services/v2/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class UserProviderV2 with ChangeNotifier {
   UserServiceV2 _userService = locator<UserServiceV2>();
@@ -20,9 +23,13 @@ class UserProviderV2 with ChangeNotifier {
   Future<void> setCurrentUser() async {
     try {
       final _firebaseUserId = FirebaseAuth.instance.currentUser?.uid;
-
-      await _userService.getUserByIdFuture(_firebaseUserId ?? '').then((event) {
+      _userService
+          .getUserById(_firebaseUserId ?? '')
+          .asBroadcastStream()
+          .listen((event) async {
         _currentUser = event;
+        await Provider.of<GroupProviderV2>(Get.context!, listen: false)
+            .setUserGroups(event.groups ?? []);
         notifyListeners();
       });
     } catch (e) {

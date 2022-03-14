@@ -43,11 +43,11 @@ class GroupProviderV2 with ChangeNotifier {
   String _groupJoinId = '';
   String get groupJoinId => _groupJoinId;
 
-  Future<void> setUserGroups() async {
+  Future<void> setUserGroups(List<String> userGroupsId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      await _groupService.getUserGroupsFuture().then((userGroups) {
+      await _groupService.getUserGroupsFuture(userGroupsId).then((userGroups) {
         _userGroups = userGroups;
         notifyListeners();
       });
@@ -180,7 +180,8 @@ class GroupProviderV2 with ChangeNotifier {
       String organization,
       String location,
       String type,
-      bool requireAdminApproval) async {
+      bool requireAdminApproval,
+      List<String> userGroupsId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
@@ -192,8 +193,6 @@ class GroupProviderV2 with ChangeNotifier {
           organization: organization,
           location: location,
           type: type);
-
-      await setUserGroups();
       return groupId;
     } catch (e) {
       rethrow;
@@ -207,7 +206,8 @@ class GroupProviderV2 with ChangeNotifier {
       bool requireAdminApproval,
       String organization,
       String location,
-      String type) async {
+      String type,
+      List<String> userGroupsId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
@@ -219,7 +219,7 @@ class GroupProviderV2 with ChangeNotifier {
           organization: organization,
           location: location,
           type: type);
-      await setUserGroups();
+      await setUserGroups(userGroupsId);
       return groupId;
     } catch (e) {
       rethrow;
@@ -351,13 +351,13 @@ class GroupProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> updateGroupUserSettings(
-      GroupDataModel group, String key, dynamic value) async {
+  Future<void> updateGroupUserSettings(GroupDataModel group, String key,
+      dynamic value, List<String> userGroupsId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       await _groupService.updateGroupUserSettings(group, key, value);
-      await setUserGroups();
+      await setUserGroups(userGroupsId);
     } catch (e) {
       rethrow;
     }

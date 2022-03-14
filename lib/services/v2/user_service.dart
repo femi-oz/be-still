@@ -88,12 +88,12 @@ class UserServiceV2 {
     }
   }
 
-  Future<UserDataModel> getUserById(String userId) {
+  Stream<UserDataModel> getUserById(String userId) {
     try {
       return _userDataCollectionReference
           .doc(userId)
-          .get()
-          .then((event) => UserDataModel.fromJson(event.data()!, event.id));
+          .snapshots()
+          .map((event) => UserDataModel.fromJson(event.data()!, event.id));
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
