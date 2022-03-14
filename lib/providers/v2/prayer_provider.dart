@@ -605,8 +605,16 @@ class PrayerProviderV2 with ChangeNotifier {
   }
 
   Future<void> unFollowPrayer(
-      String prayerId, String groupId, List<String> prayersIds) async {
-    await _prayerService.unFollowPrayer(prayerId: prayerId, groupId: groupId);
+      String prayerId,
+      String groupId,
+      List<String> prayersIds,
+      FollowedPrayer prayer,
+      FollowerModel follower) async {
+    await _prayerService.unFollowPrayer(
+        prayerId: prayerId,
+        groupId: groupId,
+        follower: follower,
+        prayer: prayer);
   }
 
   void flush() {

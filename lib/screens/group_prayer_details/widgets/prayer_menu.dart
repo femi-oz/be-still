@@ -110,9 +110,17 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
       final currentGroup =
           Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
+      final follower = (widget.prayerData?.followers ?? []).firstWhere(
+          (e) => e.userId == FirebaseAuth.instance.currentUser?.uid);
+      final prayer = (user.prayers ?? [])
+          .firstWhere((e) => e.prayerId == widget.prayerData?.id);
       await Provider.of<PrayerProviderV2>(context, listen: false)
-          .unFollowPrayer(widget.prayerData?.id ?? '', currentGroup.id ?? '',
-              (user.prayers ?? []).map((e) => e.prayerId ?? '').toList());
+          .unFollowPrayer(
+              widget.prayerData?.id ?? '',
+              currentGroup.id ?? '',
+              (user.prayers ?? []).map((e) => e.prayerId ?? '').toList(),
+              prayer,
+              follower);
       clearSearch();
 
       BeStilDialog.hideLoading(context);

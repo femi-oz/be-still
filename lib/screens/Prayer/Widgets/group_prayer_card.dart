@@ -112,9 +112,17 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
           Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      final follower = (widget.prayerData.followers ?? []).firstWhere(
+          (e) => e.userId == FirebaseAuth.instance.currentUser?.uid);
+      final prayer = (user.prayers ?? [])
+          .firstWhere((e) => e.prayerId == widget.prayerData.id);
       await Provider.of<PrayerProviderV2>(context, listen: false)
-          .unFollowPrayer(widget.prayerData.id ?? '', currentGroup.id ?? '',
-              (user.prayers ?? []).map((e) => e.prayerId ?? '').toList());
+          .unFollowPrayer(
+              widget.prayerData.id ?? '',
+              currentGroup.id ?? '',
+              (user.prayers ?? []).map((e) => e.prayerId ?? '').toList(),
+              prayer,
+              follower);
       BeStilDialog.hideLoading(context);
       AppController appController = Get.find();
       appController.setCurrentPage(8, true, 0);
@@ -256,14 +264,11 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
   }
 
   bool get isAdmin {
-    final userId = FirebaseAuth.instance.currentUser?.uid;
-    final currentGroup =
-        Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
-    final isAdmin = (currentGroup.users ?? <GroupUserDataModel>[]).any(
-        (element) =>
-            element.role == GroupUserRole.admin && element.userId == userId);
+    final group = Provider.of<GroupProviderV2>(context).currentGroup;
 
-    return isAdmin;
+    return (group.users ?? []).any((e) =>
+        e.role == GroupUserRole.admin &&
+        e.userId == FirebaseAuth.instance.currentUser?.uid);
   }
 
   void _onMarkAsAnswered() async {

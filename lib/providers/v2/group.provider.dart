@@ -88,6 +88,14 @@ class GroupProviderV2 with ChangeNotifier {
     }
   }
 
+  Future<GroupDataModel> getCurrentGroupById(String groupId) async {
+    try {
+      return await _groupService.getGroup(groupId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> searchAllGroups(String searchQuery, String userId) async {
     try {
       setAllGroups(userId);

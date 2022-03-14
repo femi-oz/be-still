@@ -243,9 +243,17 @@ class _PrayerCardState extends State<PrayerCard> {
           Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      final follower = (widget.prayer.followers ?? []).firstWhere(
+          (e) => e.userId == FirebaseAuth.instance.currentUser?.uid);
+      final prayer = (user.prayers ?? [])
+          .firstWhere((e) => e.prayerId == widget.prayer.id);
       await Provider.of<PrayerProviderV2>(context, listen: false)
-          .unFollowPrayer(widget.prayer.id ?? '', currentGroup.id ?? '',
-              (user.prayers ?? []).map((e) => e.prayerId ?? '').toList());
+          .unFollowPrayer(
+              widget.prayer.id ?? '',
+              currentGroup.id ?? '',
+              (user.prayers ?? []).map((e) => e.prayerId ?? '').toList(),
+              prayer,
+              follower);
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);

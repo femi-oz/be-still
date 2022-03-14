@@ -2,6 +2,7 @@ import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
+import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/follower.model.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
@@ -64,66 +65,28 @@ class _PrayerMenuState extends State<PrayerMenu> {
     super.initState();
   }
 
+  bool _isInit = true;
+
   @override
   void didChangeDependencies() async {
-    Provider.of<PrayerProviderV2>(context)
-        .getPrayer(prayerId: widget.prayerData?.id ?? '');
+    if (_isInit) {
+      Provider.of<PrayerProviderV2>(context, listen: false)
+          .getPrayer(prayerId: widget.prayerData?.id ?? '');
+
+      _isInit = false;
+    }
     super.didChangeDependencies();
   }
 
   bool get isAdmin {
-    try {
-      final _userId = FirebaseAuth.instance.currentUser?.uid;
+    final group = Provider.of<GroupProviderV2>(context)
+        .allGroups
+        .firstWhere((e) => e.id == widget.prayerData?.groupId);
 
-      // return Provider.of<GroupPrayerProvider>(context)
-      //     .followedPrayers
-      //     .any((element) {
-      //   if (element.prayerId == widget.prayerData?.id &&
-      //       element.createdBy == _userId &&
-      //       (element.isFollowedByAdmin ?? false)) {
-      //     return true;
-      //   } else {
-      //     return false;
-      //   }
-      // });
-// todo implement is admin
-      return true;
-    } on HttpException catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-      return false;
-    } catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-      return false;
-    }
+    return (group.users ?? []).any((e) =>
+        e.role == GroupUserRole.admin &&
+        e.userId == FirebaseAuth.instance.currentUser?.uid);
   }
-
-  // getGroup() async {
-  //   try {
-  //     var _userId =
-  //         Provider.of<UserProvider>(context, listen: false).currentUser.id;
-  //     await Provider.of<GroupPrayerProvider>(context, listen: false)
-  //         .setFollowedPrayerByUserId(_userId ?? '');
-  //   } on HttpException catch (e, s) {
-  //     BeStilDialog.hideLoading(context);
-  //     final user =
-  //         Provider.of<UserProvider>(context, listen: false).currentUser;
-  //     BeStilDialog.showErrorDialog(
-  //         context, StringUtils.getErrorMessage(e), user, s);
-  //   } catch (e, s) {
-  //     BeStilDialog.hideLoading(context);
-  //     final user =
-  //         Provider.of<UserProvider>(context, listen: false).currentUser;
-  //     BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
-  //   }
-  // }
 
   clearSearch() async {
     final userId = FirebaseAuth.instance.currentUser?.uid;
@@ -171,9 +134,17 @@ class _PrayerMenuState extends State<PrayerMenu> {
           Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      final follower = (widget.prayerData?.followers ?? []).firstWhere(
+          (e) => e.userId == FirebaseAuth.instance.currentUser?.uid);
+      final prayer = (user.prayers ?? [])
+          .firstWhere((e) => e.prayerId == widget.prayerData?.id);
       await Provider.of<PrayerProviderV2>(context, listen: false)
-          .unFollowPrayer(widget.prayerData?.id ?? '', currentGroup.id ?? '',
-              (user.prayers ?? []).map((e) => e.prayerId ?? '').toList());
+          .unFollowPrayer(
+              widget.prayerData?.id ?? '',
+              currentGroup.id ?? '',
+              (user.prayers ?? []).map((e) => e.prayerId ?? '').toList(),
+              prayer,
+              follower);
 
       clearSearch();
 

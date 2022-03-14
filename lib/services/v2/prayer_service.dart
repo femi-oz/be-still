@@ -519,6 +519,7 @@ class PrayerServiceV2 {
           .get();
 
       archivedPrayers.docs.forEach((prayer) {
+        WriteBatch batch = FirebaseFirestore.instance.batch();
         final mappedPrayer = PrayerDataModel.fromJson(prayer.data(), prayer.id);
         if ((mappedPrayer.followers ?? []).isNotEmpty &&
             (mappedPrayer.followers ?? []).any((element) =>
@@ -530,18 +531,19 @@ class PrayerServiceV2 {
             ..prayerStatus = Status.active;
           (mappedPrayer.followers ??
               [])[(mappedPrayer.followers ?? []).indexOf(user)] = user;
-          prayer.reference
-              .update({'followers': (mappedPrayer.followers ?? [])});
+          batch.update(
+              prayer.reference, {'followers': (mappedPrayer.followers ?? [])});
         } else {
-          prayer.reference.update({'status': Status.active});
+          batch.update(prayer.reference, {'status': Status.active});
         }
+        batch.commit();
       });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
-  Future followPrayer(
+  Future<void> followPrayer(
       {required String prayerId, required String groupId}) async {
     final userPrayer =
         FollowedPrayer(prayerId: prayerId, groupId: groupId).toJson();
@@ -550,32 +552,35 @@ class PrayerServiceV2 {
             status: Status.active,
             id: groupId)
         .toJson();
-    await _userDataCollectionReference
-        .doc(FirebaseAuth.instance.currentUser?.uid)
-        .update({
-      'prayers': FieldValue.arrayUnion([userPrayer])
-    });
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    batch.update(
+        _userDataCollectionReference
+            .doc(FirebaseAuth.instance.currentUser?.uid),
+        {
+          'prayers': FieldValue.arrayUnion([userPrayer])
+        });
 
-    await _prayerDataCollectionReference.doc(prayerId).update({
+    batch.update(_prayerDataCollectionReference.doc(prayerId), {
       'followers': FieldValue.arrayUnion([followers])
     });
+    batch.commit();
   }
 
-  Future unFollowPrayer(
-      {required String prayerId, required String groupId}) async {
-    final userPrayer =
-        FollowedPrayer(prayerId: prayerId, groupId: groupId).toJson();
-    final followers = FollowerModel(
-        userId: FirebaseAuth.instance.currentUser?.uid,
-        status: Status.active,
-        id: groupId);
-    await _userDataCollectionReference
-        .doc(FirebaseAuth.instance.currentUser?.uid)
-        .update({
-      'prayers': FieldValue.arrayRemove([userPrayer])
+  Future<void> unFollowPrayer(
+      {required String prayerId,
+      required String groupId,
+      required FollowedPrayer prayer,
+      required FollowerModel follower}) async {
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    batch.update(
+        _userDataCollectionReference
+            .doc(FirebaseAuth.instance.currentUser?.uid),
+        {
+          'prayers': FieldValue.arrayRemove([prayer.toJson()])
+        });
+    batch.update(_prayerDataCollectionReference.doc(prayerId), {
+      'followers': FieldValue.arrayRemove([follower.toJson()])
     });
-    await _prayerDataCollectionReference.doc(prayerId).update({
-      'followers': FieldValue.arrayRemove([followers])
-    });
+    batch.commit();
   }
 }

@@ -169,9 +169,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
                                         }
                                       },
                                       child: GroupPrayerCard(
-                                        prayerData: e,
-                                        timeago: '',
-                                      )))
+                                          prayerData: e, timeago: '')))
                                   .toList(),
                             ],
                           ),
