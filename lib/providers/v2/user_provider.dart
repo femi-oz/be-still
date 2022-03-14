@@ -29,7 +29,7 @@ class UserProviderV2 with ChangeNotifier {
           .listen((event) async {
         _currentUser = event;
         await Provider.of<GroupProviderV2>(Get.context!, listen: false)
-            .setUserGroups(event.groups ?? []);
+            .setUserGroups(event.groups ?? <String>[]);
         notifyListeners();
       });
     } catch (e) {

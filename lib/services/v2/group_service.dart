@@ -329,6 +329,12 @@ class GroupServiceV2 {
         modifiedDate: DateTime.now(),
       );
 
+      final adminId = (group.users ?? [])
+              .firstWhere((element) => element.role == GroupUserRole.admin)
+              .userId ??
+          '';
+      final admin = await _userService.getUserByIdFuture(adminId);
+
       group = group..users?.add(user);
 
       WriteBatch batch = FirebaseFirestore.instance.batch();
@@ -337,6 +343,23 @@ class GroupServiceV2 {
           _userDataCollectionReference.doc(_firebaseAuth.currentUser?.uid), {
         'groups': FieldValue.arrayUnion([group.id])
       });
+      final notId = Uuid().v1();
+      final doc = NotificationModel(
+        id: notId,
+        message: message,
+        status: Status.active,
+        isSent: 0,
+        tokens: (admin.devices ?? []).map((e) => e.token ?? '').toList(),
+        type: NotificationType.join_group,
+        groupId: group.id,
+        prayerId: '',
+        receiverId: admin.id,
+        modifiedBy: _firebaseAuth.currentUser?.uid,
+        createdBy: _firebaseAuth.currentUser?.uid,
+        createdDate: DateTime.now(),
+        modifiedDate: DateTime.now(),
+      ).toJson();
+      batch.set(_notificationCollectionReference.doc(notId), doc);
       batch.commit();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
