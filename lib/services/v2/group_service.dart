@@ -253,14 +253,6 @@ class GroupServiceV2 {
           modifiedBy: _firebaseAuth.currentUser?.uid,
           modifiedDate: DateTime.now());
 
-      // final requests = GroupRequestModel(
-      //     id: request.id,
-      //     userId: request.userId,
-      //     groupId: group.id,
-      //     status: RequestStatus.approved,
-      //     createdBy: _firebaseAuth.currentUser?.uid,
-      //     createdOn: DateTime.now());
-
       group = group..users?.add(user);
       group = group..requests?.where((e) => e.id == request.id);
       WriteBatch batch = FirebaseFirestore.instance.batch();

@@ -46,12 +46,15 @@ class _GroupCardState extends State<GroupCard> {
               .firstWhere((element) => element.role == GroupUserRole.admin)
               .userId ??
           '';
+      final _user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       await Provider.of<GroupProviderV2>(context, listen: false)
           .requestToJoinGroup(
               groupData.id ?? '',
               '$userName has requested to join your group',
               adminDataId,
-              tokens);
+              tokens,
+              _user.groups ?? []);
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);

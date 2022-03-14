@@ -297,16 +297,15 @@ class GroupProviderV2 with ChangeNotifier {
   }
 
   Future<void> requestToJoinGroup(String groupId, String message,
-      String receiverId, List<String> tokens) async {
+      String receiverId, List<String> tokens, List<String> userGroupsId) async {
     try {
-      if (_firebaseAuth.currentUser == null)
-        return Future.error(StringUtils.unathorized);
-      return await _groupService.requestToJoinGroup(
+      await _groupService.requestToJoinGroup(
         groupId: groupId,
         message: message,
         receiverId: receiverId,
         tokens: tokens,
       );
+      setUserGroups(userGroupsId);
     } catch (e) {
       rethrow;
     }
