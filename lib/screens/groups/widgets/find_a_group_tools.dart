@@ -1,7 +1,5 @@
 import 'dart:io';
-
-import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -30,9 +28,9 @@ class _FindGroupToolsState extends State<FindGroupTools> {
   void _searchGroup() async {
     try {
       final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser.id;
 
-      await Provider.of<GroupProvider>(context, listen: false)
+      await Provider.of<GroupProviderV2>(context, listen: false)
           .advanceSearchAllGroups(
               _groupNameController.text,
               userId ?? '',
