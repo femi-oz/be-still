@@ -225,30 +225,19 @@ class PrayerServiceV2 {
     }
   }
 
-  Future<void> archivePrayer({
-    required String prayerId,
-  }) async {
+  Future<void> archivePrayer(
+      {required String prayerId,
+      required List<FollowerModel> followers}) async {
     try {
-      _prayerDataCollectionReference
-          .doc(prayerId)
-          .update({'status': Status.archived});
-      // if (currentFollowers.isNotEmpty &&
-      //     currentFollowers.any(
-      //         (element) => element.userId == _firebaseAuth.currentUser?.uid) &&
-      //     !isAdmin) {
-      //   FollowerModel user = currentFollowers.firstWhere(
-      //       (element) => element.userId == _firebaseAuth.currentUser?.uid);
-      //   user = currentFollowers[currentFollowers.indexOf(user)]
-      //     ..prayerStatus = Status.archived;
-      //   currentFollowers[currentFollowers.indexOf(user)] = user;
-      //   await _prayerDataCollectionReference
-      //       .doc(prayerId)
-      //       .update({'followers': FieldValue.arrayUnion(elements)});
-      // } else {
-      //   _prayerDataCollectionReference
-      //       .doc(prayerId)
-      //       .update({'status': Status.archived});
-      // }
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      batch.update(_prayerDataCollectionReference.doc(prayerId),
+          {'status': Status.archived});
+      followers.forEach((follower) {
+        batch.update(_userDataCollectionReference.doc(follower.userId), {
+          'followers': FieldValue.arrayRemove([follower.toJson()])
+        });
+      });
+      batch.commit();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -437,16 +426,25 @@ class PrayerServiceV2 {
     }
   }
 
-  Future<void> markPrayerAsAnswered({required String prayerId}) async {
+  Future<void> markPrayerAsAnswered(
+      {required String prayerId,
+      required List<FollowerModel> followers}) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      _prayerDataCollectionReference.doc(prayerId).update({
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      batch.update(_prayerDataCollectionReference.doc(prayerId), {
         'isAnswered': true,
         'status': Status.archived,
         'modifiedOn': DateTime.now(),
         'modifiedBy': _firebaseAuth.currentUser?.uid
       });
+      followers.forEach((follower) {
+        batch.update(_userDataCollectionReference.doc(follower.userId), {
+          'followers': FieldValue.arrayRemove([follower.toJson()])
+        });
+      });
+      batch.commit();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

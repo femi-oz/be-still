@@ -317,9 +317,11 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> archivePrayer(String prayerId) async {
+  Future<void> archivePrayer(
+      String prayerId, List<FollowerModel> followers) async {
     try {
-      await _prayerService.archivePrayer(prayerId: prayerId);
+      await _prayerService.archivePrayer(
+          prayerId: prayerId, followers: followers);
     } catch (e) {
       rethrow;
     }
@@ -385,9 +387,11 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> markPrayerAsAnswered(String prayerId) async {
+  Future<void> markPrayerAsAnswered(
+      String prayerId, List<FollowerModel> followers) async {
     try {
-      await _prayerService.markPrayerAsAnswered(prayerId: prayerId);
+      await _prayerService.markPrayerAsAnswered(
+          prayerId: prayerId, followers: followers);
     } catch (e) {
       rethrow;
     }

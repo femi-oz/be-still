@@ -286,8 +286,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       _sendPrayerNotification(NotificationType.answered_prayers);
       await Provider.of<PrayerProviderV2>(context, listen: false)
           .markPrayerAsAnswered(
-        widget.prayerData?.id ?? '',
-      );
+              widget.prayerData?.id ?? '', widget.prayerData?.followers ?? []);
       // _deleteFollowedPrayers();
       clearSearch();
 
@@ -496,22 +495,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     BeStilDialog.showLoading(context);
 
     try {
-      final notifications =
-          Provider.of<NotificationProviderV2>(context, listen: false)
-              .localNotifications
-              .where((e) =>
-                  e.prayerId == widget.prayerData?.id &&
-                  e.type == NotificationType.reminder)
-              .toList();
-
-      // notifications.forEach((e) async =>
-      //     await Provider.of<NotificationProviderV2>(context, listen: false)
-      //         .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
-      // _sendPrayerNotification(NotificationType.archived_prayers);
-
       await Provider.of<PrayerProviderV2>(context, listen: false).archivePrayer(
-        widget.prayerData?.id ?? '',
-      );
+          widget.prayerData?.id ?? '', widget.prayerData?.followers ?? []);
       clearSearch();
 
       BeStilDialog.hideLoading(context);

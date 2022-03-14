@@ -171,9 +171,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
 
     try {
       await Provider.of<PrayerProviderV2>(context, listen: false).archivePrayer(
-        widget.prayerData.id ?? '',
-      );
-      // _deleteFollowedPrayers();
+          widget.prayerData.id ?? '', widget.prayerData.followers ?? []);
 
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
@@ -285,12 +283,9 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
       notifications.forEach((e) async =>
           await Provider.of<NotificationProviderV2>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
-      // _sendPrayerNotification(NotificationType.answered_prayers);
       await Provider.of<PrayerProviderV2>(context, listen: false)
           .markPrayerAsAnswered(
-        widget.prayerData.id ?? '',
-      );
-      // _deleteFollowedPrayers();
+              widget.prayerData.id ?? '', widget.prayerData.followers ?? []);
 
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
