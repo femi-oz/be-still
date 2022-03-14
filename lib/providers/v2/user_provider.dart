@@ -2,6 +2,7 @@ import 'package:be_still/locator.dart';
 import 'package:be_still/models/v2/device.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/services/v2/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -30,6 +31,9 @@ class UserProviderV2 with ChangeNotifier {
         _currentUser = event;
         await Provider.of<GroupProviderV2>(Get.context!, listen: false)
             .setUserGroups(event.groups ?? <String>[]);
+        await Provider.of<PrayerProviderV2>(Get.context!, listen: false)
+            .setPrayers(
+                (event.prayers ?? []).map((e) => e.prayerId ?? '').toList());
         notifyListeners();
       });
     } catch (e) {

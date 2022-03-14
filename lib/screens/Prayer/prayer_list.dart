@@ -116,14 +116,13 @@ class _PrayerListState extends State<PrayerList> {
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
       final searchQuery =
           Provider.of<MiscProviderV2>(context, listen: false).searchQuery;
-      await Provider.of<PrayerProviderV2>(context, listen: false)
-          .setPrayerTimePrayers();
+
       if (searchQuery.isNotEmpty) {
         Provider.of<PrayerProviderV2>(context, listen: false)
             .searchPrayers(searchQuery, _user.id ?? '');
       } else {
-        // await Provider.of<PrayerProviderV2>(context, listen: false)
-        //     .setPrayers();
+        await Provider.of<PrayerProviderV2>(context, listen: false).setPrayers(
+            (_user.prayers ?? []).map((e) => e.prayerId ?? '').toList());
       }
     } on HttpException catch (e, s) {
       final user =

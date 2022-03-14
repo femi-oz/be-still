@@ -149,43 +149,6 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> setPrayerTimePrayers() async {
-    try {
-      // setPrayers();
-
-      prayerTimeStream =
-          _prayerService.getUserPrayers().asBroadcastStream().listen(
-        (data) {
-          data.sort((a, b) => (b.modifiedDate ?? DateTime.now())
-              .compareTo(a.modifiedDate ?? DateTime.now()));
-
-          _filteredPrayerTimeList = data
-              .where((e) =>
-                  (e.status ?? '').toLowerCase() == Status.active.toLowerCase())
-              .toList();
-          var favoritePrayers =
-              data.where((PrayerDataModel e) => e.isFavorite ?? false).toList();
-
-          _filteredPrayerTimeList = [
-            ...favoritePrayers,
-            ..._filteredPrayerTimeList
-          ];
-          List<PrayerDataModel> _distinct = [];
-          var idSet = <String>{};
-          for (var e in _filteredPrayerTimeList) {
-            if (idSet.add(e.id ?? '')) {
-              _distinct.add(e);
-            }
-          }
-          _filteredPrayerTimeList = _distinct;
-          notifyListeners();
-        },
-      );
-    } catch (e) {
-      rethrow;
-    }
-  }
-
   Future<void> searchGroupPrayers(String searchQuery, String userId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
@@ -629,6 +592,7 @@ class PrayerProviderV2 with ChangeNotifier {
       }
 
       _filteredPrayers = _distinct;
+      _filteredPrayerTimeList = activePrayers;
       notifyListeners();
     } catch (e) {
       rethrow;
@@ -637,14 +601,12 @@ class PrayerProviderV2 with ChangeNotifier {
 
   Future<void> followPrayer(
       String prayerId, String groupId, List<String> prayersIds) async {
-    _prayerService.followPrayer(prayerId: prayerId, groupId: groupId);
-    await setPrayers(prayersIds);
+    await _prayerService.followPrayer(prayerId: prayerId, groupId: groupId);
   }
 
   Future<void> unFollowPrayer(
       String prayerId, String groupId, List<String> prayersIds) async {
-    _prayerService.unFollowPrayer(prayerId: prayerId, groupId: groupId);
-    await setPrayers(prayersIds);
+    await _prayerService.unFollowPrayer(prayerId: prayerId, groupId: groupId);
   }
 
   void flush() {

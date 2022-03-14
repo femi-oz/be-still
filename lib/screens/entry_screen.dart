@@ -147,26 +147,6 @@ class _EntryScreenState extends State<EntryScreen> {
         Provider.of<PrayerProviderV2>(context, listen: false)
             .checkPrayerValidity(userId, userPrayersId);
       Provider.of<MiscProviderV2>(context, listen: false).setDeviceId();
-
-      final searchQuery =
-          Provider.of<MiscProviderV2>(context, listen: false).searchQuery;
-
-      if (searchQuery.isNotEmpty) {
-        Provider.of<PrayerProviderV2>(context, listen: false)
-            .searchPrayers(searchQuery, userId);
-      } else {
-        await Provider.of<PrayerProviderV2>(context, listen: false)
-            .setPrayers(userPrayersId);
-      }
-      await Provider.of<PrayerProviderV2>(context, listen: false)
-          .setPrayerTimePrayers();
-
-      // final _user = await Provider.of<UserProviderV2>(context, listen: false)
-      //     .getUserDataById(userId ?? '');
-
-      // await Provider.of<GroupProviderV2>(context, listen: false)
-      //     .setUserGroups(_user.groups ?? []);
-
       await Provider.of<DevotionalProviderV2>(context, listen: false)
           .getDevotionals();
       await Provider.of<DevotionalProviderV2>(context, listen: false)

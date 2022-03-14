@@ -84,8 +84,6 @@ class _SplashScreenState extends State<SplashScreen>
       if ((message.entityId ?? '').isNotEmpty) {
         WidgetsBinding.instance?.addPostFrameCallback((_) async {
           if (message.type == NotificationType.prayer_time) {
-            await Provider.of<PrayerProviderV2>(context, listen: false)
-                .setPrayerTimePrayers();
             AppController appController = Get.find();
             appController.setCurrentPage(2, false, 0);
             Provider.of<MiscProviderV2>(context, listen: false)
