@@ -344,13 +344,18 @@ class NotificationProviderV2 with ChangeNotifier {
     _flutterLocalNotificationsPlugin.cancelAll();
   }
 
-  Future<void> flagAsInappropriate(String prayerId, String groupId,
-      String adminId, String senderName, List<String> tokens) async {
-    final message = '';
+  Future<void> flagAsInappropriate(
+      String prayerId,
+      String groupId,
+      String adminId,
+      String senderName,
+      List<String> tokens,
+      String groupName) async {
+    final message = '$senderName flagged this prayer as in appropriate';
     await _notificationService.addNotification(
         prayerId: prayerId,
         message: message,
-        senderName: senderName,
+        senderName: groupName,
         type: NotificationType.inappropriate_content,
         tokens: tokens,
         groupId: groupId,

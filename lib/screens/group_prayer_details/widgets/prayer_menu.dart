@@ -189,7 +189,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
               widget.prayerData?.groupId ?? '',
               adminId ?? '',
               (user.firstName ?? '') + ' ' + (user.lastName ?? ''),
-              (user.devices ?? []).map((e) => e.token ?? '').toList());
+              (user.devices ?? []).map((e) => e.token ?? '').toList(),
+              group.name ?? '');
 
       clearSearch();
 
