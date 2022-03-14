@@ -162,13 +162,11 @@ class PrayerServiceV2 {
     }
   }
 
-  Future<PrayerDataModel> getPrayerFuture(String prayerId) {
+  Future<PrayerDataModel> getPrayerFuture(String prayerId) async {
     try {
-      return _prayerDataCollectionReference
-          .doc(prayerId)
-          .get()
-          .then<PrayerDataModel>(
-              (doc) => PrayerDataModel.fromJson(doc.data()!, doc.id));
+      final doc = await _prayerDataCollectionReference.doc(prayerId).get();
+      if (!doc.exists) return Future.error(StringUtils.documentDoesNotExist);
+      return PrayerDataModel.fromJson(doc.data()!, doc.id);
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

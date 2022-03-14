@@ -78,7 +78,7 @@ class NotificationServiceV2 {
           .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
 
       final group = await _groupService.getGroup(groupId);
-      final prayer = await _prayerService.getPrayerFuture(groupId);
+      final prayer = await _prayerService.getPrayerFuture(prayerId);
 
       if (type == NotificationType.prayer ||
           type == NotificationType.prayer_updates) {
