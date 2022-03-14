@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/enums/request_status.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/v2/device.model.dart';
@@ -49,18 +50,12 @@ class _GroupCardState extends State<GroupCard> {
               .userId ??
           '';
       await Provider.of<GroupProviderV2>(context, listen: false)
-          .requestToJoinGroup(groupData.id ?? '',
-              '$userName has requested to join your group', adminDataId);
-
-      await Provider.of<NotificationProviderV2>(context, listen: false)
-          .sendPushNotification(
+          .requestToJoinGroup(
+              groupData.id ?? '',
               '$userName has requested to join your group',
-              NotificationType.request,
-              groupData.name?.sentenceCase() ?? '',
-              tokens,
-              prayerId: '',
-              receiverId: adminDataId,
-              groupId: groupData.id);
+              adminDataId,
+              tokens);
+
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppController appController = Get.find();
@@ -405,11 +400,9 @@ class _GroupCardState extends State<GroupCard> {
   }
 
   bool get isRequestSent {
-    final currentUser =
-        Provider.of<UserProviderV2>(context, listen: false).currentUser;
     final userId = FirebaseAuth.instance.currentUser?.uid;
     return (widget.groupData.requests ?? [])
-        .any((element) => element.userId == userId);
+        .any((element) => element.status != RequestStatus.pending);
   }
 
   @override

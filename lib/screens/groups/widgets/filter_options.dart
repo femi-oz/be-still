@@ -26,7 +26,8 @@ class _GroupPrayerFiltersState extends State<GroupPrayerFilters> {
 
       Provider.of<PrayerProviderV2>(context, listen: false)
           .setPrayerFilterOptions(status);
-      Provider.of<PrayerProviderV2>(context, listen: false).filterPrayers();
+      Provider.of<PrayerProviderV2>(context, listen: false)
+          .filterGroupPrayers();
       final group =
           ((Provider.of<GroupProviderV2>(context, listen: false).currentGroup)
                       .name ??

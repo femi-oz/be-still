@@ -8,6 +8,7 @@ import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/models/v2/update.model.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
 import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
@@ -164,27 +165,27 @@ class _PrayerMenuState extends State<PrayerMenu> {
 
   void _unFollowPrayer() async {
     BeStilDialog.showLoading(context);
+
     try {
-      final s =
-          Provider.of<PrayerProviderV2>(context, listen: false).followedPrayers;
-      final followedPrayer = s.firstWhere(
-          (element) =>
-              (element.followers ?? <FollowerModel>[])
-                  .any((element) => element.userId == userId) &&
-              element.createdBy == userId,
-          orElse: () => PrayerDataModel());
+      final currentGroup =
+          Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
 
-      //todo: remove user from followed list
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .unFollowPrayer(widget.prayerData?.id ?? '', currentGroup.id ?? '');
 
-      // await Provider.of<GroupPrayerProvider>(context, listen: false)
-      //     .removeFromMyList(
-      //         followedPrayer.id ?? '', widget.prayerData?.id ?? '');
       clearSearch();
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppController appController = Get.find();
       appController.setCurrentPage(0, true, 0);
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =

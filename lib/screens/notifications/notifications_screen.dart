@@ -324,16 +324,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           .getUserDataById(receiverId); //requestor
       await Provider.of<GroupProviderV2>(context, listen: false)
           .setCurrentGroupById(groupId);
-      UserDataModel requestor =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
-      final admin = Provider.of<UserProviderV2>(context, listen: false)
-          .currentUser; //admin
+
       final groupData = Provider.of<GroupProviderV2>(context, listen: false)
           .currentGroup; //group
       final groupRequest =
           (groupData.requests ?? []).firstWhere((e) => e.userId == receiverId);
       await Provider.of<GroupProviderV2>(context, listen: false)
-          .denyRequest(groupData, groupRequest.id ?? '');
+          .denyRequest(groupData, groupRequest);
       deleteNotification(notificationId);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
@@ -380,15 +377,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           .acceptRequest(groupData, groupRequest);
       await deleteNotification(notificationId);
 
-      await Provider.of<NotificationProviderV2>(context, listen: false)
-          .sendPushNotification(
-              'Your request to join this group has been accepted.',
-              NotificationType.accept_request,
-              adminName.sentenceCase(),
-              tokens,
-              prayerId: '',
-              groupId: groupId,
-              receiverId: groupRequest.userId);
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();
     } on HttpException catch (e, s) {
@@ -947,14 +935,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
-                                              getSenderName(
-                                                          notification.userId ??
-                                                              '') !=
+                                              getSenderName(notification
+                                                              .senderId ??
+                                                          '') !=
                                                       ''
                                                   ? Expanded(
                                                       child: Text(
                                                         getSenderName(notification
-                                                                    .userId ??
+                                                                    .senderId ??
                                                                 '')
                                                             .sentenceCase(),
                                                         style: AppTextStyles
@@ -1092,14 +1080,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: <Widget>[
-                                            getSenderName(notification.userId ??
-                                                        '') !=
+                                            getSenderName(
+                                                        notification.senderId ??
+                                                            '') !=
                                                     ''
                                                 ? Expanded(
                                                     child: Text(
                                                         getSenderName(
                                                             notification
-                                                                    .userId ??
+                                                                    .senderId ??
                                                                 ''),
                                                         style: AppTextStyles
                                                             .regularText15b
@@ -1239,9 +1228,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
-                                              getSenderName(
-                                                          notification.userId ??
-                                                              '') !=
+                                              getSenderName(notification
+                                                              .senderId ??
+                                                          '') !=
                                                       ''
                                                   ? Expanded(
                                                       child: Text(
@@ -1296,7 +1285,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                       width: MediaQuery.of(context).size.width *
                                           0.8,
                                       child: Text(
-                                        '${getSenderName(notification.userId ?? '')} added a new prayer to the group.',
+                                        '${getSenderName(notification.senderId ?? '')} added a new prayer to the group.',
                                         style: AppTextStyles.regularText16b
                                             .copyWith(
                                           color: AppColors.lightBlue4,
@@ -1387,15 +1376,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
-                                              getSenderName(
-                                                          notification.userId ??
-                                                              '') !=
+                                              getSenderName(notification
+                                                              .senderId ??
+                                                          '') !=
                                                       ''
                                                   ? Expanded(
                                                       child: Text(
                                                         getSenderName(
                                                             notification
-                                                                    .userId ??
+                                                                    .senderId ??
                                                                 ''),
                                                         style: AppTextStyles
                                                             .regularText15b
@@ -1562,15 +1551,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
-                                              getSenderName(
-                                                          notification.userId ??
-                                                              '') !=
+                                              getSenderName(notification
+                                                              .senderId ??
+                                                          '') !=
                                                       ''
                                                   ? Expanded(
                                                       child: Text(
                                                         getSenderName(
                                                             notification
-                                                                    .userId ??
+                                                                    .senderId ??
                                                                 ''),
                                                         style: AppTextStyles
                                                             .regularText15b
@@ -1737,15 +1726,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
-                                              getSenderName(
-                                                          notification.userId ??
-                                                              '') !=
+                                              getSenderName(notification
+                                                              .senderId ??
+                                                          '') !=
                                                       ''
                                                   ? Expanded(
                                                       child: Text(
                                                         getSenderName(
                                                             notification
-                                                                    .userId ??
+                                                                    .senderId ??
                                                                 ''),
                                                         style: AppTextStyles
                                                             .regularText15b
@@ -1912,15 +1901,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
-                                              getSenderName(
-                                                          notification.userId ??
-                                                              '') !=
+                                              getSenderName(notification
+                                                              .senderId ??
+                                                          '') !=
                                                       ''
                                                   ? Expanded(
                                                       child: Text(
                                                         getSenderName(
                                                             notification
-                                                                    .userId ??
+                                                                    .senderId ??
                                                                 ''),
                                                         style: AppTextStyles
                                                             .regularText15b

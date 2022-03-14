@@ -204,8 +204,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        ('${userData.firstName} ${userData.lastName}')
-                            .toUpperCase(),
+                        ('${user.firstName} ${user.lastName}').toUpperCase(),
                         style: TextStyle(
                             color: AppColors.lightBlue3,
                             fontSize: 14,
@@ -999,18 +998,12 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                     return GestureDetector(
                                                       onTap: () async {
                                                         try {
-                                                          Future.delayed(
-                                                              Duration(
-                                                                  milliseconds:
-                                                                      15), () {
-                                                            _showMemberAlert(
-                                                                snapshot.data ??
-                                                                    UserDataModel(),
-                                                                group,
-                                                                groupUser
-                                                                        .role ??
-                                                                    '');
-                                                          });
+                                                          _showMemberAlert(
+                                                              snapshot.data ??
+                                                                  UserDataModel(),
+                                                              group,
+                                                              groupUser.role ??
+                                                                  '');
                                                         } on HttpException catch (e, s) {
                                                           BeStilDialog
                                                               .hideLoading(
@@ -1103,7 +1096,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                                         .spaceBetween,
                                                                 children: [
                                                                   Text(
-                                                                      '${(snapshot.data ?? UserDataModel()).firstName} ${(snapshot.data ?? UserDataModel()).lastName}}'
+                                                                      '${(snapshot.data ?? UserDataModel()).firstName} ${(snapshot.data ?? UserDataModel()).lastName}'
                                                                           .sentenceCase(),
                                                                       style: AppTextStyles
                                                                           .boldText14

@@ -250,13 +250,6 @@ class PrayerServiceV2 {
     }
   }
 
-  Future<void> getPrayerFollowers() async {
-    await _userDataCollectionReference
-        .where('prayers', arrayContains: '1')
-        .get()
-        .then((value) => print(value));
-  }
-
   Future<void> unArchivePrayer(
       {required String prayerId,
       required List<FollowerModel> currentFollowers,
@@ -542,10 +535,19 @@ class PrayerServiceV2 {
       {required String prayerId, required String groupId}) async {
     final userPrayer =
         FollowedPrayer(prayerId: prayerId, groupId: groupId).toJson();
+    final followers = FollowerModel(
+            userId: FirebaseAuth.instance.currentUser?.uid,
+            status: Status.active,
+            id: groupId)
+        .toJson();
     await _userDataCollectionReference
         .doc(FirebaseAuth.instance.currentUser?.uid)
         .update({
       'prayers': FieldValue.arrayUnion([userPrayer])
+    });
+
+    await _prayerDataCollectionReference.doc(prayerId).update({
+      'followers': FieldValue.arrayUnion([followers])
     });
   }
 
@@ -553,10 +555,17 @@ class PrayerServiceV2 {
       {required String prayerId, required String groupId}) async {
     final userPrayer =
         FollowedPrayer(prayerId: prayerId, groupId: groupId).toJson();
+    final followers = FollowerModel(
+        userId: FirebaseAuth.instance.currentUser?.uid,
+        status: Status.active,
+        id: groupId);
     await _userDataCollectionReference
         .doc(FirebaseAuth.instance.currentUser?.uid)
         .update({
       'prayers': FieldValue.arrayRemove([userPrayer])
+    });
+    await _prayerDataCollectionReference.doc(prayerId).update({
+      'followers': FieldValue.arrayRemove([followers])
     });
   }
 }

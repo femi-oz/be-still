@@ -7,6 +7,7 @@ import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
@@ -238,19 +239,12 @@ class _PrayerCardState extends State<PrayerCard> {
     BeStilDialog.showLoading(context);
 
     try {
-      // await Provider.of<GroupPrayerProvider>(context, listen: false)
-      //     .setFollowedPrayer(widget.prayerData.prayer?.id ?? '');
-      final _userId = FirebaseAuth.instance.currentUser?.uid;
-      final followedPrayer =
-          Provider.of<PrayerProviderV2>(context, listen: false)
-              .followedPrayers
-              .firstWhere((element) => element.userId == _userId);
+      final currentGroup =
+          Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
 
-      if ((followedPrayer.id ?? '').isNotEmpty)
-        // await Provider.of<PrayerProviderV2>(context, listen: false)
-        //     .removeFromMyList(followedPrayer.id ?? '',
-        //         widget.prayerData.userPrayer?.id ?? '');
-        BeStilDialog.hideLoading(context);
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .unFollowPrayer(widget.prayerData.id ?? '', currentGroup.id ?? '');
+      BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
