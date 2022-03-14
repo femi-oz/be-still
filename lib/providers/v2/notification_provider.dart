@@ -344,6 +344,19 @@ class NotificationProviderV2 with ChangeNotifier {
     _flutterLocalNotificationsPlugin.cancelAll();
   }
 
+  Future<void> flagAsInappropriate(String prayerId, String groupId,
+      String adminId, String senderName, List<String> tokens) async {
+    final message = '';
+    await _notificationService.addNotification(
+        prayerId: prayerId,
+        message: message,
+        senderName: senderName,
+        type: NotificationType.inappropriate_content,
+        tokens: tokens,
+        groupId: groupId,
+        receiverId: adminId);
+  }
+
   void flush() {
     userNotificationStream.cancel();
     // prayerTimeStream.cancel();

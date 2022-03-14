@@ -178,17 +178,19 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     BeStilDialog.showLoading(context);
 
     try {
-      // await Provider.of<PrayerProviderV2>(context, listen: false).
-      //     .flagAsInappropriate(widget.prayerData?.prayer?.id ?? '');
+      final adminId = (group.users ?? [])
+          .firstWhere((e) => e.role == GroupUserRole.admin)
+          .userId;
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      await Provider.of<NotificationProviderV2>(context, listen: false)
+          .flagAsInappropriate(
+              widget.prayerData?.id ?? '',
+              widget.prayerData?.groupId ?? '',
+              adminId ?? '',
+              (user.firstName ?? '') + ' ' + (user.lastName ?? ''),
+              (user.devices ?? []).map((e) => e.token ?? '').toList());
 
-      // var admin = (group.groupUsers ?? [])
-      //     .firstWhere((element) => element.role == GroupUserRole.admin);
-      // await Provider.of<UserProvider>(context, listen: false)
-      //     .getUserById(admin.userId ?? '');
-      // final adminData =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // _sendNotification(group.group?.id ?? '', [adminData.pushToken ?? ''],
-      //     adminData.id ?? '', group.group?.name ?? '');
       clearSearch();
 
       BeStilDialog.hideLoading(context);
