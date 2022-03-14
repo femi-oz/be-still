@@ -203,7 +203,10 @@ class NotificationProviderV2 with ChangeNotifier {
   Future<void> setLocalNotifications() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      _notificationService.getLocalNotifications().then((notifications) {
+      _notificationService
+          .getLocalNotifications()
+          .asBroadcastStream()
+          .listen((notifications) {
         _localNotifications = notifications;
         _prayerTimeNotifications = notifications
             .where((e) => e.type == NotificationType.prayer_time)

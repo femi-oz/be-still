@@ -764,15 +764,15 @@ class _AddPrayerState extends State<AddPrayer> {
   @override
   Widget build(BuildContext context) {
     final userGroups = Provider.of<GroupProviderV2>(context).userGroups;
-    bool isValid = (!Provider.of<PrayerProviderV2>(context).isEdit &&
-            _descriptionController.text.trim().isNotEmpty) ||
-        (Provider.of<PrayerProviderV2>(context).isEdit &&
-            _backupDescription.trim() != _descriptionController.text.trim());
+    bool canSave =
+        _backupDescription.trim() == _descriptionController.text.trim()
+            ? false
+            : _descriptionController.text.trim().isNotEmpty;
 
     bool isUpdateValid = Provider.of<PrayerProviderV2>(context).isEdit &&
         updateTextControllers
             .any((e) => e.backupText.trim() != e.ctrl.text.trim());
-    if (updates.length > 0) isValid = isValid || isUpdateValid;
+    if (updates.length > 0) canSave = canSave || isUpdateValid;
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -803,7 +803,7 @@ class _AddPrayerState extends State<AddPrayer> {
                                 style: AppTextStyles.boldText18
                                     .copyWith(color: AppColors.grey),
                               ),
-                              onTap: isValid
+                              onTap: canSave
                                   ? () => onCancel()
                                   : () {
                                       FocusScope.of(context)
@@ -816,14 +816,14 @@ class _AddPrayerState extends State<AddPrayer> {
                           InkWell(
                               child: Text('SAVE',
                                   style: AppTextStyles.boldText18.copyWith(
-                                      color: !isValid
+                                      color: !canSave
                                           ? AppColors.lightBlue5
                                               .withOpacity(0.5)
                                           : Colors.blue)),
                               onTap: () {
                                 FocusScope.of(context).unfocus();
 
-                                if (isValid) {
+                                if (canSave) {
                                   if ((selected?.name ?? '').isEmpty ||
                                       (selected?.name) == 'My Prayers') {
                                     _save();

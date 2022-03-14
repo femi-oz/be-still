@@ -48,11 +48,9 @@ class _PrayerCardState extends State<PrayerCard> {
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
-    final res = reminders.any(
+    return reminders.any(
       (reminder) => reminder.prayerId == widget.prayer.id,
     );
-
-    return res;
   }
 
   bool get isReminderActive {

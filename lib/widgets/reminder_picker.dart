@@ -106,7 +106,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
         .searchPrayers('', userId ?? '');
   }
 
-  storeNotification({
+  Future<void> storeNotification({
     required String notificationText,
     required String frequency,
     required tz.TZDateTime scheduledDate,
@@ -133,7 +133,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
     setState(() => null);
   }
 
-  updatePrayerTime(
+  Future<void> updatePrayerTime(
     String selectedDay,
     String selectedPeriod,
     String selectedFrequency,
@@ -184,7 +184,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
     }
   }
 
-  setNotification() async {
+  Future<void> setNotification() async {
     // AM 22= 22-12
     // pm 12 = 12+12
     // selectedMinute = 54;
@@ -257,35 +257,34 @@ class _ReminderPickerState extends State<ReminderPicker> {
           entityId: widget.entityId,
           type: widget.type,
           isGroup: widget.isGroup);
-      if (Settings.enabledReminderPermission)
+      if (Settings.enabledReminderPermission) {
         await LocalNotification.setLocalNotification(
-          context: context,
-          title: title,
-          description: widget.type == NotificationType.prayer_time
-              ? 'It is time to pray!'
-              : description,
-          scheduledDate: scheduleDate,
-          payload: jsonEncode(payload.toJson()),
-          frequency: selectedFrequency,
-          localNotificationId: widget.reminder?.localNotificationId ?? null,
-        );
-      if (widget.reminder != null)
-        updatePrayerTime(
-          LocalNotification.daysOfWeek[selectedDayOfWeek],
-          selectedPeriod,
-          selectedFrequency,
-          _selectedHourString,
-          _selectedMinuteString,
-          scheduleDate,
-          userId ?? '',
-          notificationText,
-          selectedYear.toString(),
-        );
-      else
-        await storeNotification(
-            notificationText: notificationText,
+            context: context,
+            title: title,
+            description: widget.type == NotificationType.prayer_time
+                ? 'It is time to pray!'
+                : description,
             scheduledDate: scheduleDate,
-            frequency: selectedFrequency);
+            payload: jsonEncode(payload.toJson()),
+            frequency: selectedFrequency,
+            localNotificationId: widget.reminder?.localNotificationId ?? null);
+        if (widget.reminder != null)
+          await updatePrayerTime(
+              LocalNotification.daysOfWeek[selectedDayOfWeek],
+              selectedPeriod,
+              selectedFrequency,
+              _selectedHourString,
+              _selectedMinuteString,
+              scheduleDate,
+              userId ?? '',
+              notificationText,
+              selectedYear.toString());
+        else
+          await storeNotification(
+              notificationText: notificationText,
+              scheduledDate: scheduleDate,
+              frequency: selectedFrequency);
+      }
       clearSearch();
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
