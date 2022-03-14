@@ -103,16 +103,16 @@ class _PrayerCardState extends State<PrayerCard> {
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(
-      //     context, StringUtils.getErrorMessage(e), user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(
-      //     context, StringUtils.getErrorMessage(e), user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -121,15 +121,15 @@ class _PrayerCardState extends State<PrayerCard> {
       await Provider.of<PrayerProviderV2>(context, listen: false)
           .unMarkPrayerAsAnswered(widget.prayer.id ?? '');
     } on HttpException catch (e, s) {
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(
-      //     context, StringUtils.getErrorMessage(e), user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(
-      //     context, StringUtils.getErrorMessage(e), user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -147,15 +147,16 @@ class _PrayerCardState extends State<PrayerCard> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(
-      //     context, StringUtils.getErrorMessage(e), user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -180,16 +181,16 @@ class _PrayerCardState extends State<PrayerCard> {
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(
-      //     context, StringUtils.getErrorMessage(e), user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(
-      //     context, StringUtils.getErrorMessage(e), user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -205,15 +206,16 @@ class _PrayerCardState extends State<PrayerCard> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(
-      //     context, StringUtils.getErrorMessage(e), user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
-      // final user =
-      //     Provider.of<UserProvider>(context, listen: false).currentUser;
-      // BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -243,7 +245,7 @@ class _PrayerCardState extends State<PrayerCard> {
           Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
 
       await Provider.of<PrayerProviderV2>(context, listen: false)
-          .unFollowPrayer(widget.prayerData.id ?? '', currentGroup.id ?? '');
+          .unFollowPrayer(widget.prayer.id ?? '', currentGroup.id ?? '');
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
