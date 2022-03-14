@@ -5,6 +5,7 @@ class NotificationModel {
   String? groupId;
   String? prayerId;
   String? message;
+  int? isSent;
   List<String>? tokens;
   String? type;
   String? createdBy;
@@ -21,6 +22,7 @@ class NotificationModel {
       this.prayerId,
       this.message,
       this.tokens,
+      this.isSent,
       this.type,
       this.createdBy,
       this.modifiedBy,
@@ -34,6 +36,7 @@ class NotificationModel {
     receiverId = json['receiverId'];
     groupId = json['groupId'];
     prayerId = json['prayerId'];
+    isSent = json['isSent'];
     message = json['message'];
     tokens = json['tokens'].cast<String>();
     type = json['type'];
@@ -52,6 +55,7 @@ class NotificationModel {
     data['groupId'] = this.groupId;
     data['prayerId'] = this.prayerId;
     data['message'] = this.message;
+    data['isSent'] = this.isSent;
     data['tokens'] = this.tokens;
     data['type'] = this.type;
     data['createdBy'] = this.createdBy;

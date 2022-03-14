@@ -2,16 +2,12 @@ import 'dart:io';
 
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
-import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/flavor_config.dart';
 import 'package:be_still/locator.dart';
-import 'package:be_still/models/message_template.dart';
-import 'package:be_still/models/v2/device.model.dart';
-import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/message.model.dart';
+import 'package:be_still/models/v2/message_template.dart';
 import 'package:be_still/models/v2/notification.model.dart';
-import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/services/v2/group_service.dart';
 import 'package:be_still/services/v2/prayer_service.dart';
 import 'package:be_still/services/v2/user_service.dart';
@@ -24,18 +20,15 @@ class NotificationServiceV2 {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   final CollectionReference<Map<String, dynamic>> _smsCollectionReference =
-      FirebaseFirestore.instance.collection("SMSMessage");
+      FirebaseFirestore.instance.collection("messages");
   final CollectionReference<Map<String, dynamic>> _emailCollectionReference =
-      FirebaseFirestore.instance.collection("MailMessage");
+      FirebaseFirestore.instance.collection("emails");
   final CollectionReference<Map<String, dynamic>>
       _notificationCollectionReference =
       FirebaseFirestore.instance.collection("notifications");
   final CollectionReference<Map<String, dynamic>>
       _localNotificationCollectionReference =
       FirebaseFirestore.instance.collection("local_notifications");
-
-  final CollectionReference<Map<String, dynamic>> _userDataCollectionReference =
-      FirebaseFirestore.instance.collection("users");
 
   Future<void> addNotification({
     required String message,
@@ -51,6 +44,7 @@ class NotificationServiceV2 {
         message: message,
         status: Status.active,
         tokens: tokens,
+        isSent: 0,
         type: type,
         groupId: groupId,
         prayerId: prayerId,
