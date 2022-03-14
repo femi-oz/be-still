@@ -49,10 +49,12 @@ class _ShareInAppState extends State<ShareInApp> {
         element.role == GroupUserRole.admin && element.userId == user.id);
     try {
       BeStilDialog.showLoading(context);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       await Provider.of<PrayerProviderV2>(context, listen: false).followPrayer(
-        prayerData?.id ?? '',
-        currentGroup.id ?? '',
-      );
+          prayerData?.id ?? '',
+          currentGroup.id ?? '',
+          (user.prayers ?? []).map((e) => e.prayerId ?? '').toList());
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);

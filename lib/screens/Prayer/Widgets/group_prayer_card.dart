@@ -78,9 +78,12 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     try {
       final currentGroup =
           Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
-
-      await Provider.of<PrayerProviderV2>(context, listen: false)
-          .followPrayer(widget.prayerData.id ?? '', currentGroup.id ?? '');
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      await Provider.of<PrayerProviderV2>(context, listen: false).followPrayer(
+          widget.prayerData.id ?? '',
+          currentGroup.id ?? '',
+          (user.prayers ?? []).map((e) => e.prayerId ?? '').toList());
 
       BeStilDialog.hideLoading(context);
       AppController appController = Get.find();
@@ -107,9 +110,11 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     try {
       final currentGroup =
           Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
-
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       await Provider.of<PrayerProviderV2>(context, listen: false)
-          .unFollowPrayer(widget.prayerData.id ?? '', currentGroup.id ?? '');
+          .unFollowPrayer(widget.prayerData.id ?? '', currentGroup.id ?? '',
+              (user.prayers ?? []).map((e) => e.prayerId ?? '').toList());
       BeStilDialog.hideLoading(context);
       AppController appController = Get.find();
       appController.setCurrentPage(8, true, 0);

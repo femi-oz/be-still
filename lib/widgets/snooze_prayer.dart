@@ -95,11 +95,14 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
       notifications.forEach((e) async =>
           await Provider.of<NotificationProviderV2>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       await Provider.of<PrayerProviderV2>(context, listen: false).snoozePrayer(
           userId ?? '',
           widget.prayerData?.id ?? '',
           selectedDuration,
-          _snoozeEndDate);
+          _snoozeEndDate,
+          (user.prayers ?? []).map((e) => e.prayerId ?? '').toList());
       clearSearch();
 
       BeStilDialog.hideLoading(context);

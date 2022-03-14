@@ -241,9 +241,11 @@ class _PrayerCardState extends State<PrayerCard> {
     try {
       final currentGroup =
           Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
-
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       await Provider.of<PrayerProviderV2>(context, listen: false)
-          .unFollowPrayer(widget.prayer.id ?? '', currentGroup.id ?? '');
+          .unFollowPrayer(widget.prayer.id ?? '', currentGroup.id ?? '',
+              (user.prayers ?? []).map((e) => e.prayerId ?? '').toList());
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);

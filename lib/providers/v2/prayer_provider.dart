@@ -79,36 +79,18 @@ class PrayerProviderV2 with ChangeNotifier {
   List<TagModel> _prayerToEditTags = [];
   List<TagModel> get prayerToEditTags => _prayerToEditTags;
 
-  Future<void> setPrayers() async {
+  Future<void> setPrayers(List<String> prayersIds) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
 
-      await _userService
-          .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '')
-          .then((value) {
-        _userPrayers = value.prayers ?? <FollowedPrayer>[];
-      });
-
-      if (_userPrayers.length > 0) {
-        followedPrayerStream = _prayerService
-            .getUserFollowedPrayers()
-            .asBroadcastStream()
-            .listen((event) {
+      prayerStream = _prayerService
+          .getUserPrayers()
+          .asBroadcastStream()
+          .listen((event) async {
+        await _prayerService.getUserFollowedPrayers(prayersIds).then((event) {
           _followedPrayers = event;
-          _userPrayers.forEach((element) {
-            _followedPrayers =
-                event.where((e) => e.id == element.prayerId).toList();
-          });
-          notifyListeners();
         });
-      } else {
-        _followedPrayers = [];
-      }
-
-      prayerStream =
-          _prayerService.getUserPrayers().asBroadcastStream().listen((event) {
         _prayers = [...followedPrayers, ...event];
-        // _prayers = event;
         filterPrayers();
         notifyListeners();
       });
@@ -153,13 +135,14 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> checkPrayerValidity(String userId) async {
+  Future<void> checkPrayerValidity(
+      String userId, List<String> prayersIds) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       if (prayers.length > 0) {
         // await _autoDeleteArchivePrayers(userId);
         // await _unSnoozePrayerPast(userId);
-        await setPrayers();
+        await setPrayers(prayersIds);
       }
     } catch (e) {
       rethrow;
@@ -390,7 +373,7 @@ class PrayerProviderV2 with ChangeNotifier {
   }
 
   Future<void> snoozePrayer(String userId, String prayerID, int duration,
-      DateTime snoozeEndDate) async {
+      DateTime snoozeEndDate, List<String> prayersIds) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       await _prayerService.snoozePrayer(
@@ -398,7 +381,7 @@ class PrayerProviderV2 with ChangeNotifier {
 
       Future.delayed(Duration(minutes: duration), () async {
         await unSnoozePrayerPast(userId);
-        await setPrayers();
+        await setPrayers(prayersIds);
       });
     } catch (e) {
       rethrow;
@@ -652,14 +635,16 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> followPrayer(String prayerId, String groupId) async {
+  Future<void> followPrayer(
+      String prayerId, String groupId, List<String> prayersIds) async {
     _prayerService.followPrayer(prayerId: prayerId, groupId: groupId);
-    await setPrayers();
+    await setPrayers(prayersIds);
   }
 
-  Future<void> unFollowPrayer(String prayerId, String groupId) async {
+  Future<void> unFollowPrayer(
+      String prayerId, String groupId, List<String> prayersIds) async {
     _prayerService.unFollowPrayer(prayerId: prayerId, groupId: groupId);
-    await setPrayers();
+    await setPrayers(prayersIds);
   }
 
   void flush() {

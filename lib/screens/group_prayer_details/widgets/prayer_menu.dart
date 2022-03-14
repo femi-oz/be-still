@@ -77,8 +77,12 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
         Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
 
     try {
-      await Provider.of<PrayerProviderV2>(context, listen: false)
-          .followPrayer(widget.prayerData?.id ?? '', currentGroup.id ?? '');
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      await Provider.of<PrayerProviderV2>(context, listen: false).followPrayer(
+          widget.prayerData?.id ?? '',
+          currentGroup.id ?? '',
+          (user.prayers ?? []).map((e) => e.prayerId ?? '').toList());
       clearSearch();
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
@@ -102,10 +106,13 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
   void _unFollowPrayer() async {
     BeStilDialog.showLoading(context);
     try {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       final currentGroup =
           Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
       await Provider.of<PrayerProviderV2>(context, listen: false)
-          .unFollowPrayer(widget.prayerData?.id ?? '', currentGroup.id ?? '');
+          .unFollowPrayer(widget.prayerData?.id ?? '', currentGroup.id ?? '',
+              (user.prayers ?? []).map((e) => e.prayerId ?? '').toList());
       clearSearch();
 
       BeStilDialog.hideLoading(context);

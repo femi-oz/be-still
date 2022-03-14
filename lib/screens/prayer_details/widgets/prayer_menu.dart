@@ -169,9 +169,11 @@ class _PrayerMenuState extends State<PrayerMenu> {
     try {
       final currentGroup =
           Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
-
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       await Provider.of<PrayerProviderV2>(context, listen: false)
-          .unFollowPrayer(widget.prayerData?.id ?? '', currentGroup.id ?? '');
+          .unFollowPrayer(widget.prayerData?.id ?? '', currentGroup.id ?? '',
+              (user.prayers ?? []).map((e) => e.prayerId ?? '').toList());
 
       clearSearch();
 

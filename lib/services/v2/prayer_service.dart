@@ -15,6 +15,7 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:quiver/iterables.dart';
 import 'package:uuid/uuid.dart';
 
 class PrayerServiceV2 {
@@ -118,17 +119,28 @@ class PrayerServiceV2 {
     }
   }
 
-  Stream<List<PrayerDataModel>> getUserFollowedPrayers() {
+  Future<List<PrayerDataModel>> getUserFollowedPrayers(
+      List<String> userGroupsId) async {
     try {
       if (_firebaseAuth.currentUser == null)
-        return Stream.error(StringUtils.unathorized);
-      return _prayerDataCollectionReference
-          .where('isGroup', isEqualTo: true)
-          .where('status', isNotEqualTo: Status.deleted)
-          .snapshots()
-          .map((event) => event.docs
-              .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
-              .toList());
+        return Future.error(StringUtils.unathorized);
+      // return _prayerDataCollectionReference
+      //     .where('isGroup', isEqualTo: true)
+      //     .where('status', isNotEqualTo: Status.deleted)
+      //     .snapshots()
+      //     .map((event) => event.docs
+      //         .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
+      //         .toList());
+      if (userGroupsId.isEmpty) return Future.value([]);
+      final chunks = partition(userGroupsId, 10);
+      final querySnapshots = await Future.wait(chunks.map((chunk) {
+        return _prayerDataCollectionReference
+            .where('status', isEqualTo: Status.active)
+            .where(FieldPath.documentId, whereIn: chunk)
+            .get();
+      }).toList());
+      final list = querySnapshots.expand((e) => e.docs).toList();
+      return list.map((e) => PrayerDataModel.fromJson(e.data(), e.id)).toList();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

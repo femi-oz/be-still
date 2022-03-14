@@ -137,11 +137,6 @@ class GroupServiceV2 {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      // final user = await _userDataCollectionReference
-      //     .doc(_firebaseAuth.currentUser?.uid)
-      //     .get();
-      // List<String> userGroupsId =
-      //     UserDataModel.fromJson(user.data()!, user.id).groups ?? [];
       if (userGroupsId.isEmpty) return Future.value([]);
       final chunks = partition(userGroupsId, 10);
       final querySnapshots = await Future.wait(chunks.map((chunk) {

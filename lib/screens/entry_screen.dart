@@ -137,11 +137,15 @@ class _EntryScreenState extends State<EntryScreen> {
       else
         Settings.enableLocalAuth = false;
 
-      final userId = FirebaseAuth.instance.currentUser?.uid;
+      final userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+      final user = await Provider.of<UserProviderV2>(context, listen: false)
+          .getUserDataById(userId);
+      final userPrayersId =
+          (user.prayers ?? []).map((e) => e.prayerId ?? '').toList();
 
-      if ((userId ?? '').isNotEmpty)
+      if (userId.isNotEmpty)
         Provider.of<PrayerProviderV2>(context, listen: false)
-            .checkPrayerValidity(userId ?? '');
+            .checkPrayerValidity(userId, userPrayersId);
       Provider.of<MiscProviderV2>(context, listen: false).setDeviceId();
 
       final searchQuery =
@@ -149,10 +153,10 @@ class _EntryScreenState extends State<EntryScreen> {
 
       if (searchQuery.isNotEmpty) {
         Provider.of<PrayerProviderV2>(context, listen: false)
-            .searchPrayers(searchQuery, userId ?? '');
+            .searchPrayers(searchQuery, userId);
       } else {
         await Provider.of<PrayerProviderV2>(context, listen: false)
-            .setPrayers();
+            .setPrayers(userPrayersId);
       }
       await Provider.of<PrayerProviderV2>(context, listen: false)
           .setPrayerTimePrayers();
@@ -188,7 +192,7 @@ class _EntryScreenState extends State<EntryScreen> {
 
       // get all push notifications
       await Provider.of<NotificationProviderV2>(context, listen: false)
-          .setUserNotifications(userId ?? '');
+          .setUserNotifications(userId);
 
       // get all local notifications
       await Provider.of<NotificationProviderV2>(context, listen: false)
