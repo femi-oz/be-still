@@ -29,14 +29,15 @@ class _GroupsSettingsState extends State<GroupsSettings> {
   final f = new DateFormat('yyyy-MM-dd');
   late FirebaseMessaging messaging;
 
-  Future<void> _removeUserFromGroup(String groupId) async {
+  Future<void> _removeUserFromGroup(String userId, String groupId) async {
     try {
       final message = 'You have removed the user from your group';
 
       BeStilDialog.showLoading(context);
       await Provider.of<GroupProviderV2>(context, listen: false)
-          .removeGroupUser(
-              FirebaseAuth.instance.currentUser?.uid ?? "", groupId);
+          .removeGroupUser(userId, groupId);
+      await Provider.of<GroupProviderV2>(context, listen: false)
+          .setAllGroups(FirebaseAuth.instance.currentUser?.uid ?? '');
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
@@ -71,11 +72,12 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       final _currentUser =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
       await _sendPushNotification(
-          '${(_currentUser.firstName ?? '').capitalizeFirst} ${(_currentUser.lastName ?? '').capitalizeFirst} has left your group ${group.name}',
+          '${(receiverData.firstName ?? '').capitalizeFirst} ${(receiverData.lastName ?? '').capitalizeFirst} has left your group ${group.name}',
           NotificationType.leave_group,
           _currentUser.firstName ?? '',
           'Groups',
           (receiverData.devices ?? []).map((e) => e.token ?? '').toList(),
+          receiverData.id ?? '',
           groupId: group.id);
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
@@ -97,6 +99,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     try {
       Navigator.pop(context);
       BeStilDialog.showLoading(context, '');
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       final notifications =
           Provider.of<NotificationProviderV2>(context, listen: false)
               .notifications
@@ -105,6 +109,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
 
       await Provider.of<GroupProviderV2>(context, listen: false)
           .deleteGroup(group.id ?? '', notifications);
+      await Provider.of<GroupProviderV2>(context, listen: false)
+          .setUserGroups(user.groups ?? []);
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -122,12 +128,12 @@ class _GroupsSettingsState extends State<GroupsSettings> {
   }
 
   Future<void> _sendPushNotification(String message, String messageType,
-      String sender, String title, List<String> tokens,
+      String sender, String title, List<String> tokens, String receiverId,
       {String? groupId, String? prayerId}) async {
     try {
       await Provider.of<NotificationProviderV2>(context, listen: false)
           .sendPushNotification(message, messageType, sender, tokens,
-              groupId: groupId, prayerId: prayerId);
+              groupId: groupId, prayerId: prayerId, receiverId: receiverId);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
@@ -493,7 +499,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      _removeUserFromGroup(group.id ?? '');
+                      _removeUserFromGroup(user.id ?? '', group.id ?? '');
                     },
                     child: Container(
                       height: 30,

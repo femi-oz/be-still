@@ -1,4 +1,5 @@
 import 'package:be_still/controllers/app_controller.dart';
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/save_options.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -7,6 +8,7 @@ import 'package:be_still/models/v2/update.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -173,15 +175,13 @@ class _AddPrayerState extends State<AddPrayer> {
           (Provider.of<GroupProviderV2>(context, listen: false).currentGroup)
                   .id ??
               '';
-      // await Provider.of<NotificationProviderV2>(context, listen: false)
-      //     .sendPrayerNotification(
-      //   prayerId,
-      //   groupPrayerId,
-      //   NotificationType.edited_prayers,
-      //   groupId,
-      //   context,
-      //   _descriptionController.text,
-      // );
+      await Provider.of<NotificationProviderV2>(context, listen: false)
+          .sendPrayerNotification(
+        prayerId,
+        NotificationType.edited_prayers,
+        groupId,
+        _descriptionController.text,
+      );
       await Provider.of<GroupProviderV2>(context, listen: false)
           .setCurrentGroupById(groupId);
       appController.setCurrentPage(8, true, 1);

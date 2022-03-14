@@ -2,18 +2,11 @@ import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/models/group.model.dart';
-import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/models/v2/group.model.dart';
-import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/log_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
+import 'package:be_still/models/v2/tag.model.dart';
 
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
 import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
@@ -49,7 +42,7 @@ class _AddUpdateState extends State<AddUpdate> {
   List<String> tags = [];
   String tagText = '';
   List<Contact> contacts = [];
-  List<PrayerTagModel> oldTags = [];
+  List<TagModel> oldTags = [];
   String backupText = '';
   TextPainter painter = TextPainter();
   bool showNoContact = false;
@@ -72,11 +65,11 @@ class _AddUpdateState extends State<AddUpdate> {
         try {
           var userId =
               Provider.of<UserProvider>(context, listen: false).currentUser.id;
-          await Provider.of<MiscProvider>(context, listen: false)
+          await Provider.of<MiscProviderV2>(context, listen: false)
               .setSearchMode(false);
-          await Provider.of<MiscProvider>(context, listen: false)
+          await Provider.of<MiscProviderV2>(context, listen: false)
               .setSearchQuery('');
-          Provider.of<PrayerProvider>(context, listen: false)
+          Provider.of<PrayerProviderV2>(context, listen: false)
               .searchPrayers('', userId ?? '');
         } on HttpException catch (e, s) {
           final user =
@@ -202,24 +195,19 @@ class _AddUpdateState extends State<AddUpdate> {
 
         if (appController.previousPage == 9 ||
             appController.previousPage == 8) {
-          final groupPrayerId =
-              Provider.of<PrayerProviderV2>(context, listen: false)
-                  .currentPrayerId;
           final groupId = (Provider.of<GroupProviderV2>(context, listen: false)
                       .currentGroup)
                   .id ??
               '';
 
-          //todo send notification
-          // await Provider.of<NotificationProviderV2>(context, listen: false)
-          //     .sendPrayerNotification(
-          //   prayerId,
-          //   groupPrayerId,
-          //   NotificationType.prayer_updates,
-          //   groupId,
-          //   context,
-          //   _descriptionController.text,
-          // );
+          // todo send notification
+          await Provider.of<NotificationProviderV2>(context, listen: false)
+              .sendPrayerNotification(
+            prayerId,
+            NotificationType.prayer_updates,
+            groupId,
+            _descriptionController.text,
+          );
         }
 
         BeStilDialog.hideLoading(context);

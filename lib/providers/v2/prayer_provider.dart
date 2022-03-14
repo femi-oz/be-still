@@ -627,6 +627,6 @@ class PrayerProviderV2 with ChangeNotifier {
     prayerStream.cancel();
     // followedPrayerStream.cancel();
     // groupPrayerStream.cancel();
-    prayerTimeStream.cancel();
+    // prayerTimeStream.cancel();
   }
 }
