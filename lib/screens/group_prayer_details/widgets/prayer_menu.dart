@@ -144,36 +144,6 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     }
   }
 
-  _sendNotification(String groupId, List<String> tokens, String receiverId,
-      String senderName) async {
-    try {
-      final _user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      final userName =
-          '${(_user.firstName ?? '').capitalizeFirst} ${(_user.lastName ?? '').capitalizeFirst}';
-      final currentGroup =
-          Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
-      await Provider.of<NotificationProviderV2>(context, listen: false)
-          .sendPushNotification(
-              '$userName flagged a prayer as inappropriate',
-              NotificationType.inappropriate_content,
-              senderName.capitalizeFirst ?? '',
-              tokens,
-              prayerId: widget.prayerData?.id,
-              groupId: currentGroup.id);
-    } on HttpException catch (e, s) {
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    } catch (e, s) {
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    }
-  }
-
   void _flagAsInappropriate(GroupDataModel group) async {
     BeStilDialog.showLoading(context);
 

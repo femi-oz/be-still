@@ -351,7 +351,7 @@ class NotificationProviderV2 with ChangeNotifier {
       String senderName,
       List<String> tokens,
       String groupName) async {
-    final message = '$senderName flagged this prayer as in appropriate';
+    final message = '$senderName flagged a prayer as inappropriate';
     await _notificationService.addNotification(
         prayerId: prayerId,
         message: message,
