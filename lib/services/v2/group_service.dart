@@ -364,11 +364,11 @@ class GroupServiceV2 {
           .then((value) => value.docs
               .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
               .toList());
-      final userGroups = await _groupDataCollectionReference
-          .where('groupId', isEqualTo: groupId)
-          .get()
-          .then((value) =>
-              value.docs.map((e) => GroupUserDataModel.fromJson(e.data())));
+      // final userGroups = await _groupDataCollectionReference
+      //     .where('groupId', isEqualTo: groupId)
+      //     .get()
+      //     .then((value) =>
+      //         value.docs.map((e) => GroupUserDataModel.fromJson(e.data())));
 
       WriteBatch batch = FirebaseFirestore.instance.batch();
       for (final not in notifications) {
@@ -376,10 +376,16 @@ class GroupServiceV2 {
             {'status': Status.inactive});
       }
 
-      for (final user in userGroups)
-        batch.update(_userDataCollectionReference.doc(user.userId), {
-          'groups': FieldValue.arrayRemove([groupId])
-        });
+      // for (final user in userGroups) {
+      //   _userService.getUserByIdFuture(user.userId ?? '').then((value) {
+      //     final userToDelete = value.groups;
+      //     final groupIdToRemove =
+      //         (userToDelete ?? []).firstWhere((element) => element == groupId);
+      //     batch.update(_userDataCollectionReference.doc(user.userId), {
+      //       'groups': FieldValue.arrayRemove([groupIdToRemove])
+      //     });
+      //   });
+      // }
 
       for (final prayer in groupPrayers) {
         batch.update(_prayerDataCollectionReference.doc(prayer.id),
