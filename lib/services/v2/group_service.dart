@@ -358,24 +358,43 @@ class GroupServiceV2 {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      WriteBatch batch = FirebaseFirestore.instance.batch();
-      for (final not in notifications) {
-        batch.update(_notificationCollectionReference.doc(not.id),
-            {'status': Status.inactive});
-      }
       final groupPrayers = await _prayerDataCollectionReference
           .where('groupId', isEqualTo: groupId)
           .get()
           .then((value) => value.docs
               .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
               .toList());
+      // final userGroups = await _groupDataCollectionReference
+      //     .where('groupId', isEqualTo: groupId)
+      //     .get()
+      //     .then((value) =>
+      //         value.docs.map((e) => GroupUserDataModel.fromJson(e.data())));
+
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      for (final not in notifications) {
+        batch.update(_notificationCollectionReference.doc(not.id),
+            {'status': Status.inactive});
+      }
+
+      // for (final user in userGroups) {
+      //   _userService.getUserByIdFuture(user.userId ?? '').then((value) {
+      //     final userToDelete = value.groups;
+      //     final groupIdToRemove =
+      //         (userToDelete ?? []).firstWhere((element) => element == groupId);
+      //     batch.update(_userDataCollectionReference.doc(user.userId), {
+      //       'groups': FieldValue.arrayRemove([groupIdToRemove])
+      //     });
+      //   });
+      // }
+
       for (final prayer in groupPrayers) {
         batch.update(_prayerDataCollectionReference.doc(prayer.id),
             {'status': Status.deleted});
       }
 
-      batch.update(_groupDataCollectionReference.doc(groupId),
-          {'status': Status.deleted});
+      batch.delete(
+        _groupDataCollectionReference.doc(groupId),
+      );
 
       //remove all followed prayers from user lists
       batch.commit();
@@ -426,15 +445,33 @@ class GroupServiceV2 {
       {required String userId, required String groupId}) async {
     try {
       UserDataModel user = await _userService.getUserByIdFuture(userId);
-      GroupDataModel group = await getGroup(userId);
-      group = group
-        ..users?.where((element) => element.userId != userId).toList();
-      WriteBatch batch = FirebaseFirestore.instance.batch();
-      batch.update(_groupDataCollectionReference.doc(groupId), group.toJson());
+      GroupDataModel group = await getGroup(groupId);
+      final groupUsers = group.users;
+      final userToRemove =
+          (groupUsers ?? []).firstWhere((element) => element.userId == userId);
 
-      user = user
-        ..prayers?.where((element) => element.groupId != groupId).toList();
-      batch.update(_userDataCollectionReference.doc(user.id), user.toJson());
+      final userGroups = user.groups;
+      final userPrayers = user.prayers;
+
+      final groupIdToRemove =
+          (userGroups ?? []).firstWhere((element) => element == group.id);
+
+      final prayerToRemove =
+          (userPrayers ?? []).where((element) => element.groupId == group.id);
+
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      batch.update(_groupDataCollectionReference.doc(groupId), {
+        'users': FieldValue.arrayRemove([userToRemove.toJson()])
+      });
+      prayerToRemove.forEach((element) {
+        batch.update(_userDataCollectionReference.doc(user.id), {
+          'prayers': FieldValue.arrayRemove([element.toJson])
+        });
+      });
+
+      batch.update(_userDataCollectionReference.doc(user.id), {
+        'groups': FieldValue.arrayRemove([groupIdToRemove])
+      });
       batch.commit();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));

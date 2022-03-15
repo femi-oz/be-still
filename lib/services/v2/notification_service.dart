@@ -81,7 +81,8 @@ class NotificationServiceV2 {
       final prayer = await _prayerService.getPrayerFuture(prayerId);
 
       if (type == NotificationType.prayer ||
-          type == NotificationType.prayer_updates) {
+          type == NotificationType.prayer_updates ||
+          type == NotificationType.edited_prayers) {
         _ids = (group.users ?? []).map((e) => e.userId ?? '').toList();
       } else {
         _ids = (prayer.followers ?? []).map((e) => e.userId ?? '').toList();
@@ -92,25 +93,23 @@ class NotificationServiceV2 {
       for (final id in _ids) {
         final member =
             (group.users ?? []).firstWhere((element) => element.userId == id);
-        if (type == NotificationType.prayer ||
-            type == NotificationType.prayer_updates) {
-          if (member.enableNotificationForNewPrayers ?? false) {
-            final userTokens = await _userService.getUserByIdFuture(id).then(
-                (value) =>
-                    (value.devices ?? []).map((e) => e.token ?? '').toList());
-            final name = ((_user.firstName ?? '').capitalizeFirst ?? '') +
-                ' ' +
-                ((_user.lastName ?? '').capitalizeFirst ?? '');
 
-            addNotification(
-                message: message.capitalizeFirst ?? '',
-                senderName: name,
-                groupId: groupId,
-                receiverId: id,
-                prayerId: prayerId,
-                tokens: userTokens,
-                type: type);
-          }
+        if (member.enableNotificationForNewPrayers ?? false) {
+          final userTokens = await _userService.getUserByIdFuture(id).then(
+              (value) =>
+                  (value.devices ?? []).map((e) => e.token ?? '').toList());
+          final name = ((_user.firstName ?? '').capitalizeFirst ?? '') +
+              ' ' +
+              ((_user.lastName ?? '').capitalizeFirst ?? '');
+
+          addNotification(
+              message: message.capitalizeFirst ?? '',
+              senderName: name,
+              groupId: groupId,
+              receiverId: id,
+              prayerId: prayerId,
+              tokens: userTokens,
+              type: type);
         }
       }
     } catch (e) {

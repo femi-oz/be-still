@@ -23,8 +23,8 @@ class UserProviderV2 with ChangeNotifier {
   List<UserDataModel> _allUsers = <UserDataModel>[];
   List<UserDataModel> get allUsers => _allUsers;
 
-  late StreamSubscription<UserDataModel> userStream;
   late StreamSubscription<List<UserDataModel>> usersStream;
+  late StreamSubscription<UserDataModel> userStream;
 
   Future<void> setCurrentUser() async {
     try {
@@ -135,9 +135,8 @@ class UserProviderV2 with ChangeNotifier {
     }
   }
 
-  flush() async {
+  Future flush() async {
     await userStream.cancel();
     await usersStream.cancel();
-    print('canceled');
   }
 }

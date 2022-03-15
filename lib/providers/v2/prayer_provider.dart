@@ -621,8 +621,12 @@ class PrayerProviderV2 with ChangeNotifier {
         prayer: prayer);
   }
 
-  void flush() async {
-    if (prayers.isNotEmpty) await prayerStream.cancel();
-    if (groupPrayers.isNotEmpty) await groupPrayerStream.cancel();
+  Future flush() async {
+    if (prayers.isNotEmpty) {
+      await prayerStream.cancel();
+    }
+    if (groupPrayers.isNotEmpty) {
+      await groupPrayerStream.cancel();
+    }
   }
 }
