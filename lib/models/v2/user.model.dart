@@ -25,6 +25,7 @@ class UserDataModel {
   bool? autoPlayMusic;
   bool? enableSharingViaText;
   bool? enableSharingViaEmail;
+  bool? enablePushNotification;
   bool? enableNotificationsForAllGroups;
   bool? includeAnsweredPrayerAutoDelete;
   String? createdBy;
@@ -47,6 +48,7 @@ class UserDataModel {
       this.churchPhone,
       this.churchWebFormUrl,
       this.defaultSnoozeFrequency,
+      this.enablePushNotification,
       this.defaultSnoozeDuration,
       this.archiveSortBy,
       this.archiveAutoDeleteMinutes,
@@ -93,6 +95,7 @@ class UserDataModel {
     churchPhone = json['churchPhone'];
     churchWebFormUrl = json['churchWebFormUrl'];
     defaultSnoozeFrequency = json['defaultSnoozeFrequency'];
+    enablePushNotification = json['enablePushNotification'] ?? true;
     defaultSnoozeDuration = json['defaultSnoozeDuration'];
     archiveSortBy = json['archiveSortBy'];
     archiveAutoDeleteMinutes = json['archiveAutoDeleteMinutes'];
@@ -132,6 +135,7 @@ class UserDataModel {
     data['churchPhone'] = this.churchPhone;
     data['churchWebFormUrl'] = this.churchWebFormUrl;
     data['defaultSnoozeFrequency'] = this.defaultSnoozeFrequency;
+    data['enablePushNotification'] = this.enablePushNotification;
     data['defaultSnoozeDuration'] = this.defaultSnoozeDuration;
     data['archiveSortBy'] = this.archiveSortBy;
     data['archiveAutoDeleteMinutes'] = this.archiveAutoDeleteMinutes;

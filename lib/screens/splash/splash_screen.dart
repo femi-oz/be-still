@@ -3,6 +3,7 @@ import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/providers/v2/auth_provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
 import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
@@ -30,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   late AnimationController _textAnimationController;
-  AuthenticationProvider _authenticationProvider = AuthenticationProvider();
+  AuthenticationProviderV2 _authenticationProvider = AuthenticationProviderV2();
 
   var _isInit = true;
 
@@ -131,7 +132,7 @@ class _SplashScreenState extends State<SplashScreen>
                 arguments: true);
           }
         } else {
-          await Provider.of<AuthenticationProvider>(context, listen: false)
+          await Provider.of<AuthenticationProviderV2>(context, listen: false)
               .signOut();
           Navigator.of(context).pushNamedAndRemoveUntil(
               LoginScreen.routeName, (Route<dynamic> route) => false,

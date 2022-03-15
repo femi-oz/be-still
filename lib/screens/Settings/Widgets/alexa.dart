@@ -12,6 +12,7 @@ import 'package:be_still/widgets/custom_input_button.dart';
 import 'package:be_still/widgets/custom_picker.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/custom_toggle.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -24,21 +25,7 @@ class AlexaSettings extends StatefulWidget {
 }
 
 class _AlexaSettingsState extends State<AlexaSettings> {
-  _onChangeTime(value) {
-    try {
-      Provider.of<SettingsProvider>(context, listen: false).updateSettings(
-          Provider.of<UserProvider>(context, listen: false).currentUser.id ??
-              '',
-          key: SettingsKey.pauseInterval,
-          value: value,
-          settingsId: widget.settings.id ?? '');
-    } catch (e, s) {
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    }
-  }
+  _onChangeTime(value) {}
 
   List<LookUpV2> prayerTimeInterval = [
     LookUpV2(text: SecondsInterval.ten, value: 10),
@@ -49,8 +36,7 @@ class _AlexaSettingsState extends State<AlexaSettings> {
 
   @override
   Widget build(BuildContext context) {
-    final setingProvider = Provider.of<SettingsProvider>(context);
-    final userId = Provider.of<UserProvider>(context).currentUser.id;
+    final userId = FirebaseAuth.instance.currentUser?.uid ?? '';
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -77,18 +63,12 @@ class _AlexaSettingsState extends State<AlexaSettings> {
               SizedBox(height: 20),
               CustomToggle(
                 title: 'Allow Alexa to notify me of my Prayer Time?',
-                onChange: (value) => setingProvider.updateSettings(userId ?? '',
-                    key: SettingsKey.allowPrayerTimeNotification,
-                    value: value,
-                    settingsId: widget.settings.id ?? ''),
+                onChange: (value) {},
                 value: widget.settings.allowPrayerTimeNotification ?? false,
               ),
               CustomToggle(
                 title: 'Sync Notifications / Reminders with Alexa?',
-                onChange: (value) => setingProvider.updateSettings(userId ?? '',
-                    key: SettingsKey.syncAlexa,
-                    value: value,
-                    settingsId: widget.settings.id ?? ''),
+                onChange: (value) {},
                 value: widget.settings.syncAlexa ?? false,
               ),
             ],
@@ -99,10 +79,7 @@ class _AlexaSettingsState extends State<AlexaSettings> {
               CustomSectionHeder('Prayer Time'),
               CustomToggle(
                 title: 'Enable Alexa to read prayers from My Prayers?',
-                onChange: (value) => setingProvider.updateSettings(userId ?? '',
-                    key: SettingsKey.allowAlexaReadPrayer,
-                    value: value,
-                    settingsId: widget.settings.id ?? ''),
+                onChange: (value) {},
                 value: widget.settings.allowAlexaReadPrayer ?? false,
               ),
               Column(

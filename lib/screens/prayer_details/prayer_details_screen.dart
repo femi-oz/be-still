@@ -7,6 +7,7 @@ import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/theme_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/prayer_details/widgets/no_update_view.dart';
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
@@ -207,20 +208,21 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                                       color: AppColors.lightBlue3),
                                   onPressed: () => showModalBottomSheet(
                                     context: context,
-                                    barrierColor: Provider.of<ThemeProvider>(
+                                    barrierColor: Provider.of<ThemeProviderV2>(
                                                 context,
                                                 listen: false)
                                             .isDarkModeEnabled
                                         ? AppColors.backgroundColor[0]
                                             .withOpacity(0.8)
                                         : Color(0xFF021D3C).withOpacity(0.7),
-                                    backgroundColor: Provider.of<ThemeProvider>(
-                                                context,
-                                                listen: false)
-                                            .isDarkModeEnabled
-                                        ? AppColors.backgroundColor[0]
-                                            .withOpacity(0.8)
-                                        : Color(0xFF021D3C).withOpacity(0.7),
+                                    backgroundColor:
+                                        Provider.of<ThemeProviderV2>(context,
+                                                    listen: false)
+                                                .isDarkModeEnabled
+                                            ? AppColors.backgroundColor[0]
+                                                .withOpacity(0.8)
+                                            : Color(0xFF021D3C)
+                                                .withOpacity(0.7),
                                     isScrollControlled: true,
                                     builder: (BuildContext context) {
                                       return _buildMenu(snapshot.data,

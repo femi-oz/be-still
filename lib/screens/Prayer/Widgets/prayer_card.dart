@@ -10,6 +10,7 @@ import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/theme_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -585,12 +586,12 @@ class _PrayerCardState extends State<PrayerCard> {
 
             showModalBottomSheet(
               context: context,
-              barrierColor: Provider.of<ThemeProvider>(context, listen: false)
+              barrierColor: Provider.of<ThemeProviderV2>(context, listen: false)
                       .isDarkModeEnabled
                   ? AppColors.backgroundColor[0].withOpacity(0.5)
                   : Color(0xFF021D3C).withOpacity(0.7),
               backgroundColor:
-                  Provider.of<ThemeProvider>(context, listen: false)
+                  Provider.of<ThemeProviderV2>(context, listen: false)
                           .isDarkModeEnabled
                       ? AppColors.backgroundColor[0].withOpacity(0.5)
                       : Color(0xFF021D3C).withOpacity(0.7),
@@ -684,7 +685,7 @@ class _PrayerCardState extends State<PrayerCard> {
                   angle: 90 * math.pi / 180,
                   child: Icon(
                     icon,
-                    color: Provider.of<ThemeProvider>(context, listen: false)
+                    color: Provider.of<ThemeProviderV2>(context, listen: false)
                             .isDarkModeEnabled
                         ? isDisabled
                             ? AppColors.white.withOpacity(0.4)
@@ -697,7 +698,7 @@ class _PrayerCardState extends State<PrayerCard> {
                 )
               : Icon(
                   icon,
-                  color: Provider.of<ThemeProvider>(context, listen: false)
+                  color: Provider.of<ThemeProviderV2>(context, listen: false)
                           .isDarkModeEnabled
                       ? isDisabled
                           ? AppColors.white.withOpacity(0.4)
@@ -708,14 +709,14 @@ class _PrayerCardState extends State<PrayerCard> {
                   size: 18,
                 ),
         ),
-        foregroundColor:
-            Provider.of<ThemeProvider>(context, listen: false).isDarkModeEnabled
-                ? isDisabled
-                    ? AppColors.white.withOpacity(0.4)
-                    : AppColors.white
-                : isDisabled
-                    ? AppColors.lightBlue3.withOpacity(0.4)
-                    : AppColors.lightBlue3,
+        foregroundColor: Provider.of<ThemeProviderV2>(context, listen: false)
+                .isDarkModeEnabled
+            ? isDisabled
+                ? AppColors.white.withOpacity(0.4)
+                : AppColors.white
+            : isDisabled
+                ? AppColors.lightBlue3.withOpacity(0.4)
+                : AppColors.lightBlue3,
         onTap: isDisabled ? () {} : _onTap,
       ),
     );

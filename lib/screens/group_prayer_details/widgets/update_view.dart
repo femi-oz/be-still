@@ -53,7 +53,7 @@ class _UpdateView extends State<UpdateView> {
   _openShareModal(BuildContext context, String phoneNumber, String email,
       String identifier) async {
     try {
-      await Provider.of<PrayerProvider>(context, listen: false).getContacts();
+      await Provider.of<PrayerProviderV2>(context, listen: false).getContacts();
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;

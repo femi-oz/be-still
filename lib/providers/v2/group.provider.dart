@@ -23,8 +23,6 @@ class GroupProviderV2 with ChangeNotifier {
   bool _isAdvanceSearch = false;
   //search params end
 
-  late StreamSubscription<List<GroupDataModel>> allGroupsStream;
-
   List<GroupDataModel> _userGroups = [];
   List<GroupDataModel> get userGroups => _userGroups;
 
@@ -368,12 +366,6 @@ class GroupProviderV2 with ChangeNotifier {
     } catch (e) {
       rethrow;
     }
-  }
-
-  flush() {
-    // allGroupsStream.cancel();
-    // groupUserStream.cancel();
-    resetValues();
   }
 
   resetValues() {

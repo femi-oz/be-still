@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
+import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/v2/tag.model.dart';
 
 import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
 import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
@@ -63,8 +65,9 @@ class _AddUpdateState extends State<AddUpdate> {
     if (isInit) {
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
         try {
-          var userId =
-              Provider.of<UserProvider>(context, listen: false).currentUser.id;
+          var userId = Provider.of<UserProviderV2>(context, listen: false)
+              .currentUser
+              .id;
           await Provider.of<MiscProviderV2>(context, listen: false)
               .setSearchMode(false);
           await Provider.of<MiscProviderV2>(context, listen: false)

@@ -19,15 +19,11 @@ class AuthenticationProviderV2 with ChangeNotifier {
       _needsVerification = response.needsVerification;
       if (_needsVerification) {
         final message = StringUtils.generateExceptionMessage('not-verified');
-        // await locator<LogService>()
-        //     .createLog(message, email, 'AUTHENTICATION/service/signIn');
         throw HttpException(message);
       }
       if (response.error != null) {
         final e = response.error;
         final message = StringUtils.generateExceptionMessage(e?.code);
-        // await locator<LogService>()
-        //     .createLog(message, email, 'AUTHENTICATION/service/signIn');
         throw HttpException(message);
       }
     } catch (e) {
