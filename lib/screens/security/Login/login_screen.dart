@@ -320,8 +320,8 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       await Provider.of<UserProviderV2>(context, listen: false)
           .setCurrentUser();
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      final user = await Provider.of<UserProviderV2>(context, listen: false)
+          .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
 
       Settings.lastUser = jsonEncode(user.toJson2());
       Settings.userPassword = _passwordController.text;

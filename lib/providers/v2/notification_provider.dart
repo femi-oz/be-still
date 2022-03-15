@@ -33,7 +33,8 @@ class NotificationProviderV2 with ChangeNotifier {
 
   late StreamSubscription<List<NotificationModel>> userNotificationStream;
 
-  late StreamSubscription<List<LocalNotificationDataModel>> prayerTimeStream;
+  late StreamSubscription<List<LocalNotificationDataModel>>
+      localNotificationStream;
 
   List<NotificationModel> _notifications = [];
   List<NotificationModel> get notifications => _notifications;
@@ -203,7 +204,7 @@ class NotificationProviderV2 with ChangeNotifier {
   Future<void> setLocalNotifications() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      _notificationService
+      localNotificationStream = _notificationService
           .getLocalNotifications()
           .asBroadcastStream()
           .listen((notifications) {
@@ -340,8 +341,8 @@ class NotificationProviderV2 with ChangeNotifier {
     }
   }
 
-  void cancelLocalNotifications() {
-    _flutterLocalNotificationsPlugin.cancelAll();
+  Future<void> cancelLocalNotifications() async {
+    await _flutterLocalNotificationsPlugin.cancelAll();
   }
 
   Future<void> flagAsInappropriate(
@@ -362,9 +363,9 @@ class NotificationProviderV2 with ChangeNotifier {
         receiverId: adminId);
   }
 
-  void flush() {
-    userNotificationStream.cancel();
-    // prayerTimeStream.cancel();
+  Future flush() async {
+    await userNotificationStream.cancel();
+    await localNotificationStream.cancel();
     resetValues();
   }
 }
