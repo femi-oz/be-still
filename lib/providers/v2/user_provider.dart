@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/v2/device.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
@@ -21,10 +23,13 @@ class UserProviderV2 with ChangeNotifier {
   List<UserDataModel> _allUsers = <UserDataModel>[];
   List<UserDataModel> get allUsers => _allUsers;
 
+  late StreamSubscription<UserDataModel> userStream;
+  late StreamSubscription<List<UserDataModel>> usersStream;
+
   Future<void> setCurrentUser() async {
     try {
       final _firebaseUserId = FirebaseAuth.instance.currentUser?.uid;
-      _userService
+      userStream = _userService
           .getUserById(_firebaseUserId ?? '')
           .asBroadcastStream()
           .listen((event) async {
@@ -67,7 +72,8 @@ class UserProviderV2 with ChangeNotifier {
     try {
       final _firebaseUserId = FirebaseAuth.instance.currentUser?.uid;
 
-      _userService.getAllUsers().asBroadcastStream().listen((users) {
+      usersStream =
+          _userService.getAllUsers().asBroadcastStream().listen((users) {
         _allUsers = users.where((e) => e.id != _firebaseUserId).toList();
         notifyListeners();
       });
@@ -127,5 +133,11 @@ class UserProviderV2 with ChangeNotifier {
     } catch (e) {
       rethrow;
     }
+  }
+
+  flush() async {
+    await userStream.cancel();
+    await usersStream.cancel();
+    print('canceled');
   }
 }

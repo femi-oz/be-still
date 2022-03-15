@@ -1,20 +1,9 @@
 import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/models/v2/group.model.dart';
-import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/log_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
-import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -70,13 +59,14 @@ class _AddUpdateState extends State<AddUpdate> {
     if (isInit) {
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
         try {
-          var userId =
-              Provider.of<UserProvider>(context, listen: false).currentUser.id;
-          await Provider.of<MiscProvider>(context, listen: false)
+          var userId = Provider.of<UserProviderV2>(context, listen: false)
+              .currentUser
+              .id;
+          await Provider.of<MiscProviderV2>(context, listen: false)
               .setSearchMode(false);
-          await Provider.of<MiscProvider>(context, listen: false)
+          await Provider.of<MiscProviderV2>(context, listen: false)
               .setSearchQuery('');
-          Provider.of<PrayerProvider>(context, listen: false)
+          Provider.of<PrayerProviderV2>(context, listen: false)
               .searchPrayers('', userId ?? '');
         } on HttpException catch (e, s) {
           final user =

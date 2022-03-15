@@ -203,7 +203,7 @@ class NotificationProviderV2 with ChangeNotifier {
   Future<void> setLocalNotifications() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      _notificationService
+      prayerTimeStream = _notificationService
           .getLocalNotifications()
           .asBroadcastStream()
           .listen((notifications) {
@@ -362,9 +362,9 @@ class NotificationProviderV2 with ChangeNotifier {
         receiverId: adminId);
   }
 
-  void flush() {
-    userNotificationStream.cancel();
-    // prayerTimeStream.cancel();
+  void flush() async {
+    await userNotificationStream.cancel();
+    await prayerTimeStream.cancel();
     resetValues();
   }
 }

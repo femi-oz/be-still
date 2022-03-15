@@ -7,6 +7,7 @@ import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/models/v2/update.model.dart';
 import 'package:be_still/providers/prayer_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 
@@ -58,7 +59,7 @@ class _UpdateView extends State<UpdateView> {
   _openShareModal(BuildContext context, String phoneNumber, String email,
       String identifier) async {
     try {
-      await Provider.of<PrayerProvider>(context, listen: false).getContacts();
+      await Provider.of<PrayerProviderV2>(context, listen: false).getContacts();
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -75,7 +76,7 @@ class _UpdateView extends State<UpdateView> {
     var updatedPhone = '';
     var updatedEmail = '';
     localContacts =
-        Provider.of<PrayerProvider>(context, listen: false).localContacts;
+        Provider.of<PrayerProviderV2>(context, listen: false).localContacts;
     var latestContact =
         localContacts.where((element) => element.identifier == identifier);
 

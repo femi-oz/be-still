@@ -23,8 +23,6 @@ class PrayerProviderV2 with ChangeNotifier {
   final userId = FirebaseAuth.instance.currentUser?.uid;
   late StreamSubscription<List<PrayerDataModel>> prayerStream;
   late StreamSubscription<List<PrayerDataModel>> groupPrayerStream;
-  late StreamSubscription<List<PrayerDataModel>> followedPrayerStream;
-  late StreamSubscription<List<PrayerDataModel>> prayerTimeStream;
 
   PrayerType _currentPrayerType = PrayerType.userPrayers;
   PrayerType get currentPrayerType => _currentPrayerType;
@@ -623,10 +621,8 @@ class PrayerProviderV2 with ChangeNotifier {
         prayer: prayer);
   }
 
-  void flush() {
-    prayerStream.cancel();
-    // followedPrayerStream.cancel();
-    // groupPrayerStream.cancel();
-    prayerTimeStream.cancel();
+  void flush() async {
+    if (prayers.isNotEmpty) await prayerStream.cancel();
+    if (groupPrayers.isNotEmpty) await groupPrayerStream.cancel();
   }
 }
