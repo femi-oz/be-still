@@ -134,7 +134,8 @@ class _AddPrayerState extends State<AddPrayer> {
           for (final c in up.contactList) {
             if (!tags.any((t) => t.contactIdentifier == c.identifier)) {
               await Provider.of<PrayerProviderV2>(context, listen: false)
-                  .addPrayerTag(up.contactList, userName, up.ctrl.text, '');
+                  .addPrayerTag(
+                      up.contactList, userName, up.ctrl.text, prayerId);
               ids.add(up.ctrl.text);
             }
           }
@@ -150,7 +151,11 @@ class _AddPrayerState extends State<AddPrayer> {
         if (!tags.any((t) => t.contactIdentifier == c.identifier)) {
           await Provider.of<PrayerProviderV2>(context, listen: false)
               .addPrayerTag(
-                  contactList, userName, _descriptionController.text, '');
+            contactList,
+            userName,
+            _descriptionController.text,
+            prayerId,
+          );
           ids.add(_descriptionController.text);
         }
       }

@@ -303,13 +303,15 @@ class PrayerServiceV2 {
                 modifiedDate: DateTime.now(),
               ))
           .toList();
-      await _prayerDataCollectionReference
-          .doc(prayerId)
-          .update({'tags': tags.map((e) => e.toJson())});
-      sendTagMessageToUsers(
-          contactData: contactData,
-          description: description,
-          username: username);
+      tags.forEach((element) async {
+        await _prayerDataCollectionReference.doc(prayerId).update({
+          'tags': FieldValue.arrayUnion([element.toJson()])
+        });
+        sendTagMessageToUsers(
+            contactData: contactData,
+            description: description,
+            username: username);
+      });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
