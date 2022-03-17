@@ -753,10 +753,10 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                       icon: AppIcons.bestill_answered,
                       onPress: () => !isOwner && !isAdmin
                           ? () {}
-                          : widget.prayerData?.status == Status.answered
+                          : widget.prayerData?.isAnswered ?? false
                               ? _unMarkAsAnswered()
                               : _onMarkAsAnswered(),
-                      text: widget.prayerData?.status == Status.answered
+                      text: widget.prayerData?.isAnswered ?? false
                           ? 'Unmark as Answered'
                           : 'Mark as Answered',
                     ),

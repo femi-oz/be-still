@@ -213,6 +213,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
       return;
     }
     try {
+      BeStilDialog.showLoading(context);
+
       if (hour == 0) {
         hour = 12;
       }
@@ -224,7 +226,6 @@ class _ReminderPickerState extends State<ReminderPicker> {
           : hour > 12
               ? (hour - 12).toString()
               : '$hour ';
-      BeStilDialog.showLoading(context);
       final userId = FirebaseAuth.instance.currentUser?.uid;
       var suffix = "th";
       var digit = selectedDayOfMonth % 10;
@@ -268,24 +269,25 @@ class _ReminderPickerState extends State<ReminderPicker> {
             payload: jsonEncode(payload.toJson()),
             frequency: selectedFrequency,
             localNotificationId: widget.reminder?.localNotificationId ?? null);
-        if (widget.reminder != null)
-          await updatePrayerTime(
-              LocalNotification.daysOfWeek[selectedDayOfWeek],
-              selectedPeriod,
-              selectedFrequency,
-              _selectedHourString,
-              _selectedMinuteString,
-              scheduleDate,
-              userId ?? '',
-              notificationText,
-              selectedYear.toString());
-        else
-          await storeNotification(
-              notificationText: notificationText,
-              scheduledDate: scheduleDate,
-              frequency: selectedFrequency);
       }
+      if (widget.reminder != null)
+        await updatePrayerTime(
+            LocalNotification.daysOfWeek[selectedDayOfWeek],
+            selectedPeriod,
+            selectedFrequency,
+            _selectedHourString,
+            _selectedMinuteString,
+            scheduleDate,
+            userId ?? '',
+            notificationText,
+            selectedYear.toString());
+      else
+        await storeNotification(
+            notificationText: notificationText,
+            scheduledDate: scheduleDate,
+            frequency: selectedFrequency);
       clearSearch();
+      // BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =

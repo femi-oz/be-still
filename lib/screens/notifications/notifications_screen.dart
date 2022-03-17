@@ -279,11 +279,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   String getSenderName(String userId) {
-    Provider.of<UserProviderV2>(context, listen: false).getUserDataById(userId);
-    final user =
-        Provider.of<UserProviderV2>(context, listen: false).selectedUser;
-    final senderName = (user.firstName ?? '') + ' ' + (user.lastName ?? '');
-    return senderName;
+    if (userId.isNotEmpty) {
+      Provider.of<UserProviderV2>(context, listen: false)
+          .getUserDataById(userId);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      final senderName = (user.firstName ?? '') + ' ' + (user.lastName ?? '');
+      return senderName;
+    } else {
+      return '';
+    }
   }
 
   gotoPrayer(NotificationModel notification) async {
@@ -935,16 +940,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
-                                              getSenderName(notification
-                                                              .senderId ??
+                                              groupName(notification.groupId ??
                                                           '') !=
                                                       ''
                                                   ? Expanded(
                                                       child: Text(
-                                                        getSenderName(notification
-                                                                    .senderId ??
-                                                                '')
-                                                            .sentenceCase(),
+                                                        groupName(notification
+                                                                    .groupId ??
+                                                                '') ??
+                                                            ''.sentenceCase(),
                                                         style: AppTextStyles
                                                             .regularText15b
                                                             .copyWith(
@@ -1080,16 +1084,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: <Widget>[
-                                            getSenderName(
-                                                        notification.senderId ??
-                                                            '') !=
+                                            groupName(notification.groupId ??
+                                                        '') !=
                                                     ''
                                                 ? Expanded(
                                                     child: Text(
-                                                        getSenderName(
-                                                            notification
-                                                                    .senderId ??
-                                                                ''),
+                                                        groupName(notification
+                                                                    .groupId ??
+                                                                '') ??
+                                                            '',
                                                         style: AppTextStyles
                                                             .regularText15b
                                                             .copyWith(

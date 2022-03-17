@@ -262,7 +262,8 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
   }
 
   bool get isAdmin {
-    final group = Provider.of<GroupProviderV2>(context).currentGroup;
+    final group =
+        Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
 
     return (group.users ?? []).any((e) =>
         e.role == GroupUserRole.admin &&

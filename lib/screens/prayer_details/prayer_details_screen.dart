@@ -161,7 +161,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting)
               return BeStilDialog.getLoading(context, false);
-            if (snapshot.hasData && (snapshot.data?.status == Status.active)) {
+            if (snapshot.hasData) {
               return Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(

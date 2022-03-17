@@ -269,6 +269,7 @@ class GroupServiceV2 {
         message: 'Your request to join this group has been accepted',
         status: Status.active,
         isSent: 0,
+        senderId: _firebaseAuth.currentUser?.uid,
         tokens: (requestor.devices ?? []).map((e) => e.token ?? '').toList(),
         type: NotificationType.accept_request,
         groupId: group.id,

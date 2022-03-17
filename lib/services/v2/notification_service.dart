@@ -275,7 +275,7 @@ class NotificationServiceV2 {
     required String status,
   }) async {
     try {
-      _notificationCollectionReference.doc(notificationId).update({
+      _localNotificationCollectionReference.doc(notificationId).update({
         'message': message,
         'localNotificationId': localNotificationId,
         'type': type,
