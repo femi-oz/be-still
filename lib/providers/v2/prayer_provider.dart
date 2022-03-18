@@ -605,6 +605,8 @@ class PrayerProviderV2 with ChangeNotifier {
 
       _filteredPrayers = _distinct;
       _filteredPrayerTimeList = activePrayers;
+      _filteredPrayerTimeList.sort((a, b) => (b.modifiedDate ?? DateTime.now())
+          .compareTo(a.modifiedDate ?? DateTime.now()));
       notifyListeners();
     } catch (e) {
       rethrow;
