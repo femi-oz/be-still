@@ -1,11 +1,17 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:be_still/locator.dart';
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/device.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/services/v2/migration.service.dart';
 import 'package:be_still/services/v2/user_service.dart';
+import 'package:be_still/utils/app_dialog.dart';
+import 'package:be_still/utils/local_notification.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -48,7 +54,7 @@ class UserProviderV2 with ChangeNotifier {
 
   Future<UserDataModel> getUserDataById(String userId) async {
     try {
-      return _userService.getUserByIdFuture(userId).then((user) {
+      return _userService.getUserByIdFuture(userId).then((user) async {
         _selectedUser = user;
         notifyListeners();
         return user;

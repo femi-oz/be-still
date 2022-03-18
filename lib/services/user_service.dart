@@ -99,10 +99,11 @@ class UserService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      return _userCollectionReference
+      final x = await _userCollectionReference
           .doc(id)
           .get()
           .then((e) => UserModel.fromData(e.data()!, e.id));
+      return x;
     } catch (e) {
       locator<LogService>().createLog(
           StringUtils.getErrorMessage(e), id, 'USER/service/getCurrentUser');

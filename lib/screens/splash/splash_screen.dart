@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/locator.dart';
+import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/v2/auth_provider.dart';
@@ -10,11 +13,13 @@ import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
+import 'package:be_still/services/v2/migration.service.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -124,6 +129,8 @@ class _SplashScreenState extends State<SplashScreen>
         if (Settings.rememberMe) {
           if (isLoggedIn) {
             await Provider.of<UserProviderV2>(context, listen: false)
+                .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
+            await Provider.of<UserProviderV2>(context, listen: false)
                 .setCurrentUser();
             await setRouteDestination();
           } else {
@@ -139,10 +146,31 @@ class _SplashScreenState extends State<SplashScreen>
               arguments: true);
         }
       }
+    } on HttpException catch (e) {
+      if (e.message == "Document does not exist.") {
+        await migrateData();
+        return;
+      }
     } catch (e) {
       Navigator.of(context).pushNamedAndRemoveUntil(
           LoginScreen.routeName, (Route<dynamic> route) => false,
           arguments: true);
+    }
+  }
+
+  final _migrationService = locator<MigrationService>();
+  Future<void> migrateData() async {
+    try {
+      BeStilDialog.showLoading(
+          context, 'Please wait, your data is being migrated!');
+      await _migrationService
+          .migrateUserData(FirebaseAuth.instance.currentUser?.uid ?? '');
+      await Provider.of<UserProviderV2>(context, listen: false)
+          .setCurrentUser();
+
+      setRouteDestination();
+    } catch (e) {
+      print(e);
     }
   }
 

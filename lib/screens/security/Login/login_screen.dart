@@ -1,5 +1,6 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/locator.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/v2/auth_provider.dart';
@@ -8,6 +9,7 @@ import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
+import 'package:be_still/services/v2/migration.service.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/debouncer.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -110,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
         bool showBioAuth =
             (ModalRoute.of(context)?.settings.arguments ?? false) as bool;
         if (showBioAuth && isBioMetricAvailable && Settings.enableLocalAuth)
-          _biologin();
+          _bioLogin();
       });
       _isInit = false;
     }
@@ -318,11 +320,11 @@ class _LoginScreenState extends State<LoginScreen> {
         email: _usernameController.text,
         password: _passwordController.text,
       );
-      await Provider.of<UserProviderV2>(context, listen: false)
-          .setCurrentUser();
+
       final user = await Provider.of<UserProviderV2>(context, listen: false)
           .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
-
+      await Provider.of<UserProviderV2>(context, listen: false)
+          .setCurrentUser();
       Settings.lastUser = jsonEncode(user.toJson2());
       Settings.userPassword = _passwordController.text;
       if (Settings.enabledReminderPermission)
@@ -333,7 +335,10 @@ class _LoginScreenState extends State<LoginScreen> {
     } on HttpException catch (e, s) {
       needsVerification =
           e.message == StringUtils.generateExceptionMessage('not-verified');
-
+      if (e.message == "Document does not exist.") {
+        await migrateData();
+        return;
+      }
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), UserDataModel(), s);
@@ -348,14 +353,35 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Future<void> _biologin() async {
+  final _migrationService = locator<MigrationService>();
+  Future<void> migrateData() async {
+    try {
+      BeStilDialog.showLoading(
+          context, 'Please wait, your data is being migrated!');
+      await _migrationService
+          .migrateUserData(FirebaseAuth.instance.currentUser?.uid ?? '');
+      final user = await Provider.of<UserProviderV2>(context, listen: false)
+          .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
+      await Provider.of<UserProviderV2>(context, listen: false)
+          .setCurrentUser();
+
+      Settings.lastUser = jsonEncode(user.toJson2());
+      Settings.userPassword = _passwordController.text;
+
+      setRouteDestination();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> _bioLogin() async {
     try {
       final userInfo = jsonDecode(Settings.lastUser);
-      final usernname = userInfo['email'];
+      final username = userInfo['email'];
       final password = Settings.userPassword;
       await Provider.of<AuthenticationProviderV2>(context, listen: false)
           .signIn(
-        email: usernname,
+        email: username,
         password: password,
       );
       final isAuth =
@@ -364,6 +390,8 @@ class _LoginScreenState extends State<LoginScreen> {
       BeStilDialog.showLoading(context, 'Authenticating');
       isLoading = true;
       if (isAuth) {
+        await Provider.of<UserProviderV2>(context, listen: false)
+            .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
         await Provider.of<UserProviderV2>(context, listen: false)
             .setCurrentUser();
         BeStilDialog.hideLoading(context);
@@ -379,6 +407,10 @@ class _LoginScreenState extends State<LoginScreen> {
         BeStilDialog.hideLoading(context);
         isLoading = false;
       }
+      if (e.message == "Document does not exist.") {
+        await migrateData();
+        return;
+      }
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), UserDataModel(), s);
     } catch (e, s) {
@@ -386,7 +418,6 @@ class _LoginScreenState extends State<LoginScreen> {
         BeStilDialog.hideLoading(context);
         isLoading = false;
       }
-
       BeStilDialog.showErrorDialog(
           context, StringUtils.errorOccured, UserDataModel(), s);
     }
@@ -580,7 +611,7 @@ class _LoginScreenState extends State<LoginScreen> {
       padding: EdgeInsets.only(top: 15.0, right: 15.0),
       child: GestureDetector(
           onTap: () => _debounce(() {
-                _biologin();
+                _bioLogin();
               }),
           child: showFingerPrint && showFaceId
               ? Image.asset(
