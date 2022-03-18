@@ -236,7 +236,7 @@ class GroupProviderV2 with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      return await _groupService.removeGroupUser(
+      await _groupService.removeGroupUser(
           userId: _firebaseAuth.currentUser?.uid ?? '', groupId: groupId);
     } catch (e) {
       rethrow;
