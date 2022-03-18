@@ -25,7 +25,7 @@ class _GroupPrayerFiltersState extends State<GroupPrayerFilters> {
       errorMessage = '';
 
       Provider.of<PrayerProviderV2>(context, listen: false)
-          .setPrayerFilterOptions(status);
+          .setGroupPrayerFilterOptions(status);
       Provider.of<PrayerProviderV2>(context, listen: false)
           .filterGroupPrayers();
       final group =
@@ -54,7 +54,7 @@ class _GroupPrayerFiltersState extends State<GroupPrayerFilters> {
   }
 
   Widget build(BuildContext context) {
-    var status = Provider.of<PrayerProviderV2>(context).filterOption;
+    var status = Provider.of<PrayerProviderV2>(context).groupFilterOption;
     return Container(
       padding: EdgeInsets.only(top: 30),
       child: Column(

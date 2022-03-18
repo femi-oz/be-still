@@ -60,6 +60,9 @@ class PrayerProviderV2 with ChangeNotifier {
   String _filterOption = Status.active;
   String get filterOption => _filterOption;
 
+  String _groupFilterOption = Status.active;
+  String get groupFilterOption => _groupFilterOption;
+
   String _currentPrayerId = '';
   String get currentPrayerId => _currentPrayerId;
 
@@ -234,6 +237,15 @@ class PrayerProviderV2 with ChangeNotifier {
   void setPrayerFilterOptions(String option) {
     try {
       _filterOption = option;
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  void setGroupPrayerFilterOptions(String option) {
+    try {
+      _groupFilterOption = option;
       notifyListeners();
     } catch (e) {
       rethrow;
@@ -468,18 +480,18 @@ class PrayerProviderV2 with ChangeNotifier {
     List<PrayerDataModel> archivedGroupPrayers = [];
     List<PrayerDataModel> allGroupPrayers = [];
 
-    if (_filterOption == Status.all) {
+    if (_groupFilterOption == Status.all) {
       allGroupPrayers = groupPrayers;
     }
 
-    if (_filterOption == Status.active) {
+    if (_groupFilterOption == Status.active) {
       activeGroupPrayers = groupPrayers
           .where((PrayerDataModel data) =>
               (data.status ?? '').toLowerCase() == Status.active.toLowerCase())
           .toList();
     }
 
-    if (_filterOption == Status.answered) {
+    if (_groupFilterOption == Status.answered) {
       answeredGroupPrayers = groupPrayers
           .where((PrayerDataModel data) =>
               (data.status == Status.archived) &&
@@ -487,7 +499,7 @@ class PrayerProviderV2 with ChangeNotifier {
           .toList();
     }
 
-    if (_filterOption == Status.archived) {
+    if (_groupFilterOption == Status.archived) {
       archivedGroupPrayers = groupPrayers
           .where((PrayerDataModel data) => data.status == Status.archived)
           .toList();

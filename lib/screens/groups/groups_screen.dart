@@ -1,4 +1,5 @@
 import 'package:be_still/controllers/app_controller.dart';
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -37,6 +38,10 @@ class _GroupScreenState extends State<GroupScreen> {
   void initState() {
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
       try {
+        Provider.of<PrayerProviderV2>(context, listen: false)
+            .setGroupPrayerFilterOptions(Status.active);
+        Provider.of<PrayerProviderV2>(context, listen: false)
+            .filterGroupPrayers();
         await Provider.of<MiscProviderV2>(context, listen: false)
             .setPageTitle('GROUPS');
       } catch (e, s) {
