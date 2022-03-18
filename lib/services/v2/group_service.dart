@@ -448,8 +448,9 @@ class GroupServiceV2 {
       UserDataModel user = await _userService.getUserByIdFuture(userId);
       GroupDataModel group = await getGroup(groupId);
       final groupUsers = group.users;
-      final userToRemove =
-          (groupUsers ?? []).firstWhere((element) => element.userId == userId);
+      final userToRemove = (groupUsers ?? [])
+          .firstWhere((element) => element.userId == userId)
+          .toJson();
 
       final userGroups = user.groups;
       final userPrayers = user.prayers;
@@ -457,12 +458,13 @@ class GroupServiceV2 {
       final groupIdToRemove =
           (userGroups ?? []).firstWhere((element) => element == group.id);
 
-      final prayerToRemove =
-          (userPrayers ?? []).where((element) => element.groupId == group.id);
+      final prayerToRemove = (userPrayers ?? [])
+          .where((element) => element.groupId == group.id)
+          .toList();
 
       WriteBatch batch = FirebaseFirestore.instance.batch();
       batch.update(_groupDataCollectionReference.doc(groupId), {
-        'users': FieldValue.arrayRemove([userToRemove.toJson()])
+        'users': FieldValue.arrayRemove([userToRemove])
       });
       prayerToRemove.forEach((element) {
         batch.update(_userDataCollectionReference.doc(user.id), {
