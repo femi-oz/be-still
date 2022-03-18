@@ -356,7 +356,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _migrationService = locator<MigrationService>();
   Future<void> migrateData() async {
     try {
-      print('migrating');
+      BeStilDialog.showLoading(
+          context, 'Please wait, your data is being migrated!');
       await _migrationService
           .migrateUserData(FirebaseAuth.instance.currentUser?.uid ?? '');
       final user = await Provider.of<UserProviderV2>(context, listen: false)
@@ -366,7 +367,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       Settings.lastUser = jsonEncode(user.toJson2());
       Settings.userPassword = _passwordController.text;
-      print('migrated');
+
       setRouteDestination();
     } catch (e) {
       print(e);
@@ -404,6 +405,10 @@ class _LoginScreenState extends State<LoginScreen> {
         BeStilDialog.hideLoading(context);
         isLoading = false;
       }
+      if (e.message == "Document does not exist.") {
+        await migrateData();
+        return;
+      }
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), UserDataModel(), s);
     } catch (e, s) {
@@ -411,7 +416,6 @@ class _LoginScreenState extends State<LoginScreen> {
         BeStilDialog.hideLoading(context);
         isLoading = false;
       }
-
       BeStilDialog.showErrorDialog(
           context, StringUtils.errorOccured, UserDataModel(), s);
     }
