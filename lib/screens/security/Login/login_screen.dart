@@ -391,6 +391,8 @@ class _LoginScreenState extends State<LoginScreen> {
       isLoading = true;
       if (isAuth) {
         await Provider.of<UserProviderV2>(context, listen: false)
+            .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
+        await Provider.of<UserProviderV2>(context, listen: false)
             .setCurrentUser();
         BeStilDialog.hideLoading(context);
         isLoading = false;

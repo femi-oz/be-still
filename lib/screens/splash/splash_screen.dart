@@ -129,6 +129,8 @@ class _SplashScreenState extends State<SplashScreen>
         if (Settings.rememberMe) {
           if (isLoggedIn) {
             await Provider.of<UserProviderV2>(context, listen: false)
+                .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
+            await Provider.of<UserProviderV2>(context, listen: false)
                 .setCurrentUser();
             await setRouteDestination();
           } else {
