@@ -562,11 +562,7 @@ class PrayerProviderV2 with ChangeNotifier {
       }
       if (_filterOption == Status.snoozed) {
         snoozedPrayers = prayers
-            .where((PrayerDataModel data) => data.status == Status.snoozed
-                //&&
-                // (data.userPrayer?.snoozeEndDate ?? DateTime.now())
-                //     .isAfter(DateTime.now())
-                )
+            .where((PrayerDataModel data) => data.status == Status.snoozed)
             .toList();
       }
       if (_filterOption == Status.following) {

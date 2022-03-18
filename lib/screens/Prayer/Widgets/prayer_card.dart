@@ -365,7 +365,7 @@ class _PrayerCardState extends State<PrayerCard> {
                             children: <Widget>[
                               Row(
                                 children: [
-                                  widget.prayer.status == Status.answered
+                                  widget.prayer.isAnswered ?? false
                                       ? Padding(
                                           padding: const EdgeInsets.only(
                                               top: 5, bottom: 5, right: 8),
@@ -620,8 +620,8 @@ class _PrayerCardState extends State<PrayerCard> {
           if (showOption)
             _buildSlideItem(
                 AppIcons.bestill_answered,
-                widget.prayer.isAnswered == true ? 'Unmark' : 'Answered',
-                () => widget.prayer.isAnswered == true
+                widget.prayer.isAnswered ?? false ? 'Unmark' : 'Answered',
+                () => widget.prayer.isAnswered ?? false
                     ? _unMarkAsAnswered()
                     : _onMarkAsAnswered(),
                 !isOwner && !isAdmin),
