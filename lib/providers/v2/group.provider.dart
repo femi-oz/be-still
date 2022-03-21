@@ -6,13 +6,8 @@ import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/models/v2/group_user.model.dart';
 import 'package:be_still/models/v2/notification.model.dart';
 import 'package:be_still/models/v2/request.model.dart';
-<<<<<<< .mine
-import 'package:be_still/models/v2/user.model.dart';
-
-=======
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
->>>>>>> .theirs
 import 'package:be_still/services/v2/group_service.dart';
 import 'package:be_still/services/v2/user_service.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -179,18 +174,6 @@ class GroupProviderV2 with ChangeNotifier {
                 .toLowerCase()
                 .contains(purpose.toLowerCase()))
             .toList();
-<<<<<<< .mine
-      if (adminName.trim().isNotEmpty)
-
-
-
-
-
-
-
-
-
-=======
       if (adminName.trim().isNotEmpty) {
         filteredGroups = filteredGroups.where((f) {
           final adminUid = (f.users ?? [])
@@ -201,25 +184,11 @@ class GroupProviderV2 with ChangeNotifier {
               Provider.of<UserProviderV2>(Get.context!, listen: false).allUsers;
           final admin = allUsers.firstWhere((u) => u.id == adminUid,
               orElse: () => UserDataModel());
->>>>>>> .theirs
 
-<<<<<<< .mine
-      //todo search by admin name
-      if (adminName.trim().isEmpty &&
-          purpose.trim().isEmpty &&
-          church.trim().isEmpty &&
-          location.trim().isEmpty &&
-          _groupName.isEmpty) {
-        filteredGroups = [];
-=======
           return ('${admin.firstName} ${admin.lastName}'
               .toLowerCase()
               .contains(adminName.toLowerCase()));
         }).toList();
-
-
-
->>>>>>> .theirs
       }
       _filteredAllGroups = filteredGroups;
       notifyListeners();

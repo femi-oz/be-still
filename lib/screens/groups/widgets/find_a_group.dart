@@ -37,13 +37,14 @@ class _FindAGroupState extends State<FindAGroup> {
     super.initState();
   }
 
+  @override
+  void didChangeDependencies() async {
+    await Provider.of<GroupProviderV2>(context, listen: false).setAllGroups();
+    super.didChangeDependencies();
+  }
+
   void _searchGroup(String val) async {
     try {
-<<<<<<< .mine
-      final userId = FirebaseAuth.instance.currentUser?.uid;
-=======
-
->>>>>>> .theirs
       await Provider.of<GroupProviderV2>(context, listen: false)
           .searchAllGroups(val);
     } on HttpException catch (e, s) {
