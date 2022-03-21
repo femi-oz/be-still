@@ -88,20 +88,42 @@ class NotificationServiceV2 {
         _ids = (prayer.followers ?? []).map((e) => e.userId ?? '').toList();
       }
 
-      _ids.removeWhere((e) => e == _user.id);
+      _ids.removeWhere((e) => e == _firebaseAuth.currentUser?.uid);
 
       for (final id in _ids) {
         final member =
             (group.users ?? []).firstWhere((element) => element.userId == id);
+        final userTokens = await _userService.getUserByIdFuture(id).then(
+            (value) =>
+                (value.devices ?? []).map((e) => e.token ?? '').toList());
+        final name = ((_user.firstName ?? '').capitalizeFirst ?? '') +
+            ' ' +
+            ((_user.lastName ?? '').capitalizeFirst ?? '');
 
-        if (member.enableNotificationForNewPrayers ?? false) {
-          final userTokens = await _userService.getUserByIdFuture(id).then(
-              (value) =>
-                  (value.devices ?? []).map((e) => e.token ?? '').toList());
-          final name = ((_user.firstName ?? '').capitalizeFirst ?? '') +
-              ' ' +
-              ((_user.lastName ?? '').capitalizeFirst ?? '');
-
+        if (type == NotificationType.prayer ||
+            type == NotificationType.edited_prayers) {
+          if (member.enableNotificationForNewPrayers ?? false) {
+            addNotification(
+                message: message.capitalizeFirst ?? '',
+                senderName: name,
+                groupId: groupId,
+                receiverId: id,
+                prayerId: prayerId,
+                tokens: userTokens,
+                type: type);
+          }
+        } else if (type == NotificationType.prayer_updates) {
+          if (member.enableNotificationForUpdates ?? false) {
+            addNotification(
+                message: message.capitalizeFirst ?? '',
+                senderName: name,
+                groupId: groupId,
+                receiverId: id,
+                prayerId: prayerId,
+                tokens: userTokens,
+                type: type);
+          }
+        } else {
           addNotification(
               message: message.capitalizeFirst ?? '',
               senderName: name,

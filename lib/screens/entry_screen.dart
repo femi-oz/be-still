@@ -148,6 +148,8 @@ class _EntryScreenState extends State<EntryScreen> {
       if (userId.isNotEmpty)
         Provider.of<PrayerProviderV2>(context, listen: false)
             .checkPrayerValidity(userId, userPrayersId);
+      await Provider.of<PrayerProviderV2>(context, listen: false).setPrayers(
+          (user.prayers ?? []).map((e) => e.prayerId ?? '').toList());
       Provider.of<MiscProviderV2>(context, listen: false).setDeviceId();
       await Provider.of<DevotionalProviderV2>(context, listen: false)
           .getDevotionals();

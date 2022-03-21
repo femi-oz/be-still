@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:be_still/enums/interval.dart';
 import 'package:be_still/enums/sort_by.dart';
 import 'package:be_still/enums/status.dart';
+import 'package:be_still/locator.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/device.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
+import 'package:be_still/services/v2/auth_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info/device_info.dart';
@@ -14,6 +16,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 class UserServiceV2 {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  AuthenticationServiceV2 _authenticationService =
+      locator<AuthenticationServiceV2>();
 
   final CollectionReference<Map<String, dynamic>> _userDataCollectionReference =
       FirebaseFirestore.instance.collection("users");
@@ -111,12 +115,18 @@ class UserServiceV2 {
 
   Future<void> updateEmail(
       {
+
       // required DocumentReference userReference,
       required String newEmail}) async {
+    User? user = _firebaseAuth.currentUser;
+
     try {
+      if (_firebaseAuth.currentUser == null) return null;
+      await user?.updateEmail(newEmail.toLowerCase());
       _userDataCollectionReference
           .doc(_firebaseAuth.currentUser?.uid ?? '')
           .update({'email': newEmail});
+      _authenticationService.sendEmailVerification();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

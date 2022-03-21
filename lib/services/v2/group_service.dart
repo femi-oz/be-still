@@ -4,12 +4,14 @@ import 'package:be_still/enums/request_status.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/locator.dart';
+import 'package:be_still/models/v2/follower.model.dart';
 import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/models/v2/group_user.model.dart';
 import 'package:be_still/models/v2/notification.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/request.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
+import 'package:be_still/services/v2/prayer_service.dart';
 import 'package:be_still/services/v2/user_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,6 +25,7 @@ import 'package:uuid/uuid.dart';
 class GroupServiceV2 {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   UserServiceV2 _userService = locator<UserServiceV2>();
+  PrayerServiceV2 _prayerService = locator<PrayerServiceV2>();
 
   final CollectionReference<Map<String, dynamic>>
       _groupDataCollectionReference =
@@ -477,20 +480,29 @@ class GroupServiceV2 {
       final userPrayers = user.prayers;
 
       final groupIdToRemove = (userGroups ?? [])
-          .firstWhere((element) => element == group.id, orElse: () => '');
+          .firstWhere((element) => element == groupId, orElse: () => '');
 
       final prayerToRemove = (userPrayers ?? [])
-          .where((element) => element.groupId == group.id)
+          .where((element) => element.groupId == groupId)
           .toList();
+      prayerToRemove.forEach((element) async {
+        PrayerDataModel prayer =
+            await _prayerService.getPrayerFuture(element.prayerId ?? '');
+        FollowerModel follower = (prayer.followers ?? []).firstWhere(
+          (e) => e.userId == _firebaseAuth.currentUser?.uid,
+          orElse: () => FollowerModel(),
+        );
+
+        _prayerService.unFollowPrayer(
+            prayerId: element.prayerId ?? '',
+            groupId: groupId,
+            prayer: element,
+            follower: follower);
+      });
 
       WriteBatch batch = FirebaseFirestore.instance.batch();
       batch.update(_groupDataCollectionReference.doc(groupId), {
         'users': FieldValue.arrayRemove([userToRemove])
-      });
-      prayerToRemove.forEach((element) {
-        batch.update(_userDataCollectionReference.doc(user.id), {
-          'prayers': FieldValue.arrayRemove([element.toJson])
-        });
       });
 
       batch.update(_userDataCollectionReference.doc(user.id), {

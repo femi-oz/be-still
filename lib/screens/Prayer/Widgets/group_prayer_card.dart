@@ -170,8 +170,25 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     BeStilDialog.showLoading(context);
 
     try {
+      var notifications =
+          Provider.of<NotificationProviderV2>(context, listen: false)
+              .localNotifications
+              .where((e) =>
+                  e.prayerId == widget.prayerData.id &&
+                  e.type == NotificationType.reminder)
+              .toList();
+      notifications.forEach((e) async =>
+          await Provider.of<NotificationProviderV2>(context, listen: false)
+              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       await Provider.of<PrayerProviderV2>(context, listen: false).archivePrayer(
           widget.prayerData.id ?? '', widget.prayerData.followers ?? []);
+      await Provider.of<NotificationProviderV2>(context, listen: false)
+          .sendPrayerNotification(
+        widget.prayerData.id ?? '',
+        NotificationType.archived_prayers,
+        widget.prayerData.groupId ?? '',
+        widget.prayerData.description ?? '',
+      );
 
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
@@ -284,9 +301,11 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
       notifications.forEach((e) async =>
           await Provider.of<NotificationProviderV2>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
+      _sendPrayerNotification(NotificationType.answered_prayers);
       await Provider.of<PrayerProviderV2>(context, listen: false)
           .markPrayerAsAnswered(
               widget.prayerData.id ?? '', widget.prayerData.followers ?? []);
+      // _deleteFollowedPrayers();
 
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
@@ -323,6 +342,15 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
+  }
+
+  void _sendPrayerNotification(String type) async {
+    await Provider.of<NotificationProviderV2>(context, listen: false)
+        .sendPrayerNotification(
+            widget.prayerData.id ?? '',
+            type,
+            widget.prayerData.groupId ?? '',
+            widget.prayerData.description ?? '');
   }
 
   @override

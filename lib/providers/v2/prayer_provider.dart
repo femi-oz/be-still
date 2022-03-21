@@ -332,6 +332,7 @@ class PrayerProviderV2 with ChangeNotifier {
     try {
       await _prayerService.archivePrayer(
           prayerId: prayerId, followers: followers);
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
@@ -342,6 +343,7 @@ class PrayerProviderV2 with ChangeNotifier {
     try {
       await _prayerService.unArchivePrayer(
           currentFollowers: followers, isAdmin: isAdmin, prayerId: prayerId);
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
