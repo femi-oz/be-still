@@ -469,14 +469,15 @@ class GroupServiceV2 {
       GroupDataModel group = await getGroup(groupId);
       final groupUsers = group.users;
       final userToRemove = (groupUsers ?? [])
-          .firstWhere((element) => element.userId == userId)
+          .firstWhere((element) => element.userId == userId,
+              orElse: () => GroupUserDataModel())
           .toJson();
 
       final userGroups = user.groups;
       final userPrayers = user.prayers;
 
-      final groupIdToRemove =
-          (userGroups ?? []).firstWhere((element) => element == group.id);
+      final groupIdToRemove = (userGroups ?? [])
+          .firstWhere((element) => element == group.id, orElse: () => '');
 
       final prayerToRemove = (userPrayers ?? [])
           .where((element) => element.groupId == group.id)
