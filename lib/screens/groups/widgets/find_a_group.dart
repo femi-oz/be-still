@@ -10,6 +10,7 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/input_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -27,29 +28,18 @@ class FindAGroup extends StatefulWidget {
 class _FindAGroupState extends State<FindAGroup> {
   final TextEditingController _searchController = TextEditingController();
   final GlobalKey _keyButton = GlobalKey();
+  bool isInit = true;
 
   @override
   void initState() {
-    try {
-      Provider.of<GroupProviderV2>(context, listen: false).emptyGroupList();
-    } on HttpException catch (e, s) {
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    } catch (e, s) {
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    }
+    _searchController.text = '';
+
     super.initState();
   }
 
   void _searchGroup(String val) async {
     try {
-      final userId =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser.id;
+      final userId = FirebaseAuth.instance.currentUser?.uid;
       await Provider.of<GroupProviderV2>(context, listen: false)
           .searchAllGroups(val, userId ?? '');
     } on HttpException catch (e, s) {
@@ -66,9 +56,10 @@ class _FindAGroupState extends State<FindAGroup> {
   }
 
   Future<bool> _onWillPop() async {
+    _searchController.text = '';
+
     AppController appController = Get.find();
     appController.setCurrentPage(3, true, 11);
-
     return false;
   }
 

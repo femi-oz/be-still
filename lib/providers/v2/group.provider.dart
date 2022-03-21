@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/models/v2/notification.model.dart';
 import 'package:be_still/models/v2/request.model.dart';
+import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/services/v2/group_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -152,16 +154,7 @@ class GroupProviderV2 with ChangeNotifier {
                 .toLowerCase()
                 .contains(purpose.toLowerCase()))
             .toList();
-      // if (adminName.trim().isNotEmpty)
-      //   filteredGroups = filteredGroups.where((GroupDataModel data) {
-      //     UserDataModel admin;
-
-      //     return (data.users ?? []).any((u) =>
-      //         '${admin.firstName} ${admin.lastName}'
-      //             .toLowerCase()
-      //             .contains(adminName.toLowerCase()) &&
-      //         u.role == GroupUserRole.admin);
-      //   }).toList();
+      if (adminName.trim().isNotEmpty)
 
       //todo search by admin name
       if (adminName.trim().isEmpty &&
@@ -246,6 +239,7 @@ class GroupProviderV2 with ChangeNotifier {
   emptyGroupList() {
     try {
       _filteredAllGroups = [];
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
