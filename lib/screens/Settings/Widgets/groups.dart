@@ -959,10 +959,13 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       value,
                                       _currentUser.groups ?? []),
                               value: (group.users ?? [])
-                                      .firstWhere((e) =>
-                                          e.userId ==
-                                          FirebaseAuth
-                                              .instance.currentUser?.uid)
+                                      .firstWhere(
+                                        (e) =>
+                                            e.userId ==
+                                            FirebaseAuth
+                                                .instance.currentUser?.uid,
+                                        orElse: () => GroupUserDataModel(),
+                                      )
                                       .enableNotificationForUpdates ??
                                   false,
                             ),
