@@ -33,7 +33,6 @@ class _FindGroupToolsState extends State<FindGroupTools> {
       await Provider.of<GroupProviderV2>(context, listen: false)
           .advanceSearchAllGroups(
               _groupNameController.text,
-              userId ?? '',
               _locationController.text,
               _organizationController.text,
               _adminNameController.text,

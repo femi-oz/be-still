@@ -137,6 +137,8 @@ class _EntryScreenState extends State<EntryScreen> {
       else
         Settings.enableLocalAuth = false;
 
+      //set all users
+      await Provider.of<UserProviderV2>(context, listen: false).setAllUsers();
       final userId = FirebaseAuth.instance.currentUser?.uid ?? '';
       final user = await Provider.of<UserProviderV2>(context, listen: false)
           .getUserDataById(userId);
@@ -151,6 +153,7 @@ class _EntryScreenState extends State<EntryScreen> {
           .getDevotionals();
       await Provider.of<DevotionalProviderV2>(context, listen: false)
           .getBibles();
+
       //load settings
       // await Provider.of<SettingsProvider>(context, listen: false)
       //     .setPrayerSettings(userId ?? '');
@@ -166,9 +169,6 @@ class _EntryScreenState extends State<EntryScreen> {
 
       // await Provider.of<GroupPrayerProvider>(context, listen: false)
       //     .setFollowedPrayerByUserId(userId ?? '');
-
-      //set all users
-      await Provider.of<UserProviderV2>(context, listen: false).setAllUsers();
 
       // get all push notifications
       await Provider.of<NotificationProviderV2>(context, listen: false)

@@ -79,8 +79,10 @@ class UserProviderV2 with ChangeNotifier {
       final _firebaseUserId = FirebaseAuth.instance.currentUser?.uid;
 
       usersStream =
-          _userService.getAllUsers().asBroadcastStream().listen((users) {
+          _userService.getAllUsers().asBroadcastStream().listen((users) async {
         _allUsers = users.where((e) => e.id != _firebaseUserId).toList();
+        await Provider.of<GroupProviderV2>(Get.context!, listen: false)
+            .setAllGroups();
         notifyListeners();
       });
     } catch (e) {
