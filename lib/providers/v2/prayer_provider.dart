@@ -90,6 +90,7 @@ class PrayerProviderV2 with ChangeNotifier {
           .listen((event) async {
         await _prayerService.getUserFollowedPrayers(prayersIds).then((event) {
           _followedPrayers = event;
+          notifyListeners();
         });
         _prayers = [...followedPrayers, ...event];
         filterPrayers();

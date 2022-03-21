@@ -57,7 +57,28 @@ class GroupProviderV2 with ChangeNotifier {
           .getUserGroups(userGroupsId)
           .asBroadcastStream()
           .listen((userGroups) {
-        _userGroups = userGroups;
+        final isAdminGroups = userGroups
+            .where((element) => (element.users ?? []).any((element) =>
+                element.role == GroupUserRole.admin &&
+                element.userId == FirebaseAuth.instance.currentUser?.uid))
+            .toList();
+
+        isAdminGroups.sort((a, b) => (a.name ?? '')
+            .toLowerCase()
+            .compareTo((b.name ?? '').toLowerCase()));
+
+        final isNotAdminGroups = userGroups
+            .where((element) => (element.users ?? []).any((element) =>
+                element.role != GroupUserRole.admin &&
+                element.userId == FirebaseAuth.instance.currentUser?.uid))
+            .toList();
+
+        isNotAdminGroups.sort((a, b) => (a.name ?? '')
+            .toLowerCase()
+            .compareTo((b.name ?? '').toLowerCase()));
+
+        _userGroups = [...isAdminGroups, ...isNotAdminGroups];
+
         notifyListeners();
       });
     } catch (e) {

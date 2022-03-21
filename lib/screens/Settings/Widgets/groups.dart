@@ -812,13 +812,18 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    Text(
-                                      (group.organization ?? '').isEmpty
-                                          ? "-"
-                                          : group.organization ?? '',
-                                      style: AppTextStyles.regularText16b
-                                          .copyWith(
-                                              color: AppColors.textFieldText),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.7,
+                                      child: Text(
+                                        (group.organization ?? '').isEmpty
+                                            ? "-"
+                                            : group.organization ?? '',
+                                        style: AppTextStyles.regularText16b
+                                            .copyWith(
+                                                color: AppColors.textFieldText),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
                                   ],
                                 ),
