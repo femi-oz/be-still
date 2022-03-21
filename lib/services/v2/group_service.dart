@@ -16,6 +16,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quiver/iterables.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:rxdart/src/transformers/switch_map.dart';
 import 'package:uuid/uuid.dart';
 
 class GroupServiceV2 {
@@ -150,6 +152,24 @@ class GroupServiceV2 {
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
+  }
+
+  Stream<List<GroupDataModel>> getUserGroups(List<String> userGroupsId) {
+    if (_firebaseAuth.currentUser == null)
+      return Stream.error(StringUtils.unathorized);
+    if (userGroupsId.isEmpty) return Stream.value([]);
+    final List<List<String>> chunks = partition(userGroupsId, 10).toList();
+    List<Stream<List<GroupDataModel>>> streams =
+        <Stream<List<GroupDataModel>>>[];
+    chunks.forEach((chunk) => streams.add(_groupDataCollectionReference
+        .where('status', isEqualTo: Status.active)
+        .where(FieldPath.documentId, whereIn: chunk)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((document) =>
+                GroupDataModel.fromJson(document.data(), document.id))
+            .toList(growable: false))));
+    return ZipStream(streams, (List<List<GroupDataModel>> value) => value.last);
   }
 
   Future<GroupDataModel> getGroup(String groupId) async {
@@ -449,14 +469,15 @@ class GroupServiceV2 {
       GroupDataModel group = await getGroup(groupId);
       final groupUsers = group.users;
       final userToRemove = (groupUsers ?? [])
-          .firstWhere((element) => element.userId == userId)
+          .firstWhere((element) => element.userId == userId,
+              orElse: () => GroupUserDataModel())
           .toJson();
 
       final userGroups = user.groups;
       final userPrayers = user.prayers;
 
-      final groupIdToRemove =
-          (userGroups ?? []).firstWhere((element) => element == group.id);
+      final groupIdToRemove = (userGroups ?? [])
+          .firstWhere((element) => element == group.id, orElse: () => '');
 
       final prayerToRemove = (userPrayers ?? [])
           .where((element) => element.groupId == group.id)

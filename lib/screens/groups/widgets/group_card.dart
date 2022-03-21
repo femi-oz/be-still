@@ -237,16 +237,18 @@ class _GroupCardState extends State<GroupCard> {
                               'Church: ',
                               style: AppTextStyles.regularText15,
                             ),
-                            Text(
-                              ((this.widget.groupData).organization ?? '')
-                                      .isEmpty
-                                  ? '-'
-                                  : '${this.widget.groupData.organization}',
-                              style: AppTextStyles.regularText15.copyWith(
-                                color: AppColors.textFieldText,
+                            Expanded(
+                              child: Text(
+                                ((this.widget.groupData).organization ?? '')
+                                        .isEmpty
+                                    ? '-'
+                                    : '${this.widget.groupData.organization}',
+                                style: AppTextStyles.regularText15.copyWith(
+                                  color: AppColors.textFieldText,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.left,
                               ),
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.center,
                             ),
                           ],
                         ),

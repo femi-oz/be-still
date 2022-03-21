@@ -36,8 +36,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       BeStilDialog.showLoading(context);
       await Provider.of<GroupProviderV2>(context, listen: false)
           .removeGroupUser(userId, groupId);
-      await Provider.of<GroupProviderV2>(context, listen: false)
-          .setAllGroups(FirebaseAuth.instance.currentUser?.uid ?? '');
+      // await Provider.of<GroupProviderV2>(context, listen: false).setAllGroups();
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);

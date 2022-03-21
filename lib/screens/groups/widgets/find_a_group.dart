@@ -39,9 +39,13 @@ class _FindAGroupState extends State<FindAGroup> {
 
   void _searchGroup(String val) async {
     try {
+<<<<<<< .mine
       final userId = FirebaseAuth.instance.currentUser?.uid;
+=======
+
+>>>>>>> .theirs
       await Provider.of<GroupProviderV2>(context, listen: false)
-          .searchAllGroups(val, userId ?? '');
+          .searchAllGroups(val);
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;

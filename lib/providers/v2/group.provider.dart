@@ -3,16 +3,27 @@ import 'dart:async';
 import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/v2/group.model.dart';
+import 'package:be_still/models/v2/group_user.model.dart';
 import 'package:be_still/models/v2/notification.model.dart';
 import 'package:be_still/models/v2/request.model.dart';
+<<<<<<< .mine
 import 'package:be_still/models/v2/user.model.dart';
+
+=======
+import 'package:be_still/models/v2/user.model.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
+>>>>>>> .theirs
 import 'package:be_still/services/v2/group_service.dart';
+import 'package:be_still/services/v2/user_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class GroupProviderV2 with ChangeNotifier {
   GroupServiceV2 _groupService = locator<GroupServiceV2>();
+  UserServiceV2 _userService = locator<UserServiceV2>();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
 //search params
@@ -47,17 +58,19 @@ class GroupProviderV2 with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      await _groupService.getUserGroupsFuture(userGroupsId).then((userGroups) {
+      _groupService
+          .getUserGroups(userGroupsId)
+          .asBroadcastStream()
+          .listen((userGroups) {
         _userGroups = userGroups;
         notifyListeners();
       });
-      setAllGroups(_firebaseAuth.currentUser?.uid ?? '');
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> setAllGroups(String userId) async {
+  Future<void> setAllGroups() async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
@@ -65,9 +78,9 @@ class GroupProviderV2 with ChangeNotifier {
         _allGroups = groups;
         if (_isAdvanceSearch)
           advanceSearchAllGroups(
-              _groupName, userId, _location, _church, _adminName, _purpose);
+              _groupName, _location, _church, _adminName, _purpose);
         else
-          searchAllGroups(_searchQuery, userId);
+          searchAllGroups(_searchQuery);
         notifyListeners();
       });
     } catch (e) {
@@ -96,9 +109,8 @@ class GroupProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> searchAllGroups(String searchQuery, String userId) async {
+  Future<void> searchAllGroups(String searchQuery) async {
     try {
-      setAllGroups(userId);
       _searchQuery = searchQuery;
       _isAdvanceSearch = false;
       if (_firebaseAuth.currentUser == null)
@@ -120,8 +132,8 @@ class GroupProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> advanceSearchAllGroups(String name, String userId,
-      String location, String church, String adminName, String purpose) async {
+  Future<void> advanceSearchAllGroups(String name, String location,
+      String church, String adminName, String purpose) async {
     try {
       _groupName = name;
       _adminName = adminName;
@@ -131,10 +143,23 @@ class GroupProviderV2 with ChangeNotifier {
       _isAdvanceSearch = true;
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      List<GroupDataModel> filteredGroups = _allGroups
+
+      List<GroupDataModel> filteredGroups = [];
+
+      if (adminName.trim().isEmpty &&
+          purpose.trim().isEmpty &&
+          church.trim().isEmpty &&
+          location.trim().isEmpty &&
+          _groupName.isEmpty) {
+        filteredGroups = [];
+        notifyListeners();
+      }
+
+      filteredGroups = _allGroups
           .where((GroupDataModel data) =>
               (data.name ?? '').toLowerCase().contains(name.toLowerCase()))
           .toList();
+
       if (location.trim().isNotEmpty)
         filteredGroups = filteredGroups
             .where((GroupDataModel data) => (data.location ?? '')
@@ -154,8 +179,31 @@ class GroupProviderV2 with ChangeNotifier {
                 .toLowerCase()
                 .contains(purpose.toLowerCase()))
             .toList();
+<<<<<<< .mine
       if (adminName.trim().isNotEmpty)
 
+
+
+
+
+
+
+
+
+=======
+      if (adminName.trim().isNotEmpty) {
+        filteredGroups = filteredGroups.where((f) {
+          final adminUid = (f.users ?? [])
+                  .firstWhere((e) => e.role == GroupUserRole.admin)
+                  .userId ??
+              '';
+          final allUsers =
+              Provider.of<UserProviderV2>(Get.context!, listen: false).allUsers;
+          final admin = allUsers.firstWhere((u) => u.id == adminUid,
+              orElse: () => UserDataModel());
+>>>>>>> .theirs
+
+<<<<<<< .mine
       //todo search by admin name
       if (adminName.trim().isEmpty &&
           purpose.trim().isEmpty &&
@@ -163,8 +211,16 @@ class GroupProviderV2 with ChangeNotifier {
           location.trim().isEmpty &&
           _groupName.isEmpty) {
         filteredGroups = [];
-      }
+=======
+          return ('${admin.firstName} ${admin.lastName}'
+              .toLowerCase()
+              .contains(adminName.toLowerCase()));
+        }).toList();
 
+
+
+>>>>>>> .theirs
+      }
       _filteredAllGroups = filteredGroups;
       notifyListeners();
     } catch (e) {
