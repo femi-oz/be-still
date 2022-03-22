@@ -43,8 +43,6 @@ class _GroupPrayersState extends State<GroupPrayers> {
   @override
   void didChangeDependencies() async {
     if (_isInit) {
-      final _userId = FirebaseAuth.instance.currentUser?.uid;
-
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
         try {
           final group =

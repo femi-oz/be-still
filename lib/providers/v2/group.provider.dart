@@ -217,6 +217,7 @@ class GroupProviderV2 with ChangeNotifier {
           organization: organization,
           location: location,
           type: type);
+      await setCurrentGroupById(groupId);
       return groupId;
     } catch (e) {
       rethrow;
@@ -244,6 +245,7 @@ class GroupProviderV2 with ChangeNotifier {
           location: location,
           type: type);
       await setUserGroups(userGroupsId);
+      await setCurrentGroupById(groupId);
       return groupId;
     } catch (e) {
       rethrow;
