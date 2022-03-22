@@ -265,18 +265,17 @@ class _NoUpdateViewState extends State<NoUpdateView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          widget.prayerData?.groupId != '0'
-              ? Container(
-                  margin: EdgeInsets.only(bottom: 20),
-                  child: Text(
-                    creatorName,
-                    style: AppTextStyles.boldText16.copyWith(
-                      color: AppColors.lightBlue4,
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                )
-              : Container(),
+          if (widget.prayerData?.isGroup ?? false)
+            Container(
+              margin: EdgeInsets.only(bottom: 20),
+              child: Text(
+                creatorName,
+                style: AppTextStyles.boldText16.copyWith(
+                  color: AppColors.lightBlue4,
+                ),
+                textAlign: TextAlign.left,
+              ),
+            ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[

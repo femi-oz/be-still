@@ -51,6 +51,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
+  AppController appController = Get.find();
+
   @override
   void initState() {
     super.initState();
@@ -86,7 +88,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       clearSearch();
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
-      AppController appController = Get.find();
+
       appController.setCurrentPage(8, true, 8);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -125,7 +127,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
-      AppController appController = Get.find();
+
       appController.setCurrentPage(8, true, 8);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -165,7 +167,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       clearSearch();
 
       BeStilDialog.hideLoading(context);
-      AppController appController = Get.find();
+
       appController.setCurrentPage(8, true, 8);
       Navigator.pop(context);
     } on HttpException catch (e, s) {
@@ -215,7 +217,6 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       // _deleteFollowedPrayers();
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
-      AppController appController = Get.find();
       appController.setCurrentPage(8, true, 8);
       Navigator.pop(context);
     } on HttpException catch (e, s) {
@@ -262,7 +263,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
               widget.prayerData?.id ?? '', widget.prayerData?.followers ?? []);
       // _deleteFollowedPrayers();
       clearSearch();
-
+      appController.setCurrentPage(8, false, 0);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
     } on HttpException catch (e, s) {
@@ -286,7 +287,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       await Provider.of<PrayerProviderV2>(context, listen: false)
           .unMarkPrayerAsAnswered(widget.prayerData?.id ?? '');
       clearSearch();
-
+      appController.setCurrentPage(8, false, 0);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
     } on HttpException catch (e, s) {
@@ -443,10 +444,9 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
           .unArchivePrayer(
               prayerData?.id ?? '', prayerData?.followers ?? [], isAdmin);
       clearSearch();
-
+      appController.setCurrentPage(8, false, 0);
       BeStilDialog.hideLoading(context);
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          EntryScreen.routeName, (Route<dynamic> route) => false);
+      Navigator.pop(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
@@ -488,7 +488,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
         widget.prayerData?.description ?? '',
       );
       clearSearch();
-
+      appController.setCurrentPage(8, false, 0);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
     } on HttpException catch (e, s) {
@@ -619,7 +619,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                 Navigator.pop(context);
                                 await Future.delayed(
                                     Duration(milliseconds: 200));
-                                AppController appController = Get.find();
+
                                 appController.setCurrentPage(
                                     1, true, appController.currentPage);
                               } on HttpException catch (e, s) {
@@ -669,7 +669,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                 Navigator.pop(context);
                                 await Future.delayed(
                                     Duration(milliseconds: 200));
-                                AppController appController = Get.find();
+
                                 appController.setCurrentPage(
                                     13, true, appController.currentPage);
                               } on HttpException catch (e, s) {

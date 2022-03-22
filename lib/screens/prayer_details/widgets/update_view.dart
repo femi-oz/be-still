@@ -267,16 +267,17 @@ class _UpdateView extends State<UpdateView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Container(
-                margin: EdgeInsets.only(bottom: 20),
-                child: Text(
-                  creatorName,
-                  style: AppTextStyles.boldText16.copyWith(
-                    color: AppColors.lightBlue4,
+              if (widget.prayerData?.isGroup ?? false)
+                Container(
+                  margin: EdgeInsets.only(bottom: 20),
+                  child: Text(
+                    creatorName,
+                    style: AppTextStyles.boldText16.copyWith(
+                      color: AppColors.lightBlue4,
+                    ),
+                    textAlign: TextAlign.left,
                   ),
-                  textAlign: TextAlign.left,
                 ),
-              ),
               for (int i = 0; i < updates.length; i++)
                 _buildDetail(
                     '',

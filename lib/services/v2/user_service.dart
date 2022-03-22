@@ -52,7 +52,7 @@ class UserServiceV2 {
         allowEmergencyCalls: true,
         archiveAutoDeleteMinutes: 0,
         defaultSnoozeFrequency: 'Minutes',
-        defaultSnoozeDuration: 0,
+        defaultSnoozeDuration: 1,
         includeAnsweredPrayerAutoDelete: false,
         archiveSortBy: SortType.date,
         autoPlayMusic: true,
