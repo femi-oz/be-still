@@ -382,6 +382,16 @@ class PrayerProviderV2 with ChangeNotifier {
   //   } catch (e) {
   //     rethrow;
   //   }
+
+  // Future<void> removeReminder(
+  //   DateTime scheduledDate,
+  //   List<String> prayerIds,
+  // ) async {
+  //   final duration = scheduledDate.difference(DateTime.now()).inMinutes;
+  //   Future.delayed(Duration(minutes: duration), () async {
+  //     await setPrayers(prayerIds);
+  //     notifyListeners();
+  //   });
   // }
 
   Future<void> favoritePrayer(String prayerID) async {
