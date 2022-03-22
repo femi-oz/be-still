@@ -123,8 +123,12 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     if (Settings.rememberMe && Settings.lastUser.isNotEmpty) {
       final userInfo = jsonDecode(Settings.lastUser);
-      _usernameController.text = userInfo['email'];
-      _passwordController.text = Settings.userPassword;
+      if (userInfo['email'] != null) {
+        _usernameController.text = userInfo['email'];
+        _passwordController.text = Settings.userPassword;
+      } else {
+        return;
+      }
     }
     initDynamicLinks();
     super.initState();

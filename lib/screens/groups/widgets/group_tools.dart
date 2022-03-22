@@ -118,7 +118,8 @@ class _GroupToolsState extends State<GroupTools> {
       List<String> tokens) async {
     try {
       await Provider.of<NotificationProviderV2>(context, listen: false)
-          .sendPushNotification(message, messageType, sender, tokens);
+          .sendPushNotification(message, messageType, sender, tokens,
+              receiverId: receiverId, groupId: entityId);
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;

@@ -453,7 +453,7 @@ class _GroupCardState extends State<GroupCard> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Container(
+                  SizedBox(
                     width: MediaQuery.of(context).size.width * 0.4,
                     child: Text(
                       (this.widget.groupData).name ?? ''.toUpperCase(),
@@ -469,17 +469,21 @@ class _GroupCardState extends State<GroupCard> {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  Text(
-                    '${this.widget.groupData.location}'.toUpperCase(),
-                    style: TextStyle(
-                        color: AppColors.lightBlue4.withOpacity(
-                            (widget.groupData.users ?? [])
-                                    .map((e) => e.userId)
-                                    .contains(currentUser.id)
-                                ? 0.5
-                                : 1),
-                        fontSize: 10),
-                    textAlign: TextAlign.left,
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    child: Text(
+                      '${this.widget.groupData.location}'.toUpperCase(),
+                      style: TextStyle(
+                          color: AppColors.lightBlue4.withOpacity(
+                              (widget.groupData.users ?? [])
+                                      .map((e) => e.userId)
+                                      .contains(currentUser.id)
+                                  ? 0.5
+                                  : 1),
+                          fontSize: 10),
+                      textAlign: TextAlign.right,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ],
               )

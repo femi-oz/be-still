@@ -55,38 +55,50 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     }
   }
 
-  Future<void> _leaveGroup(GroupDataModel group) async {
+  _leaveGroup(GroupDataModel group) async {
+    Navigator.pop(context);
+
+    BeStilDialog.showLoading(context);
     try {
-      Navigator.pop(context);
-      BeStilDialog.showLoading(context, '');
+      final _userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+      final _user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
 
       await Provider.of<GroupProviderV2>(context, listen: false)
-          .leaveGroup(group.id ?? "");
+          .leaveGroup(group.id ?? '');
 
-      final receiver = (group.users ?? [])
-          .firstWhere((element) => element.role == GroupUserRole.admin);
-      final receiverData =
+      final userName =
+          '${(_user.firstName ?? '').capitalizeFirst} ${(_user.lastName ?? '').capitalizeFirst}';
+
+      final admin = (group.users ?? []).firstWhere(
+          (element) => element.role == GroupUserRole.admin,
+          orElse: () => GroupUserDataModel());
+
+      final adminData =
           await Provider.of<UserProviderV2>(context, listen: false)
-              .getUserDataById(receiver.userId ?? '');
-      final _currentUser =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+              .getUserDataById(admin.userId ?? '');
+
       await _sendPushNotification(
-          '${(receiverData.firstName ?? '').capitalizeFirst} ${(receiverData.lastName ?? '').capitalizeFirst} has left your group ${group.name}',
-          NotificationType.leave_group,
-          _currentUser.firstName ?? '',
-          'Groups',
-          (receiverData.devices ?? []).map((e) => e.token ?? '').toList(),
-          receiverData.id ?? '',
-          groupId: group.id);
+        '$userName has left this group',
+        NotificationType.leave_group,
+        userName,
+        _userId,
+        (adminData.devices ?? []).map((e) => e.token ?? '').toList(),
+        adminData.id ?? '',
+        groupId: group.id ?? '',
+      );
+
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
+
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
+
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
@@ -800,13 +812,18 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    Text(
-                                      (group.organization ?? '').isEmpty
-                                          ? "-"
-                                          : group.organization ?? '',
-                                      style: AppTextStyles.regularText16b
-                                          .copyWith(
-                                              color: AppColors.textFieldText),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.7,
+                                      child: Text(
+                                        (group.organization ?? '').isEmpty
+                                            ? "-"
+                                            : group.organization ?? '',
+                                        style: AppTextStyles.regularText16b
+                                            .copyWith(
+                                                color: AppColors.textFieldText),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -942,10 +959,13 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                       value,
                                       _currentUser.groups ?? []),
                               value: (group.users ?? [])
-                                      .firstWhere((e) =>
-                                          e.userId ==
-                                          FirebaseAuth
-                                              .instance.currentUser?.uid)
+                                      .firstWhere(
+                                        (e) =>
+                                            e.userId ==
+                                            FirebaseAuth
+                                                .instance.currentUser?.uid,
+                                        orElse: () => GroupUserDataModel(),
+                                      )
                                       .enableNotificationForUpdates ??
                                   false,
                             ),

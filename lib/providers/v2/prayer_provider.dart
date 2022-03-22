@@ -90,6 +90,7 @@ class PrayerProviderV2 with ChangeNotifier {
           .listen((event) async {
         await _prayerService.getUserFollowedPrayers(prayersIds).then((event) {
           _followedPrayers = event;
+          notifyListeners();
         });
         _prayers = [...followedPrayers, ...event];
         filterPrayers();
@@ -332,6 +333,7 @@ class PrayerProviderV2 with ChangeNotifier {
     try {
       await _prayerService.archivePrayer(
           prayerId: prayerId, followers: followers);
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
@@ -342,6 +344,7 @@ class PrayerProviderV2 with ChangeNotifier {
     try {
       await _prayerService.unArchivePrayer(
           currentFollowers: followers, isAdmin: isAdmin, prayerId: prayerId);
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
@@ -605,6 +608,8 @@ class PrayerProviderV2 with ChangeNotifier {
 
       _filteredPrayers = _distinct;
       _filteredPrayerTimeList = activePrayers;
+      _filteredPrayerTimeList.sort((a, b) => (b.modifiedDate ?? DateTime.now())
+          .compareTo(a.modifiedDate ?? DateTime.now()));
       notifyListeners();
     } catch (e) {
       rethrow;

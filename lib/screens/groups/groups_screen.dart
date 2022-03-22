@@ -108,10 +108,15 @@ class _GroupScreenState extends State<GroupScreen> {
                     Container(
                       padding: EdgeInsets.only(left: 50),
                       child: LongButton(
-                        onPress: () {
+                        onPress: () async {
                           try {
                             Provider.of<MiscProviderV2>(context, listen: false)
                                 .setPageTitle('FIND A GROUP');
+
+                            await Provider.of<GroupProviderV2>(context,
+                                    listen: false)
+                                .searchAllGroups('');
+
                             appController.setCurrentPage(11, true, 3);
                           } catch (e, s) {
                             final user = Provider.of<UserProviderV2>(context,
