@@ -85,6 +85,7 @@ class PrayerServiceV2 {
         modifiedDate: DateTime.now(),
         snoozeEndDate: DateTime.now(),
       ).toJson();
+
       _prayerDataCollectionReference.add(doc).then((value) {
         if (isGroup ?? false) {
           _notificationService.sendPrayerNotification(

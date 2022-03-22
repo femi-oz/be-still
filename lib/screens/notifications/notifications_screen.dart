@@ -280,10 +280,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   String getSenderName(String userId) {
     if (userId.isNotEmpty) {
-      Provider.of<UserProviderV2>(context, listen: false)
-          .getUserDataById(userId);
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).selectedUser;
+      final user = Provider.of<UserProviderV2>(context, listen: false)
+          .allUsers
+          .firstWhere((u) => u.id == userId, orElse: () => UserDataModel());
       final senderName = (user.firstName ?? '') + ' ' + (user.lastName ?? '');
       return senderName;
     } else {

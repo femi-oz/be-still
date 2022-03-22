@@ -345,16 +345,20 @@ class GroupServiceV2 {
               .firstWhere((element) => element.role == GroupUserRole.admin)
               .userId ??
           '';
+
       final admin = await _userService.getUserByIdFuture(adminId);
 
-      group = group..users?.add(user);
-
       WriteBatch batch = FirebaseFirestore.instance.batch();
-      batch.update(_groupDataCollectionReference.doc(group.id), group.toJson());
+
+      batch.update(_groupDataCollectionReference.doc(group.id), {
+        'users': FieldValue.arrayUnion([user.toJson()])
+      });
+
       batch.update(
           _userDataCollectionReference.doc(_firebaseAuth.currentUser?.uid), {
         'groups': FieldValue.arrayUnion([group.id])
       });
+
       final notId = Uuid().v1();
       final doc = NotificationModel(
         id: notId,
