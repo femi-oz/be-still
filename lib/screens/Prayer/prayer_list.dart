@@ -16,6 +16,7 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:be_still/widgets/initial_tutorial.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -60,6 +61,13 @@ class _PrayerListState extends State<PrayerList> {
               '${status == Status.active ? 'MY PRAYERS' : status.toUpperCase()}';
           await Provider.of<MiscProviderV2>(context, listen: false)
               .setPageTitle(heading);
+          final userId = FirebaseAuth.instance.currentUser?.uid;
+          await Provider.of<MiscProviderV2>(context, listen: false)
+              .setSearchMode(false);
+          await Provider.of<MiscProviderV2>(context, listen: false)
+              .setSearchQuery('');
+          await Provider.of<PrayerProviderV2>(context, listen: false)
+              .searchPrayers('', userId ?? '');
           if (Settings.isAppInit)
             TutorialTarget().showTutorial(
               context,

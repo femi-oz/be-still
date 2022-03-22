@@ -44,6 +44,13 @@ class _GroupScreenState extends State<GroupScreen> {
             .filterGroupPrayers();
         await Provider.of<MiscProviderV2>(context, listen: false)
             .setPageTitle('GROUPS');
+        final userId = FirebaseAuth.instance.currentUser?.uid;
+        await Provider.of<MiscProviderV2>(context, listen: false)
+            .setSearchMode(false);
+        await Provider.of<MiscProviderV2>(context, listen: false)
+            .setSearchQuery('');
+        await Provider.of<PrayerProviderV2>(context, listen: false)
+            .searchGroupPrayers('', userId ?? '');
       } catch (e, s) {
         final user =
             Provider.of<UserProviderV2>(context, listen: false).currentUser;
