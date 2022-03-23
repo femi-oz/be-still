@@ -70,7 +70,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     await Provider.of<MiscProviderV2>(context, listen: false)
         .setSearchQuery('');
     await Provider.of<PrayerProviderV2>(context, listen: false)
-        .searchPrayers('', userId ?? '');
+        .searchGroupPrayers('', userId ?? '');
   }
 
   void _followPrayer() async {
@@ -155,13 +155,16 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
           .userId;
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      final adminData =
+          await Provider.of<UserProviderV2>(context, listen: false)
+              .getUserDataById(adminId ?? '');
       await Provider.of<NotificationProviderV2>(context, listen: false)
           .flagAsInappropriate(
               widget.prayerData?.id ?? '',
               widget.prayerData?.groupId ?? '',
               adminId ?? '',
               (user.firstName ?? '') + ' ' + (user.lastName ?? ''),
-              (user.devices ?? []).map((e) => e.token ?? '').toList(),
+              (adminData.devices ?? []).map((e) => e.token ?? '').toList(),
               group.name ?? '');
 
       clearSearch();

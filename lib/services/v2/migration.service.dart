@@ -4,6 +4,7 @@
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/notification.model.dart';
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/prayer_settings.model.dart';
 import 'package:be_still/models/settings.model.dart';
@@ -11,26 +12,33 @@ import 'package:be_still/models/sharing_settings.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/models/v2/device.model.dart';
 import 'package:be_still/models/v2/follower.model.dart';
+import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/models/v2/update.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
+import 'package:be_still/services/notification_service.dart';
 import 'package:be_still/services/prayer_service.dart';
 import 'package:be_still/services/settings_service.dart';
 import 'package:be_still/services/user_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
 
 class MigrationService {
   final _oldUserService = locator<UserService>();
   final _oldSettingsService = locator<SettingsService>();
   final _oldPrayerService = locator<PrayerService>();
+  final _oldNotificationService = locator<NotificationService>();
 
   final CollectionReference<Map<String, dynamic>> _userDataCollectionReference =
       FirebaseFirestore.instance.collection("users");
   final CollectionReference<Map<String, dynamic>>
       _prayerDataCollectionReference =
       FirebaseFirestore.instance.collection("prayers");
+  final CollectionReference<Map<String, dynamic>>
+      _localNotificationCollectionReference =
+      FirebaseFirestore.instance.collection("local_notifications");
   Future<void> migrateUserData(String uid) async {
     //old user service
     //set old data
@@ -156,6 +164,30 @@ class MigrationService {
       print(newUserPrayer);
 
       _prayerDataCollectionReference.add(newUserPrayer);
+    });
+    await migrateUserReminders(userId);
+  }
+
+  Future<void> migrateUserReminders(String userId) async {
+    List<LocalNotificationModel> oldReminders =
+        await _oldNotificationService.getLocalNotifications(userId);
+    oldReminders.forEach((r) {
+      final newReminders = LocalNotificationDataModel(
+              userId: FirebaseAuth.instance.currentUser?.uid,
+              prayerId: r.entityId,
+              message: r.notificationText,
+              status: Status.active,
+              title: r.title,
+              localNotificationId: r.localNotificationId,
+              type: r.type,
+              frequency: r.frequency,
+              scheduleDate: r.scheduledDate,
+              createdBy: FirebaseAuth.instance.currentUser?.uid,
+              createdDate: DateTime.now(),
+              modifiedBy: FirebaseAuth.instance.currentUser?.uid,
+              modifiedDate: DateTime.now())
+          .toJson();
+      _localNotificationCollectionReference.add(newReminders);
     });
   }
 }

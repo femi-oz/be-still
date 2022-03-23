@@ -286,6 +286,13 @@ class _ReminderPickerState extends State<ReminderPicker> {
             notificationText: notificationText,
             scheduledDate: scheduleDate,
             frequency: selectedFrequency);
+      // final user = await Provider.of<UserProviderV2>(context, listen: false)
+      //     .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
+      // final prayerIds =
+      //     (user.prayers ?? []).map((e) => e.prayerId ?? '').toList();
+      // await Provider.of<PrayerProviderV2>(context, listen: false)
+      //     .removeReminder(scheduleDate, prayerIds);
+
       clearSearch();
       // BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
