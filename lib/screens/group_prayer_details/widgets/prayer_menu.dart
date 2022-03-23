@@ -191,25 +191,6 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     BeStilDialog.showLoading(context);
 
     try {
-      final notifications =
-          Provider.of<NotificationProviderV2>(context, listen: false)
-              .localNotifications
-              .where((e) => e.prayerId == widget.prayerData?.id)
-              .toList();
-      // final pushNotifications =
-      //     await Provider.of<NotificationProviderV2>(context, listen: false)
-      //         .getNotifications(widget.prayerData?.groupPrayer?.id ?? '');
-      // (pushNotifications ?? []).where((element) =>
-      //     element.prayerId == widget.prayerData?.groupPrayer?.id ||
-      //     element.groupId == widget.prayerData?.groupPrayer?.groupId);
-
-      // for (final not in notifications)
-      //   await Provider.of<NotificationProvider>(context, listen: false)
-      //       .deleteLocalNotification(
-      //           not.id ?? '', not.localNotificationId ?? 0);
-      // (pushNotifications ?? []).forEach((e) async =>
-      //     await Provider.of<NotificationProvider>(context, listen: false)
-      //         .updateNotification(e.id ?? ''));
       await Provider.of<PrayerProviderV2>(context, listen: false).deletePrayer(
           widget.prayerData?.id ?? '', widget.prayerData?.followers ?? []);
       clearSearch();

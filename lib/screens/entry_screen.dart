@@ -140,16 +140,11 @@ class _EntryScreenState extends State<EntryScreen> {
       //set all users
       await Provider.of<UserProviderV2>(context, listen: false).setAllUsers();
       final userId = FirebaseAuth.instance.currentUser?.uid ?? '';
-      final user = await Provider.of<UserProviderV2>(context, listen: false)
-          .getUserDataById(userId);
-      final userPrayersId =
-          (user.prayers ?? []).map((e) => e.prayerId ?? '').toList();
+      // final user = await Provider.of<UserProviderV2>(context, listen: false)
+      //     .getUserDataById(userId);
 
-      if (userId.isNotEmpty)
-        Provider.of<PrayerProviderV2>(context, listen: false)
-            .checkPrayerValidity(userId, userPrayersId);
-      await Provider.of<PrayerProviderV2>(context, listen: false).setPrayers(
-          (user.prayers ?? []).map((e) => e.prayerId ?? '').toList());
+      // await Provider.of<PrayerProviderV2>(context, listen: false).setPrayers(
+      //     (user.prayers ?? []).map((e) => e.prayerId ?? '').toList());
       Provider.of<MiscProviderV2>(context, listen: false).setDeviceId();
       await Provider.of<DevotionalProviderV2>(context, listen: false)
           .getDevotionals();

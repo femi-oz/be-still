@@ -315,6 +315,7 @@ class NotificationServiceV2 {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
+
       _localNotificationCollectionReference.doc(notificationId).delete();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));

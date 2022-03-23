@@ -130,6 +130,7 @@ class MigrationService {
               groupId: e.prayer?.groupId == '0' ? '' : e.prayer?.groupId,
               isGroup: e.prayer?.isGroup,
               isAnswered: e.prayer?.isAnswer,
+              archivedDate: e.userPrayer?.archivedDate,
               status: e.userPrayer?.deleteStatus == -1
                   ? Status.deleted
                   : e.userPrayer?.isArchived ?? false

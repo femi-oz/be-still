@@ -96,7 +96,8 @@ class UserDataModel {
     churchWebFormUrl = json['churchWebFormUrl'];
     defaultSnoozeFrequency = json['defaultSnoozeFrequency'];
     enablePushNotification = json['enablePushNotification'] ?? true;
-    defaultSnoozeDuration = json['defaultSnoozeDuration'];
+    defaultSnoozeDuration =
+        json['defaultSnoozeDuration'] == 0 ? 1 : json['defaultSnoozeDuration'];
     archiveSortBy = json['archiveSortBy'];
     archiveAutoDeleteMinutes = json['archiveAutoDeleteMinutes'];
     doNotDisturb = json['doNotDisturb'];
