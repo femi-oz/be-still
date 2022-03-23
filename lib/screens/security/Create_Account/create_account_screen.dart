@@ -113,6 +113,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         Settings.lastUser = '';
         Settings.userPassword = '';
         Settings.enableLocalAuth = false;
+        Settings.enabledReminderPermission = true;
         BeStilDialog.hideLoading(context);
         showInfoDialog(context);
       }

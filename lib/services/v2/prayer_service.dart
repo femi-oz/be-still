@@ -269,7 +269,9 @@ class PrayerServiceV2 {
             (element) => element.userId == _firebaseAuth.currentUser?.uid) &&
         !isAdmin) {
       FollowerModel user = currentFollowers.firstWhere(
-          (element) => element.userId == _firebaseAuth.currentUser?.uid);
+        (element) => element.userId == _firebaseAuth.currentUser?.uid,
+        orElse: () => FollowerModel(),
+      );
       user = currentFollowers[currentFollowers.indexOf(user)]
         ..prayerStatus = Status.active;
       currentFollowers[currentFollowers.indexOf(user)] = user;

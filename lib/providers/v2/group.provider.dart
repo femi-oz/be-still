@@ -168,49 +168,50 @@ class GroupProviderV2 with ChangeNotifier {
           location.trim().isEmpty &&
           _groupName.isEmpty) {
         filteredGroups = [];
-        notifyListeners();
+      } else {
+        filteredGroups = _allGroups
+            .where((GroupDataModel data) =>
+                (data.name ?? '').toLowerCase().contains(name.toLowerCase()))
+            .toList();
+
+        if (location.trim().isNotEmpty)
+          filteredGroups = filteredGroups
+              .where((GroupDataModel data) => (data.location ?? '')
+                  .toLowerCase()
+                  .contains(location.toLowerCase()))
+              .toList();
+
+        if (church.trim().isNotEmpty)
+          filteredGroups = filteredGroups
+              .where((GroupDataModel data) => (data.organization ?? '')
+                  .toLowerCase()
+                  .contains(church.toLowerCase()))
+              .toList();
+        if (purpose.trim().isNotEmpty)
+          filteredGroups = filteredGroups
+              .where((GroupDataModel data) => (data.purpose ?? '')
+                  .toLowerCase()
+                  .contains(purpose.toLowerCase()))
+              .toList();
+        if (adminName.trim().isNotEmpty) {
+          filteredGroups = filteredGroups.where((f) {
+            final adminUid = (f.users ?? [])
+                    .firstWhere((e) => e.role == GroupUserRole.admin)
+                    .userId ??
+                '';
+            final allUsers =
+                Provider.of<UserProviderV2>(Get.context!, listen: false)
+                    .allUsers;
+            final admin = allUsers.firstWhere((u) => u.id == adminUid,
+                orElse: () => UserDataModel());
+
+            return ('${admin.firstName} ${admin.lastName}'
+                .toLowerCase()
+                .contains(adminName.toLowerCase()));
+          }).toList();
+        }
       }
 
-      filteredGroups = _allGroups
-          .where((GroupDataModel data) =>
-              (data.name ?? '').toLowerCase().contains(name.toLowerCase()))
-          .toList();
-
-      if (location.trim().isNotEmpty)
-        filteredGroups = filteredGroups
-            .where((GroupDataModel data) => (data.location ?? '')
-                .toLowerCase()
-                .contains(location.toLowerCase()))
-            .toList();
-
-      if (church.trim().isNotEmpty)
-        filteredGroups = filteredGroups
-            .where((GroupDataModel data) => (data.organization ?? '')
-                .toLowerCase()
-                .contains(church.toLowerCase()))
-            .toList();
-      if (purpose.trim().isNotEmpty)
-        filteredGroups = filteredGroups
-            .where((GroupDataModel data) => (data.purpose ?? '')
-                .toLowerCase()
-                .contains(purpose.toLowerCase()))
-            .toList();
-      if (adminName.trim().isNotEmpty) {
-        filteredGroups = filteredGroups.where((f) {
-          final adminUid = (f.users ?? [])
-                  .firstWhere((e) => e.role == GroupUserRole.admin)
-                  .userId ??
-              '';
-          final allUsers =
-              Provider.of<UserProviderV2>(Get.context!, listen: false).allUsers;
-          final admin = allUsers.firstWhere((u) => u.id == adminUid,
-              orElse: () => UserDataModel());
-
-          return ('${admin.firstName} ${admin.lastName}'
-              .toLowerCase()
-              .contains(adminName.toLowerCase()));
-        }).toList();
-      }
       _filteredAllGroups = filteredGroups;
       notifyListeners();
     } catch (e) {

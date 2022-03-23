@@ -19,6 +19,7 @@ import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
+import 'package:be_still/widgets/snooze_prayer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -238,59 +239,21 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                     ),
                     if ((snapshot.data?.status == Status.snoozed))
                       Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                        InkWell(
-                          onTap: () => showDialog(
-                            context: context,
-                            barrierColor: AppColors.detailBackgroundColor[1]
-                                .withOpacity(0.5),
-                            builder: (BuildContext context) {
-                              return Dialog(
-                                insetPadding: EdgeInsets.all(20),
-                                backgroundColor: AppColors.prayerCardBgColor,
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: AppColors.darkBlue),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10.0),
-                                  ),
-                                ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 30),
-                                      child: ReminderPicker(
-                                        isGroup: false,
-                                        entityId: snapshot.data?.id ?? '',
-                                        type: NotificationType.reminder,
-                                        reminder: _reminder(snapshot.data),
-                                        hideActionuttons: false,
-                                        onCancel: () =>
-                                            Navigator.of(context).pop(),
-                                        prayerData: snapshot.data,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
-                                AppIcons.snooze,
-                                size: 12,
-                                color: AppColors.lightBlue5,
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(left: 7),
-                                child: Text(
-                                    'Snoozed until ${DateFormat('MMM').format(snapshot.data?.snoozeEndDate ?? DateTime.now())} ${getDayText(snapshot.data?.snoozeEndDate?.day)}, ${DateFormat('yyyy h:mm a').format(snapshot.data?.snoozeEndDate ?? DateTime.now())}',
-                                    style: AppTextStyles.regularText12),
-                              ),
-                            ],
-                          ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(
+                              AppIcons.snooze,
+                              size: 12,
+                              color: AppColors.lightBlue5,
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(left: 7),
+                              child: Text(
+                                  'Snoozed until ${DateFormat('MMM').format(snapshot.data?.snoozeEndDate ?? DateTime.now())} ${getDayText(snapshot.data?.snoozeEndDate?.day)}, ${DateFormat('yyyy h:mm a').format(snapshot.data?.snoozeEndDate ?? DateTime.now())}',
+                                  style: AppTextStyles.regularText12),
+                            ),
+                          ],
                         ),
                         SizedBox(width: 20),
                       ]),

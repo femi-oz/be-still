@@ -5,6 +5,7 @@ import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/follower.model.dart';
+import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
@@ -79,9 +80,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
   }
 
   bool get isAdmin {
-    final group = Provider.of<GroupProviderV2>(context)
+    final group = Provider.of<GroupProviderV2>(context, listen: false)
         .allGroups
-        .firstWhere((e) => e.id == widget.prayerData?.groupId);
+        .firstWhere(
+          (e) => e.id == widget.prayerData?.groupId,
+          orElse: () => GroupDataModel(),
+        );
 
     return (group.users ?? []).any((e) =>
         e.role == GroupUserRole.admin &&

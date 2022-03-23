@@ -109,7 +109,7 @@ class NotificationServiceV2 {
                 groupId: groupId,
                 receiverId: id,
                 prayerId: prayerId,
-                tokens: userTokens,
+                tokens: [],
                 type: type);
           }
         } else if (type == NotificationType.prayer_updates) {
@@ -120,7 +120,7 @@ class NotificationServiceV2 {
                 groupId: groupId,
                 receiverId: id,
                 prayerId: prayerId,
-                tokens: userTokens,
+                tokens: [],
                 type: type);
           }
         } else {

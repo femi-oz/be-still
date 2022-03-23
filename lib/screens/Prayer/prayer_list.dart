@@ -159,7 +159,7 @@ class _PrayerListState extends State<PrayerList> {
     } else if (filterOption.toLowerCase() == Status.following.toLowerCase()) {
       return 'You do not have any followed prayers.';
     } else {
-      return 'You do not have any active prayers.';
+      return 'You do not have any prayers.';
     }
   }
 
