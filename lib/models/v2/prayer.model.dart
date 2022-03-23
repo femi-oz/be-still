@@ -18,6 +18,7 @@ class PrayerDataModel {
   List<UpdateModel>? updates;
   List<TagModel>? tags;
   List<FollowerModel>? followers;
+  DateTime? archivedDate;
   String? createdBy;
   String? modifiedBy;
   DateTime? createdDate;
@@ -40,6 +41,7 @@ class PrayerDataModel {
       this.updates,
       this.tags,
       this.followers,
+      this.archivedDate,
       this.createdBy,
       this.modifiedBy,
       this.createdDate,
@@ -56,6 +58,9 @@ class PrayerDataModel {
     isFavorite = json['isFavorite'];
     userId = json['userId'];
     groupId = json['groupId'];
+    archivedDate = json['archivedDate']?.toDate() == null
+        ? DateTime.now().add(Duration(days: 10))
+        : json['archivedDate']?.toDate();
     snoozeEndDate = json['snoozeEndDate']?.toDate();
     snoozeFrequency = json['snoozeFrequency'];
     snoozeDuration = json['snoozeDuration'];
@@ -95,6 +100,7 @@ class PrayerDataModel {
     data['isFavorite'] = this.isFavorite;
     data['userId'] = this.userId;
     data['groupId'] = this.groupId;
+    data['archivedDate'] = this.archivedDate;
     data['snoozeEndDate'] = this.snoozeEndDate;
     data['snoozeFrequency'] = this.snoozeFrequency;
     data['snoozeDuration'] = this.snoozeDuration;

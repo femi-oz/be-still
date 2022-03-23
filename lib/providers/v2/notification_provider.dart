@@ -345,6 +345,10 @@ class NotificationProviderV2 with ChangeNotifier {
     await _flutterLocalNotificationsPlugin.cancelAll();
   }
 
+  Future<void> cancelLocalNotificationById(int id) async {
+    await _flutterLocalNotificationsPlugin.cancel(id);
+  }
+
   Future<void> flagAsInappropriate(
       String prayerId,
       String groupId,

@@ -5,17 +5,21 @@ import 'package:be_still/locator.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/followed_prayer.model.dart';
 import 'package:be_still/models/v2/follower.model.dart';
+import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/message_template.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/models/v2/update.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/services/v2/notification_service.dart';
 import 'package:be_still/services/v2/user_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:quiver/iterables.dart';
 import 'package:uuid/uuid.dart';
 
@@ -29,6 +33,10 @@ class PrayerServiceV2 {
 
   final CollectionReference<Map<String, dynamic>> _userDataCollectionReference =
       FirebaseFirestore.instance.collection('users');
+
+  final CollectionReference<Map<String, dynamic>>
+      _localNotificationCollectionReference =
+      FirebaseFirestore.instance.collection("local_notifications");
 
   final CollectionReference<Map<String, dynamic>>
       _messageTemplateCollectionReference =
@@ -60,6 +68,7 @@ class PrayerServiceV2 {
         userId: _firebaseAuth.currentUser?.uid,
         groupId: groupId,
         followers: [],
+        archivedDate: null,
         status: Status.active,
         tags: (contacts ?? [])
             .map((contact) => TagModel(
@@ -551,36 +560,66 @@ class PrayerServiceV2 {
     }
   }
 
-  Future<void> autoUnArchivePrayers() async {
-    try {
-      final archivedPrayers = await _prayerDataCollectionReference
-          .where('userId', isEqualTo: _firebaseAuth.currentUser?.uid)
-          .where('isGroup', isEqualTo: false)
-          .get();
+  // Future<void> autoUnArchivePrayers() async {
+  //   try {
+  //     final archivedPrayers = await _prayerDataCollectionReference
+  //         .where('userId', isEqualTo: _firebaseAuth.currentUser?.uid)
+  //         .where('isGroup', isEqualTo: false)
+  //         .get();
 
-      archivedPrayers.docs.forEach((prayer) {
-        WriteBatch batch = FirebaseFirestore.instance.batch();
-        final mappedPrayer = PrayerDataModel.fromJson(prayer.data(), prayer.id);
-        if ((mappedPrayer.followers ?? []).isNotEmpty &&
-            (mappedPrayer.followers ?? []).any((element) =>
-                element.userId == _firebaseAuth.currentUser?.uid)) {
-          FollowerModel user = (mappedPrayer.followers ?? []).firstWhere(
-              (element) => element.userId == _firebaseAuth.currentUser?.uid);
-          user = (mappedPrayer.followers ??
-              [])[(mappedPrayer.followers ?? []).indexOf(user)]
-            ..prayerStatus = Status.active;
-          (mappedPrayer.followers ??
-              [])[(mappedPrayer.followers ?? []).indexOf(user)] = user;
-          batch.update(
-              prayer.reference, {'followers': (mappedPrayer.followers ?? [])});
-        } else {
-          batch.update(prayer.reference, {'status': Status.active});
-        }
-        batch.commit();
+  //     archivedPrayers.docs.forEach((prayer) {
+  //       WriteBatch batch = FirebaseFirestore.instance.batch();
+  //       final mappedPrayer = PrayerDataModel.fromJson(prayer.data(), prayer.id);
+  //       if ((mappedPrayer.followers ?? []).isNotEmpty &&
+  //           (mappedPrayer.followers ?? []).any((element) =>
+  //               element.userId == _firebaseAuth.currentUser?.uid)) {
+  //         FollowerModel user = (mappedPrayer.followers ?? []).firstWhere(
+  //             (element) => element.userId == _firebaseAuth.currentUser?.uid);
+  //         user = (mappedPrayer.followers ??
+  //             [])[(mappedPrayer.followers ?? []).indexOf(user)]
+  //           ..prayerStatus = Status.active;
+  //         (mappedPrayer.followers ??
+  //             [])[(mappedPrayer.followers ?? []).indexOf(user)] = user;
+  //         batch.update(
+  //             prayer.reference, {'followers': (mappedPrayer.followers ?? [])});
+  //       } else {
+  //         batch.update(prayer.reference, {'status': Status.active});
+  //       }
+  //       batch.commit();
+  //     });
+  //   } catch (e) {
+  //     throw HttpException(StringUtils.getErrorMessage(e));
+  //   }
+  // }
+
+  Future<void> autoDeleteArchivePrayers(int autoDeletePeriod) async {
+    final archivedPrayers = await _prayerDataCollectionReference
+        .where('userId', isEqualTo: _firebaseAuth.currentUser?.uid)
+        .where('status', isEqualTo: Status.archived)
+        .get();
+    final mappedPrayers = archivedPrayers.docs
+        .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
+        .toList();
+    final filteredPrayers = mappedPrayers
+        .where((prayer) => (prayer.archivedDate ?? DateTime.now())
+            .add(Duration(minutes: autoDeletePeriod))
+            .isBefore(DateTime.now()))
+        .toList();
+    filteredPrayers.forEach((prayer) async {
+      _prayerDataCollectionReference
+          .doc(prayer.id)
+          .update({'status': Status.deleted});
+      final notProvider =
+          Provider.of<NotificationProviderV2>(Get.context!, listen: false);
+      final notifications = notProvider.localNotifications
+          .where((e) => e.prayerId == prayer.id)
+          .toList();
+      notifications.forEach((element) {
+        if (element.localNotificationId != null)
+          notProvider
+              .cancelLocalNotificationById(element.localNotificationId ?? 0);
       });
-    } catch (e) {
-      throw HttpException(StringUtils.getErrorMessage(e));
-    }
+    });
   }
 
   Future<void> followPrayer(

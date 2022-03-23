@@ -334,6 +334,7 @@ class GroupServiceV2 {
         enableNotificationForUpdates: true,
         notifyMeOfFlaggedPrayers: true,
         notifyWhenNewMemberJoins: true,
+        enableNotificationForNewPrayers: true,
         status: Status.active,
         createdBy: _firebaseAuth.currentUser?.uid,
         createdDate: DateTime.now(),

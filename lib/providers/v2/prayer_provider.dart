@@ -8,13 +8,18 @@ import 'package:be_still/models/v2/follower.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/models/v2/update.model.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/services/v2/prayer_service.dart';
 import 'package:be_still/services/v2/user_service.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
+
+import 'notification_provider.dart';
 
 class PrayerProviderV2 with ChangeNotifier {
   PrayerServiceV2 _prayerService = locator<PrayerServiceV2>();
@@ -88,10 +93,9 @@ class PrayerProviderV2 with ChangeNotifier {
           .getUserPrayers()
           .asBroadcastStream()
           .listen((event) async {
-        await _prayerService.getUserFollowedPrayers(prayersIds).then((event) {
-          _followedPrayers = event;
-          notifyListeners();
-        });
+        await checkPrayerValidity();
+        _followedPrayers =
+            await _prayerService.getUserFollowedPrayers(prayersIds);
         _prayers = [...followedPrayers, ...event];
         filterPrayers();
         notifyListeners();
@@ -137,14 +141,12 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> checkPrayerValidity(
-      String userId, List<String> prayersIds) async {
+  Future<void> checkPrayerValidity() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       if (prayers.length > 0) {
-        // await _autoDeleteArchivePrayers(userId);
-        // await _unSnoozePrayerPast(userId);
-        await setPrayers(prayersIds);
+        await _autoDeleteArchivePrayers();
+        await _unSnoozePrayerPast();
       }
     } catch (e) {
       rethrow;
@@ -374,25 +376,29 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  // Future<void> autoDeleteArchivePrayers(String userId) async {
-  //   try {
-  //     if (_firebaseAuth.currentUser == null) return null;
-  //     _prayerService.autoDeleteArchivePrayers(
-  //         userId, settings.archiveAutoDeleteMins ?? 0);
-  //   } catch (e) {
-  //     rethrow;
-  //   }
+  Future<void> _autoDeleteArchivePrayers() async {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      final archiveAutoDeleteMins =
+          Provider.of<UserProviderV2>(Get.context!, listen: false)
+                  .currentUser
+                  .archiveAutoDeleteMinutes ??
+              0;
+      if (archiveAutoDeleteMins > 0)
+        await _prayerService.autoDeleteArchivePrayers(archiveAutoDeleteMins);
+    } catch (e) {
+      rethrow;
+    }
+  }
 
-  // Future<void> removeReminder(
-  //   DateTime scheduledDate,
-  //   List<String> prayerIds,
-  // ) async {
-  //   final duration = scheduledDate.difference(DateTime.now()).inMinutes;
-  //   Future.delayed(Duration(minutes: duration), () async {
-  //     await setPrayers(prayerIds);
-  //     notifyListeners();
-  //   });
-  // }
+  Future<void> _unSnoozePrayerPast() async {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      _prayerService.autoUnSnoozePrayers();
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   Future<void> favoritePrayer(String prayerID) async {
     try {
@@ -434,6 +440,16 @@ class PrayerProviderV2 with ChangeNotifier {
       if (_firebaseAuth.currentUser == null) return null;
       await _prayerService.deletePrayer(
           prayerId: prayerId, followers: followers);
+      final notProvider =
+          Provider.of<NotificationProviderV2>(Get.context!, listen: false);
+      final notifications = notProvider.localNotifications
+          .where((e) => e.prayerId == prayerId)
+          .toList();
+      notifications.forEach((element) {
+        if (element.localNotificationId != null)
+          notProvider
+              .cancelLocalNotificationById(element.localNotificationId ?? 0);
+      });
     } catch (e) {
       rethrow;
     }
