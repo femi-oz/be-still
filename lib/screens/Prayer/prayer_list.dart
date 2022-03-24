@@ -62,12 +62,16 @@ class _PrayerListState extends State<PrayerList> {
           await Provider.of<MiscProviderV2>(context, listen: false)
               .setPageTitle(heading);
           final userId = FirebaseAuth.instance.currentUser?.uid;
-          await Provider.of<MiscProviderV2>(context, listen: false)
-              .setSearchMode(false);
-          await Provider.of<MiscProviderV2>(context, listen: false)
-              .setSearchQuery('');
-          await Provider.of<PrayerProviderV2>(context, listen: false)
-              .searchPrayers('', userId ?? '');
+          AppController appController = Get.find();
+          if (appController.previousPage != 7) {
+            await Provider.of<MiscProviderV2>(context, listen: false)
+                .setSearchMode(false);
+            await Provider.of<MiscProviderV2>(context, listen: false)
+                .setSearchQuery('');
+            await Provider.of<PrayerProviderV2>(context, listen: false)
+                .searchPrayers('', userId ?? '');
+          }
+
           if (Settings.isAppInit)
             TutorialTarget().showTutorial(
               context,

@@ -49,6 +49,16 @@ class _GroupPrayersState extends State<GroupPrayers> {
               Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
           await Provider.of<MiscProviderV2>(context, listen: false)
               .setPageTitle((group.name ?? '').toUpperCase());
+          AppController appController = Get.find();
+          if (appController.previousPage != 9) {
+            await Provider.of<MiscProviderV2>(context, listen: false)
+                .setSearchMode(false);
+            await Provider.of<MiscProviderV2>(context, listen: false)
+                .setSearchQuery('');
+            await Provider.of<PrayerProviderV2>(context, listen: false)
+                .searchGroupPrayers(
+                    '', FirebaseAuth.instance.currentUser?.uid ?? '');
+          }
         } on HttpException catch (e, s) {
           final user =
               Provider.of<UserProviderV2>(context, listen: false).currentUser;
@@ -61,6 +71,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
               context, StringUtils.getErrorMessage(e), user, s);
         }
       });
+
       _isInit = false;
     }
     super.didChangeDependencies();
