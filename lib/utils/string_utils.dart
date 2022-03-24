@@ -65,9 +65,7 @@ class StringUtils {
   static String documentDoesNotExist = "Document does not exist.";
 
   static String getErrorMessage(e) {
-    return (e?.emtpyLitsMessage != null
-            ? e.emtpyLitsMessage
-            : StringUtils.errorOccured) ??
+    return (e?.message != null ? e.message : StringUtils.errorOccured) ??
         StringUtils.errorOccured;
   }
 

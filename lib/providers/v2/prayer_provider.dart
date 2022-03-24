@@ -602,6 +602,10 @@ class PrayerProviderV2 with ChangeNotifier {
             .toList();
       }
       if (_filterOption == Status.snoozed) {
+        favoritePrayers = prayers
+            .where((PrayerDataModel data) =>
+                (data.isFavorite ?? false) && (data.status == Status.snoozed))
+            .toList();
         snoozedPrayers = prayers
             .where((PrayerDataModel data) => data.status == Status.snoozed)
             .toList();
