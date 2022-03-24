@@ -145,7 +145,7 @@ class _PrayerListState extends State<PrayerList> {
     }
   }
 
-  String get message {
+  String get emtpyLitsMessage {
     final filterOption = Provider.of<PrayerProviderV2>(context).filterOption;
 
     if (filterOption.toLowerCase() == Status.active.toLowerCase()) {
@@ -217,7 +217,7 @@ class _PrayerListState extends State<PrayerList> {
                                     child: Opacity(
                                       opacity: 0.3,
                                       child: Text(
-                                        message,
+                                        emtpyLitsMessage,
                                         style: AppTextStyles.demiboldText34,
                                         textAlign: TextAlign.center,
                                       ),
