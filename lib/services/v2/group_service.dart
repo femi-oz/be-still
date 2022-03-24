@@ -158,6 +158,11 @@ class GroupServiceV2 {
     }
   }
 
+  Stream<QuerySnapshot<Map<String, dynamic>>> getUserGroupEmpty(
+      List<String> userGroupsId) {
+    return _groupDataCollectionReference.snapshots();
+  }
+
   Stream<List<GroupDataModel>> getUserGroups(List<String> userGroupsId) {
     if (_firebaseAuth.currentUser == null)
       return Stream.error(StringUtils.unathorized);

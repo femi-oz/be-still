@@ -140,32 +140,12 @@ class _EntryScreenState extends State<EntryScreen> {
       //set all users
       await Provider.of<UserProviderV2>(context, listen: false).setAllUsers();
       final userId = FirebaseAuth.instance.currentUser?.uid ?? '';
-      // final user = await Provider.of<UserProviderV2>(context, listen: false)
-      //     .getUserDataById(userId);
 
-      // await Provider.of<PrayerProviderV2>(context, listen: false).setPrayers(
-      //     (user.prayers ?? []).map((e) => e.prayerId ?? '').toList());
       Provider.of<MiscProviderV2>(context, listen: false).setDeviceId();
       await Provider.of<DevotionalProviderV2>(context, listen: false)
           .getDevotionals();
       await Provider.of<DevotionalProviderV2>(context, listen: false)
           .getBibles();
-
-      //load settings
-      // await Provider.of<SettingsProvider>(context, listen: false)
-      //     .setPrayerSettings(userId ?? '');
-      // await Provider.of<SettingsProvider>(context, listen: false)
-      //     .setSettings(userId ?? '');
-      // await Provider.of<SettingsProvider>(context, listen: false)
-      //     .setSharingSettings(userId ?? '');
-
-      // await Provider.of<SettingsProvider>(context, listen: false)
-      //     .setGroupSettings(userId??'');
-      // await Provider.of<SettingsProvider>(context, listen: false)
-      //     .setGroupPreferenceSettings(userId ?? '');
-
-      // await Provider.of<GroupPrayerProvider>(context, listen: false)
-      //     .setFollowedPrayerByUserId(userId ?? '');
 
       // get all push notifications
       await Provider.of<NotificationProviderV2>(context, listen: false)
