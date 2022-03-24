@@ -172,8 +172,12 @@ class GroupServiceV2 {
         .map((snapshot) => snapshot.docs
             .map((document) =>
                 GroupDataModel.fromJson(document.data(), document.id))
-            .toList(growable: false))));
-    return ZipStream(streams, (List<List<GroupDataModel>> value) => value.last);
+            .toList())));
+    print(streams);
+    return ZipStream(
+        streams,
+        (List<List<GroupDataModel>> value) =>
+            value.expand((element) => element).toList());
   }
 
   Future<GroupDataModel> getGroup(String groupId) async {
@@ -294,7 +298,7 @@ class GroupServiceV2 {
         status: Status.active,
         isSent: 0,
         senderId: _firebaseAuth.currentUser?.uid,
-        tokens: (requestor.devices ?? []).map((e) => e.token ?? '').toList(),
+        tokens: [],
         type: NotificationType.accept_request,
         groupId: group.id,
         prayerId: '',
@@ -331,6 +335,7 @@ class GroupServiceV2 {
         id: Uuid().v1(),
         userId: _firebaseAuth.currentUser?.uid,
         role: GroupUserRole.member,
+        enableNotificationForNewPrayers: true,
         enableNotificationForUpdates: true,
         notifyMeOfFlaggedPrayers: true,
         notifyWhenNewMemberJoins: true,

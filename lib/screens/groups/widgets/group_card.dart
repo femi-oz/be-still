@@ -41,7 +41,9 @@ class _GroupCardState extends State<GroupCard> {
       BeStilDialog.showLoading(context);
       List<String> tokens = [];
       final devices = admin.devices ?? <DeviceModel>[];
-      tokens = devices.map((e) => e.token ?? '').toList();
+      if (admin.enableNotificationsForAllGroups ?? false) {
+        tokens = devices.map((e) => e.token ?? '').toList();
+      }
       String adminDataId = (groupData.users ?? <GroupUserDataModel>[])
               .firstWhere((element) => element.role == GroupUserRole.admin)
               .userId ??
@@ -81,7 +83,9 @@ class _GroupCardState extends State<GroupCard> {
     try {
       List<String> tokens = [];
       final devices = admin.devices ?? <DeviceModel>[];
-      tokens = devices.map((e) => e.token ?? '').toList();
+      if (admin.enableNotificationsForAllGroups ?? false) {
+        tokens = devices.map((e) => e.token ?? '').toList();
+      }
 
       await Provider.of<GroupProviderV2>(context, listen: false).autoJoinGroup(
         groupData,
@@ -230,28 +234,27 @@ class _GroupCardState extends State<GroupCard> {
                           ],
                         ),
                         SizedBox(height: 10.0),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Church: ',
-                              style: AppTextStyles.regularText15,
-                            ),
-                            Expanded(
-                              child: Text(
-                                ((this.widget.groupData).organization ?? '')
-                                        .isEmpty
-                                    ? '-'
-                                    : '${this.widget.groupData.organization}',
-                                style: AppTextStyles.regularText15.copyWith(
-                                  color: AppColors.textFieldText,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.left,
+                        RichText(
+                          textAlign: TextAlign.center,
+                          text: new TextSpan(
+                            children: <TextSpan>[
+                              new TextSpan(
+                                text: 'Church: ',
+                                style: AppTextStyles.regularText15,
                               ),
-                            ),
-                          ],
+                              new TextSpan(
+                                  text: ((this.widget.groupData).organization ??
+                                              '')
+                                          .isEmpty
+                                      ? '-'
+                                      : '${this.widget.groupData.organization}',
+                                  style: AppTextStyles.regularText15.copyWith(
+                                    color: AppColors.textFieldText,
+                                  ))
+                            ],
+                          ),
                         ),
+
                         // Row(
                         //   mainAxisAlignment: MainAxisAlignment.center,
                         //   children: [

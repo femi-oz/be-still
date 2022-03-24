@@ -4,6 +4,7 @@ import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/v2/device.model.dart';
 import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
@@ -158,13 +159,18 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       final adminData =
           await Provider.of<UserProviderV2>(context, listen: false)
               .getUserDataById(adminId ?? '');
+      List<String> tokens = [];
+      final devices = adminData.devices ?? <DeviceModel>[];
+      if (adminData.enableNotificationsForAllGroups ?? false) {
+        tokens = devices.map((e) => e.token ?? '').toList();
+      }
       await Provider.of<NotificationProviderV2>(context, listen: false)
           .flagAsInappropriate(
               widget.prayerData?.id ?? '',
               widget.prayerData?.groupId ?? '',
               adminId ?? '',
               (user.firstName ?? '') + ' ' + (user.lastName ?? ''),
-              (adminData.devices ?? []).map((e) => e.token ?? '').toList(),
+              tokens,
               group.name ?? '');
 
       clearSearch();
