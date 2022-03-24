@@ -166,7 +166,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       String userId, GroupDataModel group, String role) async {
     bool userIsAdmin = false;
     UserDataModel user =
-        await Provider.of<UserProviderV2>(context).getUserDataById(userId);
+        await Provider.of<UserProviderV2>(context, listen: false)
+            .getUserDataById(userId);
     try {
       final _currentUser =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;

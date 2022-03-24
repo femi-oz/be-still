@@ -98,6 +98,7 @@ class PrayerProviderV2 with ChangeNotifier {
             await _prayerService.getUserFollowedPrayers(prayersIds);
         _prayers = [...followedPrayers, ...event];
         filterPrayers();
+
         notifyListeners();
       });
     } catch (e) {
@@ -640,6 +641,14 @@ class PrayerProviderV2 with ChangeNotifier {
       _filteredPrayerTimeList = activePrayers;
       _filteredPrayerTimeList.sort((a, b) => (b.modifiedDate ?? DateTime.now())
           .compareTo(a.modifiedDate ?? DateTime.now()));
+      _filteredPrayerTimeList = [
+        ..._filteredPrayerTimeList
+            .where((element) => element.isFavorite ?? false)
+            .toList(),
+        ..._filteredPrayerTimeList
+            .where((element) => !(element.isFavorite ?? false))
+            .toList(),
+      ];
       notifyListeners();
     } catch (e) {
       rethrow;
