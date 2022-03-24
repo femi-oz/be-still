@@ -163,18 +163,16 @@ class _GroupsSettingsState extends State<GroupsSettings> {
   }
 
   void _showMemberAlert(
-      UserDataModel user, GroupDataModel group, String role) async {
+      String userId, GroupDataModel group, String role) async {
     bool userIsAdmin = false;
-    UserDataModel userData = UserDataModel();
+    UserDataModel user =
+        await Provider.of<UserProviderV2>(context).getUserDataById(userId);
     try {
       final _currentUser =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
       userIsAdmin = user.id == _currentUser.id && role == GroupUserRole.admin
           ? true
           : false;
-
-      userData =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
 
@@ -576,20 +574,33 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     });
   }
 
-  // List<GroupUserDataModel> sortedGroupMembers(
-  //     List<GroupUserDataModel> groupMembers) {
-  //   final adminId = groupMembers
-  //       .firstWhere((element) => element.role == GroupUserRole.admin);
-  //       final adminData =
-  //   final memberNames = groupMembers
-  //       .where((element) => element.role == GroupUserRole.member)
-  //       .toList();
-  //   memberNames.sort((a, b) => (a.fullName ?? '')
-  //       .toLowerCase()
-  //       .compareTo((b.fullName ?? '').toLowerCase()));
-  //   final users = [...adminName, ...memberNames];
-  //   return users;
-  // }
+  List<GroupUserDataModel> sortedGroupMembers(
+      List<GroupUserDataModel> groupMembers) {
+    final admin = groupMembers
+        .firstWhere((element) => element.role == GroupUserRole.admin);
+    final members = groupMembers
+        .where((element) => element.role == GroupUserRole.member)
+        .toList();
+    members.sort((a, b) => (getMemberName(a.userId ?? ''))
+        .toLowerCase()
+        .compareTo((getMemberName(b.userId ?? '')).toLowerCase()));
+    final users = [admin, ...members];
+    return users;
+  }
+
+  String getMemberName(String userId) {
+    if (userId.isNotEmpty) {
+      final user = userId == FirebaseAuth.instance.currentUser?.uid
+          ? Provider.of<UserProviderV2>(context, listen: false).currentUser
+          : Provider.of<UserProviderV2>(context, listen: false)
+              .allUsers
+              .firstWhere((u) => u.id == userId, orElse: () => UserDataModel());
+      final senderName = (user.firstName ?? '') + ' ' + (user.lastName ?? '');
+      return senderName;
+    } else {
+      return '';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1008,155 +1019,128 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                     padding: const EdgeInsets.only(left: 20.0),
                                     child: Column(
                                       children: <Widget>[
-                                        ...(group.users ?? []).map(
+                                        ...sortedGroupMembers(group.users ?? [])
+                                            .map(
                                           (groupUser) {
-                                            return FutureBuilder<UserDataModel>(
-                                                future: Provider.of<
-                                                            UserProviderV2>(
-                                                        context,
-                                                        listen: false)
-                                                    .getUserDataById(
-                                                        groupUser.userId ?? ''),
-                                                builder: (context, snapshot) {
-                                                  if (!snapshot.hasData)
-                                                    return SizedBox.shrink();
-                                                  else
-                                                    return GestureDetector(
-                                                      onTap: () async {
-                                                        try {
-                                                          _showMemberAlert(
-                                                              snapshot.data ??
-                                                                  UserDataModel(),
-                                                              group,
-                                                              groupUser.role ??
-                                                                  '');
-                                                        } on HttpException catch (e, s) {
-                                                          BeStilDialog
-                                                              .hideLoading(
-                                                                  context);
+                                            return GestureDetector(
+                                              onTap: () async {
+                                                try {
+                                                  _showMemberAlert(
+                                                      groupUser.userId ?? '',
+                                                      group,
+                                                      groupUser.role ?? '');
+                                                } on HttpException catch (e, s) {
+                                                  BeStilDialog.hideLoading(
+                                                      context);
 
-                                                          final user = Provider
-                                                                  .of<UserProviderV2>(
-                                                                      context,
-                                                                      listen:
-                                                                          false)
-                                                              .currentUser;
-                                                          BeStilDialog
-                                                              .showErrorDialog(
-                                                                  context,
-                                                                  StringUtils
-                                                                      .getErrorMessage(
-                                                                          e),
-                                                                  user,
-                                                                  s);
-                                                        } catch (e, s) {
-                                                          BeStilDialog
-                                                              .hideLoading(
-                                                                  context);
+                                                  final user = Provider.of<
+                                                              UserProviderV2>(
+                                                          context,
+                                                          listen: false)
+                                                      .currentUser;
+                                                  BeStilDialog.showErrorDialog(
+                                                      context,
+                                                      StringUtils
+                                                          .getErrorMessage(e),
+                                                      user,
+                                                      s);
+                                                } catch (e, s) {
+                                                  BeStilDialog.hideLoading(
+                                                      context);
 
-                                                          final user = Provider
-                                                                  .of<UserProviderV2>(
-                                                                      context,
-                                                                      listen:
-                                                                          false)
-                                                              .currentUser;
-                                                          BeStilDialog
-                                                              .showErrorDialog(
-                                                                  context,
-                                                                  StringUtils
-                                                                      .getErrorMessage(
-                                                                          e),
-                                                                  user,
-                                                                  s);
-                                                        }
-                                                      },
-                                                      child: Container(
-                                                        margin: EdgeInsets
-                                                            .symmetric(
-                                                                vertical: 7.0),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: AppColors
-                                                              .cardBorder,
-                                                          borderRadius:
-                                                              BorderRadius.only(
-                                                            bottomLeft:
-                                                                Radius.circular(
-                                                                    10),
-                                                            topLeft:
-                                                                Radius.circular(
-                                                                    10),
-                                                          ),
-                                                        ),
-                                                        child: Container(
-                                                          margin:
-                                                              EdgeInsetsDirectional
-                                                                  .only(
-                                                                      start: 1,
-                                                                      bottom: 1,
-                                                                      top: 1),
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  20),
-                                                          width:
-                                                              double.infinity,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: AppColors
-                                                                .prayerCardBgColor,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .only(
-                                                              bottomLeft: Radius
-                                                                  .circular(9),
-                                                              topLeft: Radius
-                                                                  .circular(9),
-                                                            ),
-                                                          ),
+                                                  final user = Provider.of<
+                                                              UserProviderV2>(
+                                                          context,
+                                                          listen: false)
+                                                      .currentUser;
+                                                  BeStilDialog.showErrorDialog(
+                                                      context,
+                                                      StringUtils
+                                                          .getErrorMessage(e),
+                                                      user,
+                                                      s);
+                                                }
+                                              },
+                                              child: Container(
+                                                margin: EdgeInsets.symmetric(
+                                                    vertical: 7.0),
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.cardBorder,
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                    bottomLeft:
+                                                        Radius.circular(10),
+                                                    topLeft:
+                                                        Radius.circular(10),
+                                                  ),
+                                                ),
+                                                child: Container(
+                                                  margin: EdgeInsetsDirectional
+                                                      .only(
+                                                          start: 1,
+                                                          bottom: 1,
+                                                          top: 1),
+                                                  padding: EdgeInsets.all(20),
+                                                  width: double.infinity,
+                                                  decoration: BoxDecoration(
+                                                    color: AppColors
+                                                        .prayerCardBgColor,
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                      bottomLeft:
+                                                          Radius.circular(9),
+                                                      topLeft:
+                                                          Radius.circular(9),
+                                                    ),
+                                                  ),
+                                                  child: Row(
+                                                    children: <Widget>[
+                                                      Expanded(
                                                           child: Row(
-                                                            children: <Widget>[
-                                                              Expanded(
-                                                                  child: Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                children: [
-                                                                  Text(
-                                                                      '${(snapshot.data ?? UserDataModel()).firstName} ${(snapshot.data ?? UserDataModel()).lastName}'
-                                                                          .sentenceCase(),
-                                                                      style: AppTextStyles
-                                                                          .boldText14
-                                                                          .copyWith(
-                                                                              color: AppColors.lightBlue4)),
-                                                                  Text(
-                                                                    groupUser.role ==
-                                                                            GroupUserRole
-                                                                                .admin
-                                                                        ? 'Admin'
-                                                                        : groupUser.role ==
-                                                                                GroupUserRole.moderator
-                                                                            ? 'Moderator'
-                                                                            : 'Member',
-                                                                    style: AppTextStyles
-                                                                        .regularText14
-                                                                        .copyWith(
-                                                                            color:
-                                                                                AppColors.lightBlue1),
-                                                                  ),
-                                                                ],
-                                                              )),
-                                                              Icon(Icons.more_vert,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                              getMemberName(
+                                                                      groupUser
+                                                                              .userId ??
+                                                                          '')
+                                                                  .sentenceCase(),
+                                                              style: AppTextStyles
+                                                                  .boldText14
+                                                                  .copyWith(
                                                                       color: AppColors
-                                                                          .lightBlue4)
-                                                                  .marginOnly(
-                                                                      left: 10,
-                                                                      right: 5)
-                                                            ],
+                                                                          .lightBlue4)),
+                                                          Text(
+                                                            groupUser.role ==
+                                                                    GroupUserRole
+                                                                        .admin
+                                                                ? 'Admin'
+                                                                : groupUser.role ==
+                                                                        GroupUserRole
+                                                                            .moderator
+                                                                    ? 'Moderator'
+                                                                    : 'Member',
+                                                            style: AppTextStyles
+                                                                .regularText14
+                                                                .copyWith(
+                                                                    color: AppColors
+                                                                        .lightBlue1),
                                                           ),
-                                                        ),
-                                                      ),
-                                                    );
-                                                });
+                                                        ],
+                                                      )),
+                                                      Icon(Icons.more_vert,
+                                                              color: AppColors
+                                                                  .lightBlue4)
+                                                          .marginOnly(
+                                                              left: 10,
+                                                              right: 5)
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            );
                                           },
                                         ),
                                       ],
