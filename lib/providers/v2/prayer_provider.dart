@@ -435,11 +435,11 @@ class PrayerProviderV2 with ChangeNotifier {
   }
 
   Future<void> deletePrayer(
-      String prayerId, List<FollowerModel> followers) async {
+      String prayerId, String groupId, List<FollowerModel> followers) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       await _prayerService.deletePrayer(
-          prayerId: prayerId, followers: followers);
+          groupId: groupId, prayerId: prayerId, followers: followers);
       final notProvider =
           Provider.of<NotificationProviderV2>(Get.context!, listen: false);
       final notifications = notProvider.localNotifications

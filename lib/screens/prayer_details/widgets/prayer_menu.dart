@@ -220,7 +220,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
           await Provider.of<NotificationProviderV2>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       await Provider.of<PrayerProviderV2>(context, listen: false).deletePrayer(
-          widget.prayerData?.id ?? '', widget.prayerData?.followers ?? []);
+          widget.prayerData?.id ?? '',
+          widget.prayerData?.groupId ?? '',
+          widget.prayerData?.followers ?? []);
       clearSearch();
 
       BeStilDialog.hideLoading(context);

@@ -514,6 +514,7 @@ class PrayerServiceV2 {
 
   Future<void> deletePrayer(
       {required String prayerId,
+      required String groupId,
       required List<FollowerModel> followers}) async {
     try {
       if (_firebaseAuth.currentUser == null)
@@ -522,8 +523,9 @@ class PrayerServiceV2 {
       batch.update(_prayerDataCollectionReference.doc(prayerId),
           {'status': Status.deleted});
       followers.forEach((follower) {
+        final prayer = FollowedPrayer(groupId: groupId, prayerId: prayerId);
         batch.update(_userDataCollectionReference.doc(follower.userId), {
-          'followers': FieldValue.arrayRemove([follower.toJson()])
+          'prayers': FieldValue.arrayRemove([prayer.toJson()])
         });
       });
       batch.commit();
