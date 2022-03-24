@@ -254,23 +254,6 @@ class _GroupCardState extends State<GroupCard> {
                             ],
                           ),
                         ),
-
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.center,
-                        //   children: [
-                        //     Text(
-                        //       'Type: ',
-                        //       style: AppTextStyles.regularText15,
-                        //     ),
-                        //     Text(
-                        //       '${this.widget.groupData.group.status} Group',
-                        //       style: AppTextStyles.regularText15.copyWith(
-                        //         color: AppColors.textFieldText,
-                        //       ),
-                        //       textAlign: TextAlign.center,
-                        //     ),
-                        //   ],
-                        // ),
                       ],
                     ),
                     SizedBox(height: 20.0),

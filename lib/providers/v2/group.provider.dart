@@ -166,7 +166,7 @@ class GroupProviderV2 with ChangeNotifier {
           purpose.trim().isEmpty &&
           church.trim().isEmpty &&
           location.trim().isEmpty &&
-          _groupName.isEmpty) {
+          name.trim().isEmpty) {
         filteredGroups = [];
       } else {
         filteredGroups = _allGroups

@@ -173,7 +173,6 @@ class GroupServiceV2 {
             .map((document) =>
                 GroupDataModel.fromJson(document.data(), document.id))
             .toList())));
-    print(streams);
     return ZipStream(
         streams,
         (List<List<GroupDataModel>> value) =>
@@ -289,8 +288,6 @@ class GroupServiceV2 {
         'groups': FieldValue.arrayUnion([group.id])
       });
 
-      final requestor =
-          await _userService.getUserByIdFuture(request.userId ?? '');
       final notId = Uuid().v1();
       final doc = NotificationModel(
         id: notId,
@@ -339,7 +336,6 @@ class GroupServiceV2 {
         enableNotificationForUpdates: true,
         notifyMeOfFlaggedPrayers: true,
         notifyWhenNewMemberJoins: true,
-        enableNotificationForNewPrayers: true,
         status: Status.active,
         createdBy: _firebaseAuth.currentUser?.uid,
         createdDate: DateTime.now(),
