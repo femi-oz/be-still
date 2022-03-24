@@ -112,9 +112,9 @@ class MigrationService {
                 description: u.description,
                 id: u.id,
                 status: u.deleteStatus == 0 ? Status.deleted : Status.active,
-                createdBy: u.createdBy,
+                createdBy: uid,
                 createdDate: u.createdOn,
-                modifiedBy: u.modifiedBy,
+                modifiedBy: uid,
                 modifiedDate: u.modifiedOn))
             .toList();
       if (e.tags.isNotEmpty)
@@ -126,9 +126,9 @@ class MigrationService {
                 email: t.email,
                 displayName: t.displayName,
                 contactIdentifier: t.identifier,
-                createdBy: t.createdBy,
+                createdBy: uid,
                 createdDate: t.createdOn,
-                modifiedBy: t.modifiedBy,
+                modifiedBy: uid,
                 modifiedDate: t.modifiedOn))
             .toList();
 
@@ -151,10 +151,10 @@ class MigrationService {
               snoozeEndDate: e.userPrayer?.snoozeEndDate,
               snoozeDuration: e.userPrayer?.snoozeDuration,
               snoozeFrequency: e.userPrayer?.snoozeFrequency,
-              createdBy: e.prayer?.createdBy,
+              createdBy: uid,
               createdDate: e.prayer?.createdOn,
               creatorName: e.prayer?.creatorName,
-              modifiedBy: e.prayer?.modifiedBy,
+              modifiedBy: uid,
               modifiedDate: e.prayer?.modifiedOn,
               updates: newPrayerUpdates,
               tags: newPrayerTags,

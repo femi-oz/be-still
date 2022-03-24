@@ -201,7 +201,9 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
 
     try {
       await Provider.of<PrayerProviderV2>(context, listen: false).deletePrayer(
-          widget.prayerData?.id ?? '', widget.prayerData?.followers ?? []);
+          widget.prayerData?.id ?? '',
+          widget.prayerData?.groupId ?? '',
+          widget.prayerData?.followers ?? []);
       clearSearch();
 
       // _deleteFollowedPrayers();
@@ -251,7 +253,6 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       await Provider.of<PrayerProviderV2>(context, listen: false)
           .markPrayerAsAnswered(
               widget.prayerData?.id ?? '', widget.prayerData?.followers ?? []);
-      // _deleteFollowedPrayers();
       clearSearch();
       appController.setCurrentPage(8, false, 0);
       BeStilDialog.hideLoading(context);

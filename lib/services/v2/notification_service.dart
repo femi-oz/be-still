@@ -123,6 +123,15 @@ class NotificationServiceV2 {
                 tokens: [],
                 type: type);
           }
+        } else if (type == NotificationType.answered_prayers) {
+          addNotification(
+              message: message.capitalizeFirst ?? '',
+              senderName: name,
+              groupId: groupId,
+              receiverId: id,
+              prayerId: prayerId,
+              tokens: [],
+              type: type);
         } else {
           addNotification(
               message: message.capitalizeFirst ?? '',

@@ -117,6 +117,16 @@ class GroupProviderV2 with ChangeNotifier {
     }
   }
 
+  Future<void> onGroupChanges(List<String> ids) async {
+    try {
+      _groupService.getUserGroupEmpty(ids).asBroadcastStream().listen((event) {
+        setUserGroups(ids);
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<GroupDataModel> getCurrentGroupById(String groupId) async {
     try {
       return await _groupService.getGroup(groupId);
@@ -324,8 +334,10 @@ class GroupProviderV2 with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      return await _groupService.removeGroupUser(
-          userId: userId, groupId: groupId);
+      await _groupService.removeGroupUser(userId: userId, groupId: groupId);
+      // final user =
+      //     Provider.of<UserProviderV2>(Get.context!, listen: false).currentUser;
+      // setUserGroups(user.groups ?? []);
     } catch (e) {
       rethrow;
     }

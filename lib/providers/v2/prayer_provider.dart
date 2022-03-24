@@ -98,6 +98,7 @@ class PrayerProviderV2 with ChangeNotifier {
             await _prayerService.getUserFollowedPrayers(prayersIds);
         _prayers = [...followedPrayers, ...event];
         filterPrayers();
+
         notifyListeners();
       });
     } catch (e) {
@@ -435,11 +436,11 @@ class PrayerProviderV2 with ChangeNotifier {
   }
 
   Future<void> deletePrayer(
-      String prayerId, List<FollowerModel> followers) async {
+      String prayerId, String groupId, List<FollowerModel> followers) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       await _prayerService.deletePrayer(
-          prayerId: prayerId, followers: followers);
+          groupId: groupId, prayerId: prayerId, followers: followers);
       final notProvider =
           Provider.of<NotificationProviderV2>(Get.context!, listen: false);
       final notifications = notProvider.localNotifications
@@ -602,6 +603,10 @@ class PrayerProviderV2 with ChangeNotifier {
             .toList();
       }
       if (_filterOption == Status.snoozed) {
+        favoritePrayers = prayers
+            .where((PrayerDataModel data) =>
+                (data.isFavorite ?? false) && (data.status == Status.snoozed))
+            .toList();
         snoozedPrayers = prayers
             .where((PrayerDataModel data) => data.status == Status.snoozed)
             .toList();
@@ -636,6 +641,14 @@ class PrayerProviderV2 with ChangeNotifier {
       _filteredPrayerTimeList = activePrayers;
       _filteredPrayerTimeList.sort((a, b) => (b.modifiedDate ?? DateTime.now())
           .compareTo(a.modifiedDate ?? DateTime.now()));
+      _filteredPrayerTimeList = [
+        ..._filteredPrayerTimeList
+            .where((element) => element.isFavorite ?? false)
+            .toList(),
+        ..._filteredPrayerTimeList
+            .where((element) => !(element.isFavorite ?? false))
+            .toList(),
+      ];
       notifyListeners();
     } catch (e) {
       rethrow;

@@ -468,9 +468,7 @@ class _PrayerCardState extends State<PrayerCard> {
                                           ),
                                         )
                                       : Container(),
-                                  ((widget.prayer).isFavorite ?? false) &&
-                                          !((widget.prayer.status ==
-                                              Status.snoozed))
+                                  ((widget.prayer).isFavorite ?? false)
                                       ? Padding(
                                           padding: const EdgeInsets.only(
                                               top: 3, bottom: 3, right: 8),
