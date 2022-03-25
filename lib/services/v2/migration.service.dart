@@ -136,9 +136,10 @@ class MigrationService {
                 modifiedDate: t.modifiedOn))
             .toList();
 
-      final reminders = oldReminders
-          .where((element) => element.entityId == e.prayer?.id)
-          .toList();
+      final reminders = oldReminders.where((element) {
+        print(element.entityId == e.userPrayer?.id);
+        return element.entityId == e.userPrayer?.id;
+      }).toList();
 
       final newUserPrayer = PrayerDataModel(
               userId: uid,
@@ -178,7 +179,7 @@ class MigrationService {
                   status: Status.active,
                   title: r.title,
                   localNotificationId: r.localNotificationId,
-                  type: r.type,
+                  type: NotificationType.reminder,
                   frequency: r.frequency,
                   scheduleDate: r.scheduledDate,
                   createdBy: FirebaseAuth.instance.currentUser?.uid,

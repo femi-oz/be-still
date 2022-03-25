@@ -188,7 +188,8 @@ class NotificationServiceV2 {
           .where('userId', isEqualTo: _firebaseAuth.currentUser?.uid)
           .snapshots()
           .map((e) => e.docs
-              .map((doc) => LocalNotificationDataModel.fromJson(doc.data()))
+              .map((doc) =>
+                  LocalNotificationDataModel.fromJson(doc.data(), doc.id))
               .toList());
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
