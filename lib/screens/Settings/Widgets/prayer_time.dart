@@ -9,6 +9,7 @@ import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/custom_select_button.dart';
@@ -29,7 +30,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
     super.initState();
   }
 
-  var prayerTimeText =
+  final prayerTimeText =
       'Be Still can remind you to pray at a specific time each day or on a regular schedule. Tap the "Add Reminder" button to create one or more prayer times. You will receive a short notification whenever you have scheduled a prayer time to start.';
 
   List<LookUpV2> songs = [
@@ -147,9 +148,11 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                             data.frequency == Frequency.weekly
                                                 ? Container(
                                                     child: Text(
-                                                      (data.scheduleDate
+                                                      (LocalNotification
+                                                              .daysOfWeek[(data
+                                                                  .scheduleDate
                                                                   ?.weekday ??
-                                                              '')
+                                                              0)])
                                                           .toString(),
                                                       style: AppTextStyles
                                                           .regularText15
@@ -202,9 +205,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                                 ),
                                                 SizedBox(width: 5),
                                                 Text(
-                                                  (data.scheduleDate?.minute ??
-                                                          '')
-                                                      .toString(),
+                                                  '${data.scheduleDate?.minute == 0 ? '0' : ''}${(data.scheduleDate?.minute ?? '')}',
                                                   style: AppTextStyles
                                                       .regularText15
                                                       .copyWith(

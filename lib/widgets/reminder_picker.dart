@@ -73,8 +73,11 @@ class _ReminderPickerState extends State<ReminderPicker> {
       selectedHour = widget.reminder?.scheduleDate?.hour ?? 0;
 
       selectedMinute = widget.reminder?.scheduleDate?.minute ?? 0;
-      selectedDayOfWeek = LocalNotification.daysOfWeek.indexOf(LocalNotification
-          .daysOfWeek[widget.reminder?.scheduleDate?.weekday ?? 0]);
+      selectedDayOfWeek = LocalNotification.daysOfWeek.indexOf(
+          LocalNotification.daysOfWeek[
+              (widget.reminder?.scheduleDate?.weekday ?? 0) > 6
+                  ? 6
+                  : widget.reminder?.scheduleDate?.weekday ?? 0]);
       selectedPeriod = DateFormat('a')
           .format(widget.reminder?.scheduleDate ?? DateTime.now());
       selectedFrequency = widget.reminder?.frequency ?? '';
@@ -147,13 +150,13 @@ class _ReminderPickerState extends State<ReminderPicker> {
     try {
       await Provider.of<NotificationProviderV2>(context, listen: false)
           .updateLocalNotification(
-        scheduledDate,
-        widget.reminder?.id ?? '',
-        notificationText,
-        widget.reminder?.localNotificationId ?? 0,
-        widget.reminder?.type ?? '',
-        widget.reminder?.status ?? '',
-      );
+              scheduledDate,
+              widget.reminder?.id ?? '',
+              notificationText,
+              widget.reminder?.localNotificationId ?? 0,
+              widget.reminder?.type ?? '',
+              widget.reminder?.status ?? '',
+              selectedFrequency);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
@@ -258,6 +261,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
           entityId: widget.entityId,
           type: widget.type,
           isGroup: widget.isGroup);
+      print(description);
       if (Settings.enabledReminderPermission) {
         await LocalNotification.setLocalNotification(
             context: context,
@@ -403,9 +407,11 @@ class _ReminderPickerState extends State<ReminderPicker> {
                               backgroundColor: Colors.transparent,
                               scrollController: frequencyController,
                               itemExtent: itemExtent,
-                              onSelectedItemChanged: (i) => setState(() =>
-                                  selectedFrequency =
-                                      LocalNotification.frequency[i]),
+                              onSelectedItemChanged: (i) {
+                                print(selectedHour);
+                                setState(() => selectedFrequency =
+                                    LocalNotification.frequency[i]);
+                              },
                               children: <Widget>[
                                 ...LocalNotification.frequency
                                     .map((i) => Align(

@@ -224,7 +224,7 @@ class NotificationProviderV2 with ChangeNotifier {
       List<LocalNotificationDataModel> data) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      var reminderToDelete = data
+      final reminderToDelete = data
           .where((e) =>
               (e.scheduleDate ?? DateTime.now()).isBefore(DateTime.now()) &&
               e.frequency == Frequency.one_time)
@@ -298,6 +298,7 @@ class NotificationProviderV2 with ChangeNotifier {
     int localNotificationId,
     String type,
     String status,
+    String frequency,
   ) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
@@ -307,7 +308,8 @@ class NotificationProviderV2 with ChangeNotifier {
           localNotificationId: localNotificationId,
           type: type,
           scheduleDate: scheduledDate,
-          status: status);
+          status: status,
+          frequency: frequency);
       await setLocalNotifications();
       notifyListeners();
     } catch (e) {

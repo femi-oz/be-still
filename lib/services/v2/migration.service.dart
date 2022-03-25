@@ -1,6 +1,7 @@
 // if user document not found, use v1 service to get user id
 // get all user relevant data
 
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -39,6 +40,8 @@ class MigrationService {
   final CollectionReference<Map<String, dynamic>>
       _localNotificationCollectionReference =
       FirebaseFirestore.instance.collection("local_notifications");
+
+  List<LocalNotificationModel> oldReminders = [];
   Future<void> migrateUserData(String uid) async {
     //old user service
     //set old data
@@ -89,6 +92,7 @@ class MigrationService {
 
       print(newUser);
       _userDataCollectionReference.doc(uid).set(newUser);
+      await migrateUserReminders(oldUser.id ?? '');
       await migrateUserPrayerData(uid, oldUser.id ?? '');
     } catch (e) {
       print(e);
@@ -132,6 +136,10 @@ class MigrationService {
                 modifiedDate: t.modifiedOn))
             .toList();
 
+      final reminders = oldReminders
+          .where((element) => element.entityId == e.prayer?.id)
+          .toList();
+
       final newUserPrayer = PrayerDataModel(
               userId: uid,
               description: e.prayer?.description,
@@ -161,17 +169,35 @@ class MigrationService {
               followers: newPrayerFollowers)
           .toJson();
 
-      print(newUserPrayer);
-
-      _prayerDataCollectionReference.add(newUserPrayer);
+      _prayerDataCollectionReference.add(newUserPrayer).then((value) {
+        reminders.forEach((r) {
+          final newReminders = LocalNotificationDataModel(
+                  userId: FirebaseAuth.instance.currentUser?.uid,
+                  prayerId: value.id,
+                  message: r.notificationText,
+                  status: Status.active,
+                  title: r.title,
+                  localNotificationId: r.localNotificationId,
+                  type: r.type,
+                  frequency: r.frequency,
+                  scheduleDate: r.scheduledDate,
+                  createdBy: FirebaseAuth.instance.currentUser?.uid,
+                  createdDate: DateTime.now(),
+                  modifiedBy: FirebaseAuth.instance.currentUser?.uid,
+                  modifiedDate: DateTime.now())
+              .toJson();
+          _localNotificationCollectionReference.add(newReminders);
+        });
+      });
     });
-    await migrateUserReminders(userId);
   }
 
   Future<void> migrateUserReminders(String userId) async {
-    List<LocalNotificationModel> oldReminders =
-        await _oldNotificationService.getLocalNotifications(userId);
-    oldReminders.forEach((r) {
+    oldReminders = await _oldNotificationService.getLocalNotifications(userId);
+    oldReminders
+        .where((element) => element.type == NotificationType.reminder)
+        .toList()
+        .forEach((r) {
       final newReminders = LocalNotificationDataModel(
               userId: FirebaseAuth.instance.currentUser?.uid,
               prayerId: r.entityId,
