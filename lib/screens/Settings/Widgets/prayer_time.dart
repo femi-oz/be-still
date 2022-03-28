@@ -183,9 +183,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                             Row(
                                               children: [
                                                 Text(
-                                                  (data.scheduleDate?.hour ??
-                                                          '')
-                                                      .toString(),
+                                                  '${data.scheduleDate?.hour == 0 ? 12 : data.scheduleDate?.hour}',
                                                   style: AppTextStyles
                                                       .regularText15
                                                       .copyWith(
@@ -205,7 +203,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                                 ),
                                                 SizedBox(width: 5),
                                                 Text(
-                                                  '${data.scheduleDate?.minute == 0 ? '0' : ''}${(data.scheduleDate?.minute ?? '')}',
+                                                  '${(data.scheduleDate?.minute ?? 0) < 10 ? '0${data.scheduleDate?.minute}' : '${data.scheduleDate?.minute}'}',
                                                   style: AppTextStyles
                                                       .regularText15
                                                       .copyWith(
