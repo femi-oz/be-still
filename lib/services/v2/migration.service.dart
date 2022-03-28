@@ -198,10 +198,7 @@ class MigrationService {
 
   Future<void> migrateUserReminders(String userId) async {
     oldReminders = await _oldNotificationService.getLocalNotifications(userId);
-    oldReminders
-        .where((element) => element.type == NotificationType.reminder)
-        .toList()
-        .forEach((r) {
+    oldReminders.forEach((r) {
       final newReminders = LocalNotificationDataModel(
               userId: FirebaseAuth.instance.currentUser?.uid,
               prayerId: r.entityId,
