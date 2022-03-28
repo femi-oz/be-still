@@ -627,6 +627,8 @@ class PrayerProviderV2 with ChangeNotifier {
 
       _filteredPrayers.sort((a, b) => (b.modifiedDate ?? DateTime.now())
           .compareTo(a.modifiedDate ?? DateTime.now()));
+      favoritePrayers.sort((a, b) => (b.modifiedDate ?? DateTime.now())
+          .compareTo(a.modifiedDate ?? DateTime.now()));
 
       _filteredPrayers = [...favoritePrayers, ..._filteredPrayers];
       List<PrayerDataModel> _distinct = [];

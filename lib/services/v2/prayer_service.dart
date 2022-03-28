@@ -195,7 +195,7 @@ class PrayerServiceV2 {
     try {
       await _prayerDataCollectionReference
           .doc(prayerId)
-          .update({'description': description, 'modifiedOn': DateTime.now()});
+          .update({'description': description, 'modifiedDate': DateTime.now()});
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -208,8 +208,9 @@ class PrayerServiceV2 {
     try {
       await prayerReference.update({
         'groupId': groupId,
-        'modifiedOn': DateTime.now(),
-        'isGroup': isGroup
+        'isGroup': isGroup,
+        'modifiedDate': DateTime.now(),
+        'modifiedBy': _firebaseAuth.currentUser?.uid
       });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -220,7 +221,12 @@ class PrayerServiceV2 {
       {required String prayerId, required snoozeEndDate}) async {
     try {
       _prayerDataCollectionReference.doc(prayerId).update(
-        {'status': Status.snoozed, 'snoozeEndDate': snoozeEndDate},
+        {
+          'status': Status.snoozed,
+          'snoozeEndDate': snoozeEndDate,
+          'modifiedDate': DateTime.now(),
+          'modifiedBy': _firebaseAuth.currentUser?.uid
+        },
       );
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -229,9 +235,11 @@ class PrayerServiceV2 {
 
   Future<void> unSnoozePrayer({required String prayerId}) async {
     try {
-      _prayerDataCollectionReference
-          .doc(prayerId)
-          .update({'status': Status.active});
+      _prayerDataCollectionReference.doc(prayerId).update({
+        'status': Status.active,
+        'modifiedDate': DateTime.now(),
+        'modifiedBy': _firebaseAuth.currentUser?.uid
+      });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -249,19 +257,29 @@ class PrayerServiceV2 {
               await _userService.getUserByIdFuture(follower.userId ?? '');
           final prayerToRemove = (user.prayers ?? [])
               .firstWhere((element) => element.prayerId == prayerId);
-          batch.update(_prayerDataCollectionReference.doc(prayerId),
-              {'status': Status.archived});
           batch.update(_prayerDataCollectionReference.doc(prayerId), {
-            'followers': FieldValue.arrayRemove([follower.toJson()])
+            'status': Status.archived,
+            'modifiedDate': DateTime.now(),
+            'modifiedBy': _firebaseAuth.currentUser?.uid
+          });
+          batch.update(_prayerDataCollectionReference.doc(prayerId), {
+            'followers': FieldValue.arrayRemove([follower.toJson()]),
+            'modifiedDate': DateTime.now(),
+            'modifiedBy': _firebaseAuth.currentUser?.uid
           });
           batch.update(_userDataCollectionReference.doc(follower.userId), {
-            'prayers': FieldValue.arrayRemove([prayerToRemove.toJson()])
+            'prayers': FieldValue.arrayRemove([prayerToRemove.toJson()]),
+            'modifiedDate': DateTime.now(),
+            'modifiedBy': _firebaseAuth.currentUser?.uid
           });
           batch.commit();
         });
       } else {
-        batch.update(_prayerDataCollectionReference.doc(prayerId),
-            {'status': Status.archived});
+        batch.update(_prayerDataCollectionReference.doc(prayerId), {
+          'status': Status.archived,
+          'modifiedDate': DateTime.now(),
+          'modifiedBy': _firebaseAuth.currentUser?.uid
+        });
         batch.commit();
       }
     } catch (e) {
@@ -284,26 +302,39 @@ class PrayerServiceV2 {
       user = currentFollowers[currentFollowers.indexOf(user)]
         ..prayerStatus = Status.active;
       currentFollowers[currentFollowers.indexOf(user)] = user;
-      await _prayerDataCollectionReference
-          .doc(prayerId)
-          .update({'followers': FieldValue.arrayUnion(currentFollowers)});
+      await _prayerDataCollectionReference.doc(prayerId).update({
+        'followers': FieldValue.arrayUnion(currentFollowers),
+        'modifiedDate': DateTime.now(),
+        'modifiedBy': _firebaseAuth.currentUser?.uid
+      });
     } else {
-      _prayerDataCollectionReference
-          .doc(prayerId)
-          .update({'status': Status.active, 'isAnswered': false});
+      _prayerDataCollectionReference.doc(prayerId).update({
+        'status': Status.active,
+        'isAnswered': false,
+        'modifiedDate': DateTime.now(),
+        'modifiedBy': _firebaseAuth.currentUser?.uid
+      });
     }
   }
 
   Future<void> favoritePrayer({required String prayerId}) async {
     try {
-      _prayerDataCollectionReference.doc(prayerId).update({'isFavorite': true});
+      _prayerDataCollectionReference.doc(prayerId).update({
+        'isFavorite': true,
+        'modifiedDate': DateTime.now(),
+        'modifiedBy': _firebaseAuth.currentUser?.uid
+      });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 
   Future<void> unFavoritePrayer({required String prayerId}) async {
-    _prayerDataCollectionReference.doc(prayerId).update({'isFavorite': false});
+    _prayerDataCollectionReference.doc(prayerId).update({
+      'isFavorite': false,
+      'modifiedDate': DateTime.now(),
+      'modifiedBy': _firebaseAuth.currentUser?.uid
+    });
   }
 
   Future<void> createPrayerTag(
@@ -333,7 +364,9 @@ class PrayerServiceV2 {
           .toList();
       tags.forEach((element) async {
         await _prayerDataCollectionReference.doc(prayerId).update({
-          'tags': FieldValue.arrayUnion([element.toJson()])
+          'tags': FieldValue.arrayUnion([element.toJson()]),
+          'modifiedDate': DateTime.now(),
+          'modifiedBy': _firebaseAuth.currentUser?.uid
         });
         sendTagMessageToUsers(
             contactData: contactData,
@@ -353,7 +386,9 @@ class PrayerServiceV2 {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       _prayerDataCollectionReference.doc(prayerId).update({
-        "tags": FieldValue.arrayRemove([currentTag.toJson()])
+        "tags": FieldValue.arrayRemove([currentTag.toJson()]),
+        'modifiedDate': DateTime.now(),
+        'modifiedBy': _firebaseAuth.currentUser?.uid
       });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -424,9 +459,11 @@ class PrayerServiceV2 {
         ).toJson()
       ];
 
-      await _prayerDataCollectionReference
-          .doc(prayerId)
-          .update({'updates': FieldValue.arrayUnion(updateList)});
+      await _prayerDataCollectionReference.doc(prayerId).update({
+        'updates': FieldValue.arrayUnion(updateList),
+        'modifiedDate': DateTime.now(),
+        'modifiedBy': _firebaseAuth.currentUser?.uid
+      });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -449,7 +486,9 @@ class PrayerServiceV2 {
           modifiedDate: DateTime.now());
       deleteUpdate(prayerId: prayerId, currentUpdate: update);
       _prayerDataCollectionReference.doc(prayerId).update({
-        'updates': FieldValue.arrayUnion([newUpdate.toJson()])
+        'updates': FieldValue.arrayUnion([newUpdate.toJson()]),
+        'modifiedDate': DateTime.now(),
+        'modifiedBy': _firebaseAuth.currentUser?.uid
       });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -474,16 +513,20 @@ class PrayerServiceV2 {
           batch.update(_prayerDataCollectionReference.doc(prayerId), {
             'isAnswered': true,
             'status': Status.archived,
-            'modifiedOn': DateTime.now(),
+            'modifiedDate': DateTime.now(),
             'modifiedBy': _firebaseAuth.currentUser?.uid
           });
           followers.forEach((follower) {
             batch.update(_userDataCollectionReference.doc(follower.userId), {
-              'followers': FieldValue.arrayRemove([follower.toJson()])
+              'followers': FieldValue.arrayRemove([follower.toJson()]),
+              'modifiedDate': DateTime.now(),
+              'modifiedBy': _firebaseAuth.currentUser?.uid
             });
           });
           batch.update(_userDataCollectionReference.doc(follower.userId), {
-            'prayers': FieldValue.arrayRemove([prayerToRemove.toJson()])
+            'prayers': FieldValue.arrayRemove([prayerToRemove.toJson()]),
+            'modifiedDate': DateTime.now(),
+            'modifiedBy': _firebaseAuth.currentUser?.uid
           });
           batch.commit();
         });
@@ -491,7 +534,7 @@ class PrayerServiceV2 {
         batch.update(_prayerDataCollectionReference.doc(prayerId), {
           'isAnswered': true,
           'status': Status.archived,
-          'modifiedOn': DateTime.now(),
+          'modifiedDate': DateTime.now(),
           'modifiedBy': _firebaseAuth.currentUser?.uid
         });
         batch.commit();
@@ -505,7 +548,8 @@ class PrayerServiceV2 {
     try {
       _prayerDataCollectionReference.doc(prayerId).update({
         'isAnswered': false,
-        'modifiedOn': DateTime.now(),
+        'modifiedDate': DateTime.now(),
+        'modifiedBy': _firebaseAuth.currentUser?.uid
       });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -520,12 +564,17 @@ class PrayerServiceV2 {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       WriteBatch batch = FirebaseFirestore.instance.batch();
-      batch.update(_prayerDataCollectionReference.doc(prayerId),
-          {'status': Status.deleted});
+      batch.update(_prayerDataCollectionReference.doc(prayerId), {
+        'status': Status.deleted,
+        'modifiedDate': DateTime.now(),
+        'modifiedBy': _firebaseAuth.currentUser?.uid
+      });
       followers.forEach((follower) {
         final prayer = FollowedPrayer(groupId: groupId, prayerId: prayerId);
         batch.update(_userDataCollectionReference.doc(follower.userId), {
-          'prayers': FieldValue.arrayRemove([prayer.toJson()])
+          'prayers': FieldValue.arrayRemove([prayer.toJson()]),
+          'modifiedDate': DateTime.now(),
+          'modifiedBy': _firebaseAuth.currentUser?.uid
         });
       });
       batch.commit();
@@ -540,7 +589,9 @@ class PrayerServiceV2 {
   }) async {
     try {
       _prayerDataCollectionReference.doc(prayerId).update({
-        'updates': FieldValue.arrayRemove([currentUpdate.toJson()])
+        'updates': FieldValue.arrayRemove([currentUpdate.toJson()]),
+        'modifiedDate': DateTime.now(),
+        'modifiedBy': _firebaseAuth.currentUser?.uid
       });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -556,45 +607,17 @@ class PrayerServiceV2 {
           .get();
 
       snoozedPrayers.docs.forEach((element) {
-        element.reference
-            .update({'status': Status.active, 'snoozeEndDate': DateTime.now()});
+        element.reference.update({
+          'status': Status.active,
+          'snoozeEndDate': DateTime.now(),
+          'modifiedDate': DateTime.now(),
+          'modifiedBy': _firebaseAuth.currentUser?.uid
+        });
       });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
-
-  // Future<void> autoUnArchivePrayers() async {
-  //   try {
-  //     final archivedPrayers = await _prayerDataCollectionReference
-  //         .where('userId', isEqualTo: _firebaseAuth.currentUser?.uid)
-  //         .where('isGroup', isEqualTo: false)
-  //         .get();
-
-  //     archivedPrayers.docs.forEach((prayer) {
-  //       WriteBatch batch = FirebaseFirestore.instance.batch();
-  //       final mappedPrayer = PrayerDataModel.fromJson(prayer.data(), prayer.id);
-  //       if ((mappedPrayer.followers ?? []).isNotEmpty &&
-  //           (mappedPrayer.followers ?? []).any((element) =>
-  //               element.userId == _firebaseAuth.currentUser?.uid)) {
-  //         FollowerModel user = (mappedPrayer.followers ?? []).firstWhere(
-  //             (element) => element.userId == _firebaseAuth.currentUser?.uid);
-  //         user = (mappedPrayer.followers ??
-  //             [])[(mappedPrayer.followers ?? []).indexOf(user)]
-  //           ..prayerStatus = Status.active;
-  //         (mappedPrayer.followers ??
-  //             [])[(mappedPrayer.followers ?? []).indexOf(user)] = user;
-  //         batch.update(
-  //             prayer.reference, {'followers': (mappedPrayer.followers ?? [])});
-  //       } else {
-  //         batch.update(prayer.reference, {'status': Status.active});
-  //       }
-  //       batch.commit();
-  //     });
-  //   } catch (e) {
-  //     throw HttpException(StringUtils.getErrorMessage(e));
-  //   }
-  // }
 
   Future<void> autoDeleteArchivePrayers(int autoDeletePeriod) async {
     final archivedPrayers = await _prayerDataCollectionReference
@@ -610,9 +633,11 @@ class PrayerServiceV2 {
             .isBefore(DateTime.now()))
         .toList();
     filteredPrayers.forEach((prayer) async {
-      _prayerDataCollectionReference
-          .doc(prayer.id)
-          .update({'status': Status.deleted});
+      _prayerDataCollectionReference.doc(prayer.id).update({
+        'status': Status.deleted,
+        'modifiedDate': DateTime.now(),
+        'modifiedBy': _firebaseAuth.currentUser?.uid
+      });
       final notProvider =
           Provider.of<NotificationProviderV2>(Get.context!, listen: false);
       final notifications = notProvider.localNotifications
@@ -640,11 +665,15 @@ class PrayerServiceV2 {
         _userDataCollectionReference
             .doc(FirebaseAuth.instance.currentUser?.uid),
         {
-          'prayers': FieldValue.arrayUnion([userPrayer])
+          'prayers': FieldValue.arrayUnion([userPrayer]),
+          'modifiedDate': DateTime.now(),
+          'modifiedBy': _firebaseAuth.currentUser?.uid
         });
 
     batch.update(_prayerDataCollectionReference.doc(prayerId), {
-      'followers': FieldValue.arrayUnion([followers])
+      'followers': FieldValue.arrayUnion([followers]),
+      'modifiedDate': DateTime.now(),
+      'modifiedBy': _firebaseAuth.currentUser?.uid
     });
     batch.commit();
   }
@@ -659,10 +688,14 @@ class PrayerServiceV2 {
         _userDataCollectionReference
             .doc(FirebaseAuth.instance.currentUser?.uid),
         {
-          'prayers': FieldValue.arrayRemove([prayer.toJson()])
+          'prayers': FieldValue.arrayRemove([prayer.toJson()]),
+          'modifiedDate': DateTime.now(),
+          'modifiedBy': _firebaseAuth.currentUser?.uid
         });
     batch.update(_prayerDataCollectionReference.doc(prayerId), {
-      'followers': FieldValue.arrayRemove([follower.toJson()])
+      'followers': FieldValue.arrayRemove([follower.toJson()]),
+      'modifiedDate': DateTime.now(),
+      'modifiedBy': _firebaseAuth.currentUser?.uid
     });
     batch.commit();
   }
