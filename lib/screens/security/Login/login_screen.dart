@@ -368,7 +368,8 @@ class _LoginScreenState extends State<LoginScreen> {
           .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
       await Provider.of<UserProviderV2>(context, listen: false)
           .setCurrentUser();
-
+      if (Settings.enabledReminderPermission)
+        LocalNotification.setNotificationsOnNewDevice(context);
       Settings.lastUser = jsonEncode(user.toJson2());
       Settings.userPassword = _passwordController.text;
 
