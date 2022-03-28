@@ -81,8 +81,7 @@ class _GroupToolsState extends State<GroupTools> {
           _userId,
           adminData.id ?? '',
           'A member has left your group',
-          group.id ?? '',
-          (adminData.devices ?? []).map((e) => e.token ?? '').toList());
+          group.id ?? '', []);
 
       BeStilDialog.hideLoading(context);
       AppController appController = Get.find();

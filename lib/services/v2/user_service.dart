@@ -188,14 +188,15 @@ class UserServiceV2 {
 
   Future<void> deletePushToken(List<DeviceModel> devices) async {
     try {
-      _userDataCollectionReference
-          .doc(_firebaseAuth.currentUser?.uid ?? '')
-          .update({
-        'devices':
-            FieldValue.arrayRemove(devices.map((e) => e.toJson()).toList()),
-        'modifiedBy': _firebaseAuth.currentUser?.uid,
-        'modifiedDate': DateTime.now()
-      });
+      for (final device in devices) {
+        _userDataCollectionReference
+            .doc(_firebaseAuth.currentUser?.uid ?? '')
+            .update({
+          'devices': FieldValue.arrayRemove([device.toJson()]),
+          'modifiedBy': _firebaseAuth.currentUser?.uid,
+          'modifiedDate': DateTime.now()
+        });
+      }
     } catch (e) {
       StringUtils.getErrorMessage(e);
     }
