@@ -30,8 +30,8 @@ class LocalNotificationDataModel {
       this.modifiedDate,
       this.status});
 
-  LocalNotificationDataModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+  LocalNotificationDataModel.fromJson(Map<String, dynamic> json, String did) {
+    id = did;
     userId = json['userId'];
     prayerId = json['prayerId'];
     message = json['message'];

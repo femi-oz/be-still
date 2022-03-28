@@ -188,7 +188,8 @@ class NotificationServiceV2 {
           .where('userId', isEqualTo: _firebaseAuth.currentUser?.uid)
           .snapshots()
           .map((e) => e.docs
-              .map((doc) => LocalNotificationDataModel.fromJson(doc.data()))
+              .map((doc) =>
+                  LocalNotificationDataModel.fromJson(doc.data(), doc.id))
               .toList());
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -304,12 +305,14 @@ class NotificationServiceV2 {
     required String type,
     required DateTime scheduleDate,
     required String status,
+    required String frequency,
   }) async {
     try {
       _localNotificationCollectionReference.doc(notificationId).update({
         'message': message,
         'localNotificationId': localNotificationId,
         'type': type,
+        "frequency": frequency,
         'scheduleDate': scheduleDate,
         'status': status,
         'modifiedBy': _firebaseAuth.currentUser?.uid,
