@@ -83,7 +83,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
         NotificationType.leave_group,
         userName,
         _userId,
-        (adminData.devices ?? []).map((e) => e.token ?? '').toList(),
+        [],
         adminData.id ?? '',
         groupId: group.id ?? '',
       );
