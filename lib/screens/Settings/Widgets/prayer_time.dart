@@ -148,7 +148,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                             data.frequency == Frequency.weekly
                                                 ? Container(
                                                     child: Text(
-                                                        '${LocalNotification.daysOfWeek[(reminder.scheduleDate?.weekday ?? 0) > 6 ? 6 : (reminder.scheduleDate?.weekday ?? 0)]}',
+                                                        '${LocalNotification.daysOfWeek[(data.scheduleDate?.weekday ?? 0) - 1]}',
                                                         style: AppTextStyles
                                                             .regularText15
                                                             .copyWith(

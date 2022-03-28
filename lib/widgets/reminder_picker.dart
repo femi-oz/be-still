@@ -73,11 +73,12 @@ class _ReminderPickerState extends State<ReminderPicker> {
       selectedHour = widget.reminder?.scheduleDate?.hour ?? 0;
 
       selectedMinute = widget.reminder?.scheduleDate?.minute ?? 0;
-      selectedDayOfWeek = LocalNotification.daysOfWeek.indexOf(
-          LocalNotification.daysOfWeek[
-              (widget.reminder?.scheduleDate?.weekday ?? 0) > 6
-                  ? 6
-                  : widget.reminder?.scheduleDate?.weekday ?? 0]);
+      // selectedDayOfWeek = LocalNotification.daysOfWeek.indexOf(
+      //     LocalNotification.daysOfWeek[
+      //         (widget.reminder?.scheduleDate?.weekday ?? 0) > 6
+      //             ? 6
+      //             : widget.reminder?.scheduleDate?.weekday ?? 0]);
+      selectedDayOfWeek = (widget.reminder?.scheduleDate?.weekday ?? 0) - 1;
       selectedPeriod = DateFormat('a')
           .format(widget.reminder?.scheduleDate ?? DateTime.now());
       selectedFrequency = widget.reminder?.frequency ?? '';
@@ -250,13 +251,19 @@ class _ReminderPickerState extends State<ReminderPicker> {
       final scheduleDate = LocalNotification.scheduleDate(
         hour,
         selectedMinute,
-        selectedDayOfWeek + 1,
+        selectedDayOfWeek,
         selectedPeriod,
         selectedYear,
         selectedMonth,
         selectedDayOfMonth,
         selectedFrequency == Frequency.one_time,
       );
+      print(selectedDayOfWeek);
+      print('========1=========');
+      print(DateTime.now().add(Duration(days: 1)).weekday);
+      print('========2=========');
+      print(scheduleDate.weekday);
+      print('=================');
       final payload = NotificationMessageModel(
           entityId: widget.entityId,
           type: widget.type,
