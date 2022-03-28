@@ -92,15 +92,6 @@ class _GroupCardState extends State<GroupCard> {
         '$userName has joined your group',
       );
 
-      await Provider.of<NotificationProviderV2>(context, listen: false)
-          .sendPushNotification(
-              '$userName has requested to join your group',
-              NotificationType.request,
-              groupData.name?.sentenceCase() ?? '',
-              tokens,
-              prayerId: '',
-              groupId: groupData.id);
-
       Navigator.of(context).pop();
       AppController appController = Get.find();
       appController.setCurrentPage(3, true, 11);

@@ -475,155 +475,130 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     bool _autoValidate = false;
     _newEmail.text = _user.email ?? '';
     final alert = AlertDialog(
-      insetPadding: EdgeInsets.all(10),
-      backgroundColor: AppColors.backgroundColor[1],
-      content: SingleChildScrollView(
-        child: Container(
-          width: MediaQuery.of(context).size.width - 100,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (type == _ModalType.email)
-                Text(
-                  'Update your email',
-                  style: AppTextStyles.boldText20,
-                )
-              else if (type == _ModalType.password)
-                Text(
-                  'Update your Password',
-                  style: AppTextStyles.boldText20,
-                ),
-              SizedBox(height: 10.0),
-              Form(
-                // ignore: deprecated_member_use
-                // autovalidate: _autoValidate,
-                autovalidateMode: _autoValidate == true
-                    ? AutovalidateMode.onUserInteraction
-                    : AutovalidateMode.disabled,
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (type == _ModalType.email)
-                      CustomInput(
-                        textkey: GlobalKey<FormFieldState>(),
-                        showSuffix: false,
-                        isRequired: true,
-                        isEmail: true,
-                        label: 'New Email',
-                        controller: _newEmail,
-                      ),
-                    SizedBox(
-                      height: 15.0,
-                    ),
-                    CustomInput(
-                      textkey: GlobalKey<FormFieldState>(),
-                      showSuffix: false,
-                      isRequired: false,
-                      obScurePassword: true,
-                      isPassword: false,
-                      label: 'Current Password',
-                      controller: _currentPassword,
-                    ),
-                    SizedBox(
-                      height: 15.0,
-                    ),
-                    if (type == _ModalType.password)
-                      SingleChildScrollView(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CustomInput(
-                              textkey: GlobalKey<FormFieldState>(),
-                              obScurePassword: true,
-                              showSuffix: false,
-                              isRequired: true,
-                              isPassword: true,
-                              label: 'New Password',
-                              controller: _newPassword,
-                            ),
-                            SizedBox(height: 15.0),
-                            CustomInput(
-                              textkey: GlobalKey<FormFieldState>(),
-                              obScurePassword: true,
-                              showSuffix: false,
-                              isRequired: true,
-                              label: 'Confirm New Password',
-                              controller: _newConfirmPassword,
-                              validator: (String? value) {
-                                if (_newPassword.text != value) {
-                                  return 'Password fields do not match';
-                                }
-                                return null;
-                              },
-                            ),
-                            SizedBox(height: 5.0),
-                          ],
-                        ),
-                      ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                AppColors.grey.withOpacity(0.5)),
-                          ),
-                          onPressed: () {
-                            _newPassword.clear();
-                            _newEmail.clear();
-                            _newConfirmPassword.clear();
-                            _currentPassword.clear();
-                            Navigator.of(context).pop();
-                          },
-                          child: Text(
-                            'Cancel',
-                            style: AppTextStyles.regularText15.copyWith(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          style: ButtonStyle(
-                            backgroundColor:
-                                // (_user.email
-                                //                 .trim()
-                                //                 .toLowerCase() ==
-                                //             _newEmail.text.trim().toLowerCase() &&
-                                //         type == _ModalType.email)
-                                //     ? MaterialStateProperty.all<Color>(
-                                //         AppColors.lightBlue3.withOpacity(0.5))
-                                //     :
-                                MaterialStateProperty.all<Color>(
-                                    AppColors.lightBlue3),
-                          ),
-                          onPressed: () {
-                            setState(() => _autoValidate = true);
-                            if (!_formKey.currentState!.validate()) return null;
-                            _formKey.currentState!.save();
-                            _verifyPassword(
-                              _user,
-                              type,
-                              ctx,
-                            );
-                          },
-                          child: Text(
-                            'Submit',
-                            style: AppTextStyles.regularText15.copyWith(
-                              color: Colors.white,
-                            ),
-                          ),
-                        )
-                      ],
+        insetPadding: EdgeInsets.all(10),
+        backgroundColor: AppColors.backgroundColor[1],
+        content: SingleChildScrollView(
+            child: Container(
+                width: MediaQuery.of(context).size.width - 100,
+                child: Column(mainAxisSize: MainAxisSize.min, children: [
+                  if (type == _ModalType.email)
+                    Text(
+                      'Update your email',
+                      style: AppTextStyles.boldText20,
                     )
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                  else if (type == _ModalType.password)
+                    Text(
+                      'Update your Password',
+                      style: AppTextStyles.boldText20,
+                    ),
+                  SizedBox(height: 10.0),
+                  Form(
+                      // ignore: deprecated_member_use
+                      // autovalidate: _autoValidate,
+                      autovalidateMode: _autoValidate == true
+                          ? AutovalidateMode.onUserInteraction
+                          : AutovalidateMode.disabled,
+                      key: _formKey,
+                      child: Column(mainAxisSize: MainAxisSize.min, children: [
+                        if (type == _ModalType.email)
+                          CustomInput(
+                            textkey: GlobalKey<FormFieldState>(),
+                            showSuffix: false,
+                            isRequired: true,
+                            isEmail: true,
+                            label: 'New Email',
+                            controller: _newEmail,
+                          ),
+                        SizedBox(
+                          height: 15.0,
+                        ),
+                        CustomInput(
+                          textkey: GlobalKey<FormFieldState>(),
+                          showSuffix: false,
+                          isRequired: false,
+                          obScurePassword: true,
+                          isPassword: false,
+                          label: 'Current Password',
+                          controller: _currentPassword,
+                        ),
+                        SizedBox(
+                          height: 15.0,
+                        ),
+                        if (type == _ModalType.password)
+                          SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                CustomInput(
+                                  textkey: GlobalKey<FormFieldState>(),
+                                  obScurePassword: true,
+                                  showSuffix: false,
+                                  isRequired: true,
+                                  isPassword: true,
+                                  label: 'New Password',
+                                  controller: _newPassword,
+                                ),
+                                SizedBox(height: 15.0),
+                                CustomInput(
+                                  textkey: GlobalKey<FormFieldState>(),
+                                  obScurePassword: true,
+                                  showSuffix: false,
+                                  isRequired: true,
+                                  label: 'Confirm New Password',
+                                  controller: _newConfirmPassword,
+                                  validator: (String? value) {
+                                    if (_newPassword.text != value) {
+                                      return 'Password fields do not match';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                SizedBox(height: 5.0),
+                              ],
+                            ),
+                          ),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              TextButton(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          AppColors.grey.withOpacity(0.5)),
+                                ),
+                                onPressed: () {
+                                  _newPassword.clear();
+                                  _newEmail.clear();
+                                  _newConfirmPassword.clear();
+                                  _currentPassword.clear();
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text(
+                                  'Cancel',
+                                  style: AppTextStyles.regularText15.copyWith(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              TextButton(
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            AppColors.lightBlue3),
+                                  ),
+                                  onPressed: () {
+                                    setState(() => _autoValidate = true);
+                                    if (!_formKey.currentState!.validate())
+                                      return null;
+                                    _formKey.currentState!.save();
+                                    _verifyPassword(_user, type, ctx);
+                                  },
+                                  child: Text('Submit',
+                                      style: AppTextStyles.regularText15
+                                          .copyWith(color: Colors.white)))
+                            ])
+                      ]))
+                ]))));
     showDialog(
         context: ctx,
         builder: (BuildContext context) {

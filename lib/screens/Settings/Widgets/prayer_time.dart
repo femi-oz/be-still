@@ -148,44 +148,33 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                             data.frequency == Frequency.weekly
                                                 ? Container(
                                                     child: Text(
-                                                      (LocalNotification
-                                                              .daysOfWeek[(data
-                                                                  .scheduleDate
-                                                                  ?.weekday ??
-                                                              0)])
-                                                          .toString(),
-                                                      style: AppTextStyles
-                                                          .regularText15
-                                                          .copyWith(
-                                                        color: AppColors
-                                                            .prayerTextColor,
-                                                      ),
-                                                    ),
+                                                        '${LocalNotification.daysOfWeek[(reminder.scheduleDate?.weekday ?? 0) > 6 ? 6 : (reminder.scheduleDate?.weekday ?? 0)]}',
+                                                        style: AppTextStyles
+                                                            .regularText15
+                                                            .copyWith(
+                                                                color: AppColors
+                                                                    .prayerTextColor)),
                                                   )
                                                 : data.frequency ==
                                                         Frequency.one_time
                                                     ? Container(
                                                         child: Text(
-                                                          DateFormat('MM-dd-yy')
-                                                              .format(data
-                                                                      .scheduleDate ??
-                                                                  DateTime
-                                                                      .now()),
-                                                          style: AppTextStyles
-                                                              .regularText15
-                                                              .copyWith(
-                                                            color: AppColors
-                                                                .prayerTextColor,
-                                                          ),
-                                                        ),
-                                                      )
+                                                            DateFormat(
+                                                                    'MM-dd-yy')
+                                                                .format(data
+                                                                        .scheduleDate ??
+                                                                    DateTime
+                                                                        .now()),
+                                                            style: AppTextStyles
+                                                                .regularText15
+                                                                .copyWith(
+                                                                    color: AppColors
+                                                                        .prayerTextColor)))
                                                     : SizedBox(),
                                             Row(
                                               children: [
                                                 Text(
-                                                  (data.scheduleDate?.hour ??
-                                                          '')
-                                                      .toString(),
+                                                  '${data.scheduleDate?.hour == 0 ? 12 : data.scheduleDate?.hour}',
                                                   style: AppTextStyles
                                                       .regularText15
                                                       .copyWith(
@@ -205,7 +194,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                                 ),
                                                 SizedBox(width: 5),
                                                 Text(
-                                                  '${data.scheduleDate?.minute == 0 ? '0' : ''}${(data.scheduleDate?.minute ?? '')}',
+                                                  '${(data.scheduleDate?.minute ?? 0) < 10 ? '0${data.scheduleDate?.minute}' : '${data.scheduleDate?.minute}'}',
                                                   style: AppTextStyles
                                                       .regularText15
                                                       .copyWith(

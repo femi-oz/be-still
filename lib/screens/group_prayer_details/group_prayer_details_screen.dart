@@ -251,7 +251,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                                               entityId: snapshot.data?.id ?? '',
                                               type: NotificationType.reminder,
                                               reminder:
-                                                  LocalNotificationDataModel(), // todo: implement reminder
+                                                  LocalNotificationDataModel(),
                                               hideActionuttons: false,
                                               onCancel: () =>
                                                   Navigator.of(context).pop(),
@@ -322,7 +322,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                                                         type: NotificationType
                                                             .reminder,
                                                         reminder:
-                                                            LocalNotificationDataModel(), // todo: implement reminder,
+                                                            LocalNotificationDataModel(),
                                                         hideActionuttons: false,
                                                         popTwice: false,
                                                         onCancel: () =>

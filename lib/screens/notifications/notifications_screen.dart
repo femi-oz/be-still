@@ -475,8 +475,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       notification.createdBy ?? '',
                       notification.id ?? '',
                       notification.createdBy ?? '',
-                      groupName(
-                          notification.groupId ?? '')), // todo: pass group name
+                      groupName(notification.groupId ?? '')),
                   child: Container(
                     margin: EdgeInsets.only(left: 20.0),
                     decoration: BoxDecoration(

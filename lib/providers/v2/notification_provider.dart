@@ -220,6 +220,18 @@ class NotificationProviderV2 with ChangeNotifier {
     }
   }
 
+  Future<List<LocalNotificationDataModel>> getLocalNotificationsFuture() async {
+    try {
+      return _notificationService
+          .getLocalNotificationsFuture()
+          .then((notifications) {
+        return notifications;
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> _deletePastReminder(
       List<LocalNotificationDataModel> data) async {
     try {

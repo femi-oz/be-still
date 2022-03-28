@@ -230,7 +230,6 @@ class GroupServiceV2 {
       await _groupDataCollectionReference.doc(groupId).update({
         "requests": FieldValue.arrayUnion([request])
       });
-      //todo send push notification
 
       final notId = Uuid().v1();
       final doc = NotificationModel(
@@ -514,22 +513,23 @@ class GroupServiceV2 {
       final prayerToRemove = (userPrayers ?? [])
           .where((element) => element.groupId == groupId)
           .toList();
-      prayerToRemove.forEach((element) async {
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      for (final element in prayerToRemove) {
         PrayerDataModel prayer =
             await _prayerService.getPrayerFuture(element.prayerId ?? '');
         FollowerModel follower = (prayer.followers ?? []).firstWhere(
-          (e) => e.userId == _firebaseAuth.currentUser?.uid,
+          (e) => e.userId == userId,
           orElse: () => FollowerModel(),
         );
 
-        _prayerService.unFollowPrayer(
-            prayerId: element.prayerId ?? '',
-            groupId: groupId,
-            prayer: element,
-            follower: follower);
-      });
+        batch.update(_userDataCollectionReference.doc(userId), {
+          'prayers': FieldValue.arrayRemove([element.toJson()])
+        });
+        batch.update(_prayerDataCollectionReference.doc(element.prayerId), {
+          'followers': FieldValue.arrayRemove([follower.toJson()])
+        });
+      }
 
-      WriteBatch batch = FirebaseFirestore.instance.batch();
       batch.update(_groupDataCollectionReference.doc(groupId), {
         'users': FieldValue.arrayRemove([userToRemove])
       });

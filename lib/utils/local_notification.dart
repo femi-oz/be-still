@@ -35,11 +35,9 @@ class LocalNotification {
       (i) => DateFormat('MMM').format(DateTime(DateTime.now().year, i + 1)));
 
   static Future<void> setNotificationsOnNewDevice(context) async {
-    await Provider.of<NotificationProviderV2>(context, listen: false)
-        .setLocalNotifications();
     final _localNotifications =
-        Provider.of<NotificationProviderV2>(context, listen: false)
-            .localNotifications;
+        await Provider.of<NotificationProviderV2>(context, listen: false)
+            .getLocalNotificationsFuture();
     //set notification in new device
 
     // The device's timezone.

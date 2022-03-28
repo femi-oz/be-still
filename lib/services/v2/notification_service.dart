@@ -196,6 +196,22 @@ class NotificationServiceV2 {
     }
   }
 
+  Future<List<LocalNotificationDataModel>> getLocalNotificationsFuture() {
+    try {
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
+      return _localNotificationCollectionReference
+          .where('userId', isEqualTo: _firebaseAuth.currentUser?.uid)
+          .get()
+          .then((e) => e.docs
+              .map((doc) =>
+                  LocalNotificationDataModel.fromJson(doc.data(), doc.id))
+              .toList());
+    } catch (e) {
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
   Stream<List<NotificationModel>> getUserPushNotifications() {
     try {
       return _notificationCollectionReference
