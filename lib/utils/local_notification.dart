@@ -50,9 +50,7 @@ class LocalNotification {
       final scheduledDate = tz.TZDateTime.from(
           _localNotifications[i].scheduleDate ?? DateTime.now(), location);
       await setLocalNotification(
-        title: _localNotifications[i].type == NotificationType.reminder
-            ? 'Reminder to pray'
-            : '',
+        title: '${_localNotifications[i].frequency} reminder to pray',
         description: _localNotifications[i].message ?? '',
         scheduledDate: scheduledDate,
         payload: _localNotifications[i].prayerId,

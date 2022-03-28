@@ -225,6 +225,7 @@ class NotificationProviderV2 with ChangeNotifier {
       return _notificationService
           .getLocalNotificationsFuture()
           .then((notifications) {
+        _localNotifications = notifications;
         return notifications;
       });
     } catch (e) {
