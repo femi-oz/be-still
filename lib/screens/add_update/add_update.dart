@@ -203,7 +203,6 @@ class _AddUpdateState extends State<AddUpdate> {
                   .id ??
               '';
 
-          // todo send notification
           await Provider.of<NotificationProviderV2>(context, listen: false)
               .sendPrayerNotification(
             prayerId,

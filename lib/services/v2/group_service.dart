@@ -230,7 +230,6 @@ class GroupServiceV2 {
       await _groupDataCollectionReference.doc(groupId).update({
         "requests": FieldValue.arrayUnion([request])
       });
-      //todo send push notification
 
       final notId = Uuid().v1();
       final doc = NotificationModel(

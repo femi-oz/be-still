@@ -232,7 +232,8 @@ class _AddPrayerState extends State<AddPrayer> {
           } else {
             await Provider.of<GroupProviderV2>(context, listen: false)
                 .setCurrentGroupById(selected?.id ?? '');
-            //todo set current group prayers
+            await Provider.of<PrayerProviderV2>(context, listen: false)
+                .setGroupPrayers(selected?.id ?? '');
             BeStilDialog.hideLoading(context);
             appController.setCurrentPage(8, true, 1);
           }
