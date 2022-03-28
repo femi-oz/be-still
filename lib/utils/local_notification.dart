@@ -111,7 +111,7 @@ class LocalNotification {
   static int _getExactDy(day) {
     var now = new DateTime.now();
 
-    while (now.weekday != day) {
+    while (now.weekday != day + 1) {
       now = now.subtract(new Duration(days: 1));
     }
     return now.day;

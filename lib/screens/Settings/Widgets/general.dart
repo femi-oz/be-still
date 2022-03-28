@@ -245,7 +245,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   void _updateEmail(UserDataModel user) async {
     try {
       await Provider.of<UserProviderV2>(context, listen: false)
-          .updateEmail(_newEmail.text, user.id ?? '');
+          .updateEmail(_newEmail.text.trim(), user.id ?? '');
       final newUser = user..email = _newEmail.text.trim();
       Settings.lastUser = jsonEncode(newUser.toJson2());
       BeStilDialog.showSuccessDialog(

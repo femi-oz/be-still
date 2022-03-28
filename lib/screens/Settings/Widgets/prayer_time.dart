@@ -103,8 +103,9 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                 ? SingleChildScrollView(
                     child: Column(
                       children: [
-                        ...prayerTimeList.map(
-                          (data) => Column(
+                        ...prayerTimeList.map((data) {
+                          final hour = data.scheduleDate?.hour ?? 0;
+                          return Column(
                             children: [
                               Row(
                                 children: [
@@ -174,7 +175,7 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                                             Row(
                                               children: [
                                                 Text(
-                                                  '${data.scheduleDate?.hour == 0 ? 12 : data.scheduleDate?.hour}',
+                                                  '${hour == 0 ? 12 : hour > 12 ? hour - 12 : hour}',
                                                   style: AppTextStyles
                                                       .regularText15
                                                       .copyWith(
@@ -310,8 +311,8 @@ class _PrayerTimeSettingsState extends State<PrayerTimeSettings> {
                               ),
                               SizedBox(height: 10.0),
                             ],
-                          ),
-                        ),
+                          );
+                        }),
                       ],
                     ),
                   )

@@ -59,20 +59,6 @@ class _PrayerDetailsState extends State<PrayerDetails> {
     LocalNotificationDataModel? reminder = reminders.firstWhere(
         (reminder) => reminder.prayerId == (prayerData?.id ?? ''),
         orElse: () => LocalNotificationDataModel());
-    var suffix = "th";
-    var digit = (reminder.scheduleDate?.day ?? 0) % 10;
-    if ((digit > 0 && digit < 4) &&
-        ((reminder.scheduleDate?.day ?? 0) < 11 ||
-            (reminder.scheduleDate?.day ?? 0) > 13)) {
-      suffix = ["st", "nd", "rd"][digit - 1];
-    }
-
-    final notificationText = reminder.frequency == Frequency.weekly
-        ? '${reminder.frequency}, ${LocalNotification.daysOfWeek[(reminder.scheduleDate?.weekday ?? 0) - 1]}, ${reminder.scheduleDate?.hour == 0 ? 12 : reminder.scheduleDate?.hour}:${(reminder.scheduleDate?.minute ?? 0) < 10 ? '0${reminder.scheduleDate?.minute}' : '${reminder.scheduleDate?.minute}'} ${DateFormat('a').format(reminder.scheduleDate ?? DateTime.now())}'
-        : reminder.frequency == Frequency.one_time
-            ? '${reminder.frequency},  ${LocalNotification.months[(reminder.scheduleDate?.month ?? 0) - 1]} ${reminder.scheduleDate?.day}$suffix, ${reminder.scheduleDate?.year} ${reminder.scheduleDate?.hour == 0 ? 12 : reminder.scheduleDate?.hour}:${(reminder.scheduleDate?.minute ?? 0) < 10 ? '0' + (reminder.scheduleDate?.minute.toString() ?? '') : reminder.scheduleDate?.minute} ${DateFormat('a').format(reminder.scheduleDate ?? DateTime.now())}'
-            : '${reminder.frequency}, ${reminder.scheduleDate?.hour == 0 ? 12 : reminder.scheduleDate?.hour}:${(reminder.scheduleDate?.minute ?? 0) < 10 ? '0${reminder.scheduleDate?.minute}' : '${reminder.scheduleDate?.minute}'}  ${DateFormat('a').format(reminder.scheduleDate ?? DateTime.now())}';
-    reminder.message = notificationText;
     return reminder.message ?? '';
   }
 
