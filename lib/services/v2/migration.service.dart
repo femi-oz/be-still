@@ -22,8 +22,10 @@ import 'package:be_still/services/notification_service.dart';
 import 'package:be_still/services/prayer_service.dart';
 import 'package:be_still/services/settings_service.dart';
 import 'package:be_still/services/user_service.dart';
+import 'package:be_still/utils/local_notification.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
 
 class MigrationService {
@@ -94,6 +96,7 @@ class MigrationService {
       _userDataCollectionReference.doc(uid).set(newUser);
       await migrateUserReminders(oldUser.id ?? '');
       await migrateUserPrayerData(uid, oldUser.id ?? '');
+      await LocalNotification.setNotificationsOnNewDevice(Get.context);
     } catch (e) {
       print(e);
       throw HttpException(e.toString());
