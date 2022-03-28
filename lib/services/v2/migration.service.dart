@@ -199,7 +199,7 @@ class MigrationService {
   Future<void> migrateUserReminders(String userId) async {
     oldReminders = await _oldNotificationService.getLocalNotifications(userId);
     oldReminders
-        .where((element) => element.type == NotificationType.reminder)
+        .where((element) => element.type == NotificationType.prayer_time)
         .toList()
         .forEach((r) {
       final newReminders = LocalNotificationDataModel(
