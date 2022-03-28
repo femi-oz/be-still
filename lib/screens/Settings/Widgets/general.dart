@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:be_still/enums/error_type.dart';
 import 'package:be_still/enums/theme_mode.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/user.model.dart';
@@ -266,8 +267,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       _newEmail.clear();
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
+      if (e.message !=
+          'The email address is already in use by another account.')
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       String message = StringUtils.getErrorMessage(e);
       if (message ==
@@ -278,6 +281,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
+
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
       _newEmail.clear();
@@ -336,22 +340,14 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       Navigator.of(context).pop();
     } on HttpException catch (e, s) {
       _currentPassword.clear();
-      var message = '';
-      if (e.message == 'Username / Password is incorrect' ||
-          e.message == 'The application has encountered an error.') {
-        message = 'Password is incorrect.';
-      } else {
-        message = e.message ?? '';
-      }
-      BeStilDialog.hideLoading(context);
 
-      PlatformException er =
-          PlatformException(code: 'custom', message: message);
+      BeStilDialog.hideLoading(context);
 
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
+      if (e.message != ErrorType.wrongPassword)
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       _currentPassword.clear();
       BeStilDialog.hideLoading(context);
@@ -515,7 +511,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                         CustomInput(
                           textkey: GlobalKey<FormFieldState>(),
                           showSuffix: false,
-                          isRequired: false,
+                          isRequired: true,
                           obScurePassword: true,
                           isPassword: false,
                           label: 'Current Password',
