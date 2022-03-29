@@ -92,7 +92,7 @@ class LocalNotification {
               android: AndroidNotificationDetails('your channel id',
                   'your channel name', 'your channel description'),
               iOS: IOSNotificationDetails()),
-          payload: payload,
+          payload: payload ?? '',
           androidAllowWhileIdle: true,
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.absoluteTime,
@@ -103,7 +103,7 @@ class LocalNotification {
         )
         .whenComplete(() => print('whenComplete'))
         .then((value) => print('then'))
-        .onError((error, stackTrace) => print('error'));
+        .onError((error, stackTrace) => print(error));
   }
 
   static int _getExactDy(day) {
