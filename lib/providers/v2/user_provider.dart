@@ -118,10 +118,14 @@ class UserProviderV2 with ChangeNotifier {
     try {
       await _userService.updateUserSettings(key: key, value: value);
       await setCurrentUser();
-      if (key == 'archiveAutoDeleteMinutes' && value != 0) {
+      if (key == 'archiveAutoDeleteMinutes') {
         Timer.periodic(Duration(minutes: value), (timer) async {
-          await _prayerService.autoDeleteArchivePrayers(
-              value, currentUser.includeAnsweredPrayerAutoDelete ?? false);
+          if (value == 0) {
+            timer.cancel();
+          } else {
+            await _prayerService.autoDeleteArchivePrayers(
+                value, currentUser.includeAnsweredPrayerAutoDelete ?? false);
+          }
         });
       }
     } catch (e) {

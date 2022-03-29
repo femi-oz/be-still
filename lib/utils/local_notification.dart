@@ -103,7 +103,7 @@ class LocalNotification {
         )
         .whenComplete(() => print('whenComplete'))
         .then((value) => print('then'))
-        .onError((error, stackTrace) => print(error));
+        .onError((error, stackTrace) => print('error'));
   }
 
   static int _getExactDy(day) {
