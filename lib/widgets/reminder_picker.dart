@@ -268,7 +268,6 @@ class _ReminderPickerState extends State<ReminderPicker> {
           entityId: widget.entityId,
           type: widget.type,
           isGroup: widget.isGroup);
-      print(description);
       if (Settings.enabledReminderPermission) {
         await LocalNotification.setLocalNotification(
             context: context,
