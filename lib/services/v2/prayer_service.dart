@@ -619,20 +619,22 @@ class PrayerServiceV2 {
     }
   }
 
-  Future<void> autoDeleteArchivePrayers(int autoDeletePeriod) async {
+  Future<void> autoDeleteArchivePrayers(
+      int autoDeletePeriod, bool includeAnsweredPrayers) async {
     final archivedPrayers = await _prayerDataCollectionReference
         .where('userId', isEqualTo: _firebaseAuth.currentUser?.uid)
         .where('status', isEqualTo: Status.archived)
+        .where('isAnswered', isEqualTo: includeAnsweredPrayers)
         .get();
     final mappedPrayers = archivedPrayers.docs
         .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
         .toList();
-    final filteredPrayers = mappedPrayers
-        .where((prayer) => (prayer.archivedDate ?? DateTime.now())
-            .add(Duration(minutes: autoDeletePeriod))
-            .isBefore(DateTime.now()))
-        .toList();
-    filteredPrayers.forEach((prayer) async {
+    // final filteredPrayers = mappedPrayers
+    //     .where((prayer) => (prayer.archivedDate ?? DateTime.now())
+    //         .add(Duration(minutes: autoDeletePeriod))
+    //         .isBefore(DateTime.now()))
+    //     .toList();
+    mappedPrayers.forEach((prayer) async {
       _prayerDataCollectionReference.doc(prayer.id).update({
         'status': Status.deleted,
         'modifiedDate': DateTime.now(),
