@@ -73,8 +73,8 @@ class LocalNotification {
       localNotificationID = localNotificationId;
     else {
       final localNots =
-          Provider.of<NotificationProviderV2>(context, listen: false)
-              .localNotifications;
+          await Provider.of<NotificationProviderV2>(context, listen: false)
+              .getLocalNotificationsFuture();
       final allIds = localNots.map((e) => e.localNotificationId).toList();
 
       localNotificationID = allIds.length > 0
