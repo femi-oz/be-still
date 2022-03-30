@@ -78,7 +78,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
       //         (widget.reminder?.scheduleDate?.weekday ?? 0) > 6
       //             ? 6
       //             : widget.reminder?.scheduleDate?.weekday ?? 0]);
-      selectedDayOfWeek = (widget.reminder?.scheduleDate?.weekday ?? 0) - 1;
+      selectedDayOfWeek = (widget.reminder?.scheduleDate?.weekday ?? 0) - 2;
       selectedPeriod = DateFormat('a')
           .format(widget.reminder?.scheduleDate ?? DateTime.now());
       selectedFrequency = widget.reminder?.frequency ?? '';
@@ -352,13 +352,10 @@ class _ReminderPickerState extends State<ReminderPicker> {
         FixedExtentScrollController(
             initialItem:
                 LocalNotification.frequency.indexOf(selectedFrequency));
-    print(selectedDayOfWeek);
     FixedExtentScrollController daysOfWeekController =
         FixedExtentScrollController(
-            initialItem: LocalNotification.daysOfWeek.indexOf(
-                LocalNotification.daysOfWeek[selectedDayOfWeek == 0
-                    ? selectedDayOfWeek
-                    : selectedDayOfWeek - 1]));
+            initialItem: LocalNotification.daysOfWeek
+                .indexOf(LocalNotification.daysOfWeek[selectedDayOfWeek]));
     FixedExtentScrollController periodController = FixedExtentScrollController(
         initialItem: periodOfDay.indexOf(selectedPeriod));
 
