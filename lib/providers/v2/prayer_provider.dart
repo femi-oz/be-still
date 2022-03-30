@@ -93,7 +93,6 @@ class PrayerProviderV2 with ChangeNotifier {
           .getUserPrayers()
           .asBroadcastStream()
           .listen((event) async {
-        await checkPrayerValidity();
         _followedPrayers =
             await _prayerService.getUserFollowedPrayers(prayersIds);
         _prayers = [...followedPrayers, ...event];
@@ -145,10 +144,10 @@ class PrayerProviderV2 with ChangeNotifier {
   Future<void> checkPrayerValidity() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      if (prayers.length > 0) {
-        await _autoDeleteArchivePrayers();
-        await _unSnoozePrayerPast();
-      }
+      // if (prayers.length > 0) {
+      await _autoDeleteArchivePrayers();
+      await _unSnoozePrayerPast();
+      // }
     } catch (e) {
       rethrow;
     }

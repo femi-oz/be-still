@@ -43,6 +43,8 @@ class UserProviderV2 with ChangeNotifier {
           .listen((event) async {
         _currentUser = event;
         await Provider.of<PrayerProviderV2>(Get.context!, listen: false)
+            .checkPrayerValidity();
+        await Provider.of<PrayerProviderV2>(Get.context!, listen: false)
             .setPrayers(
                 (event.prayers ?? []).map((e) => e.prayerId ?? '').toList());
         // await Provider.of<GroupProviderV2>(Get.context!, listen: false)
