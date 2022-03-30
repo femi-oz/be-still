@@ -6,16 +6,11 @@ import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 
 class MiscProviderV2 with ChangeNotifier {
-  MigrationService _migrationService = locator<MigrationService>();
-
   String _pageTitle = 'MY PRAYERS';
   String get pageTitle => _pageTitle;
 
   bool _initialLoad = false;
   bool get initialLoad => _initialLoad;
-
-  bool _ranMigration = false;
-  bool get ranMigration => _ranMigration;
 
   String _searchQuery = '';
   String get searchQuery => _searchQuery;
@@ -43,11 +38,6 @@ class MiscProviderV2 with ChangeNotifier {
 
   setLoadStatus(bool value) {
     _initialLoad = value;
-    notifyListeners();
-  }
-
-  setMigrateStatus(bool value) {
-    _ranMigration = value;
     notifyListeners();
   }
 

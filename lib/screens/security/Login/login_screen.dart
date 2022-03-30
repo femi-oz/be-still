@@ -362,8 +362,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       BeStilDialog.showLoading(
           context, 'Please wait, your data is being migrated!');
-      await Provider.of<MiscProviderV2>(context, listen: false)
-          .setMigrateStatus(true);
+
       await _migrationService
           .migrateUserData(FirebaseAuth.instance.currentUser?.uid ?? '');
       final user = await Provider.of<UserProviderV2>(context, listen: false)

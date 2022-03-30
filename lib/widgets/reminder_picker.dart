@@ -192,8 +192,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
     // AM 22= 22-12
     // pm 12 = 12+12
     // selectedMinute = 54;
-    await Provider.of<MiscProviderV2>(context, listen: false)
-        .setMigrateStatus(false);
+    // await Provider.of<MiscProviderV2>(context, listen: false)
+    //     .setMigrateStatus(false);
     var hour = selectedPeriod == PeriodOfDay.am && selectedHour >= 12
         ? selectedHour - 12
         : selectedPeriod == PeriodOfDay.pm && selectedHour < 12
@@ -348,17 +348,14 @@ class _ReminderPickerState extends State<ReminderPicker> {
 
   @override
   Widget build(BuildContext context) {
-    final ranMigration =
-        Provider.of<MiscProviderV2>(context, listen: false).ranMigration;
     FixedExtentScrollController frequencyController =
         FixedExtentScrollController(
             initialItem:
                 LocalNotification.frequency.indexOf(selectedFrequency));
     FixedExtentScrollController daysOfWeekController =
         FixedExtentScrollController(
-            initialItem: LocalNotification.daysOfWeek.indexOf(ranMigration
-                ? LocalNotification.daysOfWeek[selectedDayOfWeek - 1]
-                : LocalNotification.daysOfWeek[selectedDayOfWeek]));
+            initialItem: LocalNotification.daysOfWeek
+                .indexOf(LocalNotification.daysOfWeek[selectedDayOfWeek - 1]));
     FixedExtentScrollController periodController = FixedExtentScrollController(
         initialItem: periodOfDay.indexOf(selectedPeriod));
 
