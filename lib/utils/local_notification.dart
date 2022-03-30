@@ -50,13 +50,13 @@ class LocalNotification {
       final scheduledDate = tz.TZDateTime.from(
           _localNotifications[i].scheduleDate ?? DateTime.now(), location);
       await setLocalNotification(
-        title: '${_localNotifications[i].frequency} reminder to pray',
-        description: _localNotifications[i].message ?? '',
-        scheduledDate: scheduledDate,
-        payload: _localNotifications[i].prayerId,
-        frequency: _localNotifications[i].frequency ?? '',
-        context: context,
-      );
+          title: '${_localNotifications[i].frequency} reminder to pray',
+          description: _localNotifications[i].message ?? '',
+          scheduledDate: scheduledDate,
+          payload: _localNotifications[i].prayerId,
+          frequency: _localNotifications[i].frequency ?? '',
+          context: context,
+          localNotificationId: _localNotifications[i].localNotificationId);
     }
   }
 
@@ -82,6 +82,7 @@ class LocalNotification {
           : 0;
       localNotificationID += 1;
     }
+    print(localNotificationID);
     await _flutterLocalNotificationsPlugin
         .zonedSchedule(
           localNotificationID,
@@ -102,7 +103,7 @@ class LocalNotification {
               : DateTimeComponents.dayOfWeekAndTime,
         )
         .whenComplete(() => print('whenComplete'))
-        .then((value) => print('then'))
+        .then((value) => print('then '))
         .onError((error, stackTrace) => print(error));
   }
 

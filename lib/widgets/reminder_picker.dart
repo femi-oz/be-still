@@ -258,17 +258,11 @@ class _ReminderPickerState extends State<ReminderPicker> {
         selectedDayOfMonth,
         selectedFrequency == Frequency.one_time,
       );
-      print(selectedDayOfWeek);
-      print('========1=========');
-      print(DateTime.now().add(Duration(days: 1)).weekday);
-      print('========2=========');
-      print(scheduleDate.weekday);
-      print('=================');
+
       final payload = NotificationMessageModel(
           entityId: widget.entityId,
           type: widget.type,
           isGroup: widget.isGroup);
-      print(description);
       if (Settings.enabledReminderPermission) {
         await LocalNotification.setLocalNotification(
             context: context,
