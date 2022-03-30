@@ -34,10 +34,6 @@ class PrayerServiceV2 {
       FirebaseFirestore.instance.collection('users');
 
   final CollectionReference<Map<String, dynamic>>
-      _localNotificationCollectionReference =
-      FirebaseFirestore.instance.collection("local_notifications");
-
-  final CollectionReference<Map<String, dynamic>>
       _messageTemplateCollectionReference =
       FirebaseFirestore.instance.collection('MessageTemplate');
 
