@@ -192,6 +192,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
     // AM 22= 22-12
     // pm 12 = 12+12
     // selectedMinute = 54;
+    await Provider.of<MiscProviderV2>(context, listen: false)
+        .setMigrateStatus(false);
     var hour = selectedPeriod == PeriodOfDay.am && selectedHour >= 12
         ? selectedHour - 12
         : selectedPeriod == PeriodOfDay.pm && selectedHour < 12
