@@ -570,25 +570,14 @@ class PrayerProviderV2 with ChangeNotifier {
       List<PrayerDataModel> activePrayers = [];
       List<PrayerDataModel> answeredPrayers = [];
       List<PrayerDataModel> snoozedPrayers = [];
-      List<PrayerDataModel> favoritePrayers = [];
       List<PrayerDataModel> archivedPrayers = [];
       List<PrayerDataModel> followingPrayers = [];
       List<PrayerDataModel> allPrayers = [];
       if (_filterOption == Status.all) {
-        favoritePrayers = prayers
-            .where((PrayerDataModel data) =>
-                (data.isFavorite ?? false) && (data.status != Status.active))
-            .toList();
         allPrayers = prayers;
       }
 
       if (_filterOption == Status.active) {
-        favoritePrayers = prayers
-            .where((PrayerDataModel data) =>
-                (data.isFavorite ?? false) &&
-                !(data.status == Status.snoozed) &&
-                (data.status == Status.active))
-            .toList();
         activePrayers = prayers
             .where((PrayerDataModel data) =>
                 (data.status ?? '').toLowerCase() ==
@@ -608,10 +597,6 @@ class PrayerProviderV2 with ChangeNotifier {
             .toList();
       }
       if (_filterOption == Status.snoozed) {
-        favoritePrayers = prayers
-            .where((PrayerDataModel data) =>
-                (data.isFavorite ?? false) && (data.status == Status.snoozed))
-            .toList();
         snoozedPrayers = prayers
             .where((PrayerDataModel data) => data.status == Status.snoozed)
             .toList();
@@ -632,10 +617,15 @@ class PrayerProviderV2 with ChangeNotifier {
 
       _filteredPrayers.sort((a, b) => (b.modifiedDate ?? DateTime.now())
           .compareTo(a.modifiedDate ?? DateTime.now()));
-      favoritePrayers.sort((a, b) => (b.modifiedDate ?? DateTime.now())
-          .compareTo(a.modifiedDate ?? DateTime.now()));
 
-      _filteredPrayers = [...favoritePrayers, ..._filteredPrayers];
+      _filteredPrayers = [
+        ..._filteredPrayers
+            .where((element) => element.isFavorite ?? false)
+            .toList(),
+        ..._filteredPrayers
+            .where((element) => !(element.isFavorite ?? false))
+            .toList(),
+      ];
       List<PrayerDataModel> _distinct = [];
       var idSet = <String>{};
       for (var e in _filteredPrayers) {

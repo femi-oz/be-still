@@ -245,9 +245,9 @@ class PrayerServiceV2 {
               await _userService.getUserByIdFuture(follower.userId ?? '');
           final prayerToRemove = (user.prayers ?? [])
               .firstWhere((element) => element.prayerId == prayerId);
-          batch.update(_prayerDataCollectionReference.doc(prayerId),
-              {'status': Status.archived});
           batch.update(_prayerDataCollectionReference.doc(prayerId), {
+            'status': Status.archived,
+            'archivedDate': DateTime.now(),
             'followers': FieldValue.arrayRemove([follower.toJson()])
           });
           batch.update(_userDataCollectionReference.doc(follower.userId), {
@@ -257,7 +257,7 @@ class PrayerServiceV2 {
         });
       } else {
         batch.update(_prayerDataCollectionReference.doc(prayerId),
-            {'status': Status.archived});
+            {'status': Status.archived, 'archivedDate': DateTime.now()});
         batch.commit();
       }
     } catch (e) {
@@ -471,12 +471,11 @@ class PrayerServiceV2 {
               await _userService.getUserByIdFuture(follower.userId ?? '');
           final prayerToRemove = (user.prayers ?? [])
               .firstWhere((element) => element.prayerId == prayerId);
-          batch.update(_prayerDataCollectionReference.doc(prayerId),
-              {'isAnswered': true, 'status': Status.archived});
-          followers.forEach((follower) {
-            batch.update(_userDataCollectionReference.doc(follower.userId), {
-              'followers': FieldValue.arrayRemove([follower.toJson()])
-            });
+          batch.update(_prayerDataCollectionReference.doc(prayerId), {
+            'isAnswered': true,
+            'status': Status.archived,
+            'archivedDate': DateTime.now(),
+            'followers': FieldValue.arrayRemove([follower.toJson()])
           });
           batch.update(_userDataCollectionReference.doc(follower.userId), {
             'prayers': FieldValue.arrayRemove([prayerToRemove.toJson()]),
@@ -484,8 +483,11 @@ class PrayerServiceV2 {
           batch.commit();
         });
       } else {
-        batch.update(_prayerDataCollectionReference.doc(prayerId),
-            {'isAnswered': true, 'status': Status.archived});
+        batch.update(_prayerDataCollectionReference.doc(prayerId), {
+          'isAnswered': true,
+          'status': Status.archived,
+          'archivedDate': DateTime.now()
+        });
         batch.commit();
       }
     } catch (e) {
