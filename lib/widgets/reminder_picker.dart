@@ -352,10 +352,13 @@ class _ReminderPickerState extends State<ReminderPicker> {
         FixedExtentScrollController(
             initialItem:
                 LocalNotification.frequency.indexOf(selectedFrequency));
+    print(selectedDayOfWeek);
     FixedExtentScrollController daysOfWeekController =
         FixedExtentScrollController(
-            initialItem: LocalNotification.daysOfWeek
-                .indexOf(LocalNotification.daysOfWeek[selectedDayOfWeek - 1]));
+            initialItem: LocalNotification.daysOfWeek.indexOf(
+                LocalNotification.daysOfWeek[selectedDayOfWeek == 0
+                    ? selectedDayOfWeek
+                    : selectedDayOfWeek - 1]));
     FixedExtentScrollController periodController = FixedExtentScrollController(
         initialItem: periodOfDay.indexOf(selectedPeriod));
 
