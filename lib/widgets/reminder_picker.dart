@@ -346,14 +346,17 @@ class _ReminderPickerState extends State<ReminderPicker> {
 
   @override
   Widget build(BuildContext context) {
+    final ranMigration =
+        Provider.of<MiscProviderV2>(context, listen: false).ranMigration;
     FixedExtentScrollController frequencyController =
         FixedExtentScrollController(
             initialItem:
                 LocalNotification.frequency.indexOf(selectedFrequency));
     FixedExtentScrollController daysOfWeekController =
         FixedExtentScrollController(
-            initialItem: LocalNotification.daysOfWeek
-                .indexOf(LocalNotification.daysOfWeek[selectedDayOfWeek]));
+            initialItem: LocalNotification.daysOfWeek.indexOf(ranMigration
+                ? LocalNotification.daysOfWeek[selectedDayOfWeek - 1]
+                : LocalNotification.daysOfWeek[selectedDayOfWeek]));
     FixedExtentScrollController periodController = FixedExtentScrollController(
         initialItem: periodOfDay.indexOf(selectedPeriod));
 

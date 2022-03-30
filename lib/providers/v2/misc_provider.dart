@@ -14,6 +14,9 @@ class MiscProviderV2 with ChangeNotifier {
   bool _initialLoad = false;
   bool get initialLoad => _initialLoad;
 
+  bool _ranMigration = false;
+  bool get ranMigration => _ranMigration;
+
   String _searchQuery = '';
   String get searchQuery => _searchQuery;
 
@@ -43,8 +46,9 @@ class MiscProviderV2 with ChangeNotifier {
     notifyListeners();
   }
 
-  Future migrateData(String uid) async {
-    _migrationService.migrateUserData(uid);
+  setMigrateStatus(bool value) {
+    _ranMigration = value;
+    notifyListeners();
   }
 
   Future setDeviceId() async {
