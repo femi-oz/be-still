@@ -8,6 +8,7 @@ import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/services/v2/migration.service.dart';
+import 'package:be_still/services/v2/prayer_service.dart';
 import 'package:be_still/services/v2/user_service.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/local_notification.dart';
@@ -19,6 +20,7 @@ import 'package:provider/provider.dart';
 
 class UserProviderV2 with ChangeNotifier {
   UserServiceV2 _userService = locator<UserServiceV2>();
+  PrayerServiceV2 _prayerService = locator<PrayerServiceV2>();
 
   UserDataModel _currentUser = UserDataModel();
   UserDataModel get currentUser => _currentUser;
@@ -116,6 +118,16 @@ class UserProviderV2 with ChangeNotifier {
     try {
       await _userService.updateUserSettings(key: key, value: value);
       await setCurrentUser();
+      if (key == 'archiveAutoDeleteMinutes') {
+        Timer.periodic(Duration(minutes: value), (timer) async {
+          if (value == 0) {
+            timer.cancel();
+          } else {
+            await _prayerService.autoDeleteArchivePrayers(
+                value, currentUser.includeAnsweredPrayerAutoDelete ?? false);
+          }
+        });
+      }
     } catch (e) {
       rethrow;
     }

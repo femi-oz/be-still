@@ -6,8 +6,6 @@ import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 
 class MiscProviderV2 with ChangeNotifier {
-  MigrationService _migrationService = locator<MigrationService>();
-
   String _pageTitle = 'MY PRAYERS';
   String get pageTitle => _pageTitle;
 
@@ -41,10 +39,6 @@ class MiscProviderV2 with ChangeNotifier {
   setLoadStatus(bool value) {
     _initialLoad = value;
     notifyListeners();
-  }
-
-  Future migrateData(String uid) async {
-    _migrationService.migrateUserData(uid);
   }
 
   Future setDeviceId() async {

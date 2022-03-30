@@ -48,7 +48,7 @@ class LocalNotification {
     //set notification in new device
     for (int i = 0; i < _localNotifications.length; i++) {
       final scheduledDate = tz.TZDateTime.from(
-          _localNotifications[i].scheduleDate ?? DateTime.now(), location);
+          (_localNotifications[i].scheduleDate) ?? DateTime.now(), location);
       await setLocalNotification(
           title: '${_localNotifications[i].frequency} reminder to pray',
           description: _localNotifications[i].message ?? '',
@@ -73,8 +73,8 @@ class LocalNotification {
       localNotificationID = localNotificationId;
     else {
       final localNots =
-          Provider.of<NotificationProviderV2>(context, listen: false)
-              .localNotifications;
+          await Provider.of<NotificationProviderV2>(context, listen: false)
+              .getLocalNotificationsFuture();
       final allIds = localNots.map((e) => e.localNotificationId).toList();
 
       localNotificationID = allIds.length > 0
@@ -93,7 +93,7 @@ class LocalNotification {
               android: AndroidNotificationDetails('your channel id',
                   'your channel name', 'your channel description'),
               iOS: IOSNotificationDetails()),
-          payload: payload,
+          payload: payload ?? '',
           androidAllowWhileIdle: true,
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.absoluteTime,

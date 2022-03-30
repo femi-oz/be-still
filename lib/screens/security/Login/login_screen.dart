@@ -362,14 +362,15 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       BeStilDialog.showLoading(
           context, 'Please wait, your data is being migrated!');
+
       await _migrationService
           .migrateUserData(FirebaseAuth.instance.currentUser?.uid ?? '');
       final user = await Provider.of<UserProviderV2>(context, listen: false)
           .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
       await Provider.of<UserProviderV2>(context, listen: false)
           .setCurrentUser();
-      if (Settings.enabledReminderPermission)
-        LocalNotification.setNotificationsOnNewDevice(context);
+      // if (Settings.enabledReminderPermission)
+      //   await LocalNotification.setNotificationsOnNewDevice(context);
       Settings.lastUser = jsonEncode(user.toJson2());
       Settings.userPassword = _passwordController.text;
 
@@ -394,11 +395,13 @@ class _LoginScreenState extends State<LoginScreen> {
               .biometricSignin();
       BeStilDialog.showLoading(context, 'Authenticating');
       isLoading = true;
+
       if (isAuth) {
         await Provider.of<UserProviderV2>(context, listen: false)
             .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
         await Provider.of<UserProviderV2>(context, listen: false)
             .setCurrentUser();
+
         BeStilDialog.hideLoading(context);
         isLoading = false;
 

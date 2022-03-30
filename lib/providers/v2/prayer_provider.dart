@@ -385,8 +385,14 @@ class PrayerProviderV2 with ChangeNotifier {
                   .currentUser
                   .archiveAutoDeleteMinutes ??
               0;
+      final includeAnsweredPrayers =
+          Provider.of<UserProviderV2>(Get.context!, listen: false)
+                  .currentUser
+                  .includeAnsweredPrayerAutoDelete ??
+              false;
       if (archiveAutoDeleteMins > 0)
-        await _prayerService.autoDeleteArchivePrayers(archiveAutoDeleteMins);
+        await _prayerService.autoDeleteArchivePrayers(
+            archiveAutoDeleteMins, includeAnsweredPrayers);
     } catch (e) {
       rethrow;
     }
