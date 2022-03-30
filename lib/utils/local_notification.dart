@@ -48,7 +48,7 @@ class LocalNotification {
     //set notification in new device
     for (int i = 0; i < _localNotifications.length; i++) {
       final scheduledDate = tz.TZDateTime.from(
-          _localNotifications[i].scheduleDate ?? DateTime.now(), location);
+          (_localNotifications[i].scheduleDate) ?? DateTime.now(), location);
       await setLocalNotification(
         title: '${_localNotifications[i].frequency} reminder to pray',
         description: _localNotifications[i].message ?? '',
