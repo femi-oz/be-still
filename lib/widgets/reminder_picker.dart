@@ -78,7 +78,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
       //         (widget.reminder?.scheduleDate?.weekday ?? 0) > 6
       //             ? 6
       //             : widget.reminder?.scheduleDate?.weekday ?? 0]);
-      selectedDayOfWeek = (widget.reminder?.scheduleDate?.weekday ?? 0) - 2;
+      selectedDayOfWeek = (widget.reminder?.scheduleDate?.weekday ?? 0) -
+          (widget.type == NotificationType.prayer_time ? 1 : 2);
       selectedPeriod = DateFormat('a')
           .format(widget.reminder?.scheduleDate ?? DateTime.now());
       selectedFrequency = widget.reminder?.frequency ?? '';
@@ -253,7 +254,9 @@ class _ReminderPickerState extends State<ReminderPicker> {
       final scheduleDate = LocalNotification.scheduleDate(
         hour,
         selectedMinute,
-        selectedDayOfWeek,
+        widget.type == NotificationType.prayer_time
+            ? selectedDayOfWeek - 1
+            : selectedDayOfWeek,
         selectedPeriod,
         selectedYear,
         selectedMonth,
