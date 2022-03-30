@@ -211,7 +211,7 @@ class MigrationService {
               localNotificationId: r.localNotificationId,
               type: r.type,
               frequency: r.frequency,
-              scheduleDate: r.scheduledDate?.subtract(Duration(days: 1)),
+              scheduleDate: r.scheduledDate?.subtract(const Duration(days: 1)),
               createdBy: FirebaseAuth.instance.currentUser?.uid,
               createdDate: DateTime.now(),
               modifiedBy: FirebaseAuth.instance.currentUser?.uid,
