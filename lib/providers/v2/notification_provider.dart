@@ -209,6 +209,8 @@ class NotificationProviderV2 with ChangeNotifier {
           .asBroadcastStream()
           .listen((notifications) {
         _localNotifications = notifications;
+        _localNotifications.sort((a, b) => (b.modifiedDate ?? DateTime.now())
+            .compareTo(a.modifiedDate ?? DateTime.now()));
         _prayerTimeNotifications = notifications
             .where((e) => e.type == NotificationType.prayer_time)
             .toList();
