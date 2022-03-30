@@ -20,6 +20,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -73,13 +74,15 @@ class _ReminderPickerState extends State<ReminderPicker> {
       selectedHour = widget.reminder?.scheduleDate?.hour ?? 0;
 
       selectedMinute = widget.reminder?.scheduleDate?.minute ?? 0;
-      // selectedDayOfWeek = LocalNotification.daysOfWeek.indexOf(
-      //     LocalNotification.daysOfWeek[
-      //         (widget.reminder?.scheduleDate?.weekday ?? 0) > 6
-      //             ? 6
-      //             : widget.reminder?.scheduleDate?.weekday ?? 0]);
-      selectedDayOfWeek = (widget.reminder?.scheduleDate?.weekday ?? 0) -
-          (widget.type == NotificationType.prayer_time ? 1 : 2);
+      final scheduledDate = tz.TZDateTime.local(
+        widget.reminder?.scheduleDate?.year ?? 0,
+        widget.reminder?.scheduleDate?.month ?? 0,
+        widget.reminder?.scheduleDate?.day ?? 0,
+        widget.reminder?.scheduleDate?.hour ?? 0,
+        widget.reminder?.scheduleDate?.minute ?? 0,
+        widget.reminder?.scheduleDate?.second ?? 0,
+      );
+      selectedDayOfWeek = scheduledDate.weekday - 1;
       selectedPeriod = DateFormat('a')
           .format(widget.reminder?.scheduleDate ?? DateTime.now());
       selectedFrequency = widget.reminder?.frequency ?? '';
@@ -90,7 +93,15 @@ class _ReminderPickerState extends State<ReminderPicker> {
     } else {
       selectedHour = DateTime.now().hour == 0 ? 12 : DateTime.now().hour;
       selectedMinute = minInTheHour[0];
-      selectedDayOfWeek = DateTime.now().weekday - 1;
+      final scheduledDate = tz.TZDateTime.local(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
+        DateTime.now().hour,
+        DateTime.now().minute,
+        DateTime.now().second,
+      );
+      selectedDayOfWeek = scheduledDate.weekday - 1;
       selectedPeriod =
           DateTime.now().hour > 12 ? PeriodOfDay.pm : PeriodOfDay.am;
       selectedFrequency = Frequency.one_time;
@@ -190,11 +201,6 @@ class _ReminderPickerState extends State<ReminderPicker> {
   }
 
   Future<void> setNotification() async {
-    // AM 22= 22-12
-    // pm 12 = 12+12
-    // selectedMinute = 54;
-    // await Provider.of<MiscProviderV2>(context, listen: false)
-    //     .setMigrateStatus(false);
     var hour = selectedPeriod == PeriodOfDay.am && selectedHour >= 12
         ? selectedHour - 12
         : selectedPeriod == PeriodOfDay.pm && selectedHour < 12
@@ -254,9 +260,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
       final scheduleDate = LocalNotification.scheduleDate(
         hour,
         selectedMinute,
-        widget.type == NotificationType.prayer_time
-            ? selectedDayOfWeek - 1
-            : selectedDayOfWeek,
+        selectedDayOfWeek,
         selectedPeriod,
         selectedYear,
         selectedMonth,
@@ -296,15 +300,8 @@ class _ReminderPickerState extends State<ReminderPicker> {
             notificationText: notificationText,
             scheduledDate: scheduleDate,
             frequency: selectedFrequency);
-      // final user = await Provider.of<UserProviderV2>(context, listen: false)
-      //     .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
-      // final prayerIds =
-      //     (user.prayers ?? []).map((e) => e.prayerId ?? '').toList();
-      // await Provider.of<PrayerProviderV2>(context, listen: false)
-      //     .removeReminder(scheduleDate, prayerIds);
 
       clearSearch();
-      // BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =

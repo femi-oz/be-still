@@ -1,5 +1,6 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/settings_key.dart';
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/device.model.dart';
 import 'package:be_still/providers/v2/devotional_provider.dart';
@@ -59,6 +60,8 @@ class _EntryScreenState extends State<EntryScreen> {
   initState() {
     try {
       final miscProvider = Provider.of<MiscProviderV2>(context, listen: false);
+      Provider.of<PrayerProviderV2>(context, listen: false)
+          .setPrayerFilterOptions(Status.active);
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
         final user =
             Provider.of<UserProviderV2>(context, listen: false).currentUser;
