@@ -423,7 +423,7 @@ class GroupProviderV2 with ChangeNotifier {
     }
   }
 
-  resetValues() {
+  Future flush() async {
     _userGroups = [];
     _allGroups = [];
     _filteredAllGroups = [];

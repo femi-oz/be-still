@@ -60,11 +60,12 @@ class _EntryScreenState extends State<EntryScreen> {
   initState() {
     try {
       final miscProvider = Provider.of<MiscProviderV2>(context, listen: false);
-      Provider.of<PrayerProviderV2>(context, listen: false)
-          .setPrayerFilterOptions(Status.active);
+
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
         final user =
             Provider.of<UserProviderV2>(context, listen: false).currentUser;
+        Provider.of<PrayerProviderV2>(context, listen: false)
+            .setPrayerFilterOptions(Status.active);
         if (miscProvider.initialLoad) {
           await _preLoadData();
           Future.delayed(Duration(milliseconds: 500));

@@ -671,11 +671,18 @@ class PrayerProviderV2 with ChangeNotifier {
   }
 
   Future flush() async {
+    _prayers = [];
+    _userPrayers = [];
+    _filteredPrayers = [];
+    _groupPrayers = [];
+    _filteredPrayerTimeList = [];
+
     if (prayers.isNotEmpty) {
       await prayerStream.cancel();
     }
     if (groupPrayers.isNotEmpty) {
       await groupPrayerStream.cancel();
     }
+    notifyListeners();
   }
 }
