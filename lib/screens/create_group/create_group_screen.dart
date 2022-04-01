@@ -3,11 +3,10 @@ import 'dart:io';
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/group_type.dart';
 import 'package:be_still/enums/status.dart';
-import 'package:be_still/models/group.model.dart';
-import 'package:be_still/models/group_settings_model.dart';
-import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/models/v2/group.model.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_form.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_succesful.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -27,7 +26,7 @@ class CreateGroupScreen extends StatefulWidget {
 }
 
 class _CreateGroupScreenState extends State<CreateGroupScreen> {
-  GroupType _option = GroupType.normal;
+  String _option = GroupType.normal;
   int _step = 1;
   AppController appController = Get.find();
   final _formKey = GlobalKey<FormState>();
@@ -38,18 +37,15 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
   @override
   void initState() {
-    final groupData =
-        Provider.of<GroupProvider>(context, listen: false).currentGroup;
+    final group =
+        Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
 
-    final isEdit = Provider.of<GroupProvider>(context, listen: false).isEdit;
-    _groupNameController.text = isEdit ? groupData.group?.name ?? '' : '';
-    _locationController.text = isEdit ? groupData.group?.location ?? '' : '';
-    _descriptionController.text =
-        isEdit ? groupData.group?.description ?? '' : '';
-    _organizationController.text =
-        isEdit ? groupData.group?.organization ?? '' : '';
-    _requireAdminApproval =
-        isEdit ? groupData.groupSettings?.requireAdminApproval ?? false : true;
+    final isEdit = Provider.of<GroupProviderV2>(context, listen: false).isEdit;
+    _groupNameController.text = isEdit ? group.name ?? '' : '';
+    _locationController.text = isEdit ? group.location ?? '' : '';
+    _descriptionController.text = isEdit ? group.purpose ?? '' : '';
+    _organizationController.text = isEdit ? group.organization ?? '' : '';
+    _requireAdminApproval = isEdit ? group.requireAdminApproval ?? false : true;
     super.initState();
   }
 
@@ -57,7 +53,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
   String newGroupId = '';
 
-  void _save(bool isEdit, CombineGroupUserStream group) async {
+  void _save(bool isEdit, GroupDataModel group) async {
     setState(() => _autoValidate = true);
     try {
       if (!_formKey.currentState!.validate()) return null;
@@ -66,65 +62,56 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       BeStilDialog.showLoading(context);
 
       final _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      final settingsId = (Provider.of<GroupProvider>(context, listen: false)
-                      .currentGroup
-                      .groupSettings ??
-                  GroupSettings.defaultValue())
-              .id ??
-          '';
-      GroupModel groupData = GroupModel(
-        id: Uuid().v1(),
-        name: _groupNameController.text,
-        location: _locationController.text,
-        organization: _organizationController.text,
-        description: _descriptionController.text,
-        status: Status.active,
-        isPrivate: _option == GroupType.private,
-        isFeed: _option == GroupType.feed,
-        modifiedBy: _user.id,
-        modifiedOn: DateTime.now(),
-        createdBy: _user.id,
-        createdOn: DateTime.now(),
-      );
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+
       final fullName =
           '${(_user.firstName ?? '') + ' ' + (_user.lastName ?? '')}';
+      String groupId = '';
 
       if (!isEdit) {
-        await Provider.of<GroupProvider>(context, listen: false).addGroup(
-            groupData, _user.id ?? '', fullName, _requireAdminApproval);
-        await Provider.of<GroupPrayerProvider>(context, listen: false)
-            .setGroupPrayers(groupData.id ?? '');
-        BeStilDialog.hideLoading(context);
-        setState(() {
-          newGroupId = groupData.id ?? '';
-          _step++;
-        });
+        groupId = await Provider.of<GroupProviderV2>(context, listen: false)
+            .createGroup(
+                _groupNameController.text,
+                _descriptionController.text,
+                fullName,
+                _organizationController.text,
+                _locationController.text,
+                GroupType.private,
+                _requireAdminApproval,
+                _user.groups ?? []);
       } else {
-        await Provider.of<GroupProvider>(context, listen: false).editGroup(
-          groupData,
-          group.group?.id ?? '',
-          _requireAdminApproval,
-          settingsId,
-          _user.id ?? '',
-        );
-        await Provider.of<GroupPrayerProvider>(context, listen: false)
-            .setGroupPrayers(group.group?.id ?? '');
-        BeStilDialog.hideLoading(context);
+        groupId = await Provider.of<GroupProviderV2>(context, listen: false)
+            .editGroup(
+                group.id ?? '',
+                _groupNameController.text,
+                _descriptionController.text,
+                _requireAdminApproval,
+                _organizationController.text,
+                _locationController.text,
+                group.type ?? GroupType.private,
+                _user.groups ?? []);
+      }
+      if (groupId.isNotEmpty) {
+        await Provider.of<GroupProviderV2>(context, listen: false)
+            .setCurrentGroupById(groupId);
+        await Provider.of<PrayerProviderV2>(context, listen: false)
+            .setGroupPrayers(groupId);
         setState(() {
-          newGroupId = groupData.id ?? '';
+          newGroupId = groupId;
           _step++;
         });
       }
+      BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -263,8 +250,9 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   bool _requireAdminApproval = true;
   bool _autoValidate = false;
   Widget build(BuildContext context) {
-    final groupProvider = Provider.of<GroupProvider>(context, listen: false);
-    final groupData = groupProvider.currentGroup;
+    final groupProviderV2GroupProviderV2 =
+        Provider.of<GroupProviderV2>(context, listen: false);
+    final groupData = groupProviderV2GroupProviderV2.currentGroup;
     bool isValid = _groupNameController.text.isNotEmpty ||
         // _emailController.text.isNotEmpty ||
         _locationController.text.isNotEmpty;
@@ -326,12 +314,15 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                             ),
                             child: InkWell(
                                 child: Text(
-                                    groupProvider.isEdit ? 'SAVE' : 'ADD',
+                                    groupProviderV2GroupProviderV2.isEdit
+                                        ? 'SAVE'
+                                        : 'ADD',
                                     style: AppTextStyles.boldText18
                                         .copyWith(color: Colors.blue)),
                                 onTap: () {
                                   if (_step == 1) {
-                                    _save(groupProvider.isEdit, groupData);
+                                    _save(groupProviderV2GroupProviderV2.isEdit,
+                                        groupData);
                                   } else {
                                     NavigationService.instance.goHome(0);
                                   }
@@ -353,7 +344,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                   _requireAdminApproval = val;
                                 });
                               },
-                              isEdit: groupProvider.isEdit,
+                              isEdit: groupProviderV2GroupProviderV2.isEdit,
                               formKey: _formKey,
                               locationController: _locationController,
                               descriptionController: _descriptionController,
@@ -364,8 +355,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                               setOption: _setOption,
                               autoValidate: _autoValidate,
                             )
-                          : GroupCreated(_groupNameController.text,
-                              groupProvider.isEdit, newGroupId),
+                          : GroupCreated(
+                              _groupNameController.text,
+                              groupProviderV2GroupProviderV2.isEdit,
+                              newGroupId),
                       SizedBox(height: 30.0),
                       // _step == 1
                       //     ? Container(
@@ -388,7 +381,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                       //                 onPressed: () {
                       // if (_step == 1) {
                       //   _save(
-                      //       groupProvider.isEdit, groupData);
+                      //       groupProviderV2GroupProviderV2.isEdit, groupData);
                       // } else {
                       //   NavigationService.instance.goHome(0);
                       // }

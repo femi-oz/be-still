@@ -1,13 +1,13 @@
 import 'dart:io';
-
-import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -28,26 +28,25 @@ class _FindGroupToolsState extends State<FindGroupTools> {
 
   void _searchGroup() async {
     try {
-      final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+      final userId = FirebaseAuth.instance.currentUser?.uid;
 
-      await Provider.of<GroupProvider>(context, listen: false)
+      await Provider.of<GroupProviderV2>(context, listen: false)
           .advanceSearchAllGroups(
               _groupNameController.text,
-              userId ?? '',
               _locationController.text,
               _organizationController.text,
               _adminNameController.text,
               _descriptionController.text);
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 

@@ -1,11 +1,15 @@
 import 'dart:io';
+import 'package:be_still/enums/interval.dart';
+import 'package:be_still/enums/sort_by.dart';
+import 'package:be_still/enums/status.dart';
+import 'package:be_still/models/v2/device.model.dart';
+import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/services/auth_service.dart';
 import 'package:be_still/services/log_service.dart';
 import 'package:be_still/services/settings_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:device_info/device_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
@@ -13,24 +17,13 @@ import 'package:uuid/uuid.dart';
 import '../locator.dart';
 
 class UserService {
+  //#region
   final CollectionReference<Map<String, dynamic>> _userCollectionReference =
       FirebaseFirestore.instance.collection("User");
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   AuthenticationService _authenticationService =
       locator<AuthenticationService>();
-
-  deviceModel() async {
-    var deviceInfo = DeviceInfoPlugin();
-    if (Platform.isIOS) {
-      var iosInfo = await deviceInfo.iosInfo;
-      print(iosInfo);
-    } else {
-      var andriodInfo = await deviceInfo.androidInfo;
-
-      print(andriodInfo);
-    }
-  }
 
   Future addUserData(String uid, String email, String password,
       String firstName, String lastName, DateTime dob) async {
@@ -106,10 +99,11 @@ class UserService {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      return _userCollectionReference
+      final x = await _userCollectionReference
           .doc(id)
           .get()
           .then((e) => UserModel.fromData(e.data()!, e.id));
+      return x;
     } catch (e) {
       locator<LogService>().createLog(
           StringUtils.getErrorMessage(e), id, 'USER/service/getCurrentUser');
@@ -180,6 +174,56 @@ class UserService {
       _userCollectionReference.doc(userId).update({'PushToken': ''});
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+  //#endregion
+
+  //=============================================================================================================================//
+  //new data structure
+
+  final CollectionReference<Map<String, dynamic>> _userDataCollectionReference =
+      FirebaseFirestore.instance.collection("users");
+
+  Future<void> createUser({
+    required String uid,
+    required String firstName,
+    required String lastName,
+    required String email,
+    required DateTime dateOfBirth,
+    required String token,
+    required String deviceId,
+  }) async {
+    try {
+      final doc = UserDataModel(
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        dateOfBirth: dateOfBirth,
+        allowEmergencyCalls: true,
+        archiveAutoDeleteMinutes: 0,
+        defaultSnoozeFrequency: IntervalRange.thirtyMinutes,
+        includeAnsweredPrayerAutoDelete: false,
+        archiveSortBy: SortType.date,
+        autoPlayMusic: true,
+        churchEmail: '',
+        churchName: '',
+        churchPhone: '',
+        churchWebFormUrl: '',
+        devices: [
+          DeviceModel(id: deviceId, token: token)
+        ], // update token on login where deviceId == deviceId
+        enableBackgroundMusic: true,
+        enableSharingViaEmail: true,
+        enableSharingViaText: true,
+        doNotDisturb: true,
+        createdBy: uid,
+        modifiedBy: uid,
+        createdDate: DateTime.now(), modifiedDate: DateTime.now(),
+        status: Status.active,
+      ).toJson();
+      _userDataCollectionReference.doc(uid).set(doc);
+    } catch (e) {
+      StringUtils.getErrorMessage(e);
     }
   }
 }

@@ -2,21 +2,19 @@ import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
-import 'package:be_still/models/group.model.dart';
-import 'package:be_still/models/notification.model.dart';
-import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/settings_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/models/v2/local_notification.model.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/theme_provider.dart';
 import 'package:be_still/screens/group_prayer_details/widgets/no_update_view.dart';
 import 'package:be_still/screens/group_prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/screens/group_prayer_details/widgets/update_view.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:flutter/material.dart';
@@ -42,38 +40,38 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
   // LocalNotificationModel _reminder = LocalNotificationModel.defaultValue();
   String reminderString = '';
   Widget _buildMenu(
-      LocalNotificationModel _reminder, CombineGroupPrayerStream? prayerData) {
+      LocalNotificationDataModel _reminder, PrayerDataModel? prayerData) {
     return PrayerGroupMenu(context, hasReminder(prayerData), _reminder,
         () => updateUI(), prayerData);
   }
 
-  bool hasReminder(CombineGroupPrayerStream? prayerData) {
+  bool hasReminder(PrayerDataModel? prayerData) {
     var reminders =
-        Provider.of<NotificationProvider>(context).localNotifications;
+        Provider.of<NotificationProviderV2>(context).localNotifications;
 
     return reminders.any(
-      (reminder) => reminder.entityId == (prayerData?.groupPrayer?.id ?? ''),
+      (reminder) => reminder.prayerId == (prayerData?.id ?? ''),
     );
   }
 
-  bool isReminderActive(CombineGroupPrayerStream prayerData) {
-    final reminders = Provider.of<NotificationProvider>(context)
+  bool isReminderActive(PrayerDataModel prayerData) {
+    final reminders = Provider.of<NotificationProviderV2>(context)
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
 
-    LocalNotificationModel rem = reminders.firstWhere(
-        (reminder) => reminder.entityId == prayerData.groupPrayer?.prayerId,
-        orElse: () => LocalNotificationModel.defaultValue());
+    LocalNotificationDataModel rem = reminders.firstWhere(
+        (reminder) => reminder.prayerId == prayerData.id,
+        orElse: () => LocalNotificationDataModel());
     if ((rem.id ?? '').isNotEmpty) {
       if (rem.frequency != Frequency.one_time) {
         return true;
       } else {
-        if ((rem.scheduledDate ?? DateTime.now().subtract(Duration(hours: 1)))
+        if ((rem.scheduleDate ?? DateTime.now().subtract(Duration(hours: 1)))
             .isAfter(DateTime.now())) {
           return true;
         } else {
-          Provider.of<NotificationProvider>(context).deleteLocalNotification(
+          Provider.of<NotificationProviderV2>(context).deleteLocalNotification(
               rem.id ?? '', rem.localNotificationId ?? 0);
           return false;
         }
@@ -89,23 +87,23 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
     setState(() {});
   }
 
-  void getSettings() async {
-    try {
-      final _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .setSettings(_user.id ?? '');
-    } on HttpException catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    } catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
-    }
-  }
+  // void getSettings() async {
+  //   try {
+  //     final _userId = FirebaseAuth.instance.currentUser?.uid;
+  //     await Provider.of<>(context, listen: false)
+  //         .setSettings(_user.id ?? '');
+  //   } on HttpException catch (e, s) {
+  //     final user =
+  //         Provider.of<UserProviderV2>(context, listen: false).currentUser;
+  //     BeStilDialog.showErrorDialog(
+  //         context, StringUtils.getErrorMessage(e), user, s);
+  //   } catch (e, s) {
+  //     final user =
+  //         Provider.of<UserProviderV2>(context, listen: false).currentUser;
+  //     BeStilDialog.showErrorDialog(
+  //         context, StringUtils.getErrorMessage(e), user, s);
+  //   }
+  // }
 
   String getDayText(day) {
     var suffix = "th";
@@ -120,7 +118,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
   void didChangeDependencies() {
     if (_isInit) {
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
-        getSettings();
+        // getSettings();
       });
       _isInit = false;
     }
@@ -130,24 +128,23 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
   @override
   Widget build(BuildContext context) {
     var reminders =
-        Provider.of<NotificationProvider>(context).localNotifications;
-    // final prayerData = Provider.of<GroupPrayerProvider>(context).currentPrayer;
+        Provider.of<NotificationProviderV2>(context).localNotifications;
+    final prayerId = Provider.of<PrayerProviderV2>(context).currentPrayerId;
 
     return Scaffold(
         appBar: CustomAppBar(
           showPrayerActions: false,
         ),
-        body: StreamBuilder<CombineGroupPrayerStream>(
-            stream: Provider.of<GroupPrayerProvider>(context).getPrayer(),
+        body: StreamBuilder<PrayerDataModel>(
+            stream: Provider.of<PrayerProviderV2>(context)
+                .getPrayer(prayerId: prayerId),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting)
-                return BeStilDialog.getLoading(context);
-              if (snapshot.hasData &&
-                  (snapshot.data?.groupPrayer?.deleteStatus ?? 0) == 0) {
+                return BeStilDialog.getLoading(context, false);
+              if (snapshot.hasData && snapshot.data?.status != Status.deleted) {
                 final _reminder = reminders.firstWhere(
-                    (reminder) =>
-                        reminder.entityId == snapshot.data?.groupPrayer?.id,
-                    orElse: () => LocalNotificationModel.defaultValue());
+                    (reminder) => reminder.prayerId == snapshot.data?.id,
+                    orElse: () => LocalNotificationDataModel());
                 return Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -192,15 +189,16 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                                         color: AppColors.lightBlue3),
                                     onPressed: () => showModalBottomSheet(
                                       context: context,
-                                      barrierColor: Provider.of<ThemeProvider>(
-                                                  context,
-                                                  listen: false)
-                                              .isDarkModeEnabled
-                                          ? AppColors.backgroundColor[0]
-                                              .withOpacity(0.8)
-                                          : Color(0xFF021D3C).withOpacity(0.7),
+                                      barrierColor:
+                                          Provider.of<ThemeProviderV2>(context,
+                                                      listen: false)
+                                                  .isDarkModeEnabled
+                                              ? AppColors.backgroundColor[0]
+                                                  .withOpacity(0.8)
+                                              : Color(0xFF021D3C)
+                                                  .withOpacity(0.7),
                                       backgroundColor:
-                                          Provider.of<ThemeProvider>(context,
+                                          Provider.of<ThemeProviderV2>(context,
                                                       listen: false)
                                                   .isDarkModeEnabled
                                               ? AppColors.backgroundColor[0]
@@ -220,7 +218,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                           ],
                         ),
                       ),
-                      if (snapshot.data?.groupPrayer?.isSnoozed ?? false)
+                      if (snapshot.data?.status == Status.snoozed)
                         Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
@@ -250,11 +248,10 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                                                 vertical: 30),
                                             child: ReminderPicker(
                                               isGroup: true,
-                                              entityId: snapshot
-                                                      .data?.groupPrayer?.id ??
-                                                  '',
+                                              entityId: snapshot.data?.id ?? '',
                                               type: NotificationType.reminder,
-                                              reminder: _reminder,
+                                              reminder:
+                                                  LocalNotificationDataModel(),
                                               hideActionuttons: false,
                                               onCancel: () =>
                                                   Navigator.of(context).pop(),
@@ -276,7 +273,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                                     Container(
                                       margin: EdgeInsets.only(left: 7),
                                       child: Text(
-                                          'Snoozed until ${DateFormat('MMM').format(snapshot.data?.groupPrayer?.snoozeEndDate ?? DateTime.now())} ${getDayText(snapshot.data?.groupPrayer?.snoozeEndDate ?? DateTime.now().day)}, ${DateFormat('yyyy h:mm a').format(snapshot.data?.groupPrayer?.snoozeEndDate ?? DateTime.now())}',
+                                          'Snoozed until ${DateFormat('MMM').format(snapshot.data?.snoozeEndDate ?? DateTime.now())} ${getDayText(snapshot.data?.snoozeEndDate ?? DateTime.now().day)}, ${DateFormat('yyyy h:mm a').format(snapshot.data?.snoozeEndDate ?? DateTime.now())}',
                                           style: AppTextStyles.regularText12),
                                     ),
                                   ],
@@ -319,14 +316,13 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
                                                           vertical: 30),
                                                       child: ReminderPicker(
                                                         isGroup: true,
-                                                        entityId: snapshot
-                                                                .data
-                                                                ?.groupPrayer
-                                                                ?.id ??
-                                                            '',
+                                                        entityId:
+                                                            snapshot.data?.id ??
+                                                                '',
                                                         type: NotificationType
                                                             .reminder,
-                                                        reminder: _reminder,
+                                                        reminder:
+                                                            LocalNotificationDataModel(),
                                                         hideActionuttons: false,
                                                         popTwice: false,
                                                         onCancel: () =>

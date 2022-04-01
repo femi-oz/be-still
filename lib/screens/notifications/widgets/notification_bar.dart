@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/providers/notification_provider.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -28,7 +30,7 @@ class NotificationBar extends StatefulWidget implements PreferredSizeWidget {
 class NotificationBarState extends State<NotificationBar> {
   @override
   Widget build(BuildContext context) {
-    final data = Provider.of<NotificationProvider>(context).notifications;
+    final data = Provider.of<NotificationProviderV2>(context).notifications;
     return AppBar(
       flexibleSpace: Container(
         decoration: BoxDecoration(
@@ -45,23 +47,25 @@ class NotificationBarState extends State<NotificationBar> {
               onPressed: () async {
                 BeStilDialog.showLoading(context);
                 try {
-                  await Provider.of<NotificationProvider>(context,
+                  await Provider.of<NotificationProviderV2>(context,
                           listen: false)
                       .clearNotification();
                   BeStilDialog.hideLoading(context);
                 } on HttpException catch (e, s) {
                   BeStilDialog.hideLoading(context);
 
-                  final user = Provider.of<UserProvider>(context, listen: false)
-                      .currentUser;
+                  final user =
+                      Provider.of<UserProviderV2>(context, listen: false)
+                          .currentUser;
                   BeStilDialog.showErrorDialog(
                       context, StringUtils.getErrorMessage(e), user, s);
                 } catch (e, s) {
                   BeStilDialog.hideLoading(context);
-                  final user = Provider.of<UserProvider>(context, listen: false)
-                      .currentUser;
+                  final user =
+                      Provider.of<UserProviderV2>(context, listen: false)
+                          .currentUser;
                   BeStilDialog.showErrorDialog(
-                      context, StringUtils.errorOccured, user, s);
+                      context, StringUtils.getErrorMessage(e), user, s);
                 }
               },
               child: Text(

@@ -2,11 +2,10 @@ import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/Prayer/Widgets/prayer_card.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -17,6 +16,7 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:be_still/widgets/initial_tutorial.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -55,12 +55,23 @@ class _PrayerListState extends State<PrayerList> {
     if (_isInit) {
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
         try {
-          var status =
-              Provider.of<PrayerProvider>(context, listen: false).filterOption;
+          var status = Provider.of<PrayerProviderV2>(context, listen: false)
+              .filterOption;
           String heading =
               '${status == Status.active ? 'MY PRAYERS' : status.toUpperCase()}';
-          await Provider.of<MiscProvider>(context, listen: false)
+          await Provider.of<MiscProviderV2>(context, listen: false)
               .setPageTitle(heading);
+          final userId = FirebaseAuth.instance.currentUser?.uid;
+          AppController appController = Get.find();
+          if (appController.previousPage != 7) {
+            await Provider.of<MiscProviderV2>(context, listen: false)
+                .setSearchMode(false);
+            await Provider.of<MiscProviderV2>(context, listen: false)
+                .setSearchQuery('');
+            await Provider.of<PrayerProviderV2>(context, listen: false)
+                .searchPrayers('', userId ?? '');
+          }
+
           if (Settings.isAppInit)
             TutorialTarget().showTutorial(
               context,
@@ -75,9 +86,9 @@ class _PrayerListState extends State<PrayerList> {
         } catch (e, s) {
           BeStilDialog.hideLoading(context);
           final user =
-              Provider.of<UserProvider>(context, listen: false).currentUser;
+              Provider.of<UserProviderV2>(context, listen: false).currentUser;
           BeStilDialog.showErrorDialog(
-              context, StringUtils.errorOccured, user, s);
+              context, StringUtils.getErrorMessage(e), user, s);
         }
 
         setState(() => _isInit = false);
@@ -86,11 +97,11 @@ class _PrayerListState extends State<PrayerList> {
     super.didChangeDependencies();
   }
 
-  Future<void> onTapCard(CombinePrayerStream prayerData) async {
+  Future<void> onTapCard(PrayerDataModel prayerData) async {
     BeStilDialog.showLoading(context, '');
     try {
-      Provider.of<PrayerProvider>(context, listen: false)
-          .setCurrentPrayerId(prayerData.userPrayer?.id ?? '');
+      Provider.of<PrayerProviderV2>(context, listen: false)
+          .setCurrentPrayerId(prayerData.id ?? '');
       await Future.delayed(const Duration(milliseconds: 300),
           () => BeStilDialog.hideLoading(context));
       AppController appController = Get.find();
@@ -99,46 +110,47 @@ class _PrayerListState extends State<PrayerList> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
   Future<void> _getPrayers() async {
     try {
       final _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       final searchQuery =
-          Provider.of<MiscProvider>(context, listen: false).searchQuery;
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayerTimePrayers(_user.id ?? '');
+          Provider.of<MiscProviderV2>(context, listen: false).searchQuery;
+
       if (searchQuery.isNotEmpty) {
-        Provider.of<PrayerProvider>(context, listen: false)
+        Provider.of<PrayerProviderV2>(context, listen: false)
             .searchPrayers(searchQuery, _user.id ?? '');
       } else {
-        await Provider.of<PrayerProvider>(context, listen: false)
-            .setPrayers(_user.id ?? '');
+        await Provider.of<PrayerProviderV2>(context, listen: false).setPrayers(
+            (_user.prayers ?? []).map((e) => e.prayerId ?? '').toList());
       }
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
-  String get message {
-    final filterOption = Provider.of<PrayerProvider>(context).filterOption;
+  String get emtpyLitsMessage {
+    final filterOption = Provider.of<PrayerProviderV2>(context).filterOption;
 
     if (filterOption.toLowerCase() == Status.active.toLowerCase()) {
       return 'You do not have any active prayers.';
@@ -151,16 +163,16 @@ class _PrayerListState extends State<PrayerList> {
     } else if (filterOption.toLowerCase() == Status.following.toLowerCase()) {
       return 'You do not have any followed prayers.';
     } else {
-      return 'You do not have any active prayers.';
+      return 'You do not have any prayers.';
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final prayers = Provider.of<PrayerProvider>(context).filteredPrayers;
+    final prayers = Provider.of<PrayerProviderV2>(context).filteredPrayers;
 
     final currentPrayerType =
-        Provider.of<PrayerProvider>(context).currentPrayerType;
+        Provider.of<PrayerProviderV2>(context).currentPrayerType;
     return WillPopScope(
       onWillPop: () async => false,
       child: GestureDetector(
@@ -209,7 +221,7 @@ class _PrayerListState extends State<PrayerList> {
                                     child: Opacity(
                                       opacity: 0.3,
                                       child: Text(
-                                        message,
+                                        emtpyLitsMessage,
                                         style: AppTextStyles.demiboldText34,
                                         textAlign: TextAlign.center,
                                       ),
@@ -222,7 +234,7 @@ class _PrayerListState extends State<PrayerList> {
                                         try {
                                           AppController appController =
                                               Get.find();
-                                          Provider.of<PrayerProvider>(context,
+                                          Provider.of<PrayerProviderV2>(context,
                                                   listen: false)
                                               .setEditMode(false, true);
                                           appController.setCurrentPage(
@@ -231,7 +243,8 @@ class _PrayerListState extends State<PrayerList> {
                                           BeStilDialog.hideLoading(context);
 
                                           final user =
-                                              Provider.of<UserProvider>(context,
+                                              Provider.of<UserProviderV2>(
+                                                      context,
                                                       listen: false)
                                                   .currentUser;
                                           BeStilDialog.showErrorDialog(
@@ -242,21 +255,22 @@ class _PrayerListState extends State<PrayerList> {
                                         } catch (e, s) {
                                           BeStilDialog.hideLoading(context);
                                           final user =
-                                              Provider.of<UserProvider>(context,
+                                              Provider.of<UserProviderV2>(
+                                                      context,
                                                       listen: false)
                                                   .currentUser;
                                           BeStilDialog.showErrorDialog(
                                               context,
-                                              StringUtils.errorOccured,
+                                              StringUtils.getErrorMessage(e),
                                               user,
                                               s);
                                         }
                                       },
                                       text: 'Add New Prayer',
                                       backgroundColor: AppColors
-                                          .addprayerBgColor
+                                          .addPrayerBgColor
                                           .withOpacity(0.9),
-                                      textColor: AppColors.addprayerTextColor,
+                                      textColor: AppColors.addPrayerTextColor,
                                       icon: AppIcons.bestill_add_btn,
                                     ),
                                   ),
@@ -287,7 +301,7 @@ class _PrayerListState extends State<PrayerList> {
                                                       AppController
                                                           appController =
                                                           Get.find();
-                                                      Provider.of<PrayerProvider>(
+                                                      Provider.of<PrayerProviderV2>(
                                                               context,
                                                               listen: false)
                                                           .setEditMode(
@@ -298,9 +312,8 @@ class _PrayerListState extends State<PrayerList> {
                                                     } on HttpException catch (e, s) {
                                                       BeStilDialog.hideLoading(
                                                           context);
-
                                                       final user = Provider.of<
-                                                                  UserProvider>(
+                                                                  UserProviderV2>(
                                                               context,
                                                               listen: false)
                                                           .currentUser;
@@ -315,25 +328,25 @@ class _PrayerListState extends State<PrayerList> {
                                                       BeStilDialog.hideLoading(
                                                           context);
                                                       final user = Provider.of<
-                                                                  UserProvider>(
+                                                                  UserProviderV2>(
                                                               context,
                                                               listen: false)
                                                           .currentUser;
-                                                      BeStilDialog
-                                                          .showErrorDialog(
-                                                              context,
-                                                              StringUtils
-                                                                  .errorOccured,
-                                                              user,
-                                                              s);
+                                                      BeStilDialog.showErrorDialog(
+                                                          context,
+                                                          StringUtils
+                                                              .getErrorMessage(
+                                                                  e),
+                                                          user,
+                                                          s);
                                                     }
                                                   },
                                                   text: 'Add New Prayer',
                                                   backgroundColor: AppColors
-                                                      .addprayerBgColor
+                                                      .addPrayerBgColor
                                                       .withOpacity(0.9),
                                                   textColor: AppColors
-                                                      .addprayerTextColor,
+                                                      .addPrayerTextColor,
                                                   icon:
                                                       AppIcons.bestill_add_btn,
                                                 ),
@@ -343,13 +356,10 @@ class _PrayerListState extends State<PrayerList> {
                                       return GestureDetector(
                                           onTap: () => onTapCard(prayers[i]),
                                           child: PrayerCard(
-                                            prayerData: prayers[i],
-                                            timeago: DateFormatter((prayers[i]
-                                                                .prayer ??
-                                                            PrayerModel
-                                                                .defaultValue())
-                                                        .modifiedOn ??
-                                                    DateTime.now())
+                                            prayer: prayers[i],
+                                            timeago: DateFormatter(
+                                                    (prayers[i]).modifiedDate ??
+                                                        DateTime.now())
                                                 .format(),
                                           ));
                                   },

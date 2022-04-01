@@ -1,19 +1,26 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/models/user.model.dart';
+import 'package:be_still/locator.dart';
+import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/auth_provider.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
+import 'package:be_still/services/v2/migration.service.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -30,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   late AnimationController _textAnimationController;
-  AuthenticationProvider _authenticationProvider = AuthenticationProvider();
+  AuthenticationProviderV2 _authenticationProvider = AuthenticationProviderV2();
 
   var _isInit = true;
 
@@ -72,7 +79,7 @@ class _SplashScreenState extends State<SplashScreen>
       }
     } catch (e, s) {
       BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
+          context, StringUtils.getErrorMessage(e), UserDataModel(), s);
     }
   }
 
@@ -80,36 +87,42 @@ class _SplashScreenState extends State<SplashScreen>
     try {
       _getPermissions();
       final message =
-          Provider.of<NotificationProvider>(context, listen: false).message;
+          Provider.of<NotificationProviderV2>(context, listen: false).message;
       if ((message.entityId ?? '').isNotEmpty) {
         WidgetsBinding.instance?.addPostFrameCallback((_) async {
           if (message.type == NotificationType.prayer_time) {
-            await Provider.of<PrayerProvider>(context, listen: false)
-                .setPrayerTimePrayers(message.entityId ?? '');
             AppController appController = Get.find();
             appController.setCurrentPage(2, false, 0);
-            Provider.of<MiscProvider>(context, listen: false)
+            Provider.of<MiscProviderV2>(context, listen: false)
                 .setLoadStatus(true);
             Navigator.of(context).pushNamedAndRemoveUntil(
                 EntryScreen.routeName, (Route<dynamic> route) => false);
           }
           if (message.type == NotificationType.prayer) {
-            Provider.of<PrayerProvider>(context, listen: false)
+            Provider.of<PrayerProviderV2>(context, listen: false)
                 .setCurrentPrayerId(message.entityId ?? '');
           }
         });
-        Provider.of<NotificationProvider>(context, listen: false)
+        Provider.of<NotificationProviderV2>(context, listen: false)
             .clearMessage();
       } else {
-        Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
+        Provider.of<MiscProviderV2>(context, listen: false).setLoadStatus(true);
         Navigator.of(context).pushNamedAndRemoveUntil(
             EntryScreen.routeName, (Route<dynamic> route) => false);
       }
     } catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
+  }
+
+  Future closeAllStreams() async {
+    await Provider.of<NotificationProviderV2>(context, listen: false).flush();
+    await Provider.of<PrayerProviderV2>(context, listen: false).flush();
+    await Provider.of<UserProviderV2>(context, listen: false).flush();
+    await Provider.of<GroupProviderV2>(context, listen: false).flush();
   }
 
 //check on login
@@ -117,32 +130,58 @@ class _SplashScreenState extends State<SplashScreen>
     try {
       final isLoggedIn = await _authenticationProvider.isUserLoggedIn();
       if (Settings.enableLocalAuth) {
+        await closeAllStreams();
         Navigator.of(context).pushNamedAndRemoveUntil(
             LoginScreen.routeName, (Route<dynamic> route) => false,
             arguments: true);
       } else {
         if (Settings.rememberMe) {
           if (isLoggedIn) {
-            await Provider.of<UserProvider>(context, listen: false)
-                .setCurrentUser(false);
+            await Provider.of<UserProviderV2>(context, listen: false)
+                .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
+            await Provider.of<UserProviderV2>(context, listen: false)
+                .setCurrentUser();
             await setRouteDestination();
           } else {
+            await closeAllStreams();
             Navigator.of(context).pushNamedAndRemoveUntil(
                 LoginScreen.routeName, (Route<dynamic> route) => false,
                 arguments: true);
           }
         } else {
-          await Provider.of<AuthenticationProvider>(context, listen: false)
+          await closeAllStreams();
+          await Provider.of<AuthenticationProviderV2>(context, listen: false)
               .signOut();
           Navigator.of(context).pushNamedAndRemoveUntil(
               LoginScreen.routeName, (Route<dynamic> route) => false,
               arguments: true);
         }
       }
+    } on HttpException catch (e) {
+      if (e.message == "Document does not exist.") {
+        await migrateData();
+        return;
+      }
     } catch (e) {
       Navigator.of(context).pushNamedAndRemoveUntil(
           LoginScreen.routeName, (Route<dynamic> route) => false,
           arguments: true);
+    }
+  }
+
+  final _migrationService = locator<MigrationService>();
+  Future<void> migrateData() async {
+    try {
+      BeStilDialog.showLoading(
+          context, 'Please wait, your data is being migrated!');
+      await _migrationService
+          .migrateUserData(FirebaseAuth.instance.currentUser?.uid ?? '');
+      await Provider.of<UserProviderV2>(context, listen: false)
+          .setCurrentUser();
+
+      setRouteDestination();
+    } catch (e) {
+      print(e);
     }
   }
 

@@ -1,18 +1,18 @@
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/settings_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/theme_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
+import 'package:be_still/screens/Settings/Widgets/general.dart';
 import 'package:be_still/screens/Settings/Widgets/groups.dart';
 import 'package:be_still/screens/Settings/Widgets/my_list.dart';
-import 'package:be_still/screens/settings/Widgets/general.dart';
-import 'package:be_still/screens/settings/Widgets/prayer_time.dart';
+import 'package:be_still/screens/Settings/Widgets/prayer_time.dart';
 import 'package:be_still/screens/settings/Widgets/sharing.dart';
 import 'package:be_still/screens/settings/widgets/settings_bar.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -40,19 +40,18 @@ class _SettingsScreenPage extends State<SettingsScreen>
   void didChangeDependencies() {
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
       try {
-        var userId =
-            Provider.of<UserProvider>(context, listen: false).currentUser.id;
-        await Provider.of<MiscProvider>(context, listen: false)
+        var userId = FirebaseAuth.instance.currentUser?.uid;
+        await Provider.of<MiscProviderV2>(context, listen: false)
             .setSearchMode(false);
-        await Provider.of<MiscProvider>(context, listen: false)
+        await Provider.of<MiscProviderV2>(context, listen: false)
             .setSearchQuery('');
-        await Provider.of<PrayerProvider>(context, listen: false)
+        await Provider.of<PrayerProviderV2>(context, listen: false)
             .searchPrayers('', userId ?? '');
       } catch (e, s) {
         final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
+            Provider.of<UserProviderV2>(context, listen: false).currentUser;
         BeStilDialog.showErrorDialog(
-            context, StringUtils.errorOccured, user, s);
+            context, StringUtils.getErrorMessage(e), user, s);
       }
     });
     super.didChangeDependencies();
@@ -120,7 +119,7 @@ class SettingsTabState extends State<SettingsTab>
 
   @override
   Widget build(BuildContext context) {
-    final _settingsProvider = Provider.of<SettingsProvider>(context);
+    final _userProvider = Provider.of<UserProviderV2>(context);
     return WillPopScope(
       onWillPop: _onWillPop,
       child: DefaultTabController(
@@ -139,7 +138,7 @@ class SettingsTabState extends State<SettingsTab>
                     blurRadius: 5.0,
                   ),
                 ],
-                color: !Provider.of<ThemeProvider>(context).isDarkModeEnabled
+                color: !Provider.of<ThemeProviderV2>(context).isDarkModeEnabled
                     ? Color(0xFFFFFFFF)
                     : Color(0xFF005780),
               ),
@@ -147,7 +146,7 @@ class SettingsTabState extends State<SettingsTab>
               child: new TabBar(
                 indicatorColor: Colors.transparent,
                 unselectedLabelColor:
-                    !Provider.of<ThemeProvider>(context).isDarkModeEnabled
+                    !Provider.of<ThemeProviderV2>(context).isDarkModeEnabled
                         ? Color(0xFF718B92)
                         : Color(0xB3FFFFFF),
                 labelColor: AppColors.actveTabMenu,
@@ -177,11 +176,10 @@ class SettingsTabState extends State<SettingsTab>
             child: TabBarView(
               physics: NeverScrollableScrollPhysics(),
               children: [
-                GeneralSettings(_settingsProvider.settings, _scaffoldKey),
+                GeneralSettings(_scaffoldKey),
                 MyListSettings(
-                    _settingsProvider.settings, widget.setDefaultSnooze),
-                PrayerTimeSettings(_settingsProvider.prayerSetttings,
-                    _settingsProvider.settings),
+                    _userProvider.currentUser, widget.setDefaultSnooze),
+                PrayerTimeSettings(),
                 SharingSettings(),
                 GroupsSettings(),
               ],

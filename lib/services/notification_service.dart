@@ -328,14 +328,15 @@ class NotificationService {
     }
   }
 
-  Stream<List<LocalNotificationModel>> getLocalNotifications(String userId) {
+  Future<List<LocalNotificationModel>> getLocalNotifications(
+      String userId) async {
     try {
       if (_firebaseAuth.currentUser == null)
-        return Stream.error(StringUtils.unathorized);
+        return Future.error(StringUtils.unathorized);
       return _localNotificationCollectionReference
           .where('UserId', isEqualTo: userId)
-          .snapshots()
-          .map((e) => e.docs
+          .get()
+          .then((e) => e.docs
               .map((doc) => LocalNotificationModel.fromData(doc.data(), doc.id))
               .toList());
     } catch (e) {

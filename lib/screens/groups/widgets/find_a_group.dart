@@ -1,15 +1,16 @@
 import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/groups/Widgets/find_a_group_tools.dart';
-import 'package:be_still/screens/groups/Widgets/group_card.dart';
+import 'package:be_still/screens/groups/widgets/group_card.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/input_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -27,55 +28,50 @@ class FindAGroup extends StatefulWidget {
 class _FindAGroupState extends State<FindAGroup> {
   final TextEditingController _searchController = TextEditingController();
   final GlobalKey _keyButton = GlobalKey();
+  bool isInit = true;
 
   @override
   void initState() {
-    try {
-      Provider.of<GroupProvider>(context, listen: false).emptyGroupList();
-    } on HttpException catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    } catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
-    }
+    _searchController.text = '';
+
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() async {
+    await Provider.of<GroupProviderV2>(context, listen: false).setAllGroups();
+    super.didChangeDependencies();
   }
 
   void _searchGroup(String val) async {
     try {
-      final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      await Provider.of<GroupProvider>(context, listen: false)
-          .searchAllGroups(val, userId ?? '');
+      await Provider.of<GroupProviderV2>(context, listen: false)
+          .searchAllGroups(val);
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
   Future<bool> _onWillPop() async {
+    _searchController.text = '';
+
     AppController appController = Get.find();
     appController.setCurrentPage(3, true, 11);
-
     return false;
   }
 
   @override
   Widget build(BuildContext context) {
-    var _filteredGroups = Provider.of<GroupProvider>(context)
-        .filteredAllGroups
-        .where((g) => (g.groupUsers ?? []).length > 0)
-        .toList();
+    var _filteredGroups =
+        Provider.of<GroupProviderV2>(context).filteredAllGroups.toList();
     var matchText = _filteredGroups.length > 1 ? 'Groups' : 'Group';
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),

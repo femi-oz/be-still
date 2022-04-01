@@ -2,6 +2,7 @@ import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/flavor_config.dart';
 import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -28,7 +29,8 @@ class _GroupCreatedState extends State<GroupCreated> {
   }
 
   void generateInviteLink(int type) async {
-    final user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    final user =
+        Provider.of<UserProviderV2>(context, listen: false).currentUser;
     final _url =
         'https://${FlavorConfig.instance.values.dynamicLink}/?groups=${widget.newGroupId}';
     final DynamicLinkParameters parameters = DynamicLinkParameters(
@@ -227,7 +229,6 @@ Click here ${'https://' + FlavorConfig.instance.values.dynamicLink + url.path} t
                   ),
                 ),
                 onPressed: () async {
-                  // await Future.delayed(Duration(seconds: 2));
                   appController.setCurrentPage(8, false, 12);
                 },
               ),

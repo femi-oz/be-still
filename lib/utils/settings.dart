@@ -92,5 +92,5 @@ class Settings {
       sharedPrefs?.getBool(CONTACT_PERMISSION) ?? false;
 
   static bool get enabledReminderPermission =>
-      sharedPrefs?.getBool(REMINDER_PERMISSION) ?? false;
+      sharedPrefs?.getBool(REMINDER_PERMISSION) ?? true;
 }

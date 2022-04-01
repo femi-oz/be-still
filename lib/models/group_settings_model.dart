@@ -75,9 +75,9 @@ class GroupSettings {
     final bool notifyWhenNewMemberJoins =
         data['NotifyWhenNewMemberJoins'] ?? false;
     final String createdBy = data['CreatedBy'] ?? '';
-    final DateTime createdOn = data['CreatedOn'].toDate() ?? DateTime.now();
+    final DateTime createdOn = data['CreatedOn']?.toDate() ?? DateTime.now();
     final String modifiedBy = data['ModifiedBy'] ?? '';
-    final DateTime modifiedOn = data['ModifiedOn'].toDate() ?? DateTime.now();
+    final DateTime modifiedOn = data['ModifiedOn']?.toDate() ?? DateTime.now();
 
     return GroupSettings(
         id: id,

@@ -1,24 +1,30 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
+import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/notification.model.dart';
-import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/models/v2/follower.model.dart';
+import 'package:be_still/models/v2/group.model.dart';
+import 'package:be_still/models/v2/local_notification.model.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
+import 'package:be_still/models/v2/tag.model.dart';
+import 'package:be_still/models/v2/update.model.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/theme_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
-import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
 import 'package:be_still/widgets/share_prayer.dart';
 import 'package:be_still/widgets/snooze_prayer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -29,8 +35,8 @@ class PrayerMenu extends StatefulWidget {
   final BuildContext parentcontext;
   final bool hasReminder;
   final Function updateUI;
-  final CombinePrayerStream? prayerData;
-  final LocalNotificationModel reminder;
+  final PrayerDataModel? prayerData;
+  final LocalNotificationDataModel reminder;
   @override
   PrayerMenu(this.parentcontext, this.hasReminder, this.reminder, this.updateUI,
       this.prayerData);
@@ -40,6 +46,8 @@ class PrayerMenu extends StatefulWidget {
 }
 
 class _PrayerMenuState extends State<PrayerMenu> {
+  final userId = FirebaseAuth.instance.currentUser?.uid;
+
   List<String> reminderInterval = [
     Frequency.daily,
     Frequency.weekly,
@@ -58,83 +66,50 @@ class _PrayerMenuState extends State<PrayerMenu> {
     super.initState();
   }
 
+  bool _isInit = true;
+
   @override
   void didChangeDependencies() async {
-    Provider.of<PrayerProvider>(context).getPrayer();
+    if (_isInit) {
+      Provider.of<PrayerProviderV2>(context, listen: false)
+          .getPrayer(prayerId: widget.prayerData?.id ?? '');
+
+      _isInit = false;
+    }
     super.didChangeDependencies();
   }
 
   bool get isAdmin {
-    try {
-      final _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+    final group = Provider.of<GroupProviderV2>(context, listen: false)
+        .allGroups
+        .firstWhere(
+          (e) => e.id == widget.prayerData?.groupId,
+          orElse: () => GroupDataModel(),
+        );
 
-      return Provider.of<GroupPrayerProvider>(context)
-          .followedPrayers
-          .any((element) {
-        if (element.prayerId == widget.prayerData?.prayer?.id &&
-            element.createdBy == _user.id &&
-            (element.isFollowedByAdmin ?? false)) {
-          return true;
-        } else {
-          return false;
-        }
-      });
-    } on HttpException catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-      return false;
-    } catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
-      return false;
-    }
+    return (group.users ?? []).any((e) =>
+        e.role == GroupUserRole.admin &&
+        e.userId == FirebaseAuth.instance.currentUser?.uid);
   }
 
-  // getGroup() async {
-  //   try {
-  //     var _userId =
-  //         Provider.of<UserProvider>(context, listen: false).currentUser.id;
-  //     await Provider.of<GroupPrayerProvider>(context, listen: false)
-  //         .setFollowedPrayerByUserId(_userId ?? '');
-  //   } on HttpException catch (e, s) {
-  //     BeStilDialog.hideLoading(context);
-  //     final user =
-  //         Provider.of<UserProvider>(context, listen: false).currentUser;
-  //     BeStilDialog.showErrorDialog(
-  //         context, StringUtils.getErrorMessage(e), user, s);
-  //   } catch (e, s) {
-  //     BeStilDialog.hideLoading(context);
-  //     final user =
-  //         Provider.of<UserProvider>(context, listen: false).currentUser;
-  //     BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
-  //   }
-  // }
-
-  void clearSearch() async {
-    final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    if (Provider.of<MiscProvider>(context, listen: false).search) {
-      await Provider.of<MiscProvider>(context, listen: false)
+  clearSearch() async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (Provider.of<MiscProviderV2>(context, listen: false).search) {
+      await Provider.of<MiscProviderV2>(context, listen: false)
           .setSearchMode(false);
-      await Provider.of<MiscProvider>(context, listen: false)
+      await Provider.of<MiscProviderV2>(context, listen: false)
           .setSearchQuery('');
-      await Provider.of<PrayerProvider>(context, listen: false)
+      await Provider.of<PrayerProviderV2>(context, listen: false)
           .searchPrayers('', userId ?? '');
     }
   }
 
-  void _markPrayerAsFavorite(CombinePrayerStream? prayerData) async {
+  void _markPrayerAsFavorite(PrayerDataModel? prayerData) async {
     BeStilDialog.showLoading(context);
     try {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .favoritePrayer(prayerData?.userPrayer?.id ?? '');
-      clearSearch();
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .favoritePrayer(prayerData?.id ?? '');
+      await clearSearch();
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppController appController = Get.find();
@@ -143,60 +118,38 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
   void _unFollowPrayer() async {
     BeStilDialog.showLoading(context);
+
     try {
-      final _userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-
-      final s = Provider.of<GroupPrayerProvider>(context, listen: false)
-          .followedPrayers;
-      final followedPrayer = s.firstWhere(
-          (element) =>
-              element.prayerId == widget.prayerData?.prayer?.id &&
-              element.createdBy == _userId,
-          orElse: () => FollowedPrayerModel.defaultValue());
-      await Provider.of<GroupPrayerProvider>(context, listen: false)
-          .removeFromMyList(
-              followedPrayer.id ?? '', widget.prayerData?.userPrayer?.id ?? '');
-      clearSearch();
-
-      BeStilDialog.hideLoading(context);
-      Navigator.pop(context);
-      AppController appController = Get.find();
-      appController.setCurrentPage(0, true, 0);
-    } catch (e, s) {
-      BeStilDialog.hideLoading(context);
+      final currentGroup =
+          Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
-    }
-  }
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      final follower = (widget.prayerData?.followers ?? []).firstWhere(
+          (e) => e.userId == FirebaseAuth.instance.currentUser?.uid);
+      final prayer = (user.prayers ?? [])
+          .firstWhere((e) => e.prayerId == widget.prayerData?.id);
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .unFollowPrayer(
+              widget.prayerData?.id ?? '',
+              currentGroup.id ?? '',
+              (user.prayers ?? []).map((e) => e.prayerId ?? '').toList(),
+              prayer,
+              follower);
 
-  bool get isFollowing {
-    var isFollowing = Provider.of<GroupPrayerProvider>(context, listen: false)
-        .followedPrayers
-        .any((element) => element.prayerId == widget.prayerData?.prayer?.id);
-    return isFollowing;
-  }
-
-  void _unMarkPrayerAsFavorite(CombinePrayerStream? prayerData) async {
-    BeStilDialog.showLoading(context);
-
-    try {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .unfavoritePrayer(prayerData?.userPrayer?.id ?? '');
       clearSearch();
 
       BeStilDialog.hideLoading(context);
@@ -207,15 +160,51 @@ class _PrayerMenuState extends State<PrayerMenu> {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    }
+  }
+
+  bool get isFollowing {
+    var isFollowing = Provider.of<PrayerProviderV2>(context, listen: false)
+        .followedPrayers
+        .any((element) => (element.followers ?? <FollowerModel>[])
+            .any((element) => element.userId == userId));
+    return isFollowing;
+  }
+
+  void _unMarkPrayerAsFavorite(PrayerDataModel? prayerData) async {
+    BeStilDialog.showLoading(context);
+
+    try {
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .unfavoritePrayer(prayerData?.id ?? '');
+      clearSearch();
+
+      BeStilDialog.hideLoading(context);
+      Navigator.pop(context);
+      AppController appController = Get.find();
+      appController.setCurrentPage(0, true, 0);
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -223,15 +212,17 @@ class _PrayerMenuState extends State<PrayerMenu> {
     BeStilDialog.showLoading(context);
     try {
       var notifications =
-          Provider.of<NotificationProvider>(context, listen: false)
+          Provider.of<NotificationProviderV2>(context, listen: false)
               .localNotifications
-              .where((e) => e.entityId == widget.prayerData?.userPrayer?.id)
+              .where((e) => e.prayerId == widget.prayerData?.id)
               .toList();
       notifications.forEach((e) async =>
-          await Provider.of<NotificationProvider>(context, listen: false)
+          await Provider.of<NotificationProviderV2>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .deletePrayer(widget.prayerData?.userPrayer?.id ?? '');
+      await Provider.of<PrayerProviderV2>(context, listen: false).deletePrayer(
+          widget.prayerData?.id ?? '',
+          widget.prayerData?.groupId ?? '',
+          widget.prayerData?.followers ?? []);
       clearSearch();
 
       BeStilDialog.hideLoading(context);
@@ -243,14 +234,15 @@ class _PrayerMenuState extends State<PrayerMenu> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -384,23 +376,23 @@ class _PrayerMenuState extends State<PrayerMenu> {
         });
   }
 
-  void _onMarkAsAnswered(CombinePrayerStream? prayerData) async {
+  void _onMarkAsAnswered(PrayerDataModel? prayerData) async {
     BeStilDialog.showLoading(context);
 
     try {
       var notifications =
-          Provider.of<NotificationProvider>(context, listen: false)
+          Provider.of<NotificationProviderV2>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData?.userPrayer?.id &&
+                  e.prayerId == widget.prayerData?.id &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
-          await Provider.of<NotificationProvider>(context, listen: false)
+          await Provider.of<NotificationProviderV2>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
-      await Provider.of<PrayerProvider>(context, listen: false)
+      await Provider.of<PrayerProviderV2>(context, listen: false)
           .markPrayerAsAnswered(
-              prayerData?.prayer?.id ?? '', prayerData?.userPrayer?.id ?? '');
+              prayerData?.id ?? '', widget.prayerData?.followers ?? []);
       clearSearch();
 
       BeStilDialog.hideLoading(context);
@@ -411,23 +403,23 @@ class _PrayerMenuState extends State<PrayerMenu> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
-  void _unMarkAsAnswered(CombinePrayerStream? prayerData) async {
+  void _unMarkAsAnswered(PrayerDataModel? prayerData) async {
     BeStilDialog.showLoading(context);
     try {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .unMarkPrayerAsAnswered(
-              prayerData?.prayer?.id ?? '', prayerData?.userPrayer?.id ?? '');
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .unMarkPrayerAsAnswered(prayerData?.id ?? '');
       clearSearch();
 
       BeStilDialog.hideLoading(context);
@@ -437,23 +429,28 @@ class _PrayerMenuState extends State<PrayerMenu> {
       appController.setCurrentPage(0, true, 0);
     } on HttpException catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
-  void _unArchive(CombinePrayerStream? prayerData) async {
+  void _unArchive(PrayerDataModel? prayerData) async {
     BeStilDialog.showLoading(context);
 
     try {
-      await Provider.of<PrayerProvider>(context, listen: false).unArchivePrayer(
-          prayerData?.userPrayer?.id ?? '', prayerData?.prayer?.id ?? '');
-      clearSearch();
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .unArchivePrayer(
+        prayerData?.id ?? '',
+        prayerData?.followers ?? <FollowerModel>[],
+        isAdmin,
+      );
+      await clearSearch();
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
@@ -463,28 +460,29 @@ class _PrayerMenuState extends State<PrayerMenu> {
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
-  void _onArchive(CombinePrayerStream? prayerData) async {
+  void _onArchive(PrayerDataModel? prayerData) async {
     BeStilDialog.showLoading(context);
 
     try {
       var notifications =
-          Provider.of<NotificationProvider>(context, listen: false)
+          Provider.of<NotificationProviderV2>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData?.userPrayer?.id &&
+                  e.prayerId == widget.prayerData?.id &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
-          await Provider.of<NotificationProvider>(context, listen: false)
+          await Provider.of<NotificationProviderV2>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
 
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .archivePrayer(widget.prayerData?.userPrayer?.id ?? '');
+      await Provider.of<PrayerProviderV2>(context, listen: false).archivePrayer(
+          widget.prayerData?.id ?? '', widget.prayerData?.followers ?? []);
       clearSearch();
 
       BeStilDialog.hideLoading(context);
@@ -495,14 +493,15 @@ class _PrayerMenuState extends State<PrayerMenu> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -510,14 +509,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
     Navigator.pop(context);
     showModalBottomSheet(
         context: context,
-        barrierColor:
-            Provider.of<ThemeProvider>(context, listen: false).isDarkModeEnabled
-                ? AppColors.backgroundColor[0].withOpacity(0.5)
-                : Color(0xFF021D3C).withOpacity(0.7),
-        backgroundColor:
-            Provider.of<ThemeProvider>(context, listen: false).isDarkModeEnabled
-                ? AppColors.backgroundColor[0].withOpacity(0.5)
-                : Color(0xFF021D3C).withOpacity(0.7),
+        barrierColor: Provider.of<ThemeProviderV2>(context, listen: false)
+                .isDarkModeEnabled
+            ? AppColors.backgroundColor[0].withOpacity(0.5)
+            : Color(0xFF021D3C).withOpacity(0.7),
+        backgroundColor: Provider.of<ThemeProviderV2>(context, listen: false)
+                .isDarkModeEnabled
+            ? AppColors.backgroundColor[0].withOpacity(0.5)
+            : Color(0xFF021D3C).withOpacity(0.7),
         isScrollControlled: true,
         builder: (BuildContext context) {
           return SharePrayer(
@@ -530,14 +529,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
     clearSearch();
   }
 
-  void _unSnoozePrayer(CombinePrayerStream? prayerData) async {
+  void _unSnoozePrayer(PrayerDataModel? prayerData) async {
     BeStilDialog.showLoading(context);
 
     try {
-      await Provider.of<PrayerProvider>(context, listen: false).unSnoozePrayer(
-          prayerData?.prayer?.id ?? '',
-          DateTime.now(),
-          prayerData?.userPrayer?.id ?? '');
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .unSnoozePrayer(
+        prayerData?.id ?? '',
+      );
       clearSearch();
 
       BeStilDialog.hideLoading(context);
@@ -548,24 +547,24 @@ class _PrayerMenuState extends State<PrayerMenu> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
   Widget build(BuildContext context) {
-    bool isGroupPrayer = widget.prayerData?.prayer?.isGroup ?? false;
-    final _user = Provider.of<UserProvider>(context).currentUser;
-    bool isOwner = widget.prayerData?.prayer?.createdBy == _user.id;
-    bool isArchived = widget.prayerData?.userPrayer?.isArchived ?? false;
-    bool isSnoozed = widget.prayerData?.userPrayer?.isSnoozed ?? false;
-    bool isAnswered = widget.prayerData?.prayer?.isAnswer ?? false;
+    bool isGroupPrayer = widget.prayerData?.isGroup ?? false;
+    bool isOwner = widget.prayerData?.createdBy == userId;
+    bool isArchived = widget.prayerData?.status == Status.archived;
+    bool isSnoozed = widget.prayerData?.status == Status.snoozed;
+    bool isAnswered = widget.prayerData?.status == Status.answered;
     /*
     LOGICS FOR DISABLING
     ----------------------
@@ -603,7 +602,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
             child: Container(
               padding: EdgeInsets.only(left: 20),
               decoration: BoxDecoration(
-                color: Provider.of<ThemeProvider>(context, listen: false)
+                color: Provider.of<ThemeProviderV2>(context, listen: false)
                         .isDarkModeEnabled
                     ? Colors.transparent
                     : AppColors.white,
@@ -615,7 +614,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
               child: TextButton.icon(
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(
-                    Provider.of<ThemeProvider>(context, listen: false)
+                    Provider.of<ThemeProviderV2>(context, listen: false)
                             .isDarkModeEnabled
                         ? Colors.transparent
                         : AppColors.white,
@@ -645,7 +644,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                       children: <Widget>[
                         LongButton(
                             textColor: AppColors.lightBlue3,
-                            backgroundColor: Provider.of<ThemeProvider>(context,
+                            backgroundColor: Provider.of<ThemeProviderV2>(
+                                        context,
                                         listen: false)
                                     .isDarkModeEnabled
                                 ? AppColors.backgroundColor[0].withOpacity(0.7)
@@ -664,7 +664,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                 : _share()),
                         LongButton(
                           textColor: AppColors.lightBlue3,
-                          backgroundColor: Provider.of<ThemeProvider>(context,
+                          backgroundColor: Provider.of<ThemeProviderV2>(context,
                                       listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
@@ -679,19 +679,19 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               ? () {}
                               : () async {
                                   try {
-                                    Provider.of<PrayerProvider>(context,
+                                    Provider.of<PrayerProviderV2>(context,
                                             listen: false)
                                         .setEditMode(true, false);
-                                    Provider.of<PrayerProvider>(context,
+                                    Provider.of<PrayerProviderV2>(context,
                                             listen: false)
                                         .setEditPrayer(
-                                            prayer: widget.prayerData?.prayer ??
-                                                PrayerModel.defaultValue(),
+                                            prayer: widget.prayerData ??
+                                                PrayerDataModel(),
                                             updates:
                                                 widget.prayerData?.updates ??
-                                                    [],
-                                            tags:
-                                                widget.prayerData?.tags ?? []);
+                                                    <UpdateModel>[],
+                                            tags: widget.prayerData?.tags ??
+                                                <TagModel>[]);
                                     Navigator.pop(context);
                                     await Future.delayed(
                                         Duration(milliseconds: 200));
@@ -701,7 +701,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                         1, true, appController.currentPage);
                                   } on HttpException catch (e, s) {
                                     BeStilDialog.hideLoading(context);
-                                    final user = Provider.of<UserProvider>(
+                                    final user = Provider.of<UserProviderV2>(
                                             context,
                                             listen: false)
                                         .currentUser;
@@ -712,19 +712,22 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                         s);
                                   } catch (e, s) {
                                     BeStilDialog.hideLoading(context);
-                                    final user = Provider.of<UserProvider>(
+                                    final user = Provider.of<UserProviderV2>(
                                             context,
                                             listen: false)
                                         .currentUser;
-                                    BeStilDialog.showErrorDialog(context,
-                                        StringUtils.errorOccured, user, s);
+                                    BeStilDialog.showErrorDialog(
+                                        context,
+                                        StringUtils.getErrorMessage(e),
+                                        user,
+                                        s);
                                   }
                                 },
                           text: 'Edit',
                         ),
                         LongButton(
                           textColor: AppColors.lightBlue3,
-                          backgroundColor: Provider.of<ThemeProvider>(context,
+                          backgroundColor: Provider.of<ThemeProviderV2>(context,
                                       listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
@@ -738,14 +741,15 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                   isArchived
                               ? () {}
                               : () {
-                                  Provider.of<PrayerProvider>(context,
+                                  Provider.of<PrayerProviderV2>(context,
                                           listen: false)
                                       .setEditPrayer(
-                                          prayer: widget.prayerData?.prayer ??
-                                              PrayerModel.defaultValue(),
-                                          updates:
-                                              widget.prayerData?.updates ?? [],
-                                          tags: widget.prayerData?.tags ?? []);
+                                          prayer: widget.prayerData ??
+                                              PrayerDataModel(),
+                                          updates: widget.prayerData?.updates ??
+                                              <UpdateModel>[],
+                                          tags: widget.prayerData?.tags ??
+                                              <TagModel>[]);
 
                                   AppController appController = Get.find();
                                   appController.setCurrentPage(
@@ -756,7 +760,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         ),
                         LongButton(
                           textColor: AppColors.lightBlue3,
-                          backgroundColor: Provider.of<ThemeProvider>(context,
+                          backgroundColor: Provider.of<ThemeProviderV2>(context,
                                       listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
@@ -767,7 +771,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                   widget.reminder.frequency ==
                                       Frequency.one_time
                               ? DateFormat('dd MMM yyyy hh:mma').format(
-                                  widget.reminder.scheduledDate ??
+                                  widget.reminder.scheduleDate ??
                                       DateTime.now())
                               : widget.hasReminder &&
                                       widget.reminder.frequency !=
@@ -801,9 +805,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                                 vertical: 30),
                                             child: ReminderPicker(
                                               isGroup: false,
-                                              entityId: widget.prayerData
-                                                      ?.userPrayer?.id ??
-                                                  '',
+                                              entityId:
+                                                  widget.prayerData?.id ?? '',
                                               type: NotificationType.reminder,
                                               hideActionuttons: false,
                                               reminder: widget.hasReminder
@@ -823,7 +826,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         ),
                         LongButton(
                           textColor: AppColors.lightBlue3,
-                          backgroundColor: Provider.of<ThemeProvider>(context,
+                          backgroundColor: Provider.of<ThemeProviderV2>(context,
                                       listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
@@ -832,8 +835,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           isDisabled: !isOwner || isAnswered || isArchived,
                           onPress: () => !isOwner || isAnswered || isArchived
                               ? () {}
-                              : widget.prayerData?.userPrayer?.isSnoozed ??
-                                      false
+                              : widget.prayerData?.status == Status.snoozed
                                   ? _unSnoozePrayer(widget.prayerData)
                                   : showDialog(
                                       context: context,
@@ -865,15 +867,14 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                         ),
                                       ),
                                     ),
-                          text:
-                              widget.prayerData?.userPrayer?.isSnoozed ?? false
-                                  ? 'Unsnooze'
-                                  : 'Snooze',
+                          text: widget.prayerData?.status == Status.snoozed
+                              ? 'Unsnooze'
+                              : 'Snooze',
                           // text: 'Snooze',
                         ),
                         LongButton(
                           textColor: AppColors.lightBlue3,
-                          backgroundColor: Provider.of<ThemeProvider>(context,
+                          backgroundColor: Provider.of<ThemeProviderV2>(context,
                                       listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
@@ -882,43 +883,38 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           icon: AppIcons.bestill_answered,
                           onPress: !isOwner && !isAdmin
                               ? () {}
-                              : () =>
-                                  widget.prayerData?.prayer?.isAnswer ?? false
-                                      ? _unMarkAsAnswered(widget.prayerData)
-                                      : _onMarkAsAnswered(widget.prayerData),
-                          text: widget.prayerData?.prayer?.isAnswer ?? false
+                              : () => widget.prayerData?.isAnswered == true
+                                  ? _unMarkAsAnswered(widget.prayerData)
+                                  : _onMarkAsAnswered(widget.prayerData),
+                          text: widget.prayerData?.isAnswered == true
                               ? 'Unmark as Answered'
                               : 'Mark as Answered',
                         ),
                         LongButton(
                           textColor: AppColors.lightBlue3,
-                          backgroundColor: Provider.of<ThemeProvider>(context,
+                          backgroundColor: Provider.of<ThemeProviderV2>(context,
                                       listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
-                          icon:
-                              widget.prayerData?.userPrayer?.isFavorite ?? false
-                                  ? Icons.favorite_border_outlined
-                                  : Icons.favorite,
+                          icon: widget.prayerData?.isFavorite ?? false
+                              ? Icons.favorite_border_outlined
+                              : Icons.favorite,
                           isDisabled: !isOwner,
                           onPress: !isOwner
                               ? () {}
-                              : () => widget
-                                          .prayerData?.userPrayer?.isFavorite ??
-                                      false
+                              : () => widget.prayerData?.isFavorite ?? false
                                   ? _unMarkPrayerAsFavorite(widget.prayerData)
                                   : _markPrayerAsFavorite(widget.prayerData),
-                          text:
-                              widget.prayerData?.userPrayer?.isFavorite ?? false
-                                  ? 'Unmark as Favorite '
-                                  : 'Mark as Favorite ',
+                          text: widget.prayerData?.isFavorite ?? false
+                              ? 'Unmark as Favorite '
+                              : 'Mark as Favorite ',
                         ),
                         LongButton(
                           textColor: AppColors.lightBlue3,
                           hasIcon: true,
                           isDisabled: !isOwner && !isAdmin,
-                          backgroundColor: Provider.of<ThemeProvider>(context,
+                          backgroundColor: Provider.of<ThemeProviderV2>(context,
                                       listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
@@ -928,18 +924,16 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           onPress: !isOwner && !isAdmin
                               ? () {}
                               : () =>
-                                  widget.prayerData?.userPrayer?.isArchived ??
-                                          false
+                                  widget.prayerData?.status == Status.archived
                                       ? _unArchive(widget.prayerData)
                                       : _onArchive(widget.prayerData),
-                          text:
-                              widget.prayerData?.userPrayer?.isArchived ?? false
-                                  ? 'Unarchive'
-                                  : 'Archive',
+                          text: widget.prayerData?.status == Status.archived
+                              ? 'Unarchive'
+                              : 'Archive',
                         ),
                         LongButton(
                           textColor: AppColors.lightBlue3,
-                          backgroundColor: Provider.of<ThemeProvider>(context,
+                          backgroundColor: Provider.of<ThemeProviderV2>(context,
                                       listen: false)
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
@@ -954,7 +948,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         if (isGroupPrayer)
                           LongButton(
                             textColor: AppColors.lightBlue3,
-                            backgroundColor: Provider.of<ThemeProvider>(context,
+                            backgroundColor: Provider.of<ThemeProviderV2>(
+                                        context,
                                         listen: false)
                                     .isDarkModeEnabled
                                 ? AppColors.backgroundColor[0].withOpacity(0.7)
@@ -968,7 +963,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         if (isGroupPrayer)
                           LongButton(
                               textColor: AppColors.lightBlue3,
-                              backgroundColor: Provider.of<ThemeProvider>(
+                              backgroundColor: Provider.of<ThemeProviderV2>(
                                           context,
                                           listen: false)
                                       .isDarkModeEnabled

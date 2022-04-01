@@ -1,16 +1,13 @@
 import 'dart:async';
 import 'package:be_still/controllers/root_binding.dart';
 import 'package:be_still/locator.dart';
-import 'package:be_still/providers/auth_provider.dart';
-import 'package:be_still/providers/devotional_provider.dart';
-import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/log_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/settings_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/auth_provider.dart';
+import 'package:be_still/providers/v2/devotional_provider.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/theme_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/services/log_service.dart';
 import 'package:be_still/utils/settings.dart' as st;
 import 'package:firebase_core/firebase_core.dart';
@@ -19,7 +16,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'app.dart';
-import 'providers/theme_provider.dart';
+import 'providers/v2/notification_provider.dart';
 
 bool userFirestoreEmulator = false;
 void main() async {
@@ -41,17 +38,15 @@ void main() async {
     runApp(
       MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (ctx) => ThemeProvider()),
-          ChangeNotifierProvider(create: (ctx) => UserProvider()),
-          ChangeNotifierProvider(create: (ctx) => AuthenticationProvider()),
-          ChangeNotifierProvider(create: (ctx) => PrayerProvider()),
-          ChangeNotifierProvider(create: (ctx) => SettingsProvider()),
-          ChangeNotifierProvider(create: (ctx) => GroupProvider()),
-          ChangeNotifierProvider(create: (ctx) => GroupPrayerProvider()),
-          ChangeNotifierProvider(create: (ctx) => MiscProvider()),
-          ChangeNotifierProvider(create: (ctx) => NotificationProvider()),
-          ChangeNotifierProvider(create: (ctx) => DevotionalProvider()),
-          ChangeNotifierProvider(create: (ctx) => LogProvider()),
+          //=========================================================//
+          ChangeNotifierProvider(create: (ctx) => UserProviderV2()),
+          ChangeNotifierProvider(create: (ctx) => AuthenticationProviderV2()),
+          ChangeNotifierProvider(create: (ctx) => PrayerProviderV2()),
+          ChangeNotifierProvider(create: (ctx) => GroupProviderV2()),
+          ChangeNotifierProvider(create: (ctx) => NotificationProviderV2()),
+          ChangeNotifierProvider(create: (ctx) => MiscProviderV2()),
+          ChangeNotifierProvider(create: (ctx) => DevotionalProviderV2()),
+          ChangeNotifierProvider(create: (ctx) => ThemeProviderV2()),
         ],
         child: MyApp(),
       ),

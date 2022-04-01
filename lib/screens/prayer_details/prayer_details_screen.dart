@@ -1,24 +1,25 @@
-import 'dart:io';
-
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
-import 'package:be_still/models/notification.model.dart';
-import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/settings_provider.dart';
+import 'package:be_still/models/v2/local_notification.model.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/theme_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/prayer_details/widgets/no_update_view.dart';
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/screens/prayer_details/widgets/update_view.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
+import 'package:be_still/widgets/snooze_prayer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -33,28 +34,6 @@ class PrayerDetails extends StatefulWidget {
 }
 
 class _PrayerDetailsState extends State<PrayerDetails> {
-  void getSettings() async {
-    try {
-      final _user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .setSettings(_user.id ?? '');
-    } on HttpException catch (e, s) {
-      BeStilDialog.hideLoading(context);
-
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
-    } catch (e, s) {
-      BeStilDialog.hideLoading(context);
-
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
-    }
-  }
-
   Duration snoozeDurationinDays = Duration.zero;
   DateTime snoozeEndDate = DateTime.now();
   Duration snoozeDurationinHour = Duration.zero;
@@ -63,52 +42,54 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   int snoozeDuration = 0;
   // String reminderString = '';
 
+  String selectedFrequency = '';
+
   Widget _buildMenu(
-      CombinePrayerStream? prayerData, LocalNotificationModel reminder) {
+      PrayerDataModel? prayerData, LocalNotificationDataModel reminder) {
     return PrayerMenu(context, hasReminder(prayerData), reminder,
         () => updateUI(), prayerData);
   }
 
-  String reminderString(CombinePrayerStream? prayerData) {
-    final reminders = Provider.of<NotificationProvider>(context)
+  String reminderString(PrayerDataModel? prayerData) {
+    final reminders = Provider.of<NotificationProviderV2>(context)
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
 
-    LocalNotificationModel? reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == (prayerData?.userPrayer?.id ?? ''),
-        orElse: () => LocalNotificationModel.defaultValue());
-    return reminder.notificationText ?? '';
+    LocalNotificationDataModel? reminder = reminders.firstWhere(
+        (reminder) => reminder.prayerId == (prayerData?.id ?? ''),
+        orElse: () => LocalNotificationDataModel());
+    return reminder.message ?? '';
   }
 
-  bool hasReminder(CombinePrayerStream? prayerData) {
-    final reminders = Provider.of<NotificationProvider>(context)
+  bool hasReminder(PrayerDataModel? prayerData) {
+    final reminders = Provider.of<NotificationProviderV2>(context)
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
 
-    return reminders.any(
-        (reminder) => reminder.entityId == (prayerData?.userPrayer?.id ?? ''));
+    return reminders
+        .any((reminder) => reminder.prayerId == (prayerData?.id ?? ''));
   }
 
-  bool isReminderActive(CombinePrayerStream? prayerData) {
-    final reminders = Provider.of<NotificationProvider>(context)
+  bool isReminderActive(PrayerDataModel? prayerData) {
+    final reminders = Provider.of<NotificationProviderV2>(context)
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
 
-    LocalNotificationModel rem = reminders.firstWhere(
-        (reminder) => reminder.entityId == prayerData?.userPrayer?.id,
-        orElse: () => LocalNotificationModel.defaultValue());
+    LocalNotificationDataModel rem = reminders.firstWhere(
+        (reminder) => reminder.prayerId == prayerData?.id,
+        orElse: () => LocalNotificationDataModel());
     if ((rem.id ?? '').isNotEmpty) {
       if (rem.frequency != Frequency.one_time) {
         return true;
       } else {
-        if ((rem.scheduledDate ?? DateTime.now().subtract(Duration(hours: 1)))
+        if ((rem.scheduleDate ?? DateTime.now().subtract(Duration(hours: 1)))
             .isAfter(DateTime.now())) {
           return true;
         } else {
-          Provider.of<NotificationProvider>(context).deleteLocalNotification(
+          Provider.of<NotificationProviderV2>(context).deleteLocalNotification(
               rem.id ?? '', rem.localNotificationId ?? 0);
           return false;
         }
@@ -138,34 +119,36 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   void didChangeDependencies() {
     if (_isInit) {
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
-        getSettings();
+        // getSettings();
       });
       _isInit = false;
     }
     super.didChangeDependencies();
   }
 
-  LocalNotificationModel _reminder(CombinePrayerStream? prayerData) {
-    final reminders = Provider.of<NotificationProvider>(context, listen: false)
-        .localNotifications;
+  LocalNotificationDataModel _reminder(PrayerDataModel? prayerData) {
+    final reminders =
+        Provider.of<NotificationProviderV2>(context, listen: false)
+            .localNotifications;
     return reminders.firstWhere(
-        (reminder) => reminder.entityId == (prayerData?.userPrayer?.id ?? ''),
-        orElse: () => LocalNotificationModel.defaultValue());
+        (reminder) => reminder.prayerId == (prayerData?.id ?? ''),
+        orElse: () => LocalNotificationDataModel());
   }
 
   @override
   Widget build(BuildContext context) {
+    final prayerId = Provider.of<PrayerProviderV2>(context).currentPrayerId;
     return Scaffold(
       appBar: CustomAppBar(
         showPrayerActions: false,
       ),
-      body: StreamBuilder<CombinePrayerStream>(
-          stream: Provider.of<PrayerProvider>(context).getPrayer(),
+      body: StreamBuilder<PrayerDataModel>(
+          stream: Provider.of<PrayerProviderV2>(context)
+              .getPrayer(prayerId: prayerId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting)
-              return BeStilDialog.getLoading(context);
-            if (snapshot.hasData &&
-                (snapshot.data?.userPrayer?.deleteStatus ?? 0) == 0) {
+              return BeStilDialog.getLoading(context, false);
+            if (snapshot.hasData) {
               return Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -212,20 +195,21 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                                       color: AppColors.lightBlue3),
                                   onPressed: () => showModalBottomSheet(
                                     context: context,
-                                    barrierColor: Provider.of<ThemeProvider>(
+                                    barrierColor: Provider.of<ThemeProviderV2>(
                                                 context,
                                                 listen: false)
                                             .isDarkModeEnabled
                                         ? AppColors.backgroundColor[0]
                                             .withOpacity(0.8)
                                         : Color(0xFF021D3C).withOpacity(0.7),
-                                    backgroundColor: Provider.of<ThemeProvider>(
-                                                context,
-                                                listen: false)
-                                            .isDarkModeEnabled
-                                        ? AppColors.backgroundColor[0]
-                                            .withOpacity(0.8)
-                                        : Color(0xFF021D3C).withOpacity(0.7),
+                                    backgroundColor:
+                                        Provider.of<ThemeProviderV2>(context,
+                                                    listen: false)
+                                                .isDarkModeEnabled
+                                            ? AppColors.backgroundColor[0]
+                                                .withOpacity(0.8)
+                                            : Color(0xFF021D3C)
+                                                .withOpacity(0.7),
                                     isScrollControlled: true,
                                     builder: (BuildContext context) {
                                       return _buildMenu(snapshot.data,
@@ -239,65 +223,23 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                         ],
                       ),
                     ),
-                    if ((snapshot.data?.userPrayer ??
-                                UserPrayerModel.defaultValue())
-                            .isSnoozed ??
-                        false)
+                    if ((snapshot.data?.status == Status.snoozed))
                       Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                        InkWell(
-                          onTap: () => showDialog(
-                            context: context,
-                            barrierColor: AppColors.detailBackgroundColor[1]
-                                .withOpacity(0.5),
-                            builder: (BuildContext context) {
-                              return Dialog(
-                                insetPadding: EdgeInsets.all(20),
-                                backgroundColor: AppColors.prayerCardBgColor,
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: AppColors.darkBlue),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10.0),
-                                  ),
-                                ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 30),
-                                      child: ReminderPicker(
-                                        isGroup: false,
-                                        entityId:
-                                            snapshot.data?.userPrayer?.id ?? '',
-                                        type: NotificationType.reminder,
-                                        reminder: _reminder(snapshot.data),
-                                        hideActionuttons: false,
-                                        onCancel: () =>
-                                            Navigator.of(context).pop(),
-                                        prayerData: snapshot.data,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
-                                AppIcons.snooze,
-                                size: 12,
-                                color: AppColors.lightBlue5,
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(left: 7),
-                                child: Text(
-                                    'Snoozed until ${DateFormat('MMM').format(snapshot.data?.userPrayer?.snoozeEndDate ?? DateTime.now())} ${getDayText(snapshot.data?.userPrayer?.snoozeEndDate?.day)}, ${DateFormat('yyyy h:mm a').format(snapshot.data?.userPrayer?.snoozeEndDate ?? DateTime.now())}',
-                                    style: AppTextStyles.regularText12),
-                              ),
-                            ],
-                          ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(
+                              AppIcons.snooze,
+                              size: 12,
+                              color: AppColors.lightBlue5,
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(left: 7),
+                              child: Text(
+                                  'Snoozed until ${DateFormat('MMM').format(snapshot.data?.snoozeEndDate ?? DateTime.now())} ${getDayText(snapshot.data?.snoozeEndDate?.day)}, ${DateFormat('yyyy h:mm a').format(snapshot.data?.snoozeEndDate ?? DateTime.now())}',
+                                  style: AppTextStyles.regularText12),
+                            ),
+                          ],
                         ),
                         SizedBox(width: 20),
                       ]),
@@ -332,9 +274,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                                                 vertical: 30),
                                             child: ReminderPicker(
                                               isGroup: false,
-                                              entityId: snapshot
-                                                      .data?.userPrayer?.id ??
-                                                  '',
+                                              entityId: snapshot.data?.id ?? '',
                                               type: NotificationType.reminder,
                                               reminder:
                                                   _reminder(snapshot.data),
@@ -371,10 +311,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                           )
                         : Container(),
                     SizedBox(height: 10),
-                    if (((snapshot.data?.prayer ?? PrayerModel.defaultValue())
-                                .id ??
-                            '')
-                        .isNotEmpty)
+                    if (((snapshot.data?.id) ?? '').isNotEmpty)
                       Expanded(
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 20),

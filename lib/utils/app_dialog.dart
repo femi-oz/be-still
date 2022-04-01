@@ -1,4 +1,5 @@
 import 'package:be_still/models/user.model.dart';
+import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_alert_dialog.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -8,7 +9,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'essentials.dart';
 
 class BeStilDialog {
-  static Widget getLoading(context, [String message = '']) {
+  static Widget getLoading(context, bool showBackground,
+      [String message = '']) {
     precacheImage(AssetImage(StringUtils.backgroundImage), context);
     return Scaffold(
       // appBar: CustomAppBar(switchSearchMode: () {}, globalKey: GlobalKey()),
@@ -19,10 +21,12 @@ class BeStilDialog {
             end: Alignment.bottomCenter,
             colors: AppColors.backgroundColor,
           ),
-          image: DecorationImage(
-            image: AssetImage(StringUtils.backgroundImage),
-            alignment: Alignment.bottomCenter,
-          ),
+          image: showBackground
+              ? DecorationImage(
+                  image: AssetImage(StringUtils.backgroundImage),
+                  alignment: Alignment.bottomCenter,
+                )
+              : null,
         ),
         child: Center(
           child: Column(
@@ -54,7 +58,7 @@ class BeStilDialog {
   }
 
   static Future showErrorDialog(BuildContext context, String error,
-      UserModel? user, StackTrace? stackTrace) async {
+      UserDataModel? user, StackTrace? stackTrace) async {
     showDialog(
       barrierDismissible: false,
       context: context,

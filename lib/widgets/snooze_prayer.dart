@@ -1,21 +1,21 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/settings_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class SnoozePrayer extends StatefulWidget {
-  final CombinePrayerStream? prayerData;
+  final PrayerDataModel? prayerData;
   final bool popTwice;
   SnoozePrayer(this.prayerData, {this.popTwice = true});
   @override
@@ -34,39 +34,37 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
 
   @override
   void initState() {
-    final settings =
-        Provider.of<SettingsProvider>(context, listen: false).settings;
-    selectedInterval =
-        (widget.prayerData?.userPrayer?.snoozeFrequency ?? '').isNotEmpty
-            ? widget.prayerData?.userPrayer?.snoozeFrequency ?? ''
-            : settings.defaultSnoozeFrequency ?? '';
-    selectedDuration = (widget.prayerData?.userPrayer?.snoozeDuration ?? 0) > 0
-        ? widget.prayerData?.userPrayer?.snoozeDuration ?? 0
-        : settings.defaultSnoozeDuration ?? 0;
-    snoozeDuration = settings.defaultSnoozeFrequency == "Weeks"
+    final currentUser =
+        Provider.of<UserProviderV2>(context, listen: false).currentUser;
+    selectedInterval = (widget.prayerData?.snoozeFrequency ?? '').isNotEmpty
+        ? widget.prayerData?.snoozeFrequency ?? ''
+        : currentUser.defaultSnoozeFrequency ?? '';
+    selectedDuration = (widget.prayerData?.snoozeDuration ?? 0) > 0
+        ? widget.prayerData?.snoozeDuration ?? 0
+        : currentUser.defaultSnoozeDuration ?? 0;
+    snoozeDuration = currentUser.defaultSnoozeFrequency == "Weeks"
         ? snoozeWeeks
-        : settings.defaultSnoozeFrequency == "Months"
+        : currentUser.defaultSnoozeFrequency == "Months"
             ? snoozeMonths
-            : settings.defaultSnoozeFrequency == "Days"
+            : currentUser.defaultSnoozeFrequency == "Days"
                 ? snoozeDays
                 : snoozeMins;
     super.initState();
   }
 
   void clearSearch() async {
-    final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
-    await Provider.of<MiscProvider>(context, listen: false)
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    await Provider.of<MiscProviderV2>(context, listen: false)
         .setSearchMode(false);
-    await Provider.of<MiscProvider>(context, listen: false).setSearchQuery('');
-    await Provider.of<PrayerProvider>(context, listen: false)
+    await Provider.of<MiscProviderV2>(context, listen: false)
+        .setSearchQuery('');
+    await Provider.of<PrayerProviderV2>(context, listen: false)
         .searchPrayers('', userId ?? '');
   }
 
   void _snoozePrayer() async {
     BeStilDialog.showLoading(context);
-    final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
+    final userId = FirebaseAuth.instance.currentUser?.uid;
 
     var minutes = 0;
     switch (selectedInterval) {
@@ -85,25 +83,26 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
       default:
     }
     var e = selectedDuration * (minutes);
-    var _snoozeEndDate = DateTime.now().add(new Duration(minutes: e));
+    final _snoozeEndDate = DateTime.now().add(new Duration(minutes: e));
     try {
       var notifications =
-          Provider.of<NotificationProvider>(context, listen: false)
+          Provider.of<NotificationProviderV2>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData?.userPrayer?.id &&
+                  e.prayerId == widget.prayerData?.id &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
-          await Provider.of<NotificationProvider>(context, listen: false)
+          await Provider.of<NotificationProviderV2>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
-      await Provider.of<PrayerProvider>(context, listen: false).snoozePrayer(
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      await Provider.of<PrayerProviderV2>(context, listen: false).snoozePrayer(
           userId ?? '',
-          widget.prayerData?.prayer?.id ?? '',
-          _snoozeEndDate,
-          widget.prayerData?.userPrayer?.id ?? '',
+          widget.prayerData?.id ?? '',
           selectedDuration,
-          selectedInterval);
+          _snoozeEndDate,
+          (user.prayers ?? []).map((e) => e.prayerId ?? '').toList());
       clearSearch();
 
       BeStilDialog.hideLoading(context);
@@ -116,7 +115,7 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
       await Future.delayed(Duration(milliseconds: 300),
           () => {BeStilDialog.hideLoading(context)});
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }

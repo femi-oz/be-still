@@ -1,8 +1,6 @@
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/auth_provider.dart';
-import 'package:be_still/providers/log_provider.dart';
-
+import 'package:be_still/models/v2/user.model.dart';
+import 'package:be_still/providers/v2/auth_provider.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -77,7 +75,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           message: 'You must accept terms to create an account.');
       final s = StackTrace.fromString(e.stacktrace ?? '');
       BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
+          context, StringUtils.getErrorMessage(e), UserDataModel(), s);
       return;
     }
     setState(() => _autoValidate = true);
@@ -92,18 +90,18 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             code: 'custom',
             message: 'First Name is empty, please enter a valid name.');
         final s = StackTrace.fromString(e.stacktrace ?? '');
-        BeStilDialog.showErrorDialog(context, StringUtils.getErrorMessage(e),
-            UserModel.defaultValue(), s);
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.getErrorMessage(e), UserDataModel(), s);
       } else if (_lastnameController.text.trim().isEmpty) {
         BeStilDialog.hideLoading(context);
         PlatformException e = PlatformException(
             code: 'custom',
             message: 'Last Name is empty, please enter a valid name.');
         final s = StackTrace.fromString(e.stacktrace ?? '');
-        BeStilDialog.showErrorDialog(context, StringUtils.getErrorMessage(e),
-            UserModel.defaultValue(), s);
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.getErrorMessage(e), UserDataModel(), s);
       } else {
-        await Provider.of<AuthenticationProvider>(context, listen: false)
+        await Provider.of<AuthenticationProviderV2>(context, listen: false)
             .registerUser(
           password: _passwordController.text,
           email: _emailController.text,
@@ -115,6 +113,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         Settings.lastUser = '';
         Settings.userPassword = '';
         Settings.enableLocalAuth = false;
+        Settings.enabledReminderPermission = true;
         BeStilDialog.hideLoading(context);
         showInfoDialog(context);
       }
@@ -122,13 +121,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       BeStilDialog.hideLoading(context);
 
       BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
+          context, StringUtils.getErrorMessage(e), UserDataModel(), s);
     } catch (e, s) {
-      Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
-          _emailController.text, 'REGISTER/screen/_createAccount');
       BeStilDialog.hideLoading(context);
+
       BeStilDialog.showErrorDialog(
-          context, StringUtils.errorOccured, UserModel.defaultValue(), s);
+          context, StringUtils.getErrorMessage(e), UserDataModel(), s);
     }
   }
 

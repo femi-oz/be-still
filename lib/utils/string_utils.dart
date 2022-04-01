@@ -62,6 +62,7 @@ class StringUtils {
       " icon to access recommended online Bibles, learn more about the app in the help section, or log out.";
   static String unathorized =
       "You're unathorized to perform this action. Kindly log in";
+  static String documentDoesNotExist = "Document does not exist.";
 
   static String getErrorMessage(e) {
     return (e?.message != null ? e.message : StringUtils.errorOccured) ??
@@ -81,9 +82,11 @@ class StringUtils {
       case ErrorType.wrongPassword:
         errorMessage = "Username / Password is incorrect";
         break;
+      case ErrorType.userNotFound:
+        errorMessage = "Username / Password is incorrect";
+        break;
       case ErrorType.notAvailable:
-        errorMessage =
-            "Finger Print / Face ID is not supported on your device.";
+        errorMessage = "This option is unavailable on this device.";
         break;
       case ErrorType.userNotFound:
         errorMessage = "User with this email doesn't exist.";

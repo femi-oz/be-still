@@ -1,6 +1,8 @@
+import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/time_range.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
@@ -33,11 +35,9 @@ class LocalNotification {
       (i) => DateFormat('MMM').format(DateTime(DateTime.now().year, i + 1)));
 
   static Future<void> setNotificationsOnNewDevice(context) async {
-    final userId =
-        Provider.of<UserProvider>(context, listen: false).currentUser.id;
     final _localNotifications =
-        await Provider.of<NotificationProvider>(context, listen: false)
-            .getLocalNotificationsFuture(userId);
+        await Provider.of<NotificationProviderV2>(context, listen: false)
+            .getLocalNotificationsFuture();
     //set notification in new device
 
     // The device's timezone.
@@ -48,15 +48,15 @@ class LocalNotification {
     //set notification in new device
     for (int i = 0; i < _localNotifications.length; i++) {
       final scheduledDate = tz.TZDateTime.from(
-          _localNotifications[i].scheduledDate ?? DateTime.now(), location);
+          (_localNotifications[i].scheduleDate) ?? DateTime.now(), location);
       await setLocalNotification(
-        title: _localNotifications[i].title ?? '',
-        description: _localNotifications[i].description ?? '',
-        scheduledDate: scheduledDate,
-        payload: _localNotifications[i].payload,
-        frequency: _localNotifications[i].frequency ?? '',
-        context: context,
-      );
+          title: '${_localNotifications[i].frequency} reminder to pray',
+          description: _localNotifications[i].message ?? '',
+          scheduledDate: scheduledDate,
+          payload: _localNotifications[i].prayerId,
+          frequency: _localNotifications[i].frequency ?? '',
+          context: context,
+          localNotificationId: _localNotifications[i].localNotificationId);
     }
   }
 
@@ -73,8 +73,8 @@ class LocalNotification {
       localNotificationID = localNotificationId;
     else {
       final localNots =
-          Provider.of<NotificationProvider>(context, listen: false)
-              .localNotifications;
+          await Provider.of<NotificationProviderV2>(context, listen: false)
+              .getLocalNotificationsFuture();
       final allIds = localNots.map((e) => e.localNotificationId).toList();
 
       localNotificationID = allIds.length > 0
@@ -82,6 +82,7 @@ class LocalNotification {
           : 0;
       localNotificationID += 1;
     }
+    print(localNotificationID);
     await _flutterLocalNotificationsPlugin
         .zonedSchedule(
           localNotificationID,
@@ -92,7 +93,7 @@ class LocalNotification {
               android: AndroidNotificationDetails('your channel id',
                   'your channel name', 'your channel description'),
               iOS: IOSNotificationDetails()),
-          payload: payload,
+          payload: payload ?? '',
           androidAllowWhileIdle: true,
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.absoluteTime,
@@ -102,14 +103,14 @@ class LocalNotification {
               : DateTimeComponents.dayOfWeekAndTime,
         )
         .whenComplete(() => print('whenComplete'))
-        .then((value) => print('then'))
+        .then((value) => print('then '))
         .onError((error, stackTrace) => print(error));
   }
 
   static int _getExactDy(day) {
     var now = new DateTime.now();
 
-    while (now.weekday != day) {
+    while (now.weekday != day + 1) {
       now = now.subtract(new Duration(days: 1));
     }
     return now.day;
@@ -138,9 +139,7 @@ class LocalNotification {
       hour,
       selectedMinute,
     );
-    if (scheduledDate.isBefore(now) && !isOneTime) {
-      scheduledDate = scheduledDate.add(const Duration(days: 1));
-    }
+
     return scheduledDate;
   }
 

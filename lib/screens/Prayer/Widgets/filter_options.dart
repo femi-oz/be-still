@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:be_still/enums/status.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
@@ -22,12 +22,12 @@ class _PrayerFiltersState extends State<PrayerFilters> {
     try {
       errorMessage = '';
 
-      Provider.of<PrayerProvider>(context, listen: false)
+      Provider.of<PrayerProviderV2>(context, listen: false)
           .setPrayerFilterOptions(status);
-      Provider.of<PrayerProvider>(context, listen: false).filterPrayers();
+      Provider.of<PrayerProviderV2>(context, listen: false).filterPrayers();
       String heading =
           '${status == Status.active ? 'MY PRAYERS' : status.toUpperCase()}';
-      await Provider.of<MiscProvider>(context, listen: false)
+      await Provider.of<MiscProviderV2>(context, listen: false)
           .setPageTitle(heading);
       setState(() {});
       Navigator.of(context).pop();
@@ -35,19 +35,20 @@ class _PrayerFiltersState extends State<PrayerFilters> {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
   Widget build(BuildContext context) {
-    var status = Provider.of<PrayerProvider>(context).filterOption;
+    var status = Provider.of<PrayerProviderV2>(context).filterOption;
     return Container(
       padding: EdgeInsets.only(top: 30),
       child: Column(

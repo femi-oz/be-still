@@ -1,45 +1,45 @@
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/providers/devotional_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/devotional_provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_expansion_tile.dart' as custom;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class RecommenededBibles extends StatefulWidget {
+class RecommendedBibles extends StatefulWidget {
   static const routeName = 'recommended-bible';
 
   @override
-  _RecommenededBiblesState createState() => _RecommenededBiblesState();
+  _RecommendedBiblesState createState() => _RecommendedBiblesState();
 }
 
-class _RecommenededBiblesState extends State<RecommenededBibles> {
+class _RecommendedBiblesState extends State<RecommendedBibles> {
   final _scrollController = new ScrollController();
 
   @override
   void didChangeDependencies() {
     WidgetsBinding.instance?.addPostFrameCallback((_) async {
       try {
-        var userId =
-            Provider.of<UserProvider>(context, listen: false).currentUser.id;
-        await Provider.of<MiscProvider>(context, listen: false)
+        var userId = FirebaseAuth.instance.currentUser?.uid;
+        await Provider.of<MiscProviderV2>(context, listen: false)
             .setSearchMode(false);
-        await Provider.of<MiscProvider>(context, listen: false)
+        await Provider.of<MiscProviderV2>(context, listen: false)
             .setSearchQuery('');
-        Provider.of<PrayerProvider>(context, listen: false)
+        Provider.of<PrayerProviderV2>(context, listen: false)
             .searchPrayers('', userId ?? '');
       } catch (e, s) {
         final user =
-            Provider.of<UserProvider>(context, listen: false).currentUser;
+            Provider.of<UserProviderV2>(context, listen: false).currentUser;
         BeStilDialog.showErrorDialog(
-            context, StringUtils.errorOccured, user, s);
+            context, StringUtils.getErrorMessage(e), user, s);
       }
     });
     super.didChangeDependencies();
@@ -170,7 +170,7 @@ class _RecommenededBiblesState extends State<RecommenededBibles> {
   }
 
   Widget _buildPanel() {
-    final bibleData = Provider.of<DevotionalProvider>(context).bibles;
+    final bibleData = Provider.of<DevotionalProviderV2>(context).bibles;
     return Theme(
       data: ThemeData().copyWith(cardColor: Colors.transparent),
       child: Container(

@@ -1,14 +1,15 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/locator.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/auth_provider.dart';
-import 'package:be_still/providers/log_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/models/v2/user.model.dart';
+import 'package:be_still/providers/v2/auth_provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/entry_screen.dart';
+import 'package:be_still/services/v2/migration.service.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/debouncer.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -111,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
         bool showBioAuth =
             (ModalRoute.of(context)?.settings.arguments ?? false) as bool;
         if (showBioAuth && isBioMetricAvailable && Settings.enableLocalAuth)
-          _biologin();
+          _bioLogin();
       });
       _isInit = false;
     }
@@ -121,9 +122,13 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     if (Settings.rememberMe && Settings.lastUser.isNotEmpty) {
-      var userInfo = jsonDecode(Settings.lastUser);
-      _usernameController.text = userInfo['email'];
-      _passwordController.text = Settings.userPassword;
+      final userInfo = jsonDecode(Settings.lastUser);
+      if (userInfo['email'] != null) {
+        _usernameController.text = userInfo['email'];
+        _passwordController.text = Settings.userPassword;
+      } else {
+        return;
+      }
     }
     initDynamicLinks();
     super.initState();
@@ -235,25 +240,24 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> setRouteDestination() async {
     try {
       final message =
-          Provider.of<NotificationProvider>(context, listen: false).message;
+          Provider.of<NotificationProviderV2>(context, listen: false).message;
       if ((message.entityId ?? '').isNotEmpty) {
         if (message.type == NotificationType.prayer_time) {
-          await Provider.of<PrayerProvider>(context, listen: false)
-              .setPrayerTimePrayers(message.entityId ?? '');
           AppController appController = Get.find();
           appController.setCurrentPage(2, false, 0);
-          Provider.of<MiscProvider>(context, listen: false).setLoadStatus(true);
+          Provider.of<MiscProviderV2>(context, listen: false)
+              .setLoadStatus(true);
           Navigator.of(context).pushNamedAndRemoveUntil(
               EntryScreen.routeName, (Route<dynamic> route) => false);
         }
         if (message.type == NotificationType.prayer) {
-          Provider.of<PrayerProvider>(context, listen: false)
+          Provider.of<PrayerProviderV2>(context, listen: false)
               .setCurrentPrayerId(message.entityId ?? '');
         }
-        Provider.of<NotificationProvider>(context, listen: false)
+        Provider.of<NotificationProviderV2>(context, listen: false)
             .clearMessage();
       } else {
-        await Provider.of<MiscProvider>(context, listen: false)
+        await Provider.of<MiscProviderV2>(context, listen: false)
             .setLoadStatus(true);
         AppController appController = Get.find();
 
@@ -265,28 +269,29 @@ class _LoginScreenState extends State<LoginScreen> {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
   void _resendVerification() async {
     try {
       BeStilDialog.showLoading(context, '');
-      await Provider.of<AuthenticationProvider>(context, listen: false)
+      await Provider.of<AuthenticationProviderV2>(context, listen: false)
           .sendEmailVerification();
       verificationSent = true;
       setState(() => verificationSendMessage =
           'Email verification sent. Please check your email');
       BeStilDialog.hideLoading(context);
-      await Provider.of<AuthenticationProvider>(context, listen: false)
+      await Provider.of<AuthenticationProviderV2>(context, listen: false)
           .signOut();
     } on HttpException catch (e, s) {
       verificationSent = false;
@@ -294,17 +299,16 @@ class _LoginScreenState extends State<LoginScreen> {
           'Resend verification email failed. Please try again');
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
+          context, StringUtils.getErrorMessage(e), UserDataModel(), s);
     } catch (e, s) {
       verificationSent = false;
       setState(() => verificationSendMessage =
           'Resend verification email failed. Please try again');
-      Provider.of<LogProvider>(context, listen: false).setErrorLog(e.toString(),
-          _usernameController.text, 'LOGIN/screen/_resendVerification');
+
       BeStilDialog.hideLoading(context);
 
       BeStilDialog.showErrorDialog(
-          context, StringUtils.errorOccured, UserModel.defaultValue(), s);
+          context, StringUtils.errorOccured, UserDataModel(), s);
     }
   }
 
@@ -315,15 +319,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
     BeStilDialog.showLoading(context, 'Authenticating');
     try {
-      await Provider.of<AuthenticationProvider>(context, listen: false).signIn(
+      await Provider.of<AuthenticationProviderV2>(context, listen: false)
+          .signIn(
         email: _usernameController.text,
         password: _passwordController.text,
       );
-      await Provider.of<UserProvider>(context, listen: false)
-          .setCurrentUser(false);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
 
+      final user = await Provider.of<UserProviderV2>(context, listen: false)
+          .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
+      await Provider.of<UserProviderV2>(context, listen: false)
+          .setCurrentUser();
       Settings.lastUser = jsonEncode(user.toJson2());
       Settings.userPassword = _passwordController.text;
       if (Settings.enabledReminderPermission)
@@ -334,40 +339,69 @@ class _LoginScreenState extends State<LoginScreen> {
     } on HttpException catch (e, s) {
       needsVerification =
           e.message == StringUtils.generateExceptionMessage('not-verified');
-
+      if (e.message == "Document does not exist.") {
+        await migrateData();
+        return;
+      }
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
+          context, StringUtils.getErrorMessage(e), UserDataModel(), s);
     } catch (e, s) {
       needsVerification =
-          Provider.of<AuthenticationProvider>(context, listen: false)
+          Provider.of<AuthenticationProviderV2>(context, listen: false)
               .needsVerification;
 
-      Provider.of<LogProvider>(context, listen: false).setErrorLog(
-          e.toString(), _usernameController.text, 'LOGIN/screen/_login');
       BeStilDialog.hideLoading(context);
       BeStilDialog.showErrorDialog(
-          context, StringUtils.errorOccured, UserModel.defaultValue(), s);
+          context, StringUtils.errorOccured, UserDataModel(), s);
     }
   }
 
-  Future<void> _biologin() async {
+  final _migrationService = locator<MigrationService>();
+  Future<void> migrateData() async {
+    try {
+      BeStilDialog.showLoading(
+          context, 'Please wait, your data is being migrated!');
+
+      await _migrationService
+          .migrateUserData(FirebaseAuth.instance.currentUser?.uid ?? '');
+      final user = await Provider.of<UserProviderV2>(context, listen: false)
+          .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
+      await Provider.of<UserProviderV2>(context, listen: false)
+          .setCurrentUser();
+      // if (Settings.enabledReminderPermission)
+      //   await LocalNotification.setNotificationsOnNewDevice(context);
+      Settings.lastUser = jsonEncode(user.toJson2());
+      Settings.userPassword = _passwordController.text;
+
+      setRouteDestination();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> _bioLogin() async {
     try {
       final userInfo = jsonDecode(Settings.lastUser);
-      final usernname = userInfo['email'];
+      final username = userInfo['email'];
       final password = Settings.userPassword;
-      await Provider.of<AuthenticationProvider>(context, listen: false).signIn(
-        email: usernname,
+      await Provider.of<AuthenticationProviderV2>(context, listen: false)
+          .signIn(
+        email: username,
         password: password,
       );
       final isAuth =
-          await Provider.of<AuthenticationProvider>(context, listen: false)
+          await Provider.of<AuthenticationProviderV2>(context, listen: false)
               .biometricSignin();
       BeStilDialog.showLoading(context, 'Authenticating');
       isLoading = true;
+
       if (isAuth) {
-        await Provider.of<UserProvider>(context, listen: false)
-            .setCurrentUser(false);
+        await Provider.of<UserProviderV2>(context, listen: false)
+            .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
+        await Provider.of<UserProviderV2>(context, listen: false)
+            .setCurrentUser();
+
         BeStilDialog.hideLoading(context);
         isLoading = false;
 
@@ -381,18 +415,19 @@ class _LoginScreenState extends State<LoginScreen> {
         BeStilDialog.hideLoading(context);
         isLoading = false;
       }
+      if (e.message == "Document does not exist.") {
+        await migrateData();
+        return;
+      }
       BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), UserModel.defaultValue(), s);
+          context, StringUtils.getErrorMessage(e), UserDataModel(), s);
     } catch (e, s) {
       if (isLoading) {
         BeStilDialog.hideLoading(context);
         isLoading = false;
       }
-      Provider.of<LogProvider>(context, listen: false).setErrorLog(
-          e.toString(), _usernameController.text, 'LOGIN/screen/_login');
-
       BeStilDialog.showErrorDialog(
-          context, StringUtils.errorOccured, UserModel.defaultValue(), s);
+          context, StringUtils.errorOccured, UserDataModel(), s);
     }
   }
 
@@ -584,7 +619,7 @@ class _LoginScreenState extends State<LoginScreen> {
       padding: EdgeInsets.only(top: 15.0, right: 15.0),
       child: GestureDetector(
           onTap: () => _debounce(() {
-                _biologin();
+                _bioLogin();
               }),
           child: showFingerPrint && showFaceId
               ? Image.asset(
@@ -630,7 +665,6 @@ class _LoginScreenState extends State<LoginScreen> {
             onTextchanged: (i) {
               isFormValid = _usernameController.text.isNotEmpty &&
                   _passwordController.text.isNotEmpty;
-              print(Settings.lastUser);
               if (Settings.lastUser.isNotEmpty) {
                 if (_usernameController.text !=
                     jsonDecode(Settings.lastUser)['email']) _setDefaults();

@@ -1,20 +1,20 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:be_still/enums/error_type.dart';
 import 'package:be_still/enums/theme_mode.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/settings.model.dart';
-import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/auth_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
+import 'package:be_still/models/v2/user.model.dart';
+import 'package:be_still/providers/v2/auth_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/theme_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/local_notification.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_edit_field.dart';
 import 'package:package_info/package_info.dart';
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
@@ -28,11 +28,10 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class GeneralSettings extends StatefulWidget {
-  final SettingsModel settings;
   final scaffoldKey;
 
   @override
-  GeneralSettings(this.settings, this.scaffoldKey);
+  GeneralSettings(this.scaffoldKey);
 
   @override
   _GeneralSettingsState createState() => _GeneralSettingsState();
@@ -232,7 +231,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       LocalNotification.setNotificationsOnNewDevice(context);
     } else {
       Settings.enabledReminderPermission = false;
-      Provider.of<NotificationProvider>(context, listen: false)
+      Provider.of<NotificationProviderV2>(context, listen: false)
           .cancelLocalNotifications();
     }
     setState(() {});
@@ -244,10 +243,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     Settings.setenableLocalAuth = false;
   }
 
-  void _updateEmail(UserModel user) async {
+  void _updateEmail(UserDataModel user) async {
     try {
-      await Provider.of<UserProvider>(context, listen: false)
-          .updateEmail(_newEmail.text, user.id ?? '');
+      await Provider.of<UserProviderV2>(context, listen: false)
+          .updateEmail(_newEmail.text.trim(), user.id ?? '');
       final newUser = user..email = _newEmail.text.trim();
       Settings.lastUser = jsonEncode(newUser.toJson2());
       BeStilDialog.showSuccessDialog(
@@ -256,7 +255,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       );
       _newEmail.clear();
       Future.delayed(Duration(seconds: 2), () async {
-        await Provider.of<AuthenticationProvider>(context, listen: false)
+        await Provider.of<AuthenticationProviderV2>(context, listen: false)
             .signOut();
         _setDefaults();
         Navigator.pushReplacement(
@@ -267,10 +266,11 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     } on HttpException catch (e, s) {
       _newEmail.clear();
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      if (e.message !=
+          'The email address is already in use by another account.')
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       String message = StringUtils.getErrorMessage(e);
       if (message ==
@@ -280,16 +280,17 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       }
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
 
-      BeStilDialog.showErrorDialog(context, message, user, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
       _newEmail.clear();
     }
   }
 
   void _updatePassword() async {
     try {
-      await Provider.of<UserProvider>(context, listen: false)
+      await Provider.of<UserProviderV2>(context, listen: false)
           .updatePassword(_newPassword.text);
       _newPassword.clear();
       _newConfirmPassword.clear();
@@ -300,7 +301,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
 
@@ -309,8 +310,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
       _newPassword.clear();
       _newConfirmPassword.clear();
     }
@@ -322,7 +324,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               _newEmail.text.trim().toLowerCase() &&
           type == _ModalType.email) return;
       BeStilDialog.showLoading(context);
-      await Provider.of<AuthenticationProvider>(context, listen: false)
+      await Provider.of<AuthenticationProviderV2>(context, listen: false)
           .signIn(email: _user.email, password: _currentPassword.text);
       _currentPassword.clear();
       Future.delayed(Duration(milliseconds: 300), () async {
@@ -338,27 +340,21 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       Navigator.of(context).pop();
     } on HttpException catch (e, s) {
       _currentPassword.clear();
-      var message = '';
-      if (e.message == 'Username / Password is incorrect' ||
-          e.message == 'The application has encountered an error.') {
-        message = 'Password is incorrect.';
-      } else {
-        message = e.message ?? '';
-      }
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      PlatformException er =
-          PlatformException(code: 'custom', message: message);
 
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(er), user, s);
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      if (e.message != ErrorType.wrongPassword)
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       _currentPassword.clear();
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -369,8 +365,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   ];
 
   Widget build(BuildContext context) {
-    final _currentUser = Provider.of<UserProvider>(context).currentUser;
-    final _themeProvider = Provider.of<ThemeProvider>(context);
+    final _currentUser = Provider.of<UserProviderV2>(context).currentUser;
+    final _themeProvider = Provider.of<ThemeProviderV2>(context);
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -470,160 +466,135 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   }
 
   void _update(_ModalType type, ctx) {
-    var _user = Provider.of<UserProvider>(context, listen: false).currentUser;
+    var _user = Provider.of<UserProviderV2>(context, listen: false).currentUser;
     final _formKey = GlobalKey<FormState>();
     bool _autoValidate = false;
     _newEmail.text = _user.email ?? '';
     final alert = AlertDialog(
-      insetPadding: EdgeInsets.all(10),
-      backgroundColor: AppColors.backgroundColor[1],
-      content: SingleChildScrollView(
-        child: Container(
-          width: MediaQuery.of(context).size.width - 100,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (type == _ModalType.email)
-                Text(
-                  'Update your email',
-                  style: AppTextStyles.boldText20,
-                )
-              else if (type == _ModalType.password)
-                Text(
-                  'Update your Password',
-                  style: AppTextStyles.boldText20,
-                ),
-              SizedBox(height: 10.0),
-              Form(
-                // ignore: deprecated_member_use
-                // autovalidate: _autoValidate,
-                autovalidateMode: _autoValidate == true
-                    ? AutovalidateMode.onUserInteraction
-                    : AutovalidateMode.disabled,
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (type == _ModalType.email)
-                      CustomInput(
-                        textkey: GlobalKey<FormFieldState>(),
-                        showSuffix: false,
-                        isRequired: true,
-                        isEmail: true,
-                        label: 'New Email',
-                        controller: _newEmail,
-                      ),
-                    SizedBox(
-                      height: 15.0,
-                    ),
-                    CustomInput(
-                      textkey: GlobalKey<FormFieldState>(),
-                      showSuffix: false,
-                      isRequired: false,
-                      obScurePassword: true,
-                      isPassword: false,
-                      label: 'Current Password',
-                      controller: _currentPassword,
-                    ),
-                    SizedBox(
-                      height: 15.0,
-                    ),
-                    if (type == _ModalType.password)
-                      SingleChildScrollView(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CustomInput(
-                              textkey: GlobalKey<FormFieldState>(),
-                              obScurePassword: true,
-                              showSuffix: false,
-                              isRequired: true,
-                              isPassword: true,
-                              label: 'New Password',
-                              controller: _newPassword,
-                            ),
-                            SizedBox(height: 15.0),
-                            CustomInput(
-                              textkey: GlobalKey<FormFieldState>(),
-                              obScurePassword: true,
-                              showSuffix: false,
-                              isRequired: true,
-                              label: 'Confirm New Password',
-                              controller: _newConfirmPassword,
-                              validator: (String? value) {
-                                if (_newPassword.text != value) {
-                                  return 'Password fields do not match';
-                                }
-                                return null;
-                              },
-                            ),
-                            SizedBox(height: 5.0),
-                          ],
-                        ),
-                      ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                AppColors.grey.withOpacity(0.5)),
-                          ),
-                          onPressed: () {
-                            _newPassword.clear();
-                            _newEmail.clear();
-                            _newConfirmPassword.clear();
-                            _currentPassword.clear();
-                            Navigator.of(context).pop();
-                          },
-                          child: Text(
-                            'Cancel',
-                            style: AppTextStyles.regularText15.copyWith(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          style: ButtonStyle(
-                            backgroundColor:
-                                // (_user.email
-                                //                 .trim()
-                                //                 .toLowerCase() ==
-                                //             _newEmail.text.trim().toLowerCase() &&
-                                //         type == _ModalType.email)
-                                //     ? MaterialStateProperty.all<Color>(
-                                //         AppColors.lightBlue3.withOpacity(0.5))
-                                //     :
-                                MaterialStateProperty.all<Color>(
-                                    AppColors.lightBlue3),
-                          ),
-                          onPressed: () {
-                            setState(() => _autoValidate = true);
-                            if (!_formKey.currentState!.validate()) return null;
-                            _formKey.currentState!.save();
-                            _verifyPassword(
-                              _user,
-                              type,
-                              ctx,
-                            );
-                          },
-                          child: Text(
-                            'Submit',
-                            style: AppTextStyles.regularText15.copyWith(
-                              color: Colors.white,
-                            ),
-                          ),
-                        )
-                      ],
+        insetPadding: EdgeInsets.all(10),
+        backgroundColor: AppColors.backgroundColor[1],
+        content: SingleChildScrollView(
+            child: Container(
+                width: MediaQuery.of(context).size.width - 100,
+                child: Column(mainAxisSize: MainAxisSize.min, children: [
+                  if (type == _ModalType.email)
+                    Text(
+                      'Update your email',
+                      style: AppTextStyles.boldText20,
                     )
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                  else if (type == _ModalType.password)
+                    Text(
+                      'Update your Password',
+                      style: AppTextStyles.boldText20,
+                    ),
+                  SizedBox(height: 10.0),
+                  Form(
+                      // ignore: deprecated_member_use
+                      // autovalidate: _autoValidate,
+                      autovalidateMode: _autoValidate == true
+                          ? AutovalidateMode.onUserInteraction
+                          : AutovalidateMode.disabled,
+                      key: _formKey,
+                      child: Column(mainAxisSize: MainAxisSize.min, children: [
+                        if (type == _ModalType.email)
+                          CustomInput(
+                            textkey: GlobalKey<FormFieldState>(),
+                            showSuffix: false,
+                            isRequired: true,
+                            isEmail: true,
+                            label: 'New Email',
+                            controller: _newEmail,
+                          ),
+                        SizedBox(
+                          height: 15.0,
+                        ),
+                        CustomInput(
+                          textkey: GlobalKey<FormFieldState>(),
+                          showSuffix: false,
+                          isRequired: true,
+                          obScurePassword: true,
+                          isPassword: false,
+                          label: 'Current Password',
+                          controller: _currentPassword,
+                        ),
+                        SizedBox(
+                          height: 15.0,
+                        ),
+                        if (type == _ModalType.password)
+                          SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                CustomInput(
+                                  textkey: GlobalKey<FormFieldState>(),
+                                  obScurePassword: true,
+                                  showSuffix: false,
+                                  isRequired: true,
+                                  isPassword: true,
+                                  label: 'New Password',
+                                  controller: _newPassword,
+                                ),
+                                SizedBox(height: 15.0),
+                                CustomInput(
+                                  textkey: GlobalKey<FormFieldState>(),
+                                  obScurePassword: true,
+                                  showSuffix: false,
+                                  isRequired: true,
+                                  label: 'Confirm New Password',
+                                  controller: _newConfirmPassword,
+                                  validator: (String? value) {
+                                    if (_newPassword.text != value) {
+                                      return 'Password fields do not match';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                SizedBox(height: 5.0),
+                              ],
+                            ),
+                          ),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              TextButton(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          AppColors.grey.withOpacity(0.5)),
+                                ),
+                                onPressed: () {
+                                  _newPassword.clear();
+                                  _newEmail.clear();
+                                  _newConfirmPassword.clear();
+                                  _currentPassword.clear();
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text(
+                                  'Cancel',
+                                  style: AppTextStyles.regularText15.copyWith(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              TextButton(
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            AppColors.lightBlue3),
+                                  ),
+                                  onPressed: () {
+                                    setState(() => _autoValidate = true);
+                                    if (!_formKey.currentState!.validate())
+                                      return null;
+                                    _formKey.currentState!.save();
+                                    _verifyPassword(_user, type, ctx);
+                                  },
+                                  child: Text('Submit',
+                                      style: AppTextStyles.regularText15
+                                          .copyWith(color: Colors.white)))
+                            ])
+                      ]))
+                ]))));
     showDialog(
         context: ctx,
         builder: (BuildContext context) {

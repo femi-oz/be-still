@@ -1,14 +1,14 @@
 import 'dart:io';
 
 import 'package:be_still/enums/settings_key.dart';
-import 'package:be_still/providers/settings_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_edit_field.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/input_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -31,123 +31,99 @@ class _SharingSettingsState extends State<SharingSettings> {
 
   void _updateChurch() async {
     try {
-      final settingProvider =
-          Provider.of<SettingsProvider>(context, listen: false);
-      final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .updateSharingSettings(userId ?? '',
-              key: SettingsKey.churchName,
-              settingsId: settingProvider.sharingSettings.id ?? '',
-              value: _churchName.text);
+      await Provider.of<UserProviderV2>(context, listen: false)
+          .updateUserSettings('churchName', _churchName.text);
 
       Navigator.pop(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
   void _updateEmail() async {
     try {
-      final settingProvider =
-          Provider.of<SettingsProvider>(context, listen: false);
-      final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .updateSharingSettings(userId ?? '',
-              key: SettingsKey.churchEmail,
-              settingsId: settingProvider.sharingSettings.id ?? '',
-              value: _churchEmail.text);
+      await Provider.of<UserProviderV2>(context, listen: false)
+          .updateUserSettings('churchEmail', _churchEmail.text);
       Navigator.pop(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
   void _updateLink() async {
     try {
-      final settingProvider =
-          Provider.of<SettingsProvider>(context, listen: false);
-      final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .updateSharingSettings(userId ?? "",
-              key: SettingsKey.webFormLink,
-              settingsId: settingProvider.sharingSettings.id ?? '',
-              value: _churchLink.text);
+      await Provider.of<UserProviderV2>(context, listen: false)
+          .updateUserSettings('churchWebFormUrl', _churchLink.text);
       Navigator.pop(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
   void _updatePhone() async {
     try {
-      final settingProvider =
-          Provider.of<SettingsProvider>(context, listen: false);
-      final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
-      await Provider.of<SettingsProvider>(context, listen: false)
-          .updateSharingSettings(userId ?? '',
-              key: SettingsKey.churchPhone,
-              settingsId: settingProvider.sharingSettings.id ?? '',
-              value: _churchPhone.text);
+      await Provider.of<UserProviderV2>(context, listen: false)
+          .updateUserSettings('churchPhone', _churchPhone.text);
       Navigator.pop(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
 
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final settingProvider = Provider.of<SettingsProvider>(context);
+    final userProvider = Provider.of<UserProviderV2>(context);
 
-    final phone = settingProvider.sharingSettings.churchPhone != ''
-        ? (settingProvider.sharingSettings.churchPhone ?? '').replaceAllMapped(
+    final phone = userProvider.currentUser.churchPhone != ''
+        ? (userProvider.currentUser.churchPhone ?? '').replaceAllMapped(
             RegExp(r'(\d{3})(\d{3})(\d+)'),
             (Match m) => "(${m[1]}) ${m[2]}-${m[3]}")
         : '---------';
@@ -181,10 +157,9 @@ class _SharingSettingsState extends State<SharingSettings> {
                   ),
                   SizedBox(height: 35),
                   CustomEditField(
-                    value:
-                        (settingProvider.sharingSettings.churchName ?? '') == ''
-                            ? '---------'
-                            : settingProvider.sharingSettings.churchName ?? '',
+                    value: (userProvider.currentUser.churchName ?? '') == ''
+                        ? '---------'
+                        : userProvider.currentUser.churchName ?? '',
                     onPressed: () {
                       _update(_ModalType.church, context);
                     },
@@ -193,11 +168,9 @@ class _SharingSettingsState extends State<SharingSettings> {
                   ),
                   SizedBox(height: 15),
                   CustomEditField(
-                    value:
-                        (settingProvider.sharingSettings.churchEmail ?? '') ==
-                                ''
-                            ? '---------'
-                            : settingProvider.sharingSettings.churchEmail ?? '',
+                    value: (userProvider.currentUser.churchEmail ?? '') == ''
+                        ? '---------'
+                        : userProvider.currentUser.churchEmail ?? '',
                     onPressed: () {
                       _update(_ModalType.email, context);
                     },
@@ -216,10 +189,9 @@ class _SharingSettingsState extends State<SharingSettings> {
                   SizedBox(height: 15),
                   CustomEditField(
                     value:
-                        (settingProvider.sharingSettings.webFormlink ?? '') ==
-                                ''
+                        (userProvider.currentUser.churchWebFormUrl ?? '') == ''
                             ? '---------'
-                            : settingProvider.sharingSettings.webFormlink ?? '',
+                            : userProvider.currentUser.churchWebFormUrl ?? '',
                     onPressed: () {
                       _update(_ModalType.link, context);
                     },
@@ -240,11 +212,11 @@ class _SharingSettingsState extends State<SharingSettings> {
     final _formKey = GlobalKey<FormState>();
     bool _autoValidate = false;
     final sharingSettings =
-        Provider.of<SettingsProvider>(context, listen: false).sharingSettings;
+        Provider.of<UserProviderV2>(context, listen: false).currentUser;
     _churchEmail.text = sharingSettings.churchEmail ?? '';
     _churchName.text = sharingSettings.churchName ?? '';
     _churchPhone.text = sharingSettings.churchPhone ?? '';
-    _churchLink.text = sharingSettings.webFormlink ?? '';
+    _churchLink.text = sharingSettings.churchWebFormUrl ?? '';
     final alert = AlertDialog(
       insetPadding: EdgeInsets.all(10),
       backgroundColor: AppColors.backgroundColor[1],

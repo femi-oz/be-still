@@ -1,12 +1,13 @@
 import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/providers/auth_provider.dart';
-import 'package:be_still/providers/group_prayer_provider.dart';
-import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/models/v2/device.model.dart';
+import 'package:be_still/providers/v2/auth_provider.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/security/login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -14,6 +15,7 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/initial_tutorial.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -52,7 +54,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
   String _shareUri = '';
 
   _launchHelpURL() async {
-    final _userProvider = Provider.of<UserProvider>(context, listen: false);
+    final _userProvider = Provider.of<UserProviderV2>(context, listen: false);
 
     try {
       if (await canLaunch('https://www.bestillapp.com/help')) {
@@ -61,13 +63,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
         throw 'Could not launch https://www.bestillapp.com/help';
       }
     } catch (e, s) {
-      BeStilDialog.showErrorDialog(context, StringUtils.getErrorMessage(e),
-          _userProvider.currentUser, s);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
   _launchURL(url) async {
-    final _userProvider = Provider.of<UserProvider>(context, listen: false);
+    final _userProvider = Provider.of<UserProviderV2>(context, listen: false);
     try {
       if (Platform.isAndroid) {
         await AppAvailability.checkAvailability(
@@ -86,22 +90,26 @@ class _CustomDrawerState extends State<CustomDrawer> {
           throw 'Could not launch https://my.bible.com/bible';
         }
       } catch (e, s) {
-        BeStilDialog.showErrorDialog(context, StringUtils.getErrorMessage(e),
-            _userProvider.currentUser, s);
+        final user =
+            Provider.of<UserProviderV2>(context, listen: false).currentUser;
+        BeStilDialog.showErrorDialog(
+            context, StringUtils.getErrorMessage(e), user, s);
       }
     }
   }
 
-  closeAllStreams() {
-    Provider.of<GroupProvider>(context, listen: false).flush();
-    Provider.of<NotificationProvider>(context, listen: false).flush();
-    Provider.of<PrayerProvider>(context, listen: false).flush();
-    Provider.of<GroupPrayerProvider>(context, listen: false).flush();
+  Future closeAllStreams() async {
+    await Provider.of<NotificationProviderV2>(context, listen: false).flush();
+    await Provider.of<PrayerProviderV2>(context, listen: false).flush();
+    await Provider.of<UserProviderV2>(context, listen: false).flush();
+    await Provider.of<GroupProviderV2>(context, listen: false).flush();
   }
 
   _openLogoutConfirmation(BuildContext context) {
     final _authProvider =
-        Provider.of<AuthenticationProvider>(context, listen: false);
+        Provider.of<AuthenticationProviderV2>(context, listen: false);
+    final user =
+        Provider.of<UserProviderV2>(context, listen: false).currentUser;
 
     final dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
@@ -183,16 +191,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      final userId =
-                          Provider.of<UserProvider>(context, listen: false)
-                              .currentUser
-                              .id;
-                      await _authProvider.signOut();
-                      Provider.of<NotificationProvider>(context, listen: false)
+                      await Provider.of<NotificationProviderV2>(context,
+                              listen: false)
                           .cancelLocalNotifications();
-                      Provider.of<UserProvider>(context, listen: false)
-                          .removePushToken(userId ?? '');
-                      closeAllStreams();
+                      await Provider.of<UserProviderV2>(context, listen: false)
+                          .removePushToken(user.devices ?? []);
+                      await closeAllStreams();
+                      await _authProvider.signOut();
                       Navigator.pushReplacement(
                         context,
                         SlideRightRoute(page: LoginScreen()),
