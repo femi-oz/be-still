@@ -73,6 +73,7 @@ post_install do |installer|
         ## dart: PermissionGroup.sensors
         'PERMISSION_SENSORS=0'
       ]
+      config.build_settings.delete 'IPHONEOS_DEPLOYMENT_TARGET'
     end
     flutter_additional_ios_build_settings(target)
   end
