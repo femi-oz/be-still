@@ -567,11 +567,16 @@ class PrayerServiceV2 {
     final archivedPrayers = await _prayerDataCollectionReference
         .where('userId', isEqualTo: _firebaseAuth.currentUser?.uid)
         .where('status', isEqualTo: Status.archived)
-        .where('isAnswered', isEqualTo: includeAnsweredPrayers)
         .get();
-    final mappedPrayers = archivedPrayers.docs
+
+    var mappedPrayers = archivedPrayers.docs
         .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
         .toList();
+    if (!includeAnsweredPrayers) {
+      mappedPrayers = mappedPrayers
+          .where((element) => element.isAnswered == false)
+          .toList();
+    }
     final filteredPrayers = mappedPrayers
         .where((prayer) => (prayer.archivedDate ?? DateTime.now())
             .add(Duration(minutes: autoDeletePeriod))

@@ -7,6 +7,7 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/v2/auth_provider.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
 import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
@@ -117,11 +118,19 @@ class _SplashScreenState extends State<SplashScreen>
     }
   }
 
+  Future closeAllStreams() async {
+    await Provider.of<NotificationProviderV2>(context, listen: false).flush();
+    await Provider.of<PrayerProviderV2>(context, listen: false).flush();
+    await Provider.of<UserProviderV2>(context, listen: false).flush();
+    await Provider.of<GroupProviderV2>(context, listen: false).flush();
+  }
+
 //check on login
   route() async {
     try {
       final isLoggedIn = await _authenticationProvider.isUserLoggedIn();
       if (Settings.enableLocalAuth) {
+        await closeAllStreams();
         Navigator.of(context).pushNamedAndRemoveUntil(
             LoginScreen.routeName, (Route<dynamic> route) => false,
             arguments: true);
@@ -134,11 +143,13 @@ class _SplashScreenState extends State<SplashScreen>
                 .setCurrentUser();
             await setRouteDestination();
           } else {
+            await closeAllStreams();
             Navigator.of(context).pushNamedAndRemoveUntil(
                 LoginScreen.routeName, (Route<dynamic> route) => false,
                 arguments: true);
           }
         } else {
+          await closeAllStreams();
           await Provider.of<AuthenticationProviderV2>(context, listen: false)
               .signOut();
           Navigator.of(context).pushNamedAndRemoveUntil(
