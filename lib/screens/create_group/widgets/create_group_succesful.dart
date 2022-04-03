@@ -49,11 +49,10 @@ class _GroupCreatedState extends State<GroupCreated> {
         appStoreId: '123456789',
       ),
     );
-    final Uri shortLink = await parameters.buildUrl();
-    Uri url = shortLink;
-    // final ShortDynamicLink shortLink =
-    //     await dynamicLinks.buildShortLink(parameters);
-    // Uri url = shortLink.shortUrl;
+    // final Uri shortLink = await parameters.buildUrl();
+    // Uri url = shortLink;
+    final ShortDynamicLink shortLink = await parameters.buildShortLink();
+    Uri url = shortLink.shortUrl;
     if (type == 0) {
       final Email email = Email(
           subject: 'Invitation to join ${widget.groupName} group',
