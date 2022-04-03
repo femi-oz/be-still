@@ -19,6 +19,7 @@ cd ..
 git clone -b stable https://github.com/flutter/flutter.git
 export PATH=`pwd`/flutter/bin:$PATH
 
+pod update
 flutter channel stable
 flutter doctor
 flutter pub get
