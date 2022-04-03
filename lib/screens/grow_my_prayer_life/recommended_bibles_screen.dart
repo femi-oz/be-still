@@ -26,7 +26,7 @@ class _RecommendedBiblesState extends State<RecommendedBibles> {
 
   @override
   void didChangeDependencies() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
       try {
         var userId = FirebaseAuth.instance.currentUser?.uid;
         await Provider.of<MiscProviderV2>(context, listen: false)

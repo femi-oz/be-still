@@ -28,7 +28,7 @@ class _PrayerTimeState extends State<PrayerTime> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
       try {
         var userId = FirebaseAuth.instance.currentUser?.uid;
         await Provider.of<MiscProviderV2>(context, listen: false)

@@ -31,7 +31,7 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
-  final SlidableController slidableController = SlidableController();
+  // final SlidableController slidableController = SlidableController();
   final refreshKey = new GlobalKey<RefreshIndicatorState>();
 
   @override

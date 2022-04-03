@@ -33,6 +33,7 @@ class _GroupCreatedState extends State<GroupCreated> {
         Provider.of<UserProviderV2>(context, listen: false).currentUser;
     final _url =
         'https://${FlavorConfig.instance.values.dynamicLink}/?groups=${widget.newGroupId}';
+    FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: "https://" + FlavorConfig.instance.values.dynamicLink,
       link: Uri.parse(_url),
@@ -40,10 +41,11 @@ class _GroupCreatedState extends State<GroupCreated> {
         packageName: FlavorConfig.instance.values.packageName,
         minimumVersion: 0,
       ),
-      dynamicLinkParametersOptions: DynamicLinkParametersOptions(
-        shortDynamicLinkPathLength: ShortDynamicLinkPathLength.short,
-      ),
-      iosParameters: IosParameters(
+
+      // dynamicLinkParametersOptions: DynamicLinkParametersOptions(
+      //   shortDynamicLinkPathLength: ShortDynamicLinkPathLength.short,
+      // ),
+      iosParameters: IOSParameters(
         bundleId: FlavorConfig.instance.values.packageName,
         minimumVersion: '1.0.1',
         appStoreId: '123456789',
@@ -51,11 +53,12 @@ class _GroupCreatedState extends State<GroupCreated> {
     );
     // final Uri shortLink = await parameters.buildUrl();
     // Uri url = shortLink;
-    final ShortDynamicLink shortLink = await parameters.buildShortLink();
+    final ShortDynamicLink shortLink =
+        await dynamicLinks.buildShortLink(parameters);
     Uri url = shortLink.shortUrl;
     if (type == 0) {
       final Email email = Email(
-          subject: 'Invitaion to join ${widget.groupName} group',
+          subject: 'Invitation to join ${widget.groupName} group',
           recipients: [],
           body:
               '''${GetUtils.capitalizeFirst(user.firstName ?? '')} has invited you to join ${widget.groupName} Group on the Be Still App

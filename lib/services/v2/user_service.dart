@@ -10,7 +10,7 @@ import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/services/v2/auth_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -176,10 +176,10 @@ class UserServiceV2 {
     try {
       if (Platform.isAndroid) {
         var build = await deviceInfoPlugin.androidInfo;
-        return build.androidId; //UUID for Android
+        return build.androidId ?? ''; //UUID for Android
       } else {
         var data = await deviceInfoPlugin.iosInfo;
-        return data.identifierForVendor; //UUID for iOS
+        return data.identifierForVendor ?? ''; //UUID for iOS
       }
     } catch (e) {
       throw Exception('Failed to get platform version');
