@@ -107,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_isInit) {
       setState(() => isFormValid = _usernameController.text.isNotEmpty &&
           _passwordController.text.isNotEmpty);
-      WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      WidgetsBinding.instance?.addPostFrameCallback((_) async {
         await _isBiometricAvailable();
         bool showBioAuth =
             (ModalRoute.of(context)?.settings.arguments ?? false) as bool;
@@ -137,8 +137,8 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> initDynamicLinks() async {
     FirebaseAuth auth = FirebaseAuth.instance;
 
-    FirebaseDynamicLinks.instance.onLink
-        .listen((PendingDynamicLinkData? dynamicLink) async {
+    FirebaseDynamicLinks.instance.onLink(
+        onSuccess: (PendingDynamicLinkData? dynamicLink) async {
       final Uri? deepLink = dynamicLink?.link;
 
       if (deepLink != null) {
@@ -153,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
           }
         }
       }
-    }).onError((e) async {
+    }, onError: (OnLinkErrorException e) async {
       print('onLinkError');
       print(e.message);
     });

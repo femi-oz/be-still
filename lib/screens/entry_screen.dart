@@ -61,7 +61,7 @@ class _EntryScreenState extends State<EntryScreen> {
     try {
       final miscProvider = Provider.of<MiscProviderV2>(context, listen: false);
 
-      WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      WidgetsBinding.instance?.addPostFrameCallback((_) async {
         final user =
             Provider.of<UserProviderV2>(context, listen: false).currentUser;
         Provider.of<PrayerProviderV2>(context, listen: false)
@@ -93,15 +93,16 @@ class _EntryScreenState extends State<EntryScreen> {
   Future<void> initDynamicLinks() async {
     try {
       String _groupId = '';
-
-      FirebaseDynamicLinks.instance.onLink
-          .listen((PendingDynamicLinkData? dynamicLink) async {
+      FirebaseDynamicLinks.instance.onLink(
+          onSuccess: (PendingDynamicLinkData? dynamicLink) async {
         final Uri deepLink = dynamicLink?.link ?? Uri();
+        // if (deepLink != null) {
         _groupId = deepLink.queryParameters['groups'] ?? "";
 
         Provider.of<GroupProviderV2>(context, listen: false)
             .setJoinGroupId(_groupId);
-      }).onError((e) async {
+        // }
+      }, onError: (OnLinkErrorException e) async {
         print('onLinkError');
         print(e.message);
       });

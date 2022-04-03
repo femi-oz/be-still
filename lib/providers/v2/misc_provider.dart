@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:device_info_plus/device_info_plus.dart';
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 
 class MiscProviderV2 with ChangeNotifier {
@@ -43,11 +43,11 @@ class MiscProviderV2 with ChangeNotifier {
     try {
       if (Platform.isAndroid) {
         var build = await deviceInfoPlugin.androidInfo;
-        _deviceId = build.androidId ?? '';
+        _deviceId = build.androidId;
         // return build.androidId; //UUID for Android
       } else {
         var data = await deviceInfoPlugin.iosInfo;
-        _deviceId = data.identifierForVendor ?? '';
+        _deviceId = data.identifierForVendor;
 
         // return data.identifierForVendor; //UUID for iOS
       }

@@ -41,21 +41,20 @@ class _GroupCreatedState extends State<GroupCreated> {
         packageName: FlavorConfig.instance.values.packageName,
         minimumVersion: 0,
       ),
-
-      // dynamicLinkParametersOptions: DynamicLinkParametersOptions(
-      //   shortDynamicLinkPathLength: ShortDynamicLinkPathLength.short,
-      // ),
-      iosParameters: IOSParameters(
+      dynamicLinkParametersOptions: DynamicLinkParametersOptions(
+        shortDynamicLinkPathLength: ShortDynamicLinkPathLength.short,
+      ),
+      iosParameters: IosParameters(
         bundleId: FlavorConfig.instance.values.packageName,
         minimumVersion: '1.0.1',
         appStoreId: '123456789',
       ),
     );
-    // final Uri shortLink = await parameters.buildUrl();
-    // Uri url = shortLink;
-    final ShortDynamicLink shortLink =
-        await dynamicLinks.buildShortLink(parameters);
-    Uri url = shortLink.shortUrl;
+    final Uri shortLink = await parameters.buildUrl();
+    Uri url = shortLink;
+    // final ShortDynamicLink shortLink =
+    //     await dynamicLinks.buildShortLink(parameters);
+    // Uri url = shortLink.shortUrl;
     if (type == 0) {
       final Email email = Email(
           subject: 'Invitation to join ${widget.groupName} group',

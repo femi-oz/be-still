@@ -90,9 +90,8 @@ class LocalNotification {
           description,
           scheduledDate,
           const NotificationDetails(
-              android: AndroidNotificationDetails(
-                  'your channel id', 'your channel name',
-                  channelDescription: 'your channel description'),
+              android: AndroidNotificationDetails('your channel id',
+                  'your channel name', 'your channel description'),
               iOS: IOSNotificationDetails()),
           payload: payload ?? '',
           androidAllowWhileIdle: true,
