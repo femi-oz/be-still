@@ -58,7 +58,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      WidgetsBinding.instance?.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         startTime();
       });
       setState(() => _isInit = false);
@@ -89,7 +89,7 @@ class _SplashScreenState extends State<SplashScreen>
       final message =
           Provider.of<NotificationProviderV2>(context, listen: false).message;
       if ((message.entityId ?? '').isNotEmpty) {
-        WidgetsBinding.instance?.addPostFrameCallback((_) async {
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
           if (message.type == NotificationType.prayer_time) {
             AppController appController = Get.find();
             appController.setCurrentPage(2, false, 0);

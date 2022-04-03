@@ -61,7 +61,7 @@ class _EntryScreenState extends State<EntryScreen> {
     try {
       final miscProvider = Provider.of<MiscProviderV2>(context, listen: false);
 
-      WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
         final user =
             Provider.of<UserProviderV2>(context, listen: false).currentUser;
         Provider.of<PrayerProviderV2>(context, listen: false)

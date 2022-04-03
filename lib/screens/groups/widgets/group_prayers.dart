@@ -43,7 +43,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
   @override
   void didChangeDependencies() async {
     if (_isInit) {
-      WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
         try {
           final group =
               Provider.of<GroupProviderV2>(context, listen: false).currentGroup;

@@ -118,7 +118,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
         // getSettings();
       });
       _isInit = false;

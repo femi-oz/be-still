@@ -53,7 +53,7 @@ class _PrayerListState extends State<PrayerList> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
         try {
           var status = Provider.of<PrayerProviderV2>(context, listen: false)
               .filterOption;
