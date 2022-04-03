@@ -1,7 +1,4 @@
 import 'dart:io';
-
-import 'package:be_still/locator.dart';
-import 'package:be_still/services/v2/migration.service.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 

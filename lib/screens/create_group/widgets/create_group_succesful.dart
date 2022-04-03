@@ -55,7 +55,7 @@ class _GroupCreatedState extends State<GroupCreated> {
     Uri url = shortLink.shortUrl;
     if (type == 0) {
       final Email email = Email(
-          subject: 'Invitaion to join ${widget.groupName} group',
+          subject: 'Invitation to join ${widget.groupName} group',
           recipients: [],
           body:
               '''${GetUtils.capitalizeFirst(user.firstName ?? '')} has invited you to join ${widget.groupName} Group on the Be Still App
