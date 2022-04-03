@@ -33,7 +33,6 @@ class _GroupCreatedState extends State<GroupCreated> {
         Provider.of<UserProviderV2>(context, listen: false).currentUser;
     final _url =
         'https://${FlavorConfig.instance.values.dynamicLink}/?groups=${widget.newGroupId}';
-    FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: "https://" + FlavorConfig.instance.values.dynamicLink,
       link: Uri.parse(_url),

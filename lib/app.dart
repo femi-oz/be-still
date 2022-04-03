@@ -52,8 +52,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
       ]);
-      WidgetsBinding.instance!.addObserver(this);
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
+      WidgetsBinding.instance?.addObserver(this);
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
         Provider.of<ThemeProviderV2>(context, listen: false).setDefaultTheme();
       });
       Provider.of<NotificationProviderV2>(context, listen: false)
@@ -160,7 +160,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance?.removeObserver(this);
     super.dispose();
   }
 

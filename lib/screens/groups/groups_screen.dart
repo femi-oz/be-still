@@ -36,7 +36,7 @@ class _GroupScreenState extends State<GroupScreen> {
 
   @override
   void initState() {
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
       try {
         Provider.of<PrayerProviderV2>(context, listen: false)
             .setGroupPrayerFilterOptions(Status.active);
