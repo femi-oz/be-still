@@ -541,8 +541,16 @@ class PrayerServiceV2 {
     required UpdateModel currentUpdate,
   }) async {
     try {
+      final updateToDelete = UpdateModel(
+          id: currentUpdate.id,
+          description: currentUpdate.description,
+          createdBy: currentUpdate.createdBy,
+          createdDate: currentUpdate.createdDate,
+          modifiedBy: currentUpdate.modifiedBy,
+          modifiedDate: currentUpdate.modifiedDate,
+          status: currentUpdate.status);
       _prayerDataCollectionReference.doc(prayerId).update({
-        'updates': FieldValue.arrayRemove([currentUpdate.toJson()])
+        'updates': FieldValue.arrayRemove([updateToDelete.toJson()])
       });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
