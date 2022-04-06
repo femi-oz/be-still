@@ -513,10 +513,25 @@ class GroupServiceV2 {
       UserDataModel user = await _userService.getUserByIdFuture(userId);
       GroupDataModel group = await getGroup(groupId);
       final groupUsers = group.users;
-      final userToRemove = (groupUsers ?? [])
-          .firstWhere((element) => element.userId == userId,
-              orElse: () => GroupUserDataModel())
-          .toJson();
+      final userToRemove = (groupUsers ?? []).firstWhere(
+          (element) => element.userId == userId,
+          orElse: () => GroupUserDataModel());
+
+      final newUser = GroupUserDataModel(
+          id: userToRemove.id,
+          userId: userToRemove.userId,
+          role: userToRemove.role,
+          enableNotificationForNewPrayers:
+              userToRemove.enableNotificationForNewPrayers,
+          enableNotificationForUpdates:
+              userToRemove.enableNotificationForUpdates,
+          notifyMeOfFlaggedPrayers: userToRemove.notifyMeOfFlaggedPrayers,
+          notifyWhenNewMemberJoins: userToRemove.notifyWhenNewMemberJoins,
+          createdBy: userToRemove.createdBy,
+          createdDate: userToRemove.createdDate,
+          modifiedBy: userToRemove.modifiedBy,
+          modifiedDate: userToRemove.modifiedDate,
+          status: userToRemove.status);
 
       final userGroups = user.groups;
       final userPrayers = user.prayers;
@@ -535,20 +550,29 @@ class GroupServiceV2 {
           (e) => e.userId == userId,
           orElse: () => FollowerModel(),
         );
+        final newFollower = FollowerModel(
+            id: follower.id,
+            userId: follower.userId,
+            prayerStatus: follower.prayerStatus,
+            createdBy: follower.createdBy,
+            createdDate: follower.createdDate,
+            modifiedBy: follower.modifiedBy,
+            modifiedDate: follower.modifiedDate,
+            status: follower.status);
+
+        final newFollowedPrayer = FollowedPrayer(
+            prayerId: element.prayerId, groupId: element.groupId);
 
         batch.update(_userDataCollectionReference.doc(userId), {
-          'prayers': FieldValue.arrayRemove([element.toJson()])
+          'prayers': FieldValue.arrayRemove([newFollowedPrayer.toJson()])
         });
         batch.update(_prayerDataCollectionReference.doc(element.prayerId), {
-          'followers': FieldValue.arrayRemove([follower.toJson()])
+          'followers': FieldValue.arrayRemove([newFollower.toJson()])
         });
-        //    batch.update(_groupDataCollectionReference.doc(group.id), {
-        //   'requests': FieldValue.arrayRemove([request.toJson()])
-        // });
       }
 
       batch.update(_groupDataCollectionReference.doc(groupId), {
-        'users': FieldValue.arrayRemove([userToRemove])
+        'users': FieldValue.arrayRemove([newUser.toJson()])
       });
 
       batch.update(_userDataCollectionReference.doc(user.id), {
