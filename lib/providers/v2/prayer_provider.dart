@@ -97,7 +97,6 @@ class PrayerProviderV2 with ChangeNotifier {
             await _prayerService.getUserFollowedPrayers(prayersIds);
         _prayers = [...followedPrayers, ...event];
         filterPrayers();
-
         notifyListeners();
       });
     } catch (e) {

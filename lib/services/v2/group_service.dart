@@ -265,6 +265,15 @@ class GroupServiceV2 {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
+
+      final newRequest = RequestModel(
+          id: request.id,
+          userId: request.userId,
+          createdBy: request.createdBy,
+          createdDate: request.createdDate,
+          modifiedBy: request.modifiedBy,
+          modifiedDate: request.modifiedDate,
+          status: request.status);
       final user = GroupUserDataModel(
           id: request.userId,
           role: GroupUserRole.member,
@@ -279,14 +288,12 @@ class GroupServiceV2 {
           modifiedBy: _firebaseAuth.currentUser?.uid,
           modifiedDate: DateTime.now());
 
-      group = group..users?.add(user);
-      group = group..requests?.where((e) => e.id == request.id);
       WriteBatch batch = FirebaseFirestore.instance.batch();
       batch.update(_groupDataCollectionReference.doc(group.id), {
         'users': FieldValue.arrayUnion([user.toJson()])
       });
       batch.update(_groupDataCollectionReference.doc(group.id), {
-        'requests': FieldValue.arrayRemove([request.toJson()])
+        'requests': FieldValue.arrayRemove([newRequest.toJson()])
       });
       batch.update(_userDataCollectionReference.doc(request.userId), {
         'groups': FieldValue.arrayUnion([group.id])
@@ -484,9 +491,16 @@ class GroupServiceV2 {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      group = group..requests?.where((e) => e.id == request.id);
+      final newRequest = RequestModel(
+          id: request.id,
+          userId: request.userId,
+          createdBy: request.createdBy,
+          createdDate: request.createdDate,
+          modifiedBy: request.modifiedBy,
+          modifiedDate: request.modifiedDate,
+          status: request.status);
       _groupDataCollectionReference.doc(group.id).update({
-        'requests': FieldValue.arrayRemove([request.toJson()])
+        'requests': FieldValue.arrayRemove([newRequest.toJson()])
       });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -528,6 +542,9 @@ class GroupServiceV2 {
         batch.update(_prayerDataCollectionReference.doc(element.prayerId), {
           'followers': FieldValue.arrayRemove([follower.toJson()])
         });
+        //    batch.update(_groupDataCollectionReference.doc(group.id), {
+        //   'requests': FieldValue.arrayRemove([request.toJson()])
+        // });
       }
 
       batch.update(_groupDataCollectionReference.doc(groupId), {

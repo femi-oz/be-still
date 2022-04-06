@@ -54,41 +54,44 @@ class PrayerServiceV2 {
       final user = UserDataModel.fromJson(userDoc.data()!, userDoc.id);
 
       final doc = PrayerDataModel(
-        description: description,
-        creatorName: (user.firstName ?? '') + ' ' + (user.lastName ?? ''),
-        isAnswered: false,
-        isFavorite: false,
-        isGroup: isGroup ?? false,
-        isInappropriate: false,
-        userId: _firebaseAuth.currentUser?.uid,
-        groupId: groupId,
-        followers: [],
-        archivedDate: null,
-        status: Status.active,
-        tags: (contacts ?? [])
-            .map((contact) => TagModel(
-                  displayName: contact.displayName ?? '',
-                  contactIdentifier: contact.identifier ?? '',
-                  phoneNumber: (contact.phones ?? []).length > 0
-                      ? (contact.phones ?? []).toList()[0].value ?? ''
-                      : '',
-                  email: (contact.emails ?? []).length > 0
-                      ? (contact.emails ?? []).toList()[0].value ?? ''
-                      : '',
-                  status: Status.active,
-                  createdBy: _firebaseAuth.currentUser?.uid,
-                  createdDate: DateTime.now(),
-                  modifiedBy: _firebaseAuth.currentUser?.uid,
-                  modifiedDate: DateTime.now(),
-                ))
-            .toList(),
-        updates: [],
-        createdBy: _firebaseAuth.currentUser?.uid,
-        modifiedBy: _firebaseAuth.currentUser?.uid,
-        createdDate: DateTime.now(),
-        modifiedDate: DateTime.now(),
-        snoozeEndDate: DateTime.now(),
-      ).toJson();
+              description: description,
+              creatorName: (user.firstName ?? '') + ' ' + (user.lastName ?? ''),
+              isAnswered: false,
+              isFavorite: false,
+              isGroup: isGroup ?? false,
+              isInappropriate: false,
+              userId: _firebaseAuth.currentUser?.uid,
+              groupId: groupId,
+              followers: [],
+              archivedDate: null,
+              status: Status.active,
+              tags: (contacts ?? [])
+                  .map((contact) => TagModel(
+                        userId: _firebaseAuth.currentUser?.uid,
+                        displayName: contact.displayName ?? '',
+                        contactIdentifier: contact.identifier ?? '',
+                        phoneNumber: (contact.phones ?? []).length > 0
+                            ? (contact.phones ?? []).toList()[0].value ?? ''
+                            : '',
+                        email: (contact.emails ?? []).length > 0
+                            ? (contact.emails ?? []).toList()[0].value ?? ''
+                            : '',
+                        status: Status.active,
+                        createdBy: _firebaseAuth.currentUser?.uid,
+                        createdDate: DateTime.now(),
+                        modifiedBy: _firebaseAuth.currentUser?.uid,
+                        modifiedDate: DateTime.now(),
+                      ))
+                  .toList(),
+              updates: [],
+              createdBy: _firebaseAuth.currentUser?.uid,
+              modifiedBy: _firebaseAuth.currentUser?.uid,
+              createdDate: DateTime.now(),
+              modifiedDate: DateTime.now(),
+              snoozeEndDate: DateTime.now(),
+              snoozeDuration: 0,
+              snoozeFrequency: '')
+          .toJson();
 
       _prayerDataCollectionReference.add(doc).then((value) {
         if (isGroup ?? false) {
@@ -312,6 +315,7 @@ class PrayerServiceV2 {
         return Future.error(StringUtils.unathorized);
       List<TagModel>? tags = contactData
           .map((contact) => TagModel(
+                userId: _firebaseAuth.currentUser?.uid,
                 displayName: contact.displayName ?? '',
                 contactIdentifier: contact.identifier ?? '',
                 phoneNumber: (contact.phones ?? []).length > 0
@@ -607,6 +611,11 @@ class PrayerServiceV2 {
     final followers = FollowerModel(
             userId: FirebaseAuth.instance.currentUser?.uid,
             status: Status.active,
+            createdBy: FirebaseAuth.instance.currentUser?.uid,
+            createdDate: DateTime.now(),
+            modifiedBy: FirebaseAuth.instance.currentUser?.uid,
+            modifiedDate: DateTime.now(),
+            prayerStatus: '',
             id: groupId)
         .toJson();
     WriteBatch batch = FirebaseFirestore.instance.batch();
