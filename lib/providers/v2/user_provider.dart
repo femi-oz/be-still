@@ -44,14 +44,16 @@ class UserProviderV2 with ChangeNotifier {
         _currentUser = event;
         await Provider.of<PrayerProviderV2>(Get.context!, listen: false)
             .checkPrayerValidity();
-        await Provider.of<PrayerProviderV2>(Get.context!, listen: false)
-            .setPrayers(
-                (event.prayers ?? []).map((e) => e.prayerId ?? '').toList());
+        // await Provider.of<PrayerProviderV2>(Get.context!, listen: false)
+        //     .setPrayers(
+        //         (event.prayers ?? []).map((e) => e.prayerId ?? '').toList());
         // await Provider.of<GroupProviderV2>(Get.context!, listen: false)
         //     .setUserGroups(event.groups ?? <String>[]);
         await Provider.of<GroupProviderV2>(Get.context!, listen: false)
             .onGroupChanges(event.groups ?? <String>[]);
-
+        await Provider.of<PrayerProviderV2>(Get.context!, listen: false)
+            .onPrayerChanges(
+                (event.prayers ?? []).map((e) => e.prayerId ?? '').toList());
         notifyListeners();
       });
     } catch (e) {

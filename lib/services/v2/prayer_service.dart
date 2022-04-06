@@ -129,6 +129,11 @@ class PrayerServiceV2 {
     }
   }
 
+  Stream<QuerySnapshot<Map<String, dynamic>>> getUserPrayerEmpty(
+      List<String> userGroupsId) {
+    return _prayerDataCollectionReference.snapshots();
+  }
+
   Future<List<PrayerDataModel>> getUserFollowedPrayers(
       List<String> userGroupsId) async {
     try {

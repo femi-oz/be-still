@@ -104,6 +104,19 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
+  Future<void> onPrayerChanges(List<String> ids) async {
+    try {
+      _prayerService
+          .getUserPrayerEmpty(ids)
+          .asBroadcastStream()
+          .listen((event) {
+        setPrayers(ids);
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> setGroupPrayers(String groupId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
