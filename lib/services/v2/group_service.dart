@@ -570,6 +570,17 @@ class GroupServiceV2 {
           'followers': FieldValue.arrayRemove([newFollower.toJson()])
         });
       }
+      final notifications = await _notificationCollectionReference
+          .where('groupId', isEqualTo: groupId)
+          .where('receiverId', isEqualTo: userId)
+          .get()
+          .then((value) =>
+              value.docs.map((e) => NotificationModel.fromJson(e.data())));
+
+      for (final not in notifications) {
+        batch.update(_notificationCollectionReference.doc(not.id),
+            {'status': Status.inactive});
+      }
 
       batch.update(_groupDataCollectionReference.doc(groupId), {
         'users': FieldValue.arrayRemove([newUser.toJson()])
@@ -578,6 +589,7 @@ class GroupServiceV2 {
       batch.update(_userDataCollectionReference.doc(user.id), {
         'groups': FieldValue.arrayRemove([groupIdToRemove])
       });
+
       batch.commit();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
