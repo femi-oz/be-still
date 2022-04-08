@@ -81,7 +81,6 @@ class NotificationServiceV2 {
       final prayer = await _prayerService.getPrayerFuture(prayerId);
 
       if (type == NotificationType.prayer ||
-          type == NotificationType.prayer_updates ||
           type == NotificationType.edited_prayers) {
         _ids = (group.users ?? []).map((e) => e.userId ?? '').toList();
       } else {
@@ -95,8 +94,7 @@ class NotificationServiceV2 {
             (group.users ?? []).firstWhere((element) => element.userId == id);
         List<String> userTokens = [];
 
-        if (type == NotificationType.request ||
-            type == NotificationType.inappropriate_content) {
+        if (type == NotificationType.inappropriate_content) {
           userTokens = await _userService.getUserByIdFuture(id).then((value) =>
               (value.devices ?? []).map((e) => e.token ?? '').toList());
         }
