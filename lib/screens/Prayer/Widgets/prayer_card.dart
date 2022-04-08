@@ -1,6 +1,7 @@
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/time_range.dart';
+import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/follower.model.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
@@ -293,18 +294,13 @@ class _PrayerCardState extends State<PrayerCard> {
   }
 
   bool get isAdmin {
-    final _user =
-        Provider.of<UserProviderV2>(context, listen: false).currentUser;
-
-    return Provider.of<PrayerProviderV2>(context)
-        .followedPrayers
-        .any((element) {
-      if (element.createdBy == _user.id) {
-        return true;
-      } else {
-        return false;
-      }
-    });
+    final group = Provider.of<GroupProviderV2>(context, listen: false)
+        .userGroups
+        .firstWhere((element) => element.id == widget.prayer.groupId);
+    final isadmin = (group.users ?? []).any((element) =>
+        element.role == GroupUserRole.admin &&
+        element.userId == FirebaseAuth.instance.currentUser?.uid);
+    return isadmin;
   }
 
   @override
@@ -326,6 +322,10 @@ class _PrayerCardState extends State<PrayerCard> {
     } else if (!isGroupPrayer) {
       showOption = true;
     }
+
+    bool isFollowing = false;
+    isFollowing = (widget.prayer.followers ?? []).any(
+        (element) => element.userId == FirebaseAuth.instance.currentUser?.uid);
 
     return Container(
       color: Colors.transparent,
@@ -601,7 +601,7 @@ class _PrayerCardState extends State<PrayerCard> {
           }, false)
         ],
         secondaryActions: <Widget>[
-          if (isAdmin || !showOption)
+          if (isFollowing)
             _buildSlideItem(Icons.star, 'Unfollow', () async {
               _unFollowPrayer();
             }, false),

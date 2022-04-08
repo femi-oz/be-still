@@ -189,8 +189,9 @@ class NotificationProviderV2 with ChangeNotifier {
 
   Future<void> clearNotification() async {
     try {
-      var notificationsToClear =
-          _notifications.where((e) => e.type != NotificationType.request);
+      var notificationsToClear = _notifications.where((e) =>
+          e.type != NotificationType.request &&
+          e.type != NotificationType.inappropriate_content);
       await _notificationService.clearAllNotifications(
           ids: notificationsToClear.map((e) => e.id ?? '').toList());
       notifyListeners();

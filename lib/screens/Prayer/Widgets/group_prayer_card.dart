@@ -649,7 +649,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
                 }
               });
             }, !isActivePrayer || isOwner),
-          if (isAdmin || isOwner)
+          if (isOwner)
             _buildSlideItem(
                 AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
                 widget.prayerData.status == Status.archived

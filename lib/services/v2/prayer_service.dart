@@ -672,17 +672,28 @@ class PrayerServiceV2 {
       required String groupId,
       required FollowedPrayer prayer,
       required FollowerModel follower}) async {
+    final newPrayers =
+        FollowedPrayer(prayerId: prayer.prayerId, groupId: prayer.groupId);
+    final newFollower = FollowerModel(
+        id: follower.id,
+        userId: follower.userId,
+        prayerStatus: follower.prayerStatus,
+        createdBy: follower.createdBy,
+        createdDate: follower.createdDate,
+        modifiedBy: follower.modifiedBy,
+        modifiedDate: follower.modifiedDate,
+        status: follower.status);
     WriteBatch batch = FirebaseFirestore.instance.batch();
     batch.update(
         _userDataCollectionReference
             .doc(FirebaseAuth.instance.currentUser?.uid),
         {
-          'prayers': FieldValue.arrayRemove([prayer.toJson()]),
+          'prayers': FieldValue.arrayRemove([newPrayers.toJson()]),
           'modifiedDate': DateTime.now(),
           'modifiedBy': _firebaseAuth.currentUser?.uid
         });
     batch.update(_prayerDataCollectionReference.doc(prayerId), {
-      'followers': FieldValue.arrayRemove([follower.toJson()]),
+      'followers': FieldValue.arrayRemove([newFollower.toJson()]),
       'modifiedDate': DateTime.now(),
       'modifiedBy': _firebaseAuth.currentUser?.uid
     });

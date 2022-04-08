@@ -129,7 +129,9 @@ class GroupProviderV2 with ChangeNotifier {
 
   Future<GroupDataModel> getCurrentGroupById(String groupId) async {
     try {
-      return await _groupService.getGroup(groupId);
+      return _groupService.getGroup(groupId).then((group) {
+        return group;
+      });
     } catch (e) {
       rethrow;
     }

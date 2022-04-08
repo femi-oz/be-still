@@ -378,7 +378,7 @@ class GroupServiceV2 {
         message: message,
         status: Status.active,
         isSent: 0,
-        tokens: (admin.devices ?? []).map((e) => e.token ?? '').toList(),
+        tokens: [],
         type: NotificationType.join_group,
         groupId: group.id,
         prayerId: '',
