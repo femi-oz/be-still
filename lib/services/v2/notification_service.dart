@@ -93,9 +93,14 @@ class NotificationServiceV2 {
       for (final id in _ids) {
         final member =
             (group.users ?? []).firstWhere((element) => element.userId == id);
-        final userTokens = await _userService.getUserByIdFuture(id).then(
-            (value) =>
-                (value.devices ?? []).map((e) => e.token ?? '').toList());
+        List<String> userTokens = [];
+
+        if (type == NotificationType.request ||
+            type == NotificationType.inappropriate_content) {
+          userTokens = await _userService.getUserByIdFuture(id).then((value) =>
+              (value.devices ?? []).map((e) => e.token ?? '').toList());
+        }
+
         final name = ((_user.firstName ?? '').capitalizeFirst ?? '') +
             ' ' +
             ((_user.lastName ?? '').capitalizeFirst ?? '');
@@ -109,7 +114,7 @@ class NotificationServiceV2 {
                 groupId: groupId,
                 receiverId: id,
                 prayerId: prayerId,
-                tokens: [],
+                tokens: userTokens,
                 type: type);
           }
         } else if (type == NotificationType.prayer_updates) {
@@ -120,18 +125,9 @@ class NotificationServiceV2 {
                 groupId: groupId,
                 receiverId: id,
                 prayerId: prayerId,
-                tokens: [],
+                tokens: userTokens,
                 type: type);
           }
-        } else if (type == NotificationType.answered_prayers) {
-          addNotification(
-              message: message.capitalizeFirst ?? '',
-              senderName: name,
-              groupId: groupId,
-              receiverId: id,
-              prayerId: prayerId,
-              tokens: [],
-              type: type);
         } else {
           addNotification(
               message: message.capitalizeFirst ?? '',
