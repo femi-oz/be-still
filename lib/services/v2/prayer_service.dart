@@ -243,23 +243,45 @@ class PrayerServiceV2 {
 
   Future<void> archivePrayer(
       {required String prayerId,
-      required List<FollowerModel> followers}) async {
+      required List<FollowerModel> followers,
+      required String type,
+      required String groupId,
+      required String description}) async {
     try {
       WriteBatch batch = FirebaseFirestore.instance.batch();
 
       if (followers.isNotEmpty) {
+        await _notificationService.sendPrayerNotification(
+            message: description,
+            type: type,
+            groupId: groupId,
+            prayerId: prayerId);
         followers.forEach((follower) async {
           UserDataModel user =
               await _userService.getUserByIdFuture(follower.userId ?? '');
-          final prayerToRemove = (user.prayers ?? [])
-              .firstWhere((element) => element.prayerId == prayerId);
+          final newFollowers = FollowerModel(
+              id: follower.id,
+              userId: follower.userId,
+              prayerStatus: follower.prayerStatus,
+              createdBy: follower.createdBy,
+              createdDate: follower.createdDate,
+              modifiedBy: follower.modifiedBy,
+              modifiedDate: follower.modifiedDate,
+              status: follower.status);
+          final prayerToRemove = (user.prayers ?? []).firstWhere(
+            (element) => element.prayerId == prayerId,
+            orElse: () => FollowedPrayer(),
+          );
+          final newPrayerToRemove = FollowedPrayer(
+              prayerId: prayerToRemove.prayerId,
+              groupId: prayerToRemove.groupId);
           batch.update(_prayerDataCollectionReference.doc(prayerId), {
             'status': Status.archived,
             'archivedDate': DateTime.now(),
-            'followers': FieldValue.arrayRemove([follower.toJson()])
+            'followers': FieldValue.arrayRemove([newFollowers.toJson()])
           });
           batch.update(_userDataCollectionReference.doc(follower.userId), {
-            'prayers': FieldValue.arrayRemove([prayerToRemove.toJson()])
+            'prayers': FieldValue.arrayRemove([newPrayerToRemove.toJson()])
           });
           batch.commit();
         });

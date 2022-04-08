@@ -172,8 +172,12 @@ class _PrayerCardState extends State<PrayerCard> {
           await Provider.of<NotificationProviderV2>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
 
-      await Provider.of<PrayerProviderV2>(context, listen: false)
-          .archivePrayer(widget.prayer.id ?? '', widget.prayer.followers ?? []);
+      await Provider.of<PrayerProviderV2>(context, listen: false).archivePrayer(
+          widget.prayer.id ?? '',
+          widget.prayer.followers ?? [],
+          NotificationType.archived_prayers,
+          widget.prayer.groupId ?? '',
+          widget.prayer.description ?? '');
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);

@@ -469,15 +469,20 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       notifications.forEach((e) async =>
           await Provider.of<NotificationProviderV2>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
+      // await Provider.of<NotificationProviderV2>(context, listen: false)
+      //     .sendPrayerNotification(
+      //   widget.prayerData?.id ?? '',
+      //   NotificationType.archived_prayers,
+      //   widget.prayerData?.groupId ?? '',
+      //   widget.prayerData?.description ?? '',
+      // );
       await Provider.of<PrayerProviderV2>(context, listen: false).archivePrayer(
-          widget.prayerData?.id ?? '', widget.prayerData?.followers ?? []);
-      await Provider.of<NotificationProviderV2>(context, listen: false)
-          .sendPrayerNotification(
-        widget.prayerData?.id ?? '',
-        NotificationType.archived_prayers,
-        widget.prayerData?.groupId ?? '',
-        widget.prayerData?.description ?? '',
-      );
+          widget.prayerData?.id ?? '',
+          widget.prayerData?.followers ?? [],
+          NotificationType.archived_prayers,
+          widget.prayerData?.groupId ?? '',
+          widget.prayerData?.description ?? '');
+
       clearSearch();
       appController.setCurrentPage(8, false, 0);
       BeStilDialog.hideLoading(context);

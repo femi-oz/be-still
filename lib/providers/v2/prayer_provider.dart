@@ -342,11 +342,15 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> archivePrayer(
-      String prayerId, List<FollowerModel> followers) async {
+  Future<void> archivePrayer(String prayerId, List<FollowerModel> followers,
+      String type, String groupId, String description) async {
     try {
       await _prayerService.archivePrayer(
-          prayerId: prayerId, followers: followers);
+          prayerId: prayerId,
+          followers: followers,
+          type: type,
+          groupId: groupId,
+          description: description);
       notifyListeners();
     } catch (e) {
       rethrow;
