@@ -136,6 +136,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
       frequency,
       scheduledDate,
     );
+
     BeStilDialog.hideLoading(context);
     setState(() {});
     if (widget.type == NotificationType.reminder) {

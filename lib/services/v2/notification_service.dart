@@ -81,7 +81,8 @@ class NotificationServiceV2 {
       final prayer = await _prayerService.getPrayerFuture(prayerId);
 
       if (type == NotificationType.prayer ||
-          type == NotificationType.edited_prayers) {
+          type == NotificationType.edited_prayers ||
+          type == NotificationType.prayer_updates) {
         _ids = (group.users ?? []).map((e) => e.userId ?? '').toList();
       } else {
         _ids = (prayer.followers ?? []).map((e) => e.userId ?? '').toList();
@@ -196,6 +197,23 @@ class NotificationServiceV2 {
         return Future.error(StringUtils.unathorized);
       return _localNotificationCollectionReference
           .where('userId', isEqualTo: _firebaseAuth.currentUser?.uid)
+          .get()
+          .then((e) => e.docs
+              .map((doc) =>
+                  LocalNotificationDataModel.fromJson(doc.data(), doc.id))
+              .toList());
+    } catch (e) {
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
+  Future<List<LocalNotificationDataModel>> getLocalNotificationsByPrayerId(
+      String prayerId) {
+    try {
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
+      return _localNotificationCollectionReference
+          .where('prayerId', isEqualTo: prayerId)
           .get()
           .then((e) => e.docs
               .map((doc) =>

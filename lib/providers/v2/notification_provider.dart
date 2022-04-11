@@ -234,6 +234,19 @@ class NotificationProviderV2 with ChangeNotifier {
     }
   }
 
+  Future<List<LocalNotificationDataModel>> getLocalNotificationsByPrayerId(
+      String prayerId) async {
+    try {
+      return _notificationService
+          .getLocalNotificationsByPrayerId(prayerId)
+          .then((notifications) {
+        return notifications;
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> _deletePastReminder(
       List<LocalNotificationDataModel> data) async {
     try {

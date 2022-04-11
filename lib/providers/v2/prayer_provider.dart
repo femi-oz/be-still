@@ -9,12 +9,14 @@ import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/models/v2/update.model.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
+import 'package:be_still/services/v2/notification_service.dart';
 import 'package:be_still/services/v2/prayer_service.dart';
 import 'package:be_still/services/v2/user_service.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +26,7 @@ import 'notification_provider.dart';
 class PrayerProviderV2 with ChangeNotifier {
   PrayerServiceV2 _prayerService = locator<PrayerServiceV2>();
   UserServiceV2 _userService = locator<UserServiceV2>();
+  NotificationServiceV2 _notificationService = locator<NotificationServiceV2>();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final userId = FirebaseAuth.instance.currentUser?.uid;
   late StreamSubscription<List<PrayerDataModel>> prayerStream;
@@ -85,6 +88,9 @@ class PrayerProviderV2 with ChangeNotifier {
   List<TagModel> _prayerToEditTags = [];
   List<TagModel> get prayerToEditTags => _prayerToEditTags;
 
+  static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
   Future<void> setPrayers(List<String> prayersIds) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
@@ -109,8 +115,18 @@ class PrayerProviderV2 with ChangeNotifier {
       _prayerService
           .getUserPrayerEmpty(ids)
           .asBroadcastStream()
-          .listen((event) {
+          .listen((event) async {
         setPrayers(ids);
+        final localNotifications =
+            await _notificationService.getLocalNotificationsFuture();
+        final pendingNotifications = await _flutterLocalNotificationsPlugin
+            .pendingNotificationRequests();
+        final notificationsToRemove =
+            localNotifications.where((e) => !pendingNotifications.contains(e));
+        notificationsToRemove.forEach((element) {
+          _flutterLocalNotificationsPlugin
+              .cancel(element.localNotificationId ?? 0);
+        });
       });
     } catch (e) {
       rethrow;
