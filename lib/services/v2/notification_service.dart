@@ -81,8 +81,8 @@ class NotificationServiceV2 {
       final prayer = await _prayerService.getPrayerFuture(prayerId);
 
       if (type == NotificationType.prayer ||
-          type == NotificationType.prayer_updates ||
-          type == NotificationType.edited_prayers) {
+          type == NotificationType.edited_prayers ||
+          type == NotificationType.prayer_updates) {
         _ids = (group.users ?? []).map((e) => e.userId ?? '').toList();
       } else {
         _ids = (prayer.followers ?? []).map((e) => e.userId ?? '').toList();
@@ -93,9 +93,13 @@ class NotificationServiceV2 {
       for (final id in _ids) {
         final member =
             (group.users ?? []).firstWhere((element) => element.userId == id);
-        final userTokens = await _userService.getUserByIdFuture(id).then(
-            (value) =>
-                (value.devices ?? []).map((e) => e.token ?? '').toList());
+        List<String> userTokens = [];
+
+        if (type == NotificationType.inappropriate_content) {
+          userTokens = await _userService.getUserByIdFuture(id).then((value) =>
+              (value.devices ?? []).map((e) => e.token ?? '').toList());
+        }
+
         final name = ((_user.firstName ?? '').capitalizeFirst ?? '') +
             ' ' +
             ((_user.lastName ?? '').capitalizeFirst ?? '');
@@ -109,7 +113,7 @@ class NotificationServiceV2 {
                 groupId: groupId,
                 receiverId: id,
                 prayerId: prayerId,
-                tokens: [],
+                tokens: userTokens,
                 type: type);
           }
         } else if (type == NotificationType.prayer_updates) {
@@ -120,18 +124,9 @@ class NotificationServiceV2 {
                 groupId: groupId,
                 receiverId: id,
                 prayerId: prayerId,
-                tokens: [],
+                tokens: userTokens,
                 type: type);
           }
-        } else if (type == NotificationType.answered_prayers) {
-          addNotification(
-              message: message.capitalizeFirst ?? '',
-              senderName: name,
-              groupId: groupId,
-              receiverId: id,
-              prayerId: prayerId,
-              tokens: [],
-              type: type);
         } else {
           addNotification(
               message: message.capitalizeFirst ?? '',
@@ -202,6 +197,23 @@ class NotificationServiceV2 {
         return Future.error(StringUtils.unathorized);
       return _localNotificationCollectionReference
           .where('userId', isEqualTo: _firebaseAuth.currentUser?.uid)
+          .get()
+          .then((e) => e.docs
+              .map((doc) =>
+                  LocalNotificationDataModel.fromJson(doc.data(), doc.id))
+              .toList());
+    } catch (e) {
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
+  Future<List<LocalNotificationDataModel>> getLocalNotificationsByPrayerId(
+      String prayerId) {
+    try {
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
+      return _localNotificationCollectionReference
+          .where('prayerId', isEqualTo: prayerId)
           .get()
           .then((e) => e.docs
               .map((doc) =>

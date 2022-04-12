@@ -284,8 +284,9 @@ class _NoUpdateViewState extends State<NoUpdateView> {
                                   i < (widget.prayerData?.tags ?? []).length;
                                   i++)
                                 EasyRichTextPattern(
-                                  targetString:
-                                      widget.prayerData?.tags?[i].displayName,
+                                  targetString: widget
+                                      .prayerData?.tags?[i].displayName
+                                      ?.trim(),
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
                                       if (widget.prayerData?.tags?[i].userId ==

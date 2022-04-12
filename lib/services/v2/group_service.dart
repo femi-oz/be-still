@@ -265,6 +265,15 @@ class GroupServiceV2 {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
+
+      final newRequest = RequestModel(
+          id: request.id,
+          userId: request.userId,
+          createdBy: request.createdBy,
+          createdDate: request.createdDate,
+          modifiedBy: request.modifiedBy,
+          modifiedDate: request.modifiedDate,
+          status: request.status);
       final user = GroupUserDataModel(
           id: request.userId,
           role: GroupUserRole.member,
@@ -279,14 +288,12 @@ class GroupServiceV2 {
           modifiedBy: _firebaseAuth.currentUser?.uid,
           modifiedDate: DateTime.now());
 
-      group = group..users?.add(user);
-      group = group..requests?.where((e) => e.id == request.id);
       WriteBatch batch = FirebaseFirestore.instance.batch();
       batch.update(_groupDataCollectionReference.doc(group.id), {
         'users': FieldValue.arrayUnion([user.toJson()])
       });
       batch.update(_groupDataCollectionReference.doc(group.id), {
-        'requests': FieldValue.arrayRemove([request.toJson()])
+        'requests': FieldValue.arrayRemove([newRequest.toJson()])
       });
       batch.update(_userDataCollectionReference.doc(request.userId), {
         'groups': FieldValue.arrayUnion([group.id])
@@ -371,7 +378,7 @@ class GroupServiceV2 {
         message: message,
         status: Status.active,
         isSent: 0,
-        tokens: (admin.devices ?? []).map((e) => e.token ?? '').toList(),
+        tokens: [],
         type: NotificationType.join_group,
         groupId: group.id,
         prayerId: '',
@@ -484,9 +491,16 @@ class GroupServiceV2 {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      group = group..requests?.where((e) => e.id == request.id);
+      final newRequest = RequestModel(
+          id: request.id,
+          userId: request.userId,
+          createdBy: request.createdBy,
+          createdDate: request.createdDate,
+          modifiedBy: request.modifiedBy,
+          modifiedDate: request.modifiedDate,
+          status: request.status);
       _groupDataCollectionReference.doc(group.id).update({
-        'requests': FieldValue.arrayRemove([request.toJson()])
+        'requests': FieldValue.arrayRemove([newRequest.toJson()])
       });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -499,10 +513,25 @@ class GroupServiceV2 {
       UserDataModel user = await _userService.getUserByIdFuture(userId);
       GroupDataModel group = await getGroup(groupId);
       final groupUsers = group.users;
-      final userToRemove = (groupUsers ?? [])
-          .firstWhere((element) => element.userId == userId,
-              orElse: () => GroupUserDataModel())
-          .toJson();
+      final userToRemove = (groupUsers ?? []).firstWhere(
+          (element) => element.userId == userId,
+          orElse: () => GroupUserDataModel());
+
+      final newUser = GroupUserDataModel(
+          id: userToRemove.id,
+          userId: userToRemove.userId,
+          role: userToRemove.role,
+          enableNotificationForNewPrayers:
+              userToRemove.enableNotificationForNewPrayers,
+          enableNotificationForUpdates:
+              userToRemove.enableNotificationForUpdates,
+          notifyMeOfFlaggedPrayers: userToRemove.notifyMeOfFlaggedPrayers,
+          notifyWhenNewMemberJoins: userToRemove.notifyWhenNewMemberJoins,
+          createdBy: userToRemove.createdBy,
+          createdDate: userToRemove.createdDate,
+          modifiedBy: userToRemove.modifiedBy,
+          modifiedDate: userToRemove.modifiedDate,
+          status: userToRemove.status);
 
       final userGroups = user.groups;
       final userPrayers = user.prayers;
@@ -521,22 +550,46 @@ class GroupServiceV2 {
           (e) => e.userId == userId,
           orElse: () => FollowerModel(),
         );
+        final newFollower = FollowerModel(
+            id: follower.id,
+            userId: follower.userId,
+            prayerStatus: follower.prayerStatus,
+            createdBy: follower.createdBy,
+            createdDate: follower.createdDate,
+            modifiedBy: follower.modifiedBy,
+            modifiedDate: follower.modifiedDate,
+            status: follower.status);
+
+        final newFollowedPrayer = FollowedPrayer(
+            prayerId: element.prayerId, groupId: element.groupId);
 
         batch.update(_userDataCollectionReference.doc(userId), {
-          'prayers': FieldValue.arrayRemove([element.toJson()])
+          'prayers': FieldValue.arrayRemove([newFollowedPrayer.toJson()])
         });
         batch.update(_prayerDataCollectionReference.doc(element.prayerId), {
-          'followers': FieldValue.arrayRemove([follower.toJson()])
+          'followers': FieldValue.arrayRemove([newFollower.toJson()])
         });
+      }
+      final notifications = await _notificationCollectionReference
+          .where('groupId', isEqualTo: groupId)
+          .where('receiverId', isEqualTo: userId)
+          .get()
+          .then((value) =>
+              value.docs.map((e) => NotificationModel.fromJson(e.data())));
+
+      for (final not in notifications) {
+        batch.update(_notificationCollectionReference.doc(not.id),
+            {'status': Status.inactive});
       }
 
       batch.update(_groupDataCollectionReference.doc(groupId), {
-        'users': FieldValue.arrayRemove([userToRemove])
+        'users': FieldValue.arrayRemove([newUser.toJson()])
       });
 
       batch.update(_userDataCollectionReference.doc(user.id), {
         'groups': FieldValue.arrayRemove([groupIdToRemove])
       });
+
       batch.commit();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));

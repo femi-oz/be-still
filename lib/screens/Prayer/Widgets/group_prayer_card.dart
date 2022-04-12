@@ -171,24 +171,18 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
 
     try {
       var notifications =
-          Provider.of<NotificationProviderV2>(context, listen: false)
-              .localNotifications
-              .where((e) =>
-                  e.prayerId == widget.prayerData.id &&
-                  e.type == NotificationType.reminder)
-              .toList();
+          await Provider.of<NotificationProviderV2>(context, listen: false)
+              .getLocalNotificationsByPrayerId(widget.prayerData.id ?? '');
       notifications.forEach((e) async =>
           await Provider.of<NotificationProviderV2>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
+
       await Provider.of<PrayerProviderV2>(context, listen: false).archivePrayer(
-          widget.prayerData.id ?? '', widget.prayerData.followers ?? []);
-      await Provider.of<NotificationProviderV2>(context, listen: false)
-          .sendPrayerNotification(
-        widget.prayerData.id ?? '',
-        NotificationType.archived_prayers,
-        widget.prayerData.groupId ?? '',
-        widget.prayerData.description ?? '',
-      );
+          widget.prayerData.id ?? '',
+          widget.prayerData.followers ?? [],
+          NotificationType.archived_prayers,
+          widget.prayerData.groupId ?? '',
+          widget.prayerData.description ?? '');
 
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
@@ -645,7 +639,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
                 }
               });
             }, !isActivePrayer || isOwner),
-          if (isAdmin || isOwner)
+          if (isOwner)
             _buildSlideItem(
                 AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
                 widget.prayerData.status == Status.archived

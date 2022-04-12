@@ -671,7 +671,7 @@ class _AddPrayerState extends State<AddPrayer> {
             ),
             Flexible(
               child: Container(
-                width: MediaQuery.of(context).size.width * 0.5,
+                padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
                   'You are about to add a new prayer to ${selected?.name ?? ''}, where it can be seen by other members of the group.',
                   textAlign: TextAlign.center,

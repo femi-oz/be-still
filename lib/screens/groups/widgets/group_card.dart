@@ -81,12 +81,6 @@ class _GroupCardState extends State<GroupCard> {
       String userName, UserDataModel admin) async {
     BeStilDialog.showLoading(context);
     try {
-      List<String> tokens = [];
-      final devices = admin.devices ?? <DeviceModel>[];
-      if (admin.enableNotificationsForAllGroups ?? false) {
-        tokens = devices.map((e) => e.token ?? '').toList();
-      }
-
       await Provider.of<GroupProviderV2>(context, listen: false).autoJoinGroup(
         groupData,
         '$userName has joined your group',
@@ -379,7 +373,7 @@ class _GroupCardState extends State<GroupCard> {
   }
 
   bool get isRequestSent {
-    return (widget.groupData.requests ?? []).any((element) =>
+    return (widget.groupData.users ?? []).any((element) =>
         element.userId == FirebaseAuth.instance.currentUser?.uid &&
         element.status == RequestStatus.pending);
   }

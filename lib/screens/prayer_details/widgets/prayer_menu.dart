@@ -134,6 +134,16 @@ class _PrayerMenuState extends State<PrayerMenu> {
     BeStilDialog.showLoading(context);
 
     try {
+      var notifications =
+          Provider.of<NotificationProviderV2>(context, listen: false)
+              .localNotifications
+              .where((e) =>
+                  e.prayerId == widget.prayerData?.id &&
+                  e.type == NotificationType.reminder)
+              .toList();
+      notifications.forEach((e) async =>
+          await Provider.of<NotificationProviderV2>(context, listen: false)
+              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       final currentGroup =
           Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
       final user =
@@ -470,7 +480,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
     BeStilDialog.showLoading(context);
 
     try {
-      var notifications =
+      final notifications =
           Provider.of<NotificationProviderV2>(context, listen: false)
               .localNotifications
               .where((e) =>
@@ -482,7 +492,11 @@ class _PrayerMenuState extends State<PrayerMenu> {
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
 
       await Provider.of<PrayerProviderV2>(context, listen: false).archivePrayer(
-          widget.prayerData?.id ?? '', widget.prayerData?.followers ?? []);
+          widget.prayerData?.id ?? '',
+          widget.prayerData?.followers ?? [],
+          NotificationType.archived_prayers,
+          widget.prayerData?.groupId ?? '',
+          widget.prayerData?.description ?? '');
       clearSearch();
 
       BeStilDialog.hideLoading(context);
