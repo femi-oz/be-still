@@ -5,6 +5,7 @@ import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/followed_prayer.model.dart';
 import 'package:be_still/models/v2/follower.model.dart';
+import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
@@ -309,11 +310,12 @@ class _PrayerCardState extends State<PrayerCard> {
   bool get isAdmin {
     final group = Provider.of<GroupProviderV2>(context, listen: false)
         .userGroups
-        .firstWhere((element) => element.id == widget.prayer.groupId);
-    final isadmin = (group.users ?? []).any((element) =>
+        .firstWhere((element) => element.id == widget.prayer.groupId,
+            orElse: () => GroupDataModel());
+    final isAdmin = (group.users ?? []).any((element) =>
         element.role == GroupUserRole.admin &&
         element.userId == FirebaseAuth.instance.currentUser?.uid);
-    return isadmin;
+    return isAdmin;
   }
 
   @override

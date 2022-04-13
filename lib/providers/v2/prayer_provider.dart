@@ -8,6 +8,7 @@ import 'package:be_still/models/v2/follower.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/models/v2/update.model.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/services/v2/notification_service.dart';
 import 'package:be_still/services/v2/prayer_service.dart';
@@ -102,6 +103,8 @@ class PrayerProviderV2 with ChangeNotifier {
         _followedPrayers =
             await _prayerService.getUserFollowedPrayers(prayersIds);
         _prayers = [...followedPrayers, ...event];
+        Provider.of<MiscProviderV2>(Get.context!, listen: false)
+            .setLoadStatus(false);
         filterPrayers();
         notifyListeners();
       });
