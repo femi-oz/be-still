@@ -5,6 +5,8 @@ import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/device.model.dart';
+import 'package:be_still/models/v2/followed_prayer.model.dart';
+import 'package:be_still/models/v2/follower.model.dart';
 import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
@@ -114,9 +116,11 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
       final currentGroup =
           Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
       final follower = (widget.prayerData?.followers ?? []).firstWhere(
-          (e) => e.userId == FirebaseAuth.instance.currentUser?.uid);
-      final prayer = (user.prayers ?? [])
-          .firstWhere((e) => e.prayerId == widget.prayerData?.id);
+          (e) => e.userId == FirebaseAuth.instance.currentUser?.uid,
+          orElse: () => FollowerModel());
+      final prayer = (user.prayers ?? []).firstWhere(
+          (e) => e.prayerId == widget.prayerData?.id,
+          orElse: () => FollowedPrayer());
       await Provider.of<PrayerProviderV2>(context, listen: false)
           .unFollowPrayer(
               widget.prayerData?.id ?? '',

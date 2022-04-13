@@ -110,23 +110,20 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> onPrayerChanges(List<String> ids) async {
+  Future<void> removeOldReminders() async {
     try {
-      _prayerService
-          .getUserPrayerEmpty(ids)
-          .asBroadcastStream()
-          .listen((event) async {
-        setPrayers(ids);
-        final localNotifications =
-            await _notificationService.getLocalNotificationsFuture();
-        final pendingNotifications = await _flutterLocalNotificationsPlugin
-            .pendingNotificationRequests();
-        final notificationsToRemove =
-            localNotifications.where((e) => !pendingNotifications.contains(e));
-        notificationsToRemove.forEach((element) {
-          _flutterLocalNotificationsPlugin
-              .cancel(element.localNotificationId ?? 0);
-        });
+      final localNotifications =
+          await _notificationService.getLocalNotificationsFuture();
+
+      final inactivePrayers = await _prayerService.getUserInactivePrayers();
+      final notificationsToRemove = localNotifications
+          .where((element) =>
+              inactivePrayers.map((e) => e.id).toList().contains(element.id))
+          .toList()
+          .map((e) => e.localNotificationId)
+          .toList();
+      notificationsToRemove.forEach((id) {
+        _flutterLocalNotificationsPlugin.cancel(id ?? 0);
       });
     } catch (e) {
       rethrow;
@@ -172,10 +169,9 @@ class PrayerProviderV2 with ChangeNotifier {
   Future<void> checkPrayerValidity() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      // if (prayers.length > 0) {
       await _autoDeleteArchivePrayers();
       await _unSnoozePrayerPast();
-      // }
+      await removeOldReminders();
     } catch (e) {
       rethrow;
     }
