@@ -129,9 +129,21 @@ class PrayerServiceV2 {
     }
   }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> getUserPrayerEmpty(
-      List<String> userGroupsId) {
-    return _prayerDataCollectionReference.snapshots();
+  Future<List<PrayerDataModel>> getUserInactivePrayers() {
+    try {
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
+      return _prayerDataCollectionReference
+          .where('userId', isEqualTo: _firebaseAuth.currentUser?.uid)
+          .where('isGroup', isEqualTo: false)
+          .where('status', isNotEqualTo: Status.active)
+          .get()
+          .then((event) => event.docs
+              .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
+              .toList());
+    } catch (e) {
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
   }
 
   Future<List<PrayerDataModel>> getUserFollowedPrayers(
@@ -438,6 +450,7 @@ class PrayerServiceV2 {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       final docId = Uuid().v1();
+      WriteBatch batch = FirebaseFirestore.instance.batch();
 
       final updateList = [
         UpdateModel(
@@ -451,11 +464,18 @@ class PrayerServiceV2 {
         ).toJson()
       ];
 
-      await _prayerDataCollectionReference.doc(prayerId).update({
+      batch.update(_prayerDataCollectionReference.doc(prayerId), {
         'updates': FieldValue.arrayUnion(updateList),
         'modifiedDate': DateTime.now(),
         'modifiedBy': _firebaseAuth.currentUser?.uid
       });
+
+      batch.update(
+          _userDataCollectionReference.doc(_firebaseAuth.currentUser?.uid), {
+        'modifiedDate': DateTime.now(),
+        'modifiedBy': _firebaseAuth.currentUser?.uid
+      });
+      batch.commit();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -684,19 +704,21 @@ class PrayerServiceV2 {
         modifiedDate: follower.modifiedDate,
         status: follower.status);
     WriteBatch batch = FirebaseFirestore.instance.batch();
-    batch.update(
-        _userDataCollectionReference
-            .doc(FirebaseAuth.instance.currentUser?.uid),
-        {
-          'prayers': FieldValue.arrayRemove([newPrayers.toJson()]),
-          'modifiedDate': DateTime.now(),
-          'modifiedBy': _firebaseAuth.currentUser?.uid
-        });
-    batch.update(_prayerDataCollectionReference.doc(prayerId), {
-      'followers': FieldValue.arrayRemove([newFollower.toJson()]),
-      'modifiedDate': DateTime.now(),
-      'modifiedBy': _firebaseAuth.currentUser?.uid
-    });
+    if ((prayer.prayerId ?? '').isNotEmpty)
+      batch.update(
+          _userDataCollectionReference
+              .doc(FirebaseAuth.instance.currentUser?.uid),
+          {
+            'prayers': FieldValue.arrayRemove([newPrayers.toJson()]),
+            'modifiedDate': DateTime.now(),
+            'modifiedBy': _firebaseAuth.currentUser?.uid
+          });
+    if ((follower.id ?? '').isNotEmpty)
+      batch.update(_prayerDataCollectionReference.doc(prayerId), {
+        'followers': FieldValue.arrayRemove([newFollower.toJson()]),
+        'modifiedDate': DateTime.now(),
+        'modifiedBy': _firebaseAuth.currentUser?.uid
+      });
     batch.commit();
   }
 }

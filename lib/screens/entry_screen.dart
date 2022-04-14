@@ -69,7 +69,6 @@ class _EntryScreenState extends State<EntryScreen> {
         if (miscProvider.initialLoad) {
           await _preLoadData();
           Future.delayed(Duration(milliseconds: 500));
-          miscProvider.setLoadStatus(false);
 
           initDynamicLinks();
         }
