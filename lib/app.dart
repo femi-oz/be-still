@@ -96,7 +96,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     var androidChannelSpecifics = AndroidNotificationDetails(
       'CHANNEL_ID',
       'CHANNEL_NAME',
-      "CHANNEL_DESCRIPTION",
+      channelDescription: "CHANNEL_DESCRIPTION",
       importance: Importance.high,
       priority: Priority.high,
       playSound: true,

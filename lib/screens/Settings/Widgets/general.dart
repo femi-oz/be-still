@@ -146,8 +146,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                             'CANCEL',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.025,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
@@ -171,14 +172,14 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                           ),
                           borderRadius: BorderRadius.circular(5),
                         ),
-                        child: FittedBox(
-                          fit: BoxFit.contain,
+                        child: Center(
                           child: Text(
                             'GO TO SETTINGS',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.025,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),

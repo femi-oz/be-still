@@ -119,17 +119,25 @@ class UserProviderV2 with ChangeNotifier {
   Future<void> updateUserSettings(String key, dynamic value) async {
     try {
       await _userService.updateUserSettings(key: key, value: value);
-      await setCurrentUser();
+      // await setCurrentUser();
       if (key == 'archiveAutoDeleteMinutes') {
-        Timer.periodic(Duration(minutes: value), (timer) async {
-          if (value == 0) {
-            timer.cancel();
-          } else {
-            await _prayerService.autoDeleteArchivePrayers(
-                value, currentUser.includeAnsweredPrayerAutoDelete ?? false);
-          }
-        });
+        setAutoDelete(value);
       }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> setAutoDelete(int value) async {
+    try {
+      Timer.periodic(Duration(minutes: value), (timer) async {
+        if (value == 0) {
+          timer.cancel();
+        } else {
+          await _prayerService.autoDeleteArchivePrayers(
+              value, currentUser.includeAnsweredPrayerAutoDelete ?? false);
+        }
+      });
     } catch (e) {
       rethrow;
     }

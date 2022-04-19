@@ -62,8 +62,8 @@ class _EntryScreenState extends State<EntryScreen> {
       final miscProvider = Provider.of<MiscProviderV2>(context, listen: false);
 
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
-        final user =
-            Provider.of<UserProviderV2>(context, listen: false).currentUser;
+        final user = await Provider.of<UserProviderV2>(context, listen: false)
+            .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
         Provider.of<PrayerProviderV2>(context, listen: false)
             .setPrayerFilterOptions(Status.active);
         if (miscProvider.initialLoad) {
@@ -79,6 +79,8 @@ class _EntryScreenState extends State<EntryScreen> {
                     .init(user.devices ?? <DeviceModel>[])
               });
         }
+        await Provider.of<UserProviderV2>(context, listen: false)
+            .setAutoDelete(user.archiveAutoDeleteMinutes ?? 0);
       });
     } catch (e, s) {
       final user =

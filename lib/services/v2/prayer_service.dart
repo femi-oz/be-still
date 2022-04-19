@@ -260,8 +260,6 @@ class PrayerServiceV2 {
       required String groupId,
       required String description}) async {
     try {
-      WriteBatch batch = FirebaseFirestore.instance.batch();
-
       if (followers.isNotEmpty) {
         await _notificationService.sendPrayerNotification(
             message: description,
@@ -269,6 +267,8 @@ class PrayerServiceV2 {
             groupId: groupId,
             prayerId: prayerId);
         followers.forEach((follower) async {
+          WriteBatch batch = FirebaseFirestore.instance.batch();
+
           UserDataModel user =
               await _userService.getUserByIdFuture(follower.userId ?? '');
           final newFollowers = FollowerModel(
@@ -298,6 +298,8 @@ class PrayerServiceV2 {
           batch.commit();
         });
       } else {
+        WriteBatch batch = FirebaseFirestore.instance.batch();
+
         batch.update(_prayerDataCollectionReference.doc(prayerId),
             {'status': Status.archived, 'archivedDate': DateTime.now()});
         batch.commit();
@@ -636,13 +638,13 @@ class PrayerServiceV2 {
           .where((element) => element.isAnswered == false)
           .toList();
     }
-    final filteredPrayers = mappedPrayers
-        .where((prayer) => (prayer.archivedDate ?? DateTime.now())
-            .add(Duration(minutes: autoDeletePeriod))
-            .isBefore(DateTime.now()))
-        .toList();
+    // final filteredPrayers = mappedPrayers
+    //     .where((prayer) => (prayer.archivedDate ?? DateTime.now())
+    //         .add(Duration(minutes: autoDeletePeriod))
+    //         .isBefore(DateTime.now()))
+    //     .toList();
 
-    filteredPrayers.forEach((prayer) async {
+    mappedPrayers.forEach((prayer) async {
       _prayerDataCollectionReference
           .doc(prayer.id)
           .update({'status': Status.deleted});

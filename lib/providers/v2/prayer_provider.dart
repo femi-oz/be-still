@@ -666,7 +666,8 @@ class PrayerProviderV2 with ChangeNotifier {
       }
 
       _filteredPrayers = _distinct;
-      _filteredPrayerTimeList = activePrayers;
+      _filteredPrayerTimeList =
+          prayers.where((element) => element.status == Status.active).toList();
       _filteredPrayerTimeList.sort((a, b) => (b.modifiedDate ?? DateTime.now())
           .compareTo(a.modifiedDate ?? DateTime.now()));
       _filteredPrayerTimeList = [
