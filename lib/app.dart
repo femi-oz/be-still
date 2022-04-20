@@ -100,7 +100,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       importance: Importance.high,
       priority: Priority.high,
       playSound: true,
-      timeoutAfter: 10000,
+      // timeoutAfter: 10000,
       styleInformation: BigTextStyleInformation(''),
     );
     var iosChannelSpecifics = IOSNotificationDetails();

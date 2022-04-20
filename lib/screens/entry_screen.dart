@@ -79,8 +79,6 @@ class _EntryScreenState extends State<EntryScreen> {
                     .init(user.devices ?? <DeviceModel>[])
               });
         }
-        await Provider.of<UserProviderV2>(context, listen: false)
-            .setAutoDelete(user.archiveAutoDeleteMinutes ?? 0);
       });
     } catch (e, s) {
       final user =

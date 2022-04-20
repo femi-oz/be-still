@@ -118,15 +118,18 @@ class PrayerProviderV2 with ChangeNotifier {
       final localNotifications =
           await _notificationService.getLocalNotificationsFuture();
 
-      final inactivePrayers = await _prayerService.getUserInactivePrayers();
-      final notificationsToRemove = localNotifications
-          .where((element) =>
-              inactivePrayers.map((e) => e.id).toList().contains(element.id))
+      final pendingLocalNotifications =
+          await _flutterLocalNotificationsPlugin.pendingNotificationRequests();
+      final notificationsToRemove = pendingLocalNotifications
+          .where((element) => !localNotifications
+              .map((e) => e.localNotificationId)
+              .toList()
+              .contains(element.id))
           .toList()
-          .map((e) => e.localNotificationId)
+          .map((e) => e.id)
           .toList();
       notificationsToRemove.forEach((id) {
-        _flutterLocalNotificationsPlugin.cancel(id ?? 0);
+        _flutterLocalNotificationsPlugin.cancel(id);
       });
     } catch (e) {
       rethrow;
