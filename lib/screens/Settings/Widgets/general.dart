@@ -131,7 +131,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       },
                       child: Container(
                         padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                         height: 30,
                         width: MediaQuery.of(context).size.width * .30,
                         decoration: BoxDecoration(
@@ -149,7 +149,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                               color: AppColors.white,
                               fontSize:
                                   MediaQuery.of(context).size.width * 0.025,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
@@ -165,7 +165,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       child: Container(
                         height: 30,
                         padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                         decoration: BoxDecoration(
                           color: Colors.blue,
                           border: Border.all(
@@ -181,7 +181,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                               color: AppColors.white,
                               fontSize:
                                   MediaQuery.of(context).size.width * 0.025,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
