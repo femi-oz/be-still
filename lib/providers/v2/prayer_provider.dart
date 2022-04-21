@@ -227,7 +227,7 @@ class PrayerProviderV2 with ChangeNotifier {
       if (searchQuery == '') {
         filterPrayers();
       } else {
-        filterPrayers();
+        // filterPrayers();
 
         List<PrayerDataModel> filteredPrayers = _filteredPrayers
             .where((PrayerDataModel data) => (data.description ?? '')
