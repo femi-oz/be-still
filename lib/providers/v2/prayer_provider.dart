@@ -609,13 +609,15 @@ class PrayerProviderV2 with ChangeNotifier {
       List<PrayerDataModel> allPrayers = [];
       List<PrayerDataModel> archivePrayersWithDelete = [];
       List<PrayerDataModel> archivePrayersWithoutDelete = [];
-      List<PrayerDataModel> answeredPrayersWithDelete = [];
-      List<PrayerDataModel> answeredPrayersWithoutDelete = [];
 
       final user = await _userService
           .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
       if (_filterOption == Status.all) {
-        allPrayers = prayers;
+        allPrayers = prayers
+            .where((PrayerDataModel data) =>
+                data.autoDeleteDate == null ||
+                (data.autoDeleteDate ?? DateTime.now()).isAfter(DateTime.now()))
+            .toList();
       }
 
       if (_filterOption == Status.active) {
