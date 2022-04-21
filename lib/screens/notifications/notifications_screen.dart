@@ -364,11 +364,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           .setCurrentGroupById(groupId);
       final requestor =
           Provider.of<UserProviderV2>(context, listen: false).selectedUser;
-      final admin = Provider.of<UserProviderV2>(context, listen: false)
-          .currentUser; //admin
+
       final groupData = Provider.of<GroupProviderV2>(context, listen: false)
           .currentGroup; //group
-      final adminName = (admin.firstName ?? '') + ' ' + (admin.lastName ?? '');
       List<String> tokens = [];
       requestor.devices ??
           <DeviceModel>[].forEach((element) {
@@ -378,8 +376,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       final groupRequest =
           (groupData.requests ?? []).firstWhere((e) => e.userId == receiverId);
       await Provider.of<GroupProviderV2>(context, listen: false)
-          .acceptRequest(groupData, groupRequest);
-      await deleteNotification(notificationId);
+          .acceptRequest(groupData, groupRequest, notificationId);
+      // deleteNotification(notificationId);
 
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();

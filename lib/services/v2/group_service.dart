@@ -261,7 +261,9 @@ class GroupServiceV2 {
   }
 
   Future<void> acceptJoinRequest(
-      {required GroupDataModel group, required RequestModel request}) async {
+      {required GroupDataModel group,
+      required RequestModel request,
+      String? notificationId}) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
@@ -287,18 +289,6 @@ class GroupServiceV2 {
           createdDate: DateTime.now(),
           modifiedBy: _firebaseAuth.currentUser?.uid,
           modifiedDate: DateTime.now());
-
-      WriteBatch batch = FirebaseFirestore.instance.batch();
-      batch.update(_groupDataCollectionReference.doc(group.id), {
-        'users': FieldValue.arrayUnion([user.toJson()])
-      });
-      batch.update(_groupDataCollectionReference.doc(group.id), {
-        'requests': FieldValue.arrayRemove([newRequest.toJson()])
-      });
-      batch.update(_userDataCollectionReference.doc(request.userId), {
-        'groups': FieldValue.arrayUnion([group.id])
-      });
-
       final notId = Uuid().v1();
       final doc = NotificationModel(
         id: notId,
@@ -316,18 +306,28 @@ class GroupServiceV2 {
         createdDate: DateTime.now(),
         modifiedDate: DateTime.now(),
       ).toJson();
-      batch.set(_notificationCollectionReference.doc(notId), doc);
-      final notifications = await _notificationCollectionReference
-          .where('groupId', isEqualTo: group.id)
-          .where('type', isEqualTo: NotificationType.request)
-          .get()
-          .then((value) =>
-              value.docs.map((e) => NotificationModel.fromJson(e.data())));
 
-      for (final not in notifications) {
-        batch.update(_notificationCollectionReference.doc(not.id),
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      batch.update(_groupDataCollectionReference.doc(group.id), {
+        'users': FieldValue.arrayUnion([user.toJson()])
+      });
+      batch.update(_groupDataCollectionReference.doc(group.id), {
+        'requests': FieldValue.arrayRemove([newRequest.toJson()])
+      });
+      batch.update(_userDataCollectionReference.doc(request.userId), {
+        'groups': FieldValue.arrayUnion([group.id])
+      });
+
+      batch.set(_notificationCollectionReference.doc(notId), doc);
+      // final notifications = await _notificationCollectionReference
+      //     .where('id', isEqualTo: notificationId)
+      //     .get()
+      //     .then((value) =>
+      //         value.docs.map((e) => NotificationModel.fromJson(e.data())));
+      if ((notificationId ?? '').isNotEmpty)
+        batch.update(_notificationCollectionReference.doc(notificationId),
             {'status': Status.inactive});
-      }
+
       batch.commit();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));

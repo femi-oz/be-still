@@ -175,7 +175,7 @@ class PrayerProviderV2 with ChangeNotifier {
   Future<void> checkPrayerValidity() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      await _autoDeleteArchivePrayers();
+      // await _autoDeleteArchivePrayers();
       await _unSnoozePrayerPast();
       await removeOldReminders();
     } catch (e) {
@@ -597,7 +597,7 @@ class PrayerProviderV2 with ChangeNotifier {
     notifyListeners();
   }
 
-  void filterPrayers() {
+  void filterPrayers() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       List<PrayerDataModel> prayers = _prayers.toList();
@@ -607,6 +607,13 @@ class PrayerProviderV2 with ChangeNotifier {
       List<PrayerDataModel> archivedPrayers = [];
       List<PrayerDataModel> followingPrayers = [];
       List<PrayerDataModel> allPrayers = [];
+      List<PrayerDataModel> archivePrayersWithDelete = [];
+      List<PrayerDataModel> archivePrayersWithoutDelete = [];
+      List<PrayerDataModel> answeredPrayersWithDelete = [];
+      List<PrayerDataModel> answeredPrayersWithoutDelete = [];
+
+      final user = await _userService
+          .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
       if (_filterOption == Status.all) {
         allPrayers = prayers;
       }
@@ -619,16 +626,54 @@ class PrayerProviderV2 with ChangeNotifier {
             .toList();
       }
       if (_filterOption == Status.answered) {
-        answeredPrayers = prayers
-            .where((PrayerDataModel data) =>
-                (data.status == Status.archived) &&
-                (data.isAnswered ?? false) == true)
-            .toList();
+        if (user.includeAnsweredPrayerAutoDelete ?? false) {
+          for (var prayer in prayers) {
+            if (prayer.autoDeleteDate != null) {
+              answeredPrayersWithDelete = prayers
+                  .where((PrayerDataModel data) =>
+                      data.status == Status.archived &&
+                      (data.autoDeleteDate ?? DateTime.now())
+                          .isAfter(DateTime.now()) &&
+                      (data.isAnswered ?? false) == true)
+                  .toList();
+            }
+          }
+          answeredPrayersWithoutDelete = prayers
+              .where((PrayerDataModel data) =>
+                  (data.status == Status.archived) &&
+                  (data.isAnswered ?? false) == true)
+              .toList();
+          answeredPrayers = [
+            ...answeredPrayersWithDelete,
+            ...answeredPrayersWithoutDelete
+          ];
+        } else {
+          answeredPrayers = prayers
+              .where((PrayerDataModel data) =>
+                  (data.status == Status.archived) &&
+                  (data.isAnswered ?? false) == true)
+              .toList();
+        }
       }
       if (_filterOption == Status.archived) {
-        archivedPrayers = prayers
-            .where((PrayerDataModel data) => data.status == Status.archived)
+        for (var prayer in prayers) {
+          if (prayer.autoDeleteDate != null) {
+            archivePrayersWithDelete = prayers
+                .where((PrayerDataModel data) =>
+                    data.status == Status.archived &&
+                    (data.autoDeleteDate ?? DateTime.now())
+                        .isAfter(DateTime.now()))
+                .toList();
+          }
+        }
+        archivePrayersWithoutDelete = prayers
+            .where((PrayerDataModel data) =>
+                data.status == Status.archived && data.autoDeleteDate == null)
             .toList();
+        archivedPrayers = [
+          ...archivePrayersWithDelete,
+          ...archivePrayersWithoutDelete
+        ];
       }
       if (_filterOption == Status.snoozed) {
         snoozedPrayers = prayers

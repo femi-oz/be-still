@@ -120,9 +120,9 @@ class UserProviderV2 with ChangeNotifier {
     try {
       await _userService.updateUserSettings(key: key, value: value);
       // await setCurrentUser();
-      if (key == 'archiveAutoDeleteMinutes') {
-        setAutoDelete(value);
-      }
+      // if (key == 'archiveAutoDeleteMinutes') {
+      //   setAutoDelete(value);
+      // }
     } catch (e) {
       rethrow;
     }

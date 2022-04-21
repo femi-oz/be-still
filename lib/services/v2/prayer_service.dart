@@ -271,6 +271,7 @@ class PrayerServiceV2 {
 
           UserDataModel user =
               await _userService.getUserByIdFuture(follower.userId ?? '');
+
           final newFollowers = FollowerModel(
               id: follower.id,
               userId: follower.userId,
@@ -289,7 +290,6 @@ class PrayerServiceV2 {
               groupId: prayerToRemove.groupId);
           batch.update(_prayerDataCollectionReference.doc(prayerId), {
             'status': Status.archived,
-            'archivedDate': DateTime.now(),
             'followers': FieldValue.arrayRemove([newFollowers.toJson()])
           });
           batch.update(_userDataCollectionReference.doc(follower.userId), {
@@ -298,10 +298,17 @@ class PrayerServiceV2 {
           batch.commit();
         });
       } else {
+        UserDataModel user = await _userService
+            .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
+
+        final autoDeleteDate = (user.archiveAutoDeleteMinutes ?? 0) > 0
+            ? DateTime.now()
+                .add(Duration(minutes: user.archiveAutoDeleteMinutes ?? 0))
+            : null;
         WriteBatch batch = FirebaseFirestore.instance.batch();
 
         batch.update(_prayerDataCollectionReference.doc(prayerId),
-            {'status': Status.archived, 'archivedDate': DateTime.now()});
+            {'status': Status.archived, 'autoDeleteDate': autoDeleteDate});
         batch.commit();
       }
     } catch (e) {
@@ -324,13 +331,16 @@ class PrayerServiceV2 {
       user = currentFollowers[currentFollowers.indexOf(user)]
         ..prayerStatus = Status.active;
       currentFollowers[currentFollowers.indexOf(user)] = user;
-      await _prayerDataCollectionReference
-          .doc(prayerId)
-          .update({'followers': FieldValue.arrayUnion(currentFollowers)});
+      await _prayerDataCollectionReference.doc(prayerId).update({
+        'followers': FieldValue.arrayUnion(currentFollowers),
+        'autoDeleteDate': null
+      });
     } else {
-      _prayerDataCollectionReference
-          .doc(prayerId)
-          .update({'status': Status.active, 'isAnswered': false});
+      _prayerDataCollectionReference.doc(prayerId).update({
+        'status': Status.active,
+        'isAnswered': false,
+        'archivedDate': DateTime.now()
+      });
     }
   }
 
@@ -536,9 +546,18 @@ class PrayerServiceV2 {
           batch.commit();
         });
       } else {
+        UserDataModel user = await _userService
+            .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
+
+        final autoDeleteDate = ((user.archiveAutoDeleteMinutes ?? 0) > 0 &&
+                (user.includeAnsweredPrayerAutoDelete ?? false))
+            ? DateTime.now()
+                .add(Duration(minutes: user.archiveAutoDeleteMinutes ?? 0))
+            : null;
         batch.update(_prayerDataCollectionReference.doc(prayerId), {
           'isAnswered': true,
           'status': Status.archived,
+          'autoDeleteDate': autoDeleteDate,
           'archivedDate': DateTime.now()
         });
         batch.commit();
@@ -550,9 +569,10 @@ class PrayerServiceV2 {
 
   Future<void> unMarkPrayerAsAnswered({required String prayerId}) async {
     try {
-      _prayerDataCollectionReference
-          .doc(prayerId)
-          .update({'isAnswered': false});
+      _prayerDataCollectionReference.doc(prayerId).update({
+        'isAnswered': false,
+        'autoDeleteDate': null,
+      });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
