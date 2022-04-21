@@ -626,10 +626,10 @@ class PrayerProviderV2 with ChangeNotifier {
             .toList();
       }
       if (_filterOption == Status.answered) {
-        if (user.includeAnsweredPrayerAutoDelete ?? false) {
-          for (var prayer in prayers) {
-            if (prayer.autoDeleteDate != null) {
-              answeredPrayersWithDelete = prayers
+        for (var prayer in prayers) {
+          if (prayer.autoDeleteDate != null) {
+            if (user.includeAnsweredPrayerAutoDelete ?? false) {
+              answeredPrayers = prayers
                   .where((PrayerDataModel data) =>
                       data.status == Status.archived &&
                       (data.autoDeleteDate ?? DateTime.now())
@@ -637,33 +637,43 @@ class PrayerProviderV2 with ChangeNotifier {
                       (data.isAnswered ?? false) == true)
                   .toList();
             }
+          } else {
+            answeredPrayers = prayers
+                .where((PrayerDataModel data) =>
+                    (data.status == Status.archived) &&
+                    (data.isAnswered ?? false) == true)
+                .toList();
           }
-          answeredPrayersWithoutDelete = prayers
-              .where((PrayerDataModel data) =>
-                  (data.status == Status.archived) &&
-                  (data.isAnswered ?? false) == true)
-              .toList();
-          answeredPrayers = [
-            ...answeredPrayersWithDelete,
-            ...answeredPrayersWithoutDelete
-          ];
-        } else {
-          answeredPrayers = prayers
-              .where((PrayerDataModel data) =>
-                  (data.status == Status.archived) &&
-                  (data.isAnswered ?? false) == true)
-              .toList();
         }
+
+        //  else {
+        //   answeredPrayers = prayers
+        //       .where((PrayerDataModel data) =>
+        //           (data.status == Status.archived) &&
+        //           (data.isAnswered ?? false) == true)
+        //       .toList();
+        // }
       }
       if (_filterOption == Status.archived) {
         for (var prayer in prayers) {
           if (prayer.autoDeleteDate != null) {
-            archivePrayersWithDelete = prayers
-                .where((PrayerDataModel data) =>
-                    data.status == Status.archived &&
-                    (data.autoDeleteDate ?? DateTime.now())
-                        .isAfter(DateTime.now()))
-                .toList();
+            if (user.includeAnsweredPrayerAutoDelete ?? false) {
+              archivePrayersWithDelete = prayers
+                  .where((PrayerDataModel data) =>
+                      data.status == Status.archived &&
+                      (data.autoDeleteDate ?? DateTime.now())
+                          .isAfter(DateTime.now()) &&
+                      data.isAnswered == true)
+                  .toList();
+            } else {
+              archivePrayersWithDelete = prayers
+                  .where((PrayerDataModel data) =>
+                      data.status == Status.archived &&
+                      (data.autoDeleteDate ?? DateTime.now())
+                          .isAfter(DateTime.now()) &&
+                      data.isAnswered == false)
+                  .toList();
+            }
           }
         }
         archivePrayersWithoutDelete = prayers
