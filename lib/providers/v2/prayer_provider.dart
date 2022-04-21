@@ -657,23 +657,12 @@ class PrayerProviderV2 with ChangeNotifier {
       if (_filterOption == Status.archived) {
         for (var prayer in prayers) {
           if (prayer.autoDeleteDate != null) {
-            if (user.includeAnsweredPrayerAutoDelete ?? false) {
-              archivePrayersWithDelete = prayers
-                  .where((PrayerDataModel data) =>
-                      data.status == Status.archived &&
-                      (data.autoDeleteDate ?? DateTime.now())
-                          .isAfter(DateTime.now()) &&
-                      data.isAnswered == true)
-                  .toList();
-            } else {
-              archivePrayersWithDelete = prayers
-                  .where((PrayerDataModel data) =>
-                      data.status == Status.archived &&
-                      (data.autoDeleteDate ?? DateTime.now())
-                          .isAfter(DateTime.now()) &&
-                      data.isAnswered == false)
-                  .toList();
-            }
+            archivePrayersWithDelete = prayers
+                .where((PrayerDataModel data) =>
+                    data.status == Status.archived &&
+                    (data.autoDeleteDate ?? DateTime.now())
+                        .isAfter(DateTime.now()))
+                .toList();
           }
         }
         archivePrayersWithoutDelete = prayers
