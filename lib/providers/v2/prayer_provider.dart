@@ -704,16 +704,8 @@ class PrayerProviderV2 with ChangeNotifier {
             .where((element) => !(element.isFavorite ?? false))
             .toList(),
       ];
-      List<PrayerDataModel> _distinct = [];
-      var idSet = <String>{};
-      for (var e in _filteredPrayers) {
-        if (idSet.add(e.id ?? '')) {
-          _distinct.add(e);
-        }
-      }
 
-      _filteredPrayers = _distinct;
-
+      _filteredPrayers = distinctPrayers(_filteredPrayers);
       _filteredPrayerTimeList =
           prayers.where((element) => element.status == Status.active).toList();
       _filteredPrayerTimeList.sort((a, b) => (b.modifiedDate ?? DateTime.now())
@@ -726,19 +718,23 @@ class PrayerProviderV2 with ChangeNotifier {
             .where((element) => !(element.isFavorite ?? false))
             .toList(),
       ];
-      List<PrayerDataModel> _prayerTimedistinct = [];
-      var prayerTimeidSet = <String>{};
-      for (var e in _filteredPrayerTimeList) {
-        if (prayerTimeidSet.add(e.id ?? '')) {
-          _prayerTimedistinct.add(e);
-        }
-      }
-
-      _filteredPrayerTimeList = _prayerTimedistinct;
+      _filteredPrayerTimeList =
+          distinctPrayers(_filteredPrayerTimeList).toList();
       notifyListeners();
     } catch (e) {
       rethrow;
     }
+  }
+
+  List<PrayerDataModel> distinctPrayers(List prayers) {
+    List<PrayerDataModel> _distinct = [];
+    var idSet = <String>{};
+    for (var e in prayers) {
+      if (idSet.add(e.id ?? '')) {
+        _distinct.add(e);
+      }
+    }
+    return _distinct;
   }
 
   Future<void> followPrayer(
