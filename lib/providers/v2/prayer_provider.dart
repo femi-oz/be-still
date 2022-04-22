@@ -92,7 +92,7 @@ class PrayerProviderV2 with ChangeNotifier {
   static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  Future<void> setPrayers(List<String> prayersIds) async {
+  Future<void> setPrayers() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
 
@@ -100,13 +100,19 @@ class PrayerProviderV2 with ChangeNotifier {
           .getUserPrayers()
           .asBroadcastStream()
           .listen((event) async {
+        final user = await _userService
+            .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
+        List<String> newPrayerIds =
+            (user.prayers ?? []).map((e) => e.prayerId ?? '').toList();
+        _prayers = event;
         _followedPrayers =
-            await _prayerService.getUserFollowedPrayers(prayersIds);
-        _prayers = [...followedPrayers, ...event];
+            await _prayerService.getUserFollowedPrayers(newPrayerIds);
+        _prayers = [...prayers, ...followedPrayers];
+
         Provider.of<MiscProviderV2>(Get.context!, listen: false)
             .setLoadStatus(false);
         filterPrayers();
-        notifyListeners();
+        // notifyListeners();
       });
     } catch (e) {
       rethrow;
@@ -395,7 +401,7 @@ class PrayerProviderV2 with ChangeNotifier {
 
       Future.delayed(Duration(minutes: duration), () async {
         await unSnoozePrayerPast(userId);
-        await setPrayers(prayersIds);
+        await setPrayers();
       });
     } catch (e) {
       rethrow;
@@ -647,14 +653,6 @@ class PrayerProviderV2 with ChangeNotifier {
                 .toList();
           }
         }
-
-        //  else {
-        //   answeredPrayers = prayers
-        //       .where((PrayerDataModel data) =>
-        //           (data.status == Status.archived) &&
-        //           (data.isAnswered ?? false) == true)
-        //       .toList();
-        // }
       }
       if (_filterOption == Status.archived) {
         for (var prayer in prayers) {
