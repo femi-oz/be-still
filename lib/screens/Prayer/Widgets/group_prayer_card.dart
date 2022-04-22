@@ -354,9 +354,10 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
         (widget.prayerData.tags ?? []).map((e) => e.displayName ?? '').toList();
 
     bool isOwner = widget.prayerData.createdBy == _userId;
-    final isActivePrayer =
-        Provider.of<PrayerProviderV2>(context).filterOption.toLowerCase() ==
-            'active';
+    final isActivePrayer = Provider.of<PrayerProviderV2>(context)
+            .groupFilterOption
+            .toLowerCase() ==
+        Status.active.toLowerCase();
     return Container(
       color: Colors.transparent,
       margin: EdgeInsets.symmetric(vertical: 7.0),
@@ -638,7 +639,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
                   _followPrayer();
                 }
               });
-            }, !isActivePrayer || isOwner),
+            }, !isActivePrayer),
           if (isOwner)
             _buildSlideItem(
                 AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
