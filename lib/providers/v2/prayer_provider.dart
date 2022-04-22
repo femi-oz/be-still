@@ -713,6 +713,7 @@ class PrayerProviderV2 with ChangeNotifier {
       }
 
       _filteredPrayers = _distinct;
+
       _filteredPrayerTimeList =
           prayers.where((element) => element.status == Status.active).toList();
       _filteredPrayerTimeList.sort((a, b) => (b.modifiedDate ?? DateTime.now())
@@ -725,6 +726,15 @@ class PrayerProviderV2 with ChangeNotifier {
             .where((element) => !(element.isFavorite ?? false))
             .toList(),
       ];
+      List<PrayerDataModel> _prayerTimedistinct = [];
+      var prayerTimeidSet = <String>{};
+      for (var e in _filteredPrayerTimeList) {
+        if (prayerTimeidSet.add(e.id ?? '')) {
+          _prayerTimedistinct.add(e);
+        }
+      }
+
+      _filteredPrayerTimeList = _prayerTimedistinct;
       notifyListeners();
     } catch (e) {
       rethrow;
