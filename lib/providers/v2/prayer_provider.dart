@@ -726,7 +726,7 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  List<PrayerDataModel> distinctPrayers(List prayers) {
+  List<PrayerDataModel> distinctPrayers(List<PrayerDataModel> prayers) {
     List<PrayerDataModel> _distinct = [];
     var idSet = <String>{};
     for (var e in prayers) {
