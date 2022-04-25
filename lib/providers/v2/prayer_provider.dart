@@ -92,7 +92,7 @@ class PrayerProviderV2 with ChangeNotifier {
   static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  Future<void> setPrayers(List<String> prayersIds) async {
+  Future<void> setPrayers() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
 
@@ -100,13 +100,19 @@ class PrayerProviderV2 with ChangeNotifier {
           .getUserPrayers()
           .asBroadcastStream()
           .listen((event) async {
+        final user = await _userService
+            .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
+        List<String> newPrayerIds =
+            (user.prayers ?? []).map((e) => e.prayerId ?? '').toList();
+        _prayers = event;
         _followedPrayers =
-            await _prayerService.getUserFollowedPrayers(prayersIds);
-        _prayers = [...followedPrayers, ...event];
+            await _prayerService.getUserFollowedPrayers(newPrayerIds);
+        _prayers = [...prayers, ...followedPrayers];
+
         Provider.of<MiscProviderV2>(Get.context!, listen: false)
             .setLoadStatus(false);
         filterPrayers();
-        notifyListeners();
+        // notifyListeners();
       });
     } catch (e) {
       rethrow;
@@ -118,15 +124,18 @@ class PrayerProviderV2 with ChangeNotifier {
       final localNotifications =
           await _notificationService.getLocalNotificationsFuture();
 
-      final inactivePrayers = await _prayerService.getUserInactivePrayers();
-      final notificationsToRemove = localNotifications
-          .where((element) =>
-              inactivePrayers.map((e) => e.id).toList().contains(element.id))
+      final pendingLocalNotifications =
+          await _flutterLocalNotificationsPlugin.pendingNotificationRequests();
+      final notificationsToRemove = pendingLocalNotifications
+          .where((element) => !localNotifications
+              .map((e) => e.localNotificationId)
+              .toList()
+              .contains(element.id))
           .toList()
-          .map((e) => e.localNotificationId)
+          .map((e) => e.id)
           .toList();
       notificationsToRemove.forEach((id) {
-        _flutterLocalNotificationsPlugin.cancel(id ?? 0);
+        _flutterLocalNotificationsPlugin.cancel(id);
       });
     } catch (e) {
       rethrow;
@@ -172,7 +181,7 @@ class PrayerProviderV2 with ChangeNotifier {
   Future<void> checkPrayerValidity() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      await _autoDeleteArchivePrayers();
+      // await _autoDeleteArchivePrayers();
       await _unSnoozePrayerPast();
       await removeOldReminders();
     } catch (e) {
@@ -224,7 +233,7 @@ class PrayerProviderV2 with ChangeNotifier {
       if (searchQuery == '') {
         filterPrayers();
       } else {
-        filterPrayers();
+        // filterPrayers();
 
         List<PrayerDataModel> filteredPrayers = _filteredPrayers
             .where((PrayerDataModel data) => (data.description ?? '')
@@ -392,7 +401,7 @@ class PrayerProviderV2 with ChangeNotifier {
 
       Future.delayed(Duration(minutes: duration), () async {
         await unSnoozePrayerPast(userId);
-        await setPrayers(prayersIds);
+        await setPrayers();
       });
     } catch (e) {
       rethrow;
@@ -594,7 +603,7 @@ class PrayerProviderV2 with ChangeNotifier {
     notifyListeners();
   }
 
-  void filterPrayers() {
+  void filterPrayers() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       List<PrayerDataModel> prayers = _prayers.toList();
@@ -604,8 +613,17 @@ class PrayerProviderV2 with ChangeNotifier {
       List<PrayerDataModel> archivedPrayers = [];
       List<PrayerDataModel> followingPrayers = [];
       List<PrayerDataModel> allPrayers = [];
+      List<PrayerDataModel> archivePrayersWithDelete = [];
+      List<PrayerDataModel> archivePrayersWithoutDelete = [];
+
+      final user = await _userService
+          .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
       if (_filterOption == Status.all) {
-        allPrayers = prayers;
+        allPrayers = prayers
+            .where((PrayerDataModel data) =>
+                data.autoDeleteDate == null ||
+                (data.autoDeleteDate ?? DateTime.now()).isAfter(DateTime.now()))
+            .toList();
       }
 
       if (_filterOption == Status.active) {
@@ -616,16 +634,45 @@ class PrayerProviderV2 with ChangeNotifier {
             .toList();
       }
       if (_filterOption == Status.answered) {
-        answeredPrayers = prayers
-            .where((PrayerDataModel data) =>
-                (data.status == Status.archived) &&
-                (data.isAnswered ?? false) == true)
-            .toList();
+        for (var prayer in prayers) {
+          if (prayer.autoDeleteDate != null) {
+            if (user.includeAnsweredPrayerAutoDelete ?? false) {
+              answeredPrayers = prayers
+                  .where((PrayerDataModel data) =>
+                      data.status == Status.archived &&
+                      (data.autoDeleteDate ?? DateTime.now())
+                          .isAfter(DateTime.now()) &&
+                      (data.isAnswered ?? false) == true)
+                  .toList();
+            }
+          } else {
+            answeredPrayers = prayers
+                .where((PrayerDataModel data) =>
+                    (data.status == Status.archived) &&
+                    (data.isAnswered ?? false) == true)
+                .toList();
+          }
+        }
       }
       if (_filterOption == Status.archived) {
-        archivedPrayers = prayers
-            .where((PrayerDataModel data) => data.status == Status.archived)
+        for (var prayer in prayers) {
+          if (prayer.autoDeleteDate != null) {
+            archivePrayersWithDelete = prayers
+                .where((PrayerDataModel data) =>
+                    data.status == Status.archived &&
+                    (data.autoDeleteDate ?? DateTime.now())
+                        .isAfter(DateTime.now()))
+                .toList();
+          }
+        }
+        archivePrayersWithoutDelete = prayers
+            .where((PrayerDataModel data) =>
+                data.status == Status.archived && data.autoDeleteDate == null)
             .toList();
+        archivedPrayers = [
+          ...archivePrayersWithDelete,
+          ...archivePrayersWithoutDelete
+        ];
       }
       if (_filterOption == Status.snoozed) {
         snoozedPrayers = prayers
@@ -657,16 +704,10 @@ class PrayerProviderV2 with ChangeNotifier {
             .where((element) => !(element.isFavorite ?? false))
             .toList(),
       ];
-      List<PrayerDataModel> _distinct = [];
-      var idSet = <String>{};
-      for (var e in _filteredPrayers) {
-        if (idSet.add(e.id ?? '')) {
-          _distinct.add(e);
-        }
-      }
 
-      _filteredPrayers = _distinct;
-      _filteredPrayerTimeList = activePrayers;
+      _filteredPrayers = distinctPrayers(_filteredPrayers);
+      _filteredPrayerTimeList =
+          prayers.where((element) => element.status == Status.active).toList();
       _filteredPrayerTimeList.sort((a, b) => (b.modifiedDate ?? DateTime.now())
           .compareTo(a.modifiedDate ?? DateTime.now()));
       _filteredPrayerTimeList = [
@@ -677,10 +718,23 @@ class PrayerProviderV2 with ChangeNotifier {
             .where((element) => !(element.isFavorite ?? false))
             .toList(),
       ];
+      _filteredPrayerTimeList =
+          distinctPrayers(_filteredPrayerTimeList).toList();
       notifyListeners();
     } catch (e) {
       rethrow;
     }
+  }
+
+  List<PrayerDataModel> distinctPrayers(List<PrayerDataModel> prayers) {
+    List<PrayerDataModel> _distinct = [];
+    var idSet = <String>{};
+    for (var e in prayers) {
+      if (idSet.add(e.id ?? '')) {
+        _distinct.add(e);
+      }
+    }
+    return _distinct;
   }
 
   Future<void> followPrayer(

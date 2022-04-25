@@ -346,14 +346,12 @@ class GroupProviderV2 with ChangeNotifier {
   }
 
   Future<void> acceptRequest(
-    GroupDataModel group,
-    RequestModel request,
-  ) async {
+      GroupDataModel group, RequestModel request, String notificationId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       return await _groupService.acceptJoinRequest(
-          group: group, request: request);
+          group: group, request: request, notificationId: notificationId);
     } catch (e) {
       rethrow;
     }

@@ -139,7 +139,11 @@ class UserServiceV2 {
     try {
       _userDataCollectionReference
           .doc(_firebaseAuth.currentUser?.uid ?? '')
-          .update({key: value});
+          .update({
+        key: value,
+        'modifiedBy': _firebaseAuth.currentUser?.uid,
+        'modifiedDate': DateTime.now()
+      });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

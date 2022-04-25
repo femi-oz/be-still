@@ -137,9 +137,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     String pageTitle = Provider.of<MiscProviderV2>(context).pageTitle;
-    final searchQuery =
-        Provider.of<MiscProviderV2>(context, listen: true).searchQuery;
-    _searchController.text = searchQuery;
 
     return AppBar(
       flexibleSpace: Container(
@@ -253,7 +250,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                               .setSearchMode(false);
                           Provider.of<MiscProviderV2>(context, listen: false)
                               .setSearchQuery('');
-                          setState(() {});
+                          // setState(() {});
                         }
                       },
                     ),

@@ -130,7 +130,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                         Navigator.of(context).pop();
                       },
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                         height: 30,
                         width: MediaQuery.of(context).size.width * .30,
                         decoration: BoxDecoration(
@@ -146,8 +147,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                             'CANCEL',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.025,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
@@ -162,7 +164,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       onTap: () => openAppSettings(),
                       child: Container(
                         height: 30,
-                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                         decoration: BoxDecoration(
                           color: Colors.blue,
                           border: Border.all(
@@ -171,14 +174,14 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                           ),
                           borderRadius: BorderRadius.circular(5),
                         ),
-                        child: FittedBox(
-                          fit: BoxFit.contain,
+                        child: Center(
                           child: Text(
                             'GO TO SETTINGS',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.025,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),

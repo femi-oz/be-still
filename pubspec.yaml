@@ -41,7 +41,7 @@ dependencies:
   dio: "4.0.0"
   local_auth: "1.1.5"
   flutter_typeahead: "3.1.2"
-  flutter_local_notifications: "5.0.0+3"
+  flutter_local_notifications: "9.4.0"
   flutter_native_timezone: "2.0.0"
   cron: "0.3.0"
   easy_rich_text: "1.0.4"
