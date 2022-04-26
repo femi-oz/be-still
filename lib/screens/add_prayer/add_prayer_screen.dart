@@ -283,6 +283,15 @@ class _AddPrayerState extends State<AddPrayer> {
     if (word.isEmpty && contactList.isNotEmpty) {
       contactList.removeLast();
     }
+    var wordSplit = _descriptionController.text.split(' ');
+    var tagToRemove = new Contact();
+    if (contactList.isNotEmpty)
+      contactList.forEach((element) {
+        if (!(wordSplit.contains(element.displayName))) {
+          tagToRemove = element;
+        }
+      });
+    contactList.remove(tagToRemove);
   }
 
   @override
