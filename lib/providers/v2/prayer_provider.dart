@@ -9,7 +9,6 @@ import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/models/v2/update.model.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
-import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/services/v2/notification_service.dart';
 import 'package:be_still/services/v2/prayer_service.dart';
 import 'package:be_still/services/v2/user_service.dart';
@@ -411,27 +410,6 @@ class PrayerProviderV2 with ChangeNotifier {
   Future<void> unSnoozePrayer(String prayerId) async {
     try {
       await _prayerService.unSnoozePrayer(prayerId: prayerId);
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<void> _autoDeleteArchivePrayers() async {
-    try {
-      if (_firebaseAuth.currentUser == null) return null;
-      final archiveAutoDeleteMins =
-          Provider.of<UserProviderV2>(Get.context!, listen: false)
-                  .currentUser
-                  .archiveAutoDeleteMinutes ??
-              0;
-      final includeAnsweredPrayers =
-          Provider.of<UserProviderV2>(Get.context!, listen: false)
-                  .currentUser
-                  .includeAnsweredPrayerAutoDelete ??
-              false;
-      if (archiveAutoDeleteMins > 0)
-        await _prayerService.autoDeleteArchivePrayers(
-            archiveAutoDeleteMins, includeAnsweredPrayers);
     } catch (e) {
       rethrow;
     }

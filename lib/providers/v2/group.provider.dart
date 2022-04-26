@@ -3,13 +3,11 @@ import 'dart:async';
 import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/v2/group.model.dart';
-import 'package:be_still/models/v2/group_user.model.dart';
 import 'package:be_still/models/v2/notification.model.dart';
 import 'package:be_still/models/v2/request.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/services/v2/group_service.dart';
-import 'package:be_still/services/v2/user_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +16,6 @@ import 'package:provider/provider.dart';
 
 class GroupProviderV2 with ChangeNotifier {
   GroupServiceV2 _groupService = locator<GroupServiceV2>();
-  UserServiceV2 _userService = locator<UserServiceV2>();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
 //search params

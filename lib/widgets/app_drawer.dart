@@ -1,10 +1,8 @@
 import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/models/v2/device.model.dart';
 import 'package:be_still/providers/v2/auth_provider.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
-import 'package:be_still/providers/v2/misc_provider.dart';
 import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
@@ -15,7 +13,6 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/initial_tutorial.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -54,8 +51,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
   String _shareUri = '';
 
   _launchHelpURL() async {
-    final _userProvider = Provider.of<UserProviderV2>(context, listen: false);
-
     try {
       if (await canLaunch('https://www.bestillapp.com/help')) {
         await launch('https://www.bestillapp.com/help');
@@ -71,7 +66,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
   }
 
   _launchURL(url) async {
-    final _userProvider = Provider.of<UserProviderV2>(context, listen: false);
     try {
       if (Platform.isAndroid) {
         await AppAvailability.checkAvailability(

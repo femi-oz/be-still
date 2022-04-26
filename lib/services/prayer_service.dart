@@ -1,15 +1,10 @@
-import 'package:be_still/enums/group_type.dart';
 import 'package:be_still/enums/message-template.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/group.model.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/message_template.dart';
-import 'package:be_still/models/v2/group.model.dart';
-import 'package:be_still/models/v2/group_user.model.dart';
-import 'package:be_still/models/v2/prayer.model.dart';
-import 'package:be_still/models/v2/tag.model.dart';
-import 'package:be_still/models/v2/update.model.dart';
+
 import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/models/user.model.dart';
 import 'package:be_still/services/log_service.dart';

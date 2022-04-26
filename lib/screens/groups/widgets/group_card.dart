@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/request_status.dart';
 import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/v2/device.model.dart';
@@ -8,7 +7,6 @@ import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/models/v2/group_user.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
-import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';

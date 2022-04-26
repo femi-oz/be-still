@@ -1,4 +1,3 @@
-import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
@@ -38,15 +37,10 @@ class _ShareInAppState extends State<ShareInApp> {
 
   _share(String receievrId, PrayerDataModel? prayerData) async {
     if (userInput.text == '') return;
-    // final _prayer = Provider.of<PrayerProvider>(context, listen: false)
-    //     .currentPrayer
-    //     .prayer;
-    final user =
-        Provider.of<UserProviderV2>(context, listen: false).currentUser;
+
     final currentGroup =
         Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
-    final isFollowedByAdmin = (currentGroup.users ?? []).any((element) =>
-        element.role == GroupUserRole.admin && element.userId == user.id);
+
     try {
       BeStilDialog.showLoading(context);
       final user =

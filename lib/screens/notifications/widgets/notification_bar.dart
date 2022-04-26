@@ -1,8 +1,7 @@
 import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+
 import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';

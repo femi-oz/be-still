@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:be_still/enums/interval.dart';
-import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/enums/sort_by.dart';
 import 'package:be_still/models/v2/duration.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
@@ -12,7 +11,6 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/custom_toggle.dart';
 import 'package:be_still/widgets/custom_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

@@ -1,20 +1,13 @@
-import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/settings.model.dart';
 import 'package:be_still/models/v2/duration.model.dart';
-import 'package:be_still/providers/settings_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/providers/v2/user_provider.dart';
-import 'package:be_still/utils/app_dialog.dart';
+
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_input_button.dart';
 import 'package:be_still/widgets/custom_picker.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/custom_toggle.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class AlexaSettings extends StatefulWidget {
   final SettingsModel settings;
@@ -36,7 +29,6 @@ class _AlexaSettingsState extends State<AlexaSettings> {
 
   @override
   Widget build(BuildContext context) {
-    final userId = FirebaseAuth.instance.currentUser?.uid ?? '';
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[

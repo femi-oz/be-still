@@ -1,11 +1,7 @@
-import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/group.model.dart';
-import 'package:be_still/providers/group_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+
 import 'package:be_still/providers/v2/group.provider.dart';
-import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -233,7 +229,6 @@ class JoinGroup {
 
   _requestToJoinGroup(CombineGroupUserStream groupData, String userId,
       String userName, String adminId, BuildContext context) async {
-    const title = 'Group Request';
     try {
       BeStilDialog.showLoading(context);
       final adminData =
