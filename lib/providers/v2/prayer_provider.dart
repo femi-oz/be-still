@@ -615,6 +615,8 @@ class PrayerProviderV2 with ChangeNotifier {
       List<PrayerDataModel> allPrayers = [];
       List<PrayerDataModel> archivePrayersWithDelete = [];
       List<PrayerDataModel> archivePrayersWithoutDelete = [];
+      List<PrayerDataModel> answeredPrayersWithDelete = [];
+      List<PrayerDataModel> answeredPrayersWithoutDelete = [];
 
       final user = await _userService
           .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
@@ -637,22 +639,31 @@ class PrayerProviderV2 with ChangeNotifier {
         for (var prayer in prayers) {
           if (prayer.autoDeleteDate != null) {
             if (user.includeAnsweredPrayerAutoDelete ?? false) {
-              answeredPrayers = prayers
+              answeredPrayersWithDelete = prayers
                   .where((PrayerDataModel data) =>
                       data.status == Status.archived &&
                       (data.autoDeleteDate ?? DateTime.now())
                           .isAfter(DateTime.now()) &&
                       (data.isAnswered ?? false) == true)
                   .toList();
+            } else {
+              answeredPrayersWithDelete = prayers
+                  .where((PrayerDataModel data) =>
+                      (data.isAnswered ?? false) == true)
+                  .toList();
             }
-          } else {
-            answeredPrayers = prayers
-                .where((PrayerDataModel data) =>
-                    (data.status == Status.archived) &&
-                    (data.isAnswered ?? false) == true)
-                .toList();
           }
+          answeredPrayersWithoutDelete = prayers
+              .where((PrayerDataModel data) =>
+                  (data.status == Status.archived) &&
+                  data.autoDeleteDate == null &&
+                  (data.isAnswered ?? false) == true)
+              .toList();
         }
+        answeredPrayers = [
+          ...answeredPrayersWithDelete,
+          ...answeredPrayersWithoutDelete
+        ];
       }
       if (_filterOption == Status.archived) {
         for (var prayer in prayers) {
