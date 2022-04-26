@@ -131,7 +131,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       },
                       child: Container(
                         padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                         height: 30,
                         width: MediaQuery.of(context).size.width * .30,
                         decoration: BoxDecoration(
@@ -165,7 +165,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       child: Container(
                         height: 30,
                         padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                         decoration: BoxDecoration(
                           color: Colors.blue,
                           border: Border.all(
