@@ -137,8 +137,10 @@ class _AddUpdateState extends State<AddUpdate> {
     }
   }
 
-  Future<void> _onTagSelected(s, TextEditingController controller) async {
-    controller.text = controller.text.replaceFirst(tagText, s.displayName);
+  Future<void> _onTagSelected(
+      Contact s, TextEditingController controller) async {
+    controller.text =
+        controller.text.replaceFirst(tagText, (s.displayName ?? '') + ' ');
     tagText = '';
     controller.selection = TextSelection.fromPosition(
         TextPosition(offset: controller.text.length));
@@ -160,7 +162,6 @@ class _AddUpdateState extends State<AddUpdate> {
     try {
       if (!_formKey.currentState!.validate()) return;
       _formKey.currentState!.save();
-      final userId = FirebaseAuth.instance.currentUser?.uid;
       BeStilDialog.showLoading(context);
       if (_descriptionController.text.trim().isEmpty) {
         BeStilDialog.hideLoading(context);
@@ -169,7 +170,6 @@ class _AddUpdateState extends State<AddUpdate> {
         final s = StackTrace.fromString(e.stacktrace ?? '');
         final user =
             Provider.of<UserProviderV2>(context, listen: false).currentUser;
-        final userName = (user.firstName ?? '') + ' ' + (user.lastName ?? '');
         BeStilDialog.showErrorDialog(
             context, StringUtils.getErrorMessage(e), user, s);
       } else {
@@ -183,7 +183,9 @@ class _AddUpdateState extends State<AddUpdate> {
         if (contacts.length > 0) {
           for (final contact in contacts) {
             if (_descriptionController.text
-                .contains(contact.displayName ?? '')) {
+                    .contains(((contact.displayName ?? '') + ' ')) ||
+                (_descriptionController.text.split(' ').last ==
+                    contact.displayName)) {
               final user = Provider.of<UserProviderV2>(context, listen: false)
                   .currentUser;
               final userName =

@@ -162,12 +162,25 @@ class _AddPrayerState extends State<AddPrayer> {
     }
 
     for (final tag in tags) {
-      if (!_descriptionController.text.contains(tag.displayName ?? '') &&
-          !updateTextControllers
-              .any((u) => u.ctrl.text.contains(tag.displayName ?? ''))) {
+      if ((_descriptionController.text !=
+          prayerToEdit.description)) if (!(_descriptionController.text
+              .split(' ')
+              .last ==
+          tag
+              .displayName)) if (!(_descriptionController.text
+          .contains(((tag.displayName ?? '') + ' ')))) {
         await Provider.of<PrayerProviderV2>(context, listen: false)
             .removePrayerTag(tag, prayerId);
       }
+      updateTextControllers.forEach((element) async {
+        if (!(element.ctrl.text.split(' ').last == tag.displayName)) {
+          if (updateTextControllers.isNotEmpty) if (!(updateTextControllers.any(
+              (u) => u.ctrl.text.contains(((tag.displayName ?? '') + ' '))))) {
+            await Provider.of<PrayerProviderV2>(context, listen: false)
+                .removePrayerTag(tag, prayerId);
+          }
+        }
+      });
     }
 
     BeStilDialog.hideLoading(context);
@@ -216,6 +229,7 @@ class _AddPrayerState extends State<AddPrayer> {
         if (!Provider.of<PrayerProviderV2>(context, listen: false).isEdit) {
           if ((selected?.name ?? '').isEmpty ||
               (selected?.name) == 'My Prayers') {
+            checkContactList();
             await Provider.of<PrayerProviderV2>(context, listen: false)
                 .addPrayer('', _descriptionController.text, false, contactList);
           } else {
@@ -253,6 +267,21 @@ class _AddPrayerState extends State<AddPrayer> {
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
+    }
+  }
+
+  void checkContactList() {
+    var word = [];
+
+    contactList.forEach((element) {
+      word = _descriptionController.text
+          .split(' ')
+          .where((e) => e == element.displayName)
+          .toList();
+    });
+
+    if (word.isEmpty && contactList.isNotEmpty) {
+      contactList.removeLast();
     }
   }
 
@@ -477,7 +506,7 @@ class _AddPrayerState extends State<AddPrayer> {
     (backup == null ? _descriptionController : backup.ctrl).text =
         (backup == null ? _descriptionController : backup.ctrl)
             .text
-            .replaceFirst(tagText, (s.displayName ?? ''));
+            .replaceFirst(tagText, (s.displayName ?? '') + ' ');
     setState(() {
       if (backup == null) {
         showContactList = false;
