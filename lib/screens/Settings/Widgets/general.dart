@@ -147,8 +147,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                             'CANCEL',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.021,
+                              fontSize: 10,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -179,8 +178,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                             'GO TO SETTINGS',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.021,
+                              fontSize: 10,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
