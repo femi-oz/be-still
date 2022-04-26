@@ -252,18 +252,18 @@ class _AddPrayerState extends State<AddPrayer> {
         }
       }
     } on HttpException catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
+      showError(e, s);
     } catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
+      showError(e, s);
     }
+  }
+
+  void showError(e, s) {
+    BeStilDialog.hideLoading(context);
+    final user =
+        Provider.of<UserProviderV2>(context, listen: false).currentUser;
+    BeStilDialog.showErrorDialog(
+        context, StringUtils.getErrorMessage(e), user, s);
   }
 
   void contactListCheck() {
