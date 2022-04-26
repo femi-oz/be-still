@@ -212,6 +212,7 @@ class _AddPrayerState extends State<AddPrayer> {
     try {
       final _user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      AppController appController = Get.find();
 
       setState(() => _autoValidate = true);
       if (!_formKey.currentState!.validate()) return;
@@ -229,21 +230,16 @@ class _AddPrayerState extends State<AddPrayer> {
         if (!Provider.of<PrayerProviderV2>(context, listen: false).isEdit) {
           if ((selected?.name ?? '').isEmpty ||
               (selected?.name) == 'My Prayers') {
-            checkContactList();
+            contactListCheck();
             await Provider.of<PrayerProviderV2>(context, listen: false)
                 .addPrayer('', _descriptionController.text, false, contactList);
-          } else {
-            await Provider.of<PrayerProviderV2>(context, listen: false)
-                .addPrayer((selected?.id ?? ''), _descriptionController.text,
-                    true, contactList);
-          }
-
-          AppController appController = Get.find();
-          if ((selected?.name ?? '').isEmpty ||
-              (selected?.name) == 'My Prayers') {
             BeStilDialog.hideLoading(context);
             appController.setCurrentPage(0, true, 1);
           } else {
+            contactListCheck();
+            await Provider.of<PrayerProviderV2>(context, listen: false)
+                .addPrayer((selected?.id ?? ''), _descriptionController.text,
+                    true, contactList);
             await Provider.of<GroupProviderV2>(context, listen: false)
                 .setCurrentGroupById(selected?.id ?? '');
             await Provider.of<PrayerProviderV2>(context, listen: false)
@@ -270,21 +266,17 @@ class _AddPrayerState extends State<AddPrayer> {
     }
   }
 
-  void checkContactList() {
+  void contactListCheck() {
     var word = [];
+    var wordSplit = _descriptionController.text.split(' ');
+    var tagToRemove = new Contact();
 
     contactList.forEach((element) {
-      word = _descriptionController.text
-          .split(' ')
-          .where((e) => e == element.displayName)
-          .toList();
+      word = wordSplit.where((e) => e == element.displayName).toList();
     });
-
     if (word.isEmpty && contactList.isNotEmpty) {
       contactList.removeLast();
     }
-    var wordSplit = _descriptionController.text.split(' ');
-    var tagToRemove = new Contact();
     if (contactList.isNotEmpty)
       contactList.forEach((element) {
         if (!(wordSplit.contains(element.displayName))) {
