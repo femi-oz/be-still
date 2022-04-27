@@ -177,21 +177,14 @@ class _AddUpdateState extends State<AddUpdate> {
           _descriptionController.text,
         );
 
+        contactListCheck();
         if (contacts.length > 0) {
-          for (final contact in contacts) {
-            if (_descriptionController.text
-                    .contains(((contact.displayName ?? '') + ' ')) ||
-                (_descriptionController.text.split(' ').last ==
-                    contact.displayName)) {
-              final user = Provider.of<UserProviderV2>(context, listen: false)
-                  .currentUser;
-              final userName =
-                  (user.firstName ?? '') + ' ' + (user.lastName ?? '');
-              await Provider.of<PrayerProviderV2>(context, listen: false)
-                  .addPrayerTag(contacts, userName, _descriptionController.text,
-                      prayerId);
-            }
-          }
+          final user =
+              Provider.of<UserProviderV2>(context, listen: false).currentUser;
+          final userName = (user.firstName ?? '') + ' ' + (user.lastName ?? '');
+          await Provider.of<PrayerProviderV2>(context, listen: false)
+              .addPrayerTag(
+                  contacts, userName, _descriptionController.text, prayerId);
         }
         AppController appController = Get.find();
 
@@ -228,6 +221,20 @@ class _AddUpdateState extends State<AddUpdate> {
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
+  }
+
+  void contactListCheck() {
+    var tagsToRemove = <Contact>[];
+    if (contacts.isNotEmpty)
+      contacts.forEach((element) {
+        if (!(_descriptionController.text
+            .contains((element.displayName ?? '') + ' '))) {
+          tagsToRemove.add(element);
+        }
+      });
+    tagsToRemove.forEach((element) {
+      contacts.removeWhere((e) => e == element);
+    });
   }
 
   Future<bool> _onWillPop() async {
