@@ -269,7 +269,7 @@ class _AddPrayerState extends State<AddPrayer> {
   void contactListCheck() {
     var word = [];
     var wordSplit = _descriptionController.text.split(' ');
-    var tagToRemove = new Contact();
+    var tagsToRemove = [];
 
     contactList.forEach((element) {
       word = wordSplit.where((e) => e == element.displayName).toList();
@@ -280,10 +280,12 @@ class _AddPrayerState extends State<AddPrayer> {
     if (contactList.isNotEmpty)
       contactList.forEach((element) {
         if (!(wordSplit.contains(element.displayName))) {
-          tagToRemove = element;
+          tagsToRemove = [...tagsToRemove, element];
         }
       });
-    contactList.remove(tagToRemove);
+    tagsToRemove.forEach((element) {
+      contactList.remove(element);
+    });
   }
 
   @override
