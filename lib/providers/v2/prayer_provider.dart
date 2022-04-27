@@ -565,8 +565,8 @@ class PrayerProviderV2 with ChangeNotifier {
       ...answeredGroupPrayers
     ];
 
-    _filteredGroupPrayers.sort((a, b) => (b.modifiedDate ?? DateTime.now())
-        .compareTo(a.modifiedDate ?? DateTime.now()));
+    _filteredGroupPrayers.sort((a, b) => (b.createdDate ?? DateTime.now())
+        .compareTo(a.createdDate ?? DateTime.now()));
 
     List<PrayerDataModel> _groupDistinct = [];
     var idSet = <String>{};
