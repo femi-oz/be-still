@@ -162,23 +162,16 @@ class _AddPrayerState extends State<AddPrayer> {
     }
 
     for (final tag in tags) {
-      if ((_descriptionController.text !=
-          prayerToEdit.description)) if (!(_descriptionController.text
-              .split(' ')
-              .last ==
-          tag
-              .displayName)) if (!(_descriptionController.text
+      if (!(_descriptionController.text
           .contains(((tag.displayName ?? '') + ' ')))) {
         await Provider.of<PrayerProviderV2>(context, listen: false)
             .removePrayerTag(tag, prayerId);
       }
       updateTextControllers.forEach((element) async {
-        if (!(element.ctrl.text.split(' ').last == tag.displayName)) {
-          if (updateTextControllers.isNotEmpty) if (!(updateTextControllers.any(
-              (u) => u.ctrl.text.contains(((tag.displayName ?? '') + ' '))))) {
-            await Provider.of<PrayerProviderV2>(context, listen: false)
-                .removePrayerTag(tag, prayerId);
-          }
+        if (updateTextControllers.isNotEmpty) if (!(updateTextControllers.any(
+            (u) => u.ctrl.text.contains(((tag.displayName ?? '') + ' '))))) {
+          await Provider.of<PrayerProviderV2>(context, listen: false)
+              .removePrayerTag(tag, prayerId);
         }
       });
     }
@@ -267,24 +260,16 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   void contactListCheck() {
-    var word = [];
-    var wordSplit = _descriptionController.text.split(' ');
-    var tagsToRemove = [];
-
-    contactList.forEach((element) {
-      word = wordSplit.where((e) => e == element.displayName).toList();
-    });
-    if (word.isEmpty && contactList.isNotEmpty) {
-      contactList.removeLast();
-    }
+    var tagsToRemove = <Contact>[];
     if (contactList.isNotEmpty)
       contactList.forEach((element) {
-        if (!(wordSplit.contains(element.displayName))) {
-          tagsToRemove = [...tagsToRemove, element];
+        if (!(_descriptionController.text
+            .contains((element.displayName ?? '') + ' '))) {
+          tagsToRemove.add(element);
         }
       });
     tagsToRemove.forEach((element) {
-      contactList.remove(element);
+      contactList.removeWhere((e) => e == element);
     });
   }
 

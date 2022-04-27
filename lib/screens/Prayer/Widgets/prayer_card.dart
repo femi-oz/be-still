@@ -323,8 +323,15 @@ class _PrayerCardState extends State<PrayerCard> {
     final creatorName = Provider.of<UserProviderV2>(context)
         .getPrayerCreatorName(widget.prayer.createdBy ?? '');
     bool isOwner = widget.prayer.createdBy == _user;
-    List<String> tags =
+    var idSet = <String>{};
+    List<String> tags = [];
+    List<String> allTags =
         (widget.prayer.tags ?? []).map((e) => e.displayName ?? '').toList();
+    for (var tag in allTags) {
+      if (idSet.add(tag)) {
+        tags.add(tag);
+      }
+    }
 
     bool isGroupPrayer = widget.prayer.isGroup ?? false;
 
