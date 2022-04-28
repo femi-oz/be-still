@@ -502,6 +502,8 @@ class PrayerServiceV2 {
         return Future.error(StringUtils.unathorized);
       WriteBatch batch = FirebaseFirestore.instance.batch();
 
+      final oldPrayer = await getPrayerFuture(prayerId);
+
       final newUpdate = UpdateModel(
           id: update.id,
           description: description,
@@ -511,8 +513,17 @@ class PrayerServiceV2 {
           modifiedBy: _firebaseAuth.currentUser?.uid,
           modifiedDate: DateTime.now());
 
+      final updateToDelete = UpdateModel(
+          id: oldPrayer.id,
+          description: oldPrayer.description,
+          createdBy: oldPrayer.createdBy,
+          createdDate: oldPrayer.createdDate,
+          modifiedBy: oldPrayer.modifiedBy,
+          modifiedDate: oldPrayer.modifiedDate,
+          status: oldPrayer.status);
+
       batch.update(_prayerDataCollectionReference.doc(prayerId), {
-        'updates': FieldValue.arrayRemove([newUpdate.toJson()])
+        'updates': FieldValue.arrayRemove([updateToDelete.toJson()])
       });
       batch.update(_prayerDataCollectionReference.doc(prayerId), {
         'updates': FieldValue.arrayUnion([newUpdate.toJson()]),
@@ -520,7 +531,7 @@ class PrayerServiceV2 {
         'modifiedBy': _firebaseAuth.currentUser?.uid
       });
       batch.commit();
-      // deleteUpdate(prayerId: prayerId, currentUpdate: update);
+      deleteUpdate(prayerId: prayerId, currentUpdate: update);
       // _prayerDataCollectionReference.doc(prayerId).update({
       //   'updates': FieldValue.arrayUnion([newUpdate.toJson()]),
       //   'modifiedDate': DateTime.now(),
