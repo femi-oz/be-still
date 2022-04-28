@@ -102,7 +102,7 @@ class _AddPrayerState extends State<AddPrayer> {
 
     if (updateTextControllers.length > 0) {
       updateTextControllers.forEach((update) async {
-        if (update.ctrl.text == '') {
+        if (update.ctrl.text.isEmpty) {
           await Provider.of<PrayerProviderV2>(context, listen: false)
               .deleteUpdate(
                   prayerToEdit.id ?? '',
@@ -111,18 +111,30 @@ class _AddPrayerState extends State<AddPrayer> {
           return;
         }
 
-        final updateValue = (prayerToEdit.updates ?? <UpdateModel>[])
-            .firstWhere((element) => element.id == update.id);
-
-        await Provider.of<PrayerProviderV2>(context, listen: false).editUpdate(
-          update.ctrl.text,
-          prayerToEdit.id ?? '',
-          updateValue,
+        final updateValue =
+            (prayerToEdit.updates ?? <UpdateModel>[]).firstWhere(
+          (element) => element.id == update.id,
+          orElse: () => UpdateModel(),
         );
+
+        if (update.ctrl.text != updateValue.description) {
+          await Provider.of<PrayerProviderV2>(context, listen: false)
+              .editUpdate(
+            update.ctrl.text,
+            prayerToEdit.id ?? '',
+            updateValue,
+          );
+        }
       });
     }
-    await Provider.of<PrayerProviderV2>(context, listen: false)
-        .editprayer(_descriptionController.text, prayerId);
+    if (_descriptionController.text != prayerToEdit.description) {
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .editprayer(_descriptionController.text, prayerId);
+    }
+
+    if (contactList.isNotEmpty) {
+      contactListCheck();
+    }
 
     //tags
     final tags = [
@@ -270,14 +282,18 @@ class _AddPrayerState extends State<AddPrayer> {
   }
 
   void contactListCheck() {
+    var tagsToKeep = <Contact>[];
     var tagsToRemove = <Contact>[];
     if (contactList.isNotEmpty)
       contactList.forEach((element) {
-        if (!(_descriptionController.text
+        if ((_descriptionController.text
             .contains((element.displayName ?? '') + ' '))) {
-          tagsToRemove.add(element);
+          tagsToKeep.add(element);
         }
       });
+
+    tagsToRemove = contactList.toSet().difference(tagsToKeep.toSet()).toList();
+
     tagsToRemove.forEach((element) {
       contactList.removeWhere((e) => e == element);
     });

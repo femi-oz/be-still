@@ -503,6 +503,10 @@ class PrayerServiceV2 {
       WriteBatch batch = FirebaseFirestore.instance.batch();
 
       final oldPrayer = await getPrayerFuture(prayerId);
+      final oldUpdates = (oldPrayer.updates ?? []).firstWhere(
+        (element) => element.id == update.id,
+        orElse: () => UpdateModel(),
+      );
 
       final newUpdate = UpdateModel(
           id: update.id,
@@ -514,13 +518,13 @@ class PrayerServiceV2 {
           modifiedDate: DateTime.now());
 
       final updateToDelete = UpdateModel(
-          id: oldPrayer.id,
-          description: oldPrayer.description,
-          createdBy: oldPrayer.createdBy,
-          createdDate: oldPrayer.createdDate,
-          modifiedBy: oldPrayer.modifiedBy,
-          modifiedDate: oldPrayer.modifiedDate,
-          status: oldPrayer.status);
+          id: oldUpdates.id,
+          description: oldUpdates.description,
+          createdBy: oldUpdates.createdBy,
+          createdDate: oldUpdates.createdDate,
+          modifiedBy: oldUpdates.modifiedBy,
+          modifiedDate: oldUpdates.modifiedDate,
+          status: oldUpdates.status);
 
       batch.update(_prayerDataCollectionReference.doc(prayerId), {
         'updates': FieldValue.arrayRemove([updateToDelete.toJson()])
@@ -531,12 +535,6 @@ class PrayerServiceV2 {
         'modifiedBy': _firebaseAuth.currentUser?.uid
       });
       batch.commit();
-      deleteUpdate(prayerId: prayerId, currentUpdate: update);
-      // _prayerDataCollectionReference.doc(prayerId).update({
-      //   'updates': FieldValue.arrayUnion([newUpdate.toJson()]),
-      //   'modifiedDate': DateTime.now(),
-      //   'modifiedBy': _firebaseAuth.currentUser?.uid
-      // });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

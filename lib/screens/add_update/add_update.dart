@@ -224,14 +224,18 @@ class _AddUpdateState extends State<AddUpdate> {
   }
 
   void contactListCheck() {
+    var tagsToKeep = <Contact>[];
     var tagsToRemove = <Contact>[];
     if (contacts.isNotEmpty)
       contacts.forEach((element) {
-        if (!(_descriptionController.text
+        if ((_descriptionController.text
             .contains((element.displayName ?? '') + ' '))) {
-          tagsToRemove.add(element);
+          tagsToKeep.add(element);
         }
       });
+
+    tagsToRemove = contacts.toSet().difference(tagsToKeep.toSet()).toList();
+
     tagsToRemove.forEach((element) {
       contacts.removeWhere((e) => e == element);
     });
