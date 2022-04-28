@@ -4,6 +4,7 @@ import 'package:be_still/enums/save_options.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
+import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/models/v2/update.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
@@ -161,20 +162,29 @@ class _AddPrayerState extends State<AddPrayer> {
       }
     }
 
+    var prayerTags = <TagModel>[];
+    var tagsToRemove = <TagModel>[];
+
     for (final tag in tags) {
-      if (!(_descriptionController.text
+      if ((_descriptionController.text
           .contains(((tag.displayName ?? '') + ' ')))) {
-        await Provider.of<PrayerProviderV2>(context, listen: false)
-            .removePrayerTag(tag, prayerId);
+        prayerTags.add(tag);
       }
       updateTextControllers.forEach((element) async {
-        if (updateTextControllers.isNotEmpty) if (!(updateTextControllers.any(
-            (u) => u.ctrl.text.contains(((tag.displayName ?? '') + ' '))))) {
-          await Provider.of<PrayerProviderV2>(context, listen: false)
-              .removePrayerTag(tag, prayerId);
+        if (updateTextControllers.isNotEmpty) {
+          updateTextControllers.forEach((element) {
+            if (element.ctrl.text.contains((tag.displayName ?? '') + ' ')) {
+              prayerTags.add(tag);
+            }
+          });
         }
       });
+      tagsToRemove = tags.toSet().difference(prayerTags.toSet()).toList();
     }
+    tagsToRemove.forEach((tag) async {
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .removePrayerTag(tag, prayerId);
+    });
 
     BeStilDialog.hideLoading(context);
     AppController appController = Get.find();
