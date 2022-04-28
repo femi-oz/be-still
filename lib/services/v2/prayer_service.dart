@@ -500,6 +500,8 @@ class PrayerServiceV2 {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+
       final newUpdate = UpdateModel(
           id: update.id,
           description: description,
@@ -508,12 +510,22 @@ class PrayerServiceV2 {
           createdDate: update.createdDate,
           modifiedBy: _firebaseAuth.currentUser?.uid,
           modifiedDate: DateTime.now());
-      deleteUpdate(prayerId: prayerId, currentUpdate: update);
-      _prayerDataCollectionReference.doc(prayerId).update({
+
+      batch.update(_prayerDataCollectionReference.doc(prayerId), {
+        'updates': FieldValue.arrayRemove([newUpdate.toJson()])
+      });
+      batch.update(_prayerDataCollectionReference.doc(prayerId), {
         'updates': FieldValue.arrayUnion([newUpdate.toJson()]),
         'modifiedDate': DateTime.now(),
         'modifiedBy': _firebaseAuth.currentUser?.uid
       });
+      batch.commit();
+      // deleteUpdate(prayerId: prayerId, currentUpdate: update);
+      // _prayerDataCollectionReference.doc(prayerId).update({
+      //   'updates': FieldValue.arrayUnion([newUpdate.toJson()]),
+      //   'modifiedDate': DateTime.now(),
+      //   'modifiedBy': _firebaseAuth.currentUser?.uid
+      // });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
