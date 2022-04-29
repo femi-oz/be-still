@@ -131,7 +131,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       },
                       child: Container(
                         padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                         height: 30,
                         width: MediaQuery.of(context).size.width * .30,
                         decoration: BoxDecoration(
@@ -147,8 +147,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                             'CANCEL',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.025,
+                              fontSize: 10,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -165,7 +164,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       child: Container(
                         height: 30,
                         padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                         decoration: BoxDecoration(
                           color: Colors.blue,
                           border: Border.all(
@@ -179,8 +178,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                             'GO TO SETTINGS',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.025,
+                              fontSize: 10,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -205,7 +203,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
   Future<void> _setPermission() async {
     var status = await Permission.contacts.request();
-    //disabled and alowed through popup
+    //disabled and allowed through popup
     if (!Settings.enabledContactPermission && status.isGranted)
       setState(() => Settings.enabledContactPermission = true);
     //disabled and is permanently denied (iOS)
@@ -222,7 +220,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     //disabled and denied through popup
     else if (!Settings.enabledContactPermission && status.isDenied)
       setState(() => Settings.enabledContactPermission = false);
-    //enabled and needs to be diabled
+    //enabled and needs to be disabled
     else {
       _openContactConfirmation(context);
     }

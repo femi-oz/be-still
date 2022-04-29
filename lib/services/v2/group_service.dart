@@ -20,7 +20,6 @@ import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quiver/iterables.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:rxdart/src/transformers/switch_map.dart';
 import 'package:uuid/uuid.dart';
 
 class GroupServiceV2 {

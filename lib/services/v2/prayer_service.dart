@@ -500,6 +500,7 @@ class PrayerServiceV2 {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
+
       final newUpdate = UpdateModel(
           id: update.id,
           description: description,
@@ -508,12 +509,33 @@ class PrayerServiceV2 {
           createdDate: update.createdDate,
           modifiedBy: _firebaseAuth.currentUser?.uid,
           modifiedDate: DateTime.now());
-      deleteUpdate(prayerId: prayerId, currentUpdate: update);
-      _prayerDataCollectionReference.doc(prayerId).update({
+
+      final createdDate =
+          Timestamp.fromDate(update.createdDate ?? DateTime.now());
+      final modifiedDate =
+          Timestamp.fromDate(update.modifiedDate ?? DateTime.now());
+
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      batch.update(_prayerDataCollectionReference.doc(prayerId), {
+        'updates': FieldValue.arrayRemove([
+          {
+            'id': update.id,
+            'description': update.description,
+            'createdBy': update.createdBy,
+            'createdDate': createdDate,
+            'modifiedBy': update.modifiedBy,
+            'modifiedDate': modifiedDate,
+            'status': update.status
+          }
+        ])
+      });
+      batch.update(_prayerDataCollectionReference.doc(prayerId), {
         'updates': FieldValue.arrayUnion([newUpdate.toJson()]),
         'modifiedDate': DateTime.now(),
         'modifiedBy': _firebaseAuth.currentUser?.uid
       });
+
+      batch.commit();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -610,16 +632,23 @@ class PrayerServiceV2 {
     required UpdateModel currentUpdate,
   }) async {
     try {
-      final updateToDelete = UpdateModel(
-          id: currentUpdate.id,
-          description: currentUpdate.description,
-          createdBy: currentUpdate.createdBy,
-          createdDate: currentUpdate.createdDate,
-          modifiedBy: currentUpdate.modifiedBy,
-          modifiedDate: currentUpdate.modifiedDate,
-          status: currentUpdate.status);
+      final createdDate =
+          Timestamp.fromDate(currentUpdate.createdDate ?? DateTime.now());
+      final modifiedDate =
+          Timestamp.fromDate(currentUpdate.modifiedDate ?? DateTime.now());
+
       _prayerDataCollectionReference.doc(prayerId).update({
-        'updates': FieldValue.arrayRemove([updateToDelete.toJson()])
+        'updates': FieldValue.arrayRemove([
+          {
+            'id': currentUpdate.id,
+            'description': currentUpdate.description,
+            'createdBy': currentUpdate.createdBy,
+            'createdDate': createdDate,
+            'modifiedBy': currentUpdate.modifiedBy,
+            'modifiedDate': modifiedDate,
+            'status': currentUpdate.status
+          }
+        ])
       });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));

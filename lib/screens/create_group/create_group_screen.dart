@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/group_type.dart';
-import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
@@ -16,7 +15,6 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
 
 class CreateGroupScreen extends StatefulWidget {
   static const routeName = '/create-group';

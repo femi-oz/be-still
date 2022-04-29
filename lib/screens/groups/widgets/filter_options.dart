@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:be_still/enums/status.dart';
-import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';

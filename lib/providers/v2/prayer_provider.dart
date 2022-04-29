@@ -9,7 +9,6 @@ import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/models/v2/update.model.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
-import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/services/v2/notification_service.dart';
 import 'package:be_still/services/v2/prayer_service.dart';
 import 'package:be_still/services/v2/user_service.dart';
@@ -416,27 +415,6 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> _autoDeleteArchivePrayers() async {
-    try {
-      if (_firebaseAuth.currentUser == null) return null;
-      final archiveAutoDeleteMins =
-          Provider.of<UserProviderV2>(Get.context!, listen: false)
-                  .currentUser
-                  .archiveAutoDeleteMinutes ??
-              0;
-      final includeAnsweredPrayers =
-          Provider.of<UserProviderV2>(Get.context!, listen: false)
-                  .currentUser
-                  .includeAnsweredPrayerAutoDelete ??
-              false;
-      if (archiveAutoDeleteMins > 0)
-        await _prayerService.autoDeleteArchivePrayers(
-            archiveAutoDeleteMins, includeAnsweredPrayers);
-    } catch (e) {
-      rethrow;
-    }
-  }
-
   Future<void> _unSnoozePrayerPast() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
@@ -587,8 +565,8 @@ class PrayerProviderV2 with ChangeNotifier {
       ...answeredGroupPrayers
     ];
 
-    _filteredGroupPrayers.sort((a, b) => (b.modifiedDate ?? DateTime.now())
-        .compareTo(a.modifiedDate ?? DateTime.now()));
+    _filteredGroupPrayers.sort((a, b) => (b.createdDate ?? DateTime.now())
+        .compareTo(a.createdDate ?? DateTime.now()));
 
     List<PrayerDataModel> _groupDistinct = [];
     var idSet = <String>{};
@@ -615,6 +593,8 @@ class PrayerProviderV2 with ChangeNotifier {
       List<PrayerDataModel> allPrayers = [];
       List<PrayerDataModel> archivePrayersWithDelete = [];
       List<PrayerDataModel> archivePrayersWithoutDelete = [];
+      List<PrayerDataModel> answeredPrayersWithDelete = [];
+      List<PrayerDataModel> answeredPrayersWithoutDelete = [];
 
       final user = await _userService
           .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
@@ -637,22 +617,31 @@ class PrayerProviderV2 with ChangeNotifier {
         for (var prayer in prayers) {
           if (prayer.autoDeleteDate != null) {
             if (user.includeAnsweredPrayerAutoDelete ?? false) {
-              answeredPrayers = prayers
+              answeredPrayersWithDelete = prayers
                   .where((PrayerDataModel data) =>
                       data.status == Status.archived &&
                       (data.autoDeleteDate ?? DateTime.now())
                           .isAfter(DateTime.now()) &&
                       (data.isAnswered ?? false) == true)
                   .toList();
+            } else {
+              answeredPrayersWithDelete = prayers
+                  .where((PrayerDataModel data) =>
+                      (data.isAnswered ?? false) == true)
+                  .toList();
             }
-          } else {
-            answeredPrayers = prayers
-                .where((PrayerDataModel data) =>
-                    (data.status == Status.archived) &&
-                    (data.isAnswered ?? false) == true)
-                .toList();
           }
+          answeredPrayersWithoutDelete = prayers
+              .where((PrayerDataModel data) =>
+                  (data.status == Status.archived) &&
+                  data.autoDeleteDate == null &&
+                  (data.isAnswered ?? false) == true)
+              .toList();
         }
+        answeredPrayers = [
+          ...answeredPrayersWithDelete,
+          ...answeredPrayersWithoutDelete
+        ];
       }
       if (_filterOption == Status.archived) {
         for (var prayer in prayers) {

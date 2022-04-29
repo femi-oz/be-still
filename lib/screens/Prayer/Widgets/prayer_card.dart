@@ -9,7 +9,6 @@ import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
-import 'package:be_still/providers/theme_provider.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
@@ -324,8 +323,15 @@ class _PrayerCardState extends State<PrayerCard> {
     final creatorName = Provider.of<UserProviderV2>(context)
         .getPrayerCreatorName(widget.prayer.createdBy ?? '');
     bool isOwner = widget.prayer.createdBy == _user;
-    List<String> tags =
+    var idSet = <String>{};
+    List<String> tags = [];
+    List<String> allTags =
         (widget.prayer.tags ?? []).map((e) => e.displayName ?? '').toList();
+    for (var tag in allTags) {
+      if (idSet.add(tag)) {
+        tags.add(tag);
+      }
+    }
 
     bool isGroupPrayer = widget.prayer.isGroup ?? false;
 

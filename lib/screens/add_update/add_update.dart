@@ -1,13 +1,10 @@
 import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/models/prayer.model.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/v2/tag.model.dart';
 
-import 'package:be_still/providers/user_provider.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
-import 'package:be_still/providers/v2/misc_provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
 import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
@@ -137,8 +134,10 @@ class _AddUpdateState extends State<AddUpdate> {
     }
   }
 
-  Future<void> _onTagSelected(s, TextEditingController controller) async {
-    controller.text = controller.text.replaceFirst(tagText, s.displayName);
+  Future<void> _onTagSelected(
+      Contact s, TextEditingController controller) async {
+    controller.text =
+        controller.text.replaceFirst(tagText, (s.displayName ?? '') + ' ');
     tagText = '';
     controller.selection = TextSelection.fromPosition(
         TextPosition(offset: controller.text.length));
@@ -160,7 +159,6 @@ class _AddUpdateState extends State<AddUpdate> {
     try {
       if (!_formKey.currentState!.validate()) return;
       _formKey.currentState!.save();
-      final userId = FirebaseAuth.instance.currentUser?.uid;
       BeStilDialog.showLoading(context);
       if (_descriptionController.text.trim().isEmpty) {
         BeStilDialog.hideLoading(context);
@@ -169,7 +167,6 @@ class _AddUpdateState extends State<AddUpdate> {
         final s = StackTrace.fromString(e.stacktrace ?? '');
         final user =
             Provider.of<UserProviderV2>(context, listen: false).currentUser;
-        final userName = (user.firstName ?? '') + ' ' + (user.lastName ?? '');
         BeStilDialog.showErrorDialog(
             context, StringUtils.getErrorMessage(e), user, s);
       } else {
@@ -180,19 +177,14 @@ class _AddUpdateState extends State<AddUpdate> {
           _descriptionController.text,
         );
 
+        contactListCheck();
         if (contacts.length > 0) {
-          for (final contact in contacts) {
-            if (_descriptionController.text
-                .contains(contact.displayName ?? '')) {
-              final user = Provider.of<UserProviderV2>(context, listen: false)
-                  .currentUser;
-              final userName =
-                  (user.firstName ?? '') + ' ' + (user.lastName ?? '');
-              await Provider.of<PrayerProviderV2>(context, listen: false)
-                  .addPrayerTag(contacts, userName, _descriptionController.text,
-                      prayerId);
-            }
-          }
+          final user =
+              Provider.of<UserProviderV2>(context, listen: false).currentUser;
+          final userName = (user.firstName ?? '') + ' ' + (user.lastName ?? '');
+          await Provider.of<PrayerProviderV2>(context, listen: false)
+              .addPrayerTag(
+                  contacts, userName, _descriptionController.text, prayerId);
         }
         AppController appController = Get.find();
 
@@ -229,6 +221,24 @@ class _AddUpdateState extends State<AddUpdate> {
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
+  }
+
+  void contactListCheck() {
+    var tagsToKeep = <Contact>[];
+    var tagsToRemove = <Contact>[];
+    if (contacts.isNotEmpty)
+      contacts.forEach((element) {
+        if ((_descriptionController.text
+            .contains((element.displayName ?? '') + ' '))) {
+          tagsToKeep.add(element);
+        }
+      });
+
+    tagsToRemove = contacts.toSet().difference(tagsToKeep.toSet()).toList();
+
+    tagsToRemove.forEach((element) {
+      contacts.removeWhere((e) => e == element);
+    });
   }
 
   Future<bool> _onWillPop() async {

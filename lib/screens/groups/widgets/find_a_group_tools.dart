@@ -7,7 +7,6 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/input_field.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -28,8 +27,6 @@ class _FindGroupToolsState extends State<FindGroupTools> {
 
   void _searchGroup() async {
     try {
-      final userId = FirebaseAuth.instance.currentUser?.uid;
-
       await Provider.of<GroupProviderV2>(context, listen: false)
           .advanceSearchAllGroups(
               _groupNameController.text,

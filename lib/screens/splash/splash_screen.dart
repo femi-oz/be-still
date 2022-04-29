@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/user.model.dart';
-import 'package:be_still/providers/auth_provider.dart';
 import 'package:be_still/providers/v2/auth_provider.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';

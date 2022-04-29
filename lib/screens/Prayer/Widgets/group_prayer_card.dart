@@ -5,7 +5,6 @@ import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/follower.model.dart';
-import 'package:be_still/models/v2/group_user.model.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/providers/v2/group.provider.dart';

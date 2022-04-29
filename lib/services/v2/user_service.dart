@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:be_still/enums/interval.dart';
 import 'package:be_still/enums/sort_by.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/locator.dart';

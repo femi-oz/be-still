@@ -4,6 +4,7 @@ import 'package:be_still/enums/save_options.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
+import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/models/v2/update.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
@@ -58,6 +59,7 @@ class _AddPrayerState extends State<AddPrayer> {
   bool _isInit = true;
   List<Contact> tagList = [];
   List<Contact> contactList = [];
+  List<Contact> updateContactList = [];
   List<SaveOption> saveOptions = [];
   String tagText = '';
   SaveOption? selected;
@@ -101,7 +103,7 @@ class _AddPrayerState extends State<AddPrayer> {
 
     if (updateTextControllers.length > 0) {
       updateTextControllers.forEach((update) async {
-        if (update.ctrl.text == '') {
+        if (update.ctrl.text.isEmpty) {
           await Provider.of<PrayerProviderV2>(context, listen: false)
               .deleteUpdate(
                   prayerToEdit.id ?? '',
@@ -110,18 +112,31 @@ class _AddPrayerState extends State<AddPrayer> {
           return;
         }
 
-        final updateValue = (prayerToEdit.updates ?? <UpdateModel>[])
-            .firstWhere((element) => element.id == update.id);
-
-        await Provider.of<PrayerProviderV2>(context, listen: false).editUpdate(
-          update.ctrl.text,
-          prayerToEdit.id ?? '',
-          updateValue,
+        final updateValue =
+            (prayerToEdit.updates ?? <UpdateModel>[]).firstWhere(
+          (element) => element.id == update.id,
+          orElse: () => UpdateModel(),
         );
+
+        if (update.ctrl.text != updateValue.description) {
+          await Provider.of<PrayerProviderV2>(context, listen: false)
+              .editUpdate(
+            update.ctrl.text,
+            prayerToEdit.id ?? '',
+            updateValue,
+          );
+        }
       });
     }
-    await Provider.of<PrayerProviderV2>(context, listen: false)
-        .editprayer(_descriptionController.text, prayerId);
+    if (_descriptionController.text != prayerToEdit.description) {
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .editprayer(_descriptionController.text, prayerId);
+    }
+
+    // if (contactList.isNotEmpty |) {
+    // }
+
+    contactListCheck();
 
     //tags
     final tags = [
@@ -135,7 +150,7 @@ class _AddPrayerState extends State<AddPrayer> {
             if (!tags.any((t) => t.contactIdentifier == c.identifier)) {
               await Provider.of<PrayerProviderV2>(context, listen: false)
                   .addPrayerTag(
-                      up.contactList, userName, up.ctrl.text, prayerId);
+                      updateContactList, userName, up.ctrl.text, prayerId);
               ids.add(up.ctrl.text);
             }
           }
@@ -161,14 +176,29 @@ class _AddPrayerState extends State<AddPrayer> {
       }
     }
 
+    var prayerTags = <TagModel>[];
+    var tagsToRemove = <TagModel>[];
+
     for (final tag in tags) {
-      if (!_descriptionController.text.contains(tag.displayName ?? '') &&
-          !updateTextControllers
-              .any((u) => u.ctrl.text.contains(tag.displayName ?? ''))) {
-        await Provider.of<PrayerProviderV2>(context, listen: false)
-            .removePrayerTag(tag, prayerId);
+      if ((_descriptionController.text
+          .contains(((tag.displayName ?? '') + ' ')))) {
+        prayerTags.add(tag);
       }
+      updateTextControllers.forEach((element) async {
+        if (updateTextControllers.isNotEmpty) {
+          updateTextControllers.forEach((element) {
+            if (element.ctrl.text.contains((tag.displayName ?? '') + ' ')) {
+              prayerTags.add(tag);
+            }
+          });
+        }
+      });
+      tagsToRemove = tags.toSet().difference(prayerTags.toSet()).toList();
     }
+    tagsToRemove.forEach((tag) async {
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .removePrayerTag(tag, prayerId);
+    });
 
     BeStilDialog.hideLoading(context);
     AppController appController = Get.find();
@@ -199,6 +229,7 @@ class _AddPrayerState extends State<AddPrayer> {
     try {
       final _user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      AppController appController = Get.find();
 
       setState(() => _autoValidate = true);
       if (!_formKey.currentState!.validate()) return;
@@ -216,20 +247,16 @@ class _AddPrayerState extends State<AddPrayer> {
         if (!Provider.of<PrayerProviderV2>(context, listen: false).isEdit) {
           if ((selected?.name ?? '').isEmpty ||
               (selected?.name) == 'My Prayers') {
+            contactListCheck();
             await Provider.of<PrayerProviderV2>(context, listen: false)
                 .addPrayer('', _descriptionController.text, false, contactList);
-          } else {
-            await Provider.of<PrayerProviderV2>(context, listen: false)
-                .addPrayer((selected?.id ?? ''), _descriptionController.text,
-                    true, contactList);
-          }
-
-          AppController appController = Get.find();
-          if ((selected?.name ?? '').isEmpty ||
-              (selected?.name) == 'My Prayers') {
             BeStilDialog.hideLoading(context);
             appController.setCurrentPage(0, true, 1);
           } else {
+            contactListCheck();
+            await Provider.of<PrayerProviderV2>(context, listen: false)
+                .addPrayer((selected?.id ?? ''), _descriptionController.text,
+                    true, contactList);
             await Provider.of<GroupProviderV2>(context, listen: false)
                 .setCurrentGroupById(selected?.id ?? '');
             await Provider.of<PrayerProviderV2>(context, listen: false)
@@ -242,18 +269,53 @@ class _AddPrayerState extends State<AddPrayer> {
         }
       }
     } on HttpException catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
+      showError(e, s);
     } catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
+      showError(e, s);
     }
+  }
+
+  void showError(e, s) {
+    BeStilDialog.hideLoading(context);
+    final user =
+        Provider.of<UserProviderV2>(context, listen: false).currentUser;
+    BeStilDialog.showErrorDialog(
+        context, StringUtils.getErrorMessage(e), user, s);
+  }
+
+  void contactListCheck() {
+    var tagsToKeep = <Contact>[];
+    var updateTagsToKeep = <Contact>[];
+    var tagsToRemove = <Contact>[];
+    var updateTagsToRemove = <Contact>[];
+    if (contactList.isNotEmpty)
+      contactList.forEach((element) {
+        if ((_descriptionController.text
+            .contains((element.displayName ?? '') + ' '))) {
+          tagsToKeep.add(element);
+        }
+      });
+
+    if (updateContactList.isNotEmpty) {
+      updateContactList.forEach((t) {
+        updateTextControllers.forEach((e) async {
+          if (e.ctrl.text.contains((t.displayName ?? '') + ' ')) {
+            updateTagsToKeep.add(t);
+          }
+        });
+      });
+    }
+
+    tagsToRemove = contactList.toSet().difference(tagsToKeep.toSet()).toList();
+    updateTagsToRemove =
+        updateContactList.toSet().difference(updateTagsToKeep.toSet()).toList();
+
+    tagsToRemove.forEach((element) {
+      contactList.removeWhere((e) => e == element);
+    });
+    updateTagsToRemove.forEach((element) {
+      updateContactList.removeWhere((e) => e == element);
+    });
   }
 
   @override
@@ -469,15 +531,19 @@ class _AddPrayerState extends State<AddPrayer> {
   Future<void> _onTagSelected(Contact s, Backup? backup) async {
     if (!(backup == null ? contactList : backup.contactList)
         .any((e) => e.identifier == s.identifier)) {
-      if (backup == null)
+      if (backup == null) {
         contactList = [...contactList, s];
-      else
+      } else {
         backup.contactList = [...backup.contactList, s];
+        backup.contactList.forEach((element) {
+          updateContactList.add(element);
+        });
+      }
     }
     (backup == null ? _descriptionController : backup.ctrl).text =
         (backup == null ? _descriptionController : backup.ctrl)
             .text
-            .replaceFirst(tagText, (s.displayName ?? ''));
+            .replaceFirst(tagText, (s.displayName ?? '') + ' ');
     setState(() {
       if (backup == null) {
         showContactList = false;

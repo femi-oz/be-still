@@ -113,16 +113,6 @@ class _EntryScreenState extends State<EntryScreen> {
       _groupId = deepLink.queryParameters['groups'] ?? "";
       Provider.of<GroupProviderV2>(context, listen: false)
           .setJoinGroupId(_groupId);
-
-      final userId = FirebaseAuth.instance.currentUser?.uid;
-
-      // if (_groupId.isNotEmpty)
-      //   Provider.of<GroupProvider>(context, listen: false)
-      //       .getGroupFuture(_groupId, userId ?? '')
-      //       .then((groupPrayer) {
-      //     if (!(groupPrayer.groupUsers ?? []).any((u) => u.userId == userId))
-      //       JoinGroup().showAlert(context, groupPrayer);
-      //   });
     } catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;

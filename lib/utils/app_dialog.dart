@@ -1,4 +1,3 @@
-import 'package:be_still/models/user.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_alert_dialog.dart';
