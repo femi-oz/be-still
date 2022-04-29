@@ -500,10 +500,9 @@ class PrayerServiceV2 {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      WriteBatch batch = FirebaseFirestore.instance.batch();
 
       final oldPrayer = await getPrayerFuture(prayerId);
-      final oldUpdates = (oldPrayer.updates ?? []).firstWhere(
+      final oldUpdate = (oldPrayer.updates ?? []).firstWhere(
         (element) => element.id == update.id,
         orElse: () => UpdateModel(),
       );
@@ -518,22 +517,25 @@ class PrayerServiceV2 {
           modifiedDate: DateTime.now());
 
       final updateToDelete = UpdateModel(
-          id: oldUpdates.id,
-          description: oldUpdates.description,
-          createdBy: oldUpdates.createdBy,
-          createdDate: oldUpdates.createdDate,
-          modifiedBy: oldUpdates.modifiedBy,
-          modifiedDate: oldUpdates.modifiedDate,
-          status: oldUpdates.status);
+          id: oldUpdate.id,
+          description: oldUpdate.description,
+          createdBy: oldUpdate.createdBy,
+          createdDate: oldUpdate.createdDate,
+          modifiedBy: oldUpdate.modifiedBy,
+          modifiedDate: oldUpdate.modifiedDate,
+          status: oldUpdate.status);
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      if (updateToDelete.id != null) {
+        batch.update(_prayerDataCollectionReference.doc(prayerId), {
+          'updates': FieldValue.arrayRemove([updateToDelete.toJson()])
+        });
+        batch.update(_prayerDataCollectionReference.doc(prayerId), {
+          'updates': FieldValue.arrayUnion([newUpdate.toJson()]),
+          'modifiedDate': DateTime.now(),
+          'modifiedBy': _firebaseAuth.currentUser?.uid
+        });
+      }
 
-      batch.update(_prayerDataCollectionReference.doc(prayerId), {
-        'updates': FieldValue.arrayRemove([updateToDelete.toJson()])
-      });
-      batch.update(_prayerDataCollectionReference.doc(prayerId), {
-        'updates': FieldValue.arrayUnion([newUpdate.toJson()]),
-        'modifiedDate': DateTime.now(),
-        'modifiedBy': _firebaseAuth.currentUser?.uid
-      });
       batch.commit();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
