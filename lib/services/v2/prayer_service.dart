@@ -534,7 +534,6 @@ class PrayerServiceV2 {
         'modifiedDate': DateTime.now(),
         'modifiedBy': _firebaseAuth.currentUser?.uid
       });
-      // // }
 
       batch.commit();
     } catch (e) {
@@ -633,16 +632,23 @@ class PrayerServiceV2 {
     required UpdateModel currentUpdate,
   }) async {
     try {
-      final updateToDelete = UpdateModel(
-          id: currentUpdate.id,
-          description: currentUpdate.description,
-          createdBy: currentUpdate.createdBy,
-          createdDate: currentUpdate.createdDate,
-          modifiedBy: currentUpdate.modifiedBy,
-          modifiedDate: currentUpdate.modifiedDate,
-          status: currentUpdate.status);
+      final createdDate =
+          Timestamp.fromDate(currentUpdate.createdDate ?? DateTime.now());
+      final modifiedDate =
+          Timestamp.fromDate(currentUpdate.modifiedDate ?? DateTime.now());
+
       _prayerDataCollectionReference.doc(prayerId).update({
-        'updates': FieldValue.arrayRemove([updateToDelete.toJson()])
+        'updates': FieldValue.arrayRemove([
+          {
+            'id': currentUpdate.id,
+            'description': currentUpdate.description,
+            'createdBy': currentUpdate.createdBy,
+            'createdDate': createdDate,
+            'modifiedBy': currentUpdate.modifiedBy,
+            'modifiedDate': modifiedDate,
+            'status': currentUpdate.status
+          }
+        ])
       });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
