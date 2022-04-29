@@ -59,6 +59,7 @@ class _AddPrayerState extends State<AddPrayer> {
   bool _isInit = true;
   List<Contact> tagList = [];
   List<Contact> contactList = [];
+  List<Contact> updateContactList = [];
   List<SaveOption> saveOptions = [];
   String tagText = '';
   SaveOption? selected;
@@ -132,9 +133,10 @@ class _AddPrayerState extends State<AddPrayer> {
           .editprayer(_descriptionController.text, prayerId);
     }
 
-    if (contactList.isNotEmpty) {
-      contactListCheck();
-    }
+    // if (contactList.isNotEmpty |) {
+    // }
+
+    contactListCheck();
 
     //tags
     final tags = [
@@ -148,7 +150,7 @@ class _AddPrayerState extends State<AddPrayer> {
             if (!tags.any((t) => t.contactIdentifier == c.identifier)) {
               await Provider.of<PrayerProviderV2>(context, listen: false)
                   .addPrayerTag(
-                      up.contactList, userName, up.ctrl.text, prayerId);
+                      updateContactList, userName, up.ctrl.text, prayerId);
               ids.add(up.ctrl.text);
             }
           }
@@ -283,7 +285,9 @@ class _AddPrayerState extends State<AddPrayer> {
 
   void contactListCheck() {
     var tagsToKeep = <Contact>[];
+    var updateTagsToKeep = <Contact>[];
     var tagsToRemove = <Contact>[];
+    var updateTagsToRemove = <Contact>[];
     if (contactList.isNotEmpty)
       contactList.forEach((element) {
         if ((_descriptionController.text
@@ -292,10 +296,25 @@ class _AddPrayerState extends State<AddPrayer> {
         }
       });
 
+    if (updateContactList.isNotEmpty) {
+      updateContactList.forEach((t) {
+        updateTextControllers.forEach((e) async {
+          if (e.ctrl.text.contains((t.displayName ?? '') + ' ')) {
+            updateTagsToKeep.add(t);
+          }
+        });
+      });
+    }
+
     tagsToRemove = contactList.toSet().difference(tagsToKeep.toSet()).toList();
+    updateTagsToRemove =
+        updateContactList.toSet().difference(updateTagsToKeep.toSet()).toList();
 
     tagsToRemove.forEach((element) {
       contactList.removeWhere((e) => e == element);
+    });
+    updateTagsToRemove.forEach((element) {
+      updateContactList.removeWhere((e) => e == element);
     });
   }
 
@@ -512,10 +531,14 @@ class _AddPrayerState extends State<AddPrayer> {
   Future<void> _onTagSelected(Contact s, Backup? backup) async {
     if (!(backup == null ? contactList : backup.contactList)
         .any((e) => e.identifier == s.identifier)) {
-      if (backup == null)
+      if (backup == null) {
         contactList = [...contactList, s];
-      else
+      } else {
         backup.contactList = [...backup.contactList, s];
+        backup.contactList.forEach((element) {
+          updateContactList.add(element);
+        });
+      }
     }
     (backup == null ? _descriptionController : backup.ctrl).text =
         (backup == null ? _descriptionController : backup.ctrl)
