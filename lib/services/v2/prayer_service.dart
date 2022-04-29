@@ -536,7 +536,7 @@ class PrayerServiceV2 {
         });
       }
 
-      batch.commit();
+      await batch.commit();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
