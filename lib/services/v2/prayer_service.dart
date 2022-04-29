@@ -501,12 +501,6 @@ class PrayerServiceV2 {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
 
-      final oldPrayer = await getPrayerFuture(prayerId);
-      final oldUpdate = (oldPrayer.updates ?? []).firstWhere(
-        (element) => element.id == update.id,
-        orElse: () => UpdateModel(),
-      );
-
       final newUpdate = UpdateModel(
           id: update.id,
           description: description,
@@ -516,27 +510,33 @@ class PrayerServiceV2 {
           modifiedBy: _firebaseAuth.currentUser?.uid,
           modifiedDate: DateTime.now());
 
-      final updateToDelete = UpdateModel(
-          id: oldUpdate.id,
-          description: oldUpdate.description,
-          createdBy: oldUpdate.createdBy,
-          createdDate: oldUpdate.createdDate,
-          modifiedBy: oldUpdate.modifiedBy,
-          modifiedDate: oldUpdate.modifiedDate,
-          status: oldUpdate.status);
-      WriteBatch batch = FirebaseFirestore.instance.batch();
-      if (updateToDelete.id != null) {
-        batch.update(_prayerDataCollectionReference.doc(prayerId), {
-          'updates': FieldValue.arrayRemove([updateToDelete.toJson()])
-        });
-        batch.update(_prayerDataCollectionReference.doc(prayerId), {
-          'updates': FieldValue.arrayUnion([newUpdate.toJson()]),
-          'modifiedDate': DateTime.now(),
-          'modifiedBy': _firebaseAuth.currentUser?.uid
-        });
-      }
+      final createdDate =
+          Timestamp.fromDate(update.createdDate ?? DateTime.now());
+      final modifiedDate =
+          Timestamp.fromDate(update.modifiedDate ?? DateTime.now());
 
-      await batch.commit();
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      batch.update(_prayerDataCollectionReference.doc(prayerId), {
+        'updates': FieldValue.arrayRemove([
+          {
+            'id': update.id,
+            'description': update.description,
+            'createdBy': update.createdBy,
+            'createdDate': createdDate,
+            'modifiedBy': update.modifiedBy,
+            'modifiedDate': modifiedDate,
+            'status': update.status
+          }
+        ])
+      });
+      batch.update(_prayerDataCollectionReference.doc(prayerId), {
+        'updates': FieldValue.arrayUnion([newUpdate.toJson()]),
+        'modifiedDate': DateTime.now(),
+        'modifiedBy': _firebaseAuth.currentUser?.uid
+      });
+      // // }
+
+      batch.commit();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
