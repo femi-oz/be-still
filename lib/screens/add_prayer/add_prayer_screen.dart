@@ -133,9 +133,6 @@ class _AddPrayerState extends State<AddPrayer> {
           .editprayer(_descriptionController.text, prayerId);
     }
 
-    // if (contactList.isNotEmpty |) {
-    // }
-
     contactListCheck();
 
     //tags

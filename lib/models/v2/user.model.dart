@@ -32,6 +32,7 @@ class UserDataModel {
   String? modifiedBy;
   DateTime? createdDate;
   DateTime? modifiedDate;
+  DateTime? prayerModifiedDate;
   String? status;
 
   UserDataModel(
@@ -64,6 +65,7 @@ class UserDataModel {
       this.modifiedBy,
       this.createdDate,
       this.modifiedDate,
+      this.prayerModifiedDate,
       this.status});
 
   UserDataModel.fromJson(Map<String, dynamic> json, String did) {
@@ -112,6 +114,7 @@ class UserDataModel {
     modifiedBy = json['modifiedBy'];
     createdDate = json['createdDate']?.toDate();
     modifiedDate = json['modifiedDate']?.toDate();
+    prayerModifiedDate = json['prayerModifiedDate']?.toDate();
     status = json['status'];
   }
 
@@ -154,6 +157,7 @@ class UserDataModel {
     data['modifiedBy'] = this.modifiedBy;
     data['createdDate'] = this.createdDate;
     data['modifiedDate'] = this.modifiedDate;
+    data['prayerModifiedDate'] = this.prayerModifiedDate;
     data['status'] = this.status;
     return data;
   }

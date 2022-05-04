@@ -71,6 +71,7 @@ class UserServiceV2 {
         modifiedBy: uid,
         createdDate: DateTime.now(),
         modifiedDate: DateTime.now(),
+        prayerModifiedDate: DateTime.now(),
         status: Status.active,
       ).toJson();
       _userDataCollectionReference.doc(uid).set(doc);

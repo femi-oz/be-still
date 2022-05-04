@@ -208,9 +208,16 @@ class PrayerServiceV2 {
   Future<void> editPrayer(
       {required String prayerId, required String description}) async {
     try {
-      await _prayerDataCollectionReference
-          .doc(prayerId)
-          .update({'description': description, 'modifiedDate': DateTime.now()});
+      final prayer = await getPrayerFuture(prayerId);
+      final followers = prayer.followers ?? [];
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      followers.forEach((follower) async {
+        batch.update(_userDataCollectionReference.doc(follower.userId),
+            {'prayerModifiedDate': DateTime.now()});
+      });
+      batch.update(_prayerDataCollectionReference.doc(prayerId),
+          {'description': description, 'modifiedDate': DateTime.now()});
+      batch.commit();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
