@@ -410,8 +410,27 @@ class PrayerServiceV2 {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
+
+      final createdDate =
+          Timestamp.fromDate(currentTag.createdDate ?? DateTime.now());
+      final modifiedDate =
+          Timestamp.fromDate(currentTag.modifiedDate ?? DateTime.now());
       _prayerDataCollectionReference.doc(prayerId).update({
-        "tags": FieldValue.arrayRemove([currentTag.toJson()])
+        "tags": FieldValue.arrayRemove([
+          {
+            'id': currentTag.id,
+            'userId': currentTag.userId,
+            'phoneNumber': currentTag.phoneNumber,
+            'email': currentTag.email,
+            'displayName': currentTag.displayName,
+            'contactIdentifier': currentTag.contactIdentifier,
+            'createdBy': currentTag.createdBy,
+            'modifiedBy': currentTag.modifiedBy,
+            'createdDate': createdDate,
+            'modifiedDate': modifiedDate,
+            'status': currentTag.status,
+          }
+        ])
       });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
