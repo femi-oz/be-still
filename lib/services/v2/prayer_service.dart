@@ -279,15 +279,6 @@ class PrayerServiceV2 {
           UserDataModel user =
               await _userService.getUserByIdFuture(follower.userId ?? '');
 
-          final newFollowers = FollowerModel(
-              id: follower.id,
-              userId: follower.userId,
-              prayerStatus: follower.prayerStatus,
-              createdBy: follower.createdBy,
-              createdDate: follower.createdDate,
-              modifiedBy: follower.modifiedBy,
-              modifiedDate: follower.modifiedDate,
-              status: follower.status);
           final prayerToRemove = (user.prayers ?? []).firstWhere(
             (element) => element.prayerId == prayerId,
             orElse: () => FollowedPrayer(),
@@ -297,7 +288,20 @@ class PrayerServiceV2 {
               groupId: prayerToRemove.groupId);
           batch.update(_prayerDataCollectionReference.doc(prayerId), {
             'status': Status.archived,
-            'followers': FieldValue.arrayRemove([newFollowers.toJson()])
+            'followers': FieldValue.arrayRemove([
+              {
+                'id': follower.id,
+                'userId': follower.userId,
+                'prayerStatus': follower.prayerStatus,
+                'createdBy': follower.createdBy,
+                'createdDate':
+                    Timestamp.fromDate(follower.createdDate ?? DateTime.now()),
+                'modifiedBy': follower.modifiedBy,
+                'modifiedDate':
+                    Timestamp.fromDate(follower.modifiedDate ?? DateTime.now()),
+                'status': follower.status
+              }
+            ])
           });
           batch.update(_userDataCollectionReference.doc(follower.userId), {
             'prayers': FieldValue.arrayRemove([newPrayerToRemove.toJson()])
@@ -586,7 +590,20 @@ class PrayerServiceV2 {
             'isAnswered': true,
             'status': Status.archived,
             'archivedDate': DateTime.now(),
-            'followers': FieldValue.arrayRemove([follower.toJson()])
+            'followers': FieldValue.arrayRemove([
+              {
+                'id': follower.id,
+                'userId': follower.userId,
+                'prayerStatus': follower.prayerStatus,
+                'createdBy': follower.createdBy,
+                'modifiedBy': follower.modifiedBy,
+                'createdDate':
+                    Timestamp.fromDate(follower.createdDate ?? DateTime.now()),
+                'modifiedDate':
+                    Timestamp.fromDate(follower.createdDate ?? DateTime.now()),
+                'status': follower.status
+              }
+            ])
           });
           batch.update(_userDataCollectionReference.doc(follower.userId), {
             'prayers': FieldValue.arrayRemove([prayerToRemove.toJson()]),
@@ -771,15 +788,7 @@ class PrayerServiceV2 {
       required FollowerModel follower}) async {
     final newPrayers =
         FollowedPrayer(prayerId: prayer.prayerId, groupId: prayer.groupId);
-    final newFollower = FollowerModel(
-        id: follower.id,
-        userId: follower.userId,
-        prayerStatus: follower.prayerStatus,
-        createdBy: follower.createdBy,
-        createdDate: follower.createdDate,
-        modifiedBy: follower.modifiedBy,
-        modifiedDate: follower.modifiedDate,
-        status: follower.status);
+
     WriteBatch batch = FirebaseFirestore.instance.batch();
     if ((prayer.prayerId ?? '').isNotEmpty)
       batch.update(
@@ -792,7 +801,20 @@ class PrayerServiceV2 {
           });
     if ((follower.id ?? '').isNotEmpty)
       batch.update(_prayerDataCollectionReference.doc(prayerId), {
-        'followers': FieldValue.arrayRemove([newFollower.toJson()]),
+        'followers': FieldValue.arrayRemove([
+          {
+            'id': follower.id,
+            'userId': follower.userId,
+            'prayerStatus': follower.prayerStatus,
+            'createdBy': follower.createdBy,
+            'createdDate':
+                Timestamp.fromDate(follower.createdDate ?? DateTime.now()),
+            'modifiedBy': follower.modifiedBy,
+            'modifiedDate':
+                Timestamp.fromDate(follower.createdDate ?? DateTime.now()),
+            'status': follower.status
+          }
+        ]),
         'modifiedDate': DateTime.now(),
         'modifiedBy': _firebaseAuth.currentUser?.uid
       });
