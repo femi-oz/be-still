@@ -164,7 +164,11 @@ class UserProviderV2 with ChangeNotifier {
   }
 
   Future flush() async {
+    _currentUser = UserDataModel();
+    _selectedUser = UserDataModel();
+    _allUsers = [];
     await userStream.cancel();
     await usersStream.cancel();
+    notifyListeners();
   }
 }
