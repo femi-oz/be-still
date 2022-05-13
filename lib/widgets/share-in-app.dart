@@ -1,7 +1,10 @@
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/user.model.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
+import 'package:be_still/models/v2/user.model.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
+
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
@@ -13,36 +16,39 @@ import 'package:provider/provider.dart';
 class ShareInApp extends StatefulWidget {
   @override
   _ShareInAppState createState() => _ShareInAppState();
+
+  final PrayerDataModel? prayerData;
+
+  ShareInApp(this.prayerData);
 }
 
 class _ShareInAppState extends State<ShareInApp> {
-  UserModel selected;
+  UserDataModel selected = UserDataModel();
   var userInput = TextEditingController();
-  List<UserModel> _getSuggestions(String query) {
-    List<UserModel> matches = [];
-    matches.addAll(Provider.of<UserProvider>(context, listen: false).allUsers);
+  List<UserDataModel> _getSuggestions(String query) {
+    List<UserDataModel> matches = [];
+    matches
+        .addAll(Provider.of<UserProviderV2>(context, listen: false).allUsers);
     matches.retainWhere((s) => '${s.firstName} ${s.lastName}'
         .toLowerCase()
         .contains(query.toLowerCase()));
     return matches;
   }
 
-  _share(receievrId) async {
+  _share(String receievrId, PrayerDataModel? prayerData) async {
     if (userInput.text == '') return;
 
-    final creator =
-        Provider.of<UserProvider>(context, listen: false).currentUser;
-    final _prayer = Provider.of<PrayerProvider>(context, listen: false)
-        .currentPrayer
-        .prayer;
+    final currentGroup =
+        Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
+
     try {
       BeStilDialog.showLoading(context);
-      await Provider.of<PrayerProvider>(context, listen: false).addUserPrayer(
-          _prayer.id,
-          _prayer.description,
-          receievrId,
-          creator.id,
-          '${creator.firstName} ${creator.lastName}');
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      await Provider.of<PrayerProviderV2>(context, listen: false).followPrayer(
+          prayerData?.id ?? '',
+          currentGroup.id ?? '',
+          (user.prayers ?? []).map((e) => e.prayerId ?? '').toList());
 
       await Future.delayed(Duration(milliseconds: 300));
       BeStilDialog.hideLoading(context);
@@ -91,7 +97,7 @@ class _ShareInAppState extends State<ShareInApp> {
                       transitionBuilder: (context, suggestionsBox, controller) {
                         return suggestionsBox;
                       },
-                      itemBuilder: (context, UserModel suggestion) {
+                      itemBuilder: (context, UserDataModel suggestion) {
                         return ListTile(
                           tileColor: AppColors.backgroundColor[1],
                           leading: Icon(Icons.person_add),
@@ -104,7 +110,8 @@ class _ShareInAppState extends State<ShareInApp> {
                           subtitle: Text('${suggestion.email}'),
                         );
                       },
-                      onSuggestionSelected: (suggestion) => setState(() {
+                      onSuggestionSelected: (UserDataModel suggestion) =>
+                          setState(() {
                             userInput.text =
                                 '${suggestion.firstName} ${suggestion.lastName}';
                             selected = suggestion;
@@ -117,7 +124,8 @@ class _ShareInAppState extends State<ShareInApp> {
                         AppIcons.bestill_share,
                         color: AppColors.offWhite4,
                       ),
-                      onPressed: () => _share(selected.id)), //prayer, user id,
+                      onPressed: () => _share(selected.id ?? '',
+                          widget.prayerData)), //prayer, user id,
                 )
               ],
             )),

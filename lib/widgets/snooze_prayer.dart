@@ -1,19 +1,21 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/settings_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class SnoozePrayer extends StatefulWidget {
-  final CombinePrayerStream prayerData;
+  final PrayerDataModel? prayerData;
   final bool popTwice;
   SnoozePrayer(this.prayerData, {this.popTwice = true});
   @override
@@ -27,31 +29,42 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
   List<int> snoozeWeeks = new List<int>.generate(52, (i) => i + 1);
   List<int> snoozeMins = new List<int>.generate(60, (i) => i + 1);
   List<int> snoozeDays = new List<int>.generate(31, (i) => i + 1);
-  String selectedInterval;
-  int selectedDuration;
+  String selectedInterval = '';
+  int selectedDuration = 0;
 
   @override
   void initState() {
-    final settings =
-        Provider.of<SettingsProvider>(context, listen: false).settings;
-    selectedInterval = widget.prayerData.userPrayer.snoozeFrequency.isNotEmpty
-        ? widget.prayerData.userPrayer.snoozeFrequency
-        : settings.defaultSnoozeFrequency;
-    selectedDuration = widget.prayerData.userPrayer.snoozeDuration > 0
-        ? widget.prayerData.userPrayer.snoozeDuration
-        : settings.defaultSnoozeDuration;
-    snoozeDuration = settings.defaultSnoozeFrequency == "Weeks"
+    final currentUser =
+        Provider.of<UserProviderV2>(context, listen: false).currentUser;
+    selectedInterval = (widget.prayerData?.snoozeFrequency ?? '').isNotEmpty
+        ? widget.prayerData?.snoozeFrequency ?? ''
+        : currentUser.defaultSnoozeFrequency ?? '';
+    selectedDuration = (widget.prayerData?.snoozeDuration ?? 0) > 0
+        ? widget.prayerData?.snoozeDuration ?? 0
+        : currentUser.defaultSnoozeDuration ?? 0;
+    snoozeDuration = currentUser.defaultSnoozeFrequency == "Weeks"
         ? snoozeWeeks
-        : settings.defaultSnoozeFrequency == "Months"
+        : currentUser.defaultSnoozeFrequency == "Months"
             ? snoozeMonths
-            : settings.defaultSnoozeFrequency == "Days"
+            : currentUser.defaultSnoozeFrequency == "Days"
                 ? snoozeDays
                 : snoozeMins;
     super.initState();
   }
 
+  void clearSearch() async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    await Provider.of<MiscProviderV2>(context, listen: false)
+        .setSearchMode(false);
+    await Provider.of<MiscProviderV2>(context, listen: false)
+        .setSearchQuery('');
+    await Provider.of<PrayerProviderV2>(context, listen: false)
+        .searchPrayers('', userId ?? '');
+  }
+
   void _snoozePrayer() async {
     BeStilDialog.showLoading(context);
+    final userId = FirebaseAuth.instance.currentUser?.uid;
 
     var minutes = 0;
     switch (selectedInterval) {
@@ -70,36 +83,41 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
       default:
     }
     var e = selectedDuration * (minutes);
-    var _snoozeEndDate = DateTime.now().add(new Duration(minutes: e));
+    final _snoozeEndDate = DateTime.now().add(new Duration(minutes: e));
     try {
       var notifications =
-          Provider.of<NotificationProvider>(context, listen: false)
+          Provider.of<NotificationProviderV2>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.userPrayer.id &&
+                  e.prayerId == widget.prayerData?.id &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
-          await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id));
-      await Provider.of<PrayerProvider>(context, listen: false).snoozePrayer(
-          widget.prayerData.prayer.id,
-          _snoozeEndDate,
-          widget.prayerData.userPrayer.id,
+          await Provider.of<NotificationProviderV2>(context, listen: false)
+              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      await Provider.of<PrayerProviderV2>(context, listen: false).snoozePrayer(
+          userId ?? '',
+          widget.prayerData?.id ?? '',
           selectedDuration,
-          selectedInterval);
+          _snoozeEndDate,
+          (user.prayers ?? []).map((e) => e.prayerId ?? '').toList());
+      clearSearch();
+
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 
-      AppCOntroller appCOntroller = Get.find();
+      AppController appController = Get.find();
       if (widget.popTwice) Navigator.pop(context);
-      appCOntroller.setCurrentPage(0, true);
+      appController.setCurrentPage(0, true, 0);
     } catch (e, s) {
       await Future.delayed(Duration(milliseconds: 300),
           () => {BeStilDialog.hideLoading(context)});
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -182,7 +200,7 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
                             ),
                           ),
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.4,
+                            width: MediaQuery.of(context).size.width * 0.3,
                             child: CupertinoPicker(
                               selectionOverlay:
                                   CupertinoPickerDefaultSelectionOverlay(
@@ -227,6 +245,7 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     GestureDetector(
                       onTap: () {
@@ -243,14 +262,10 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
                           ),
                           borderRadius: BorderRadius.circular(5),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text('CANCEL',
-                                style: AppTextStyles.boldText20.copyWith(
-                                    color: AppColors.white, height: 1.5)),
-                          ],
+                        child: Center(
+                          child: Text('CANCEL',
+                              style: AppTextStyles.boldText20
+                                  .copyWith(color: AppColors.white)),
                         ),
                       ),
                     ),
@@ -267,14 +282,10 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
                           ),
                           borderRadius: BorderRadius.circular(5),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text('SNOOZE',
-                                style: AppTextStyles.boldText20.copyWith(
-                                    color: AppColors.white, height: 1.5)),
-                          ],
+                        child: Center(
+                          child: Text('SNOOZE',
+                              style: AppTextStyles.boldText20
+                                  .copyWith(color: AppColors.white)),
                         ),
                       ),
                     ),

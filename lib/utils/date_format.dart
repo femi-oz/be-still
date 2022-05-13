@@ -2,7 +2,7 @@ import 'package:intl/intl.dart';
 
 class DateFormatter {
   DateFormatter(this.dateTime);
-  final dateTime;
+  DateTime dateTime;
 
   String format() {
     DateTime now = DateTime.now();

@@ -1,20 +1,33 @@
-import 'package:be_still/providers/prayer_provider.dart';
+import 'dart:io';
+
+import 'package:be_still/enums/status.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
+import 'package:be_still/models/v2/tag.model.dart';
+import 'package:be_still/models/v2/update.model.dart';
+
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
+import 'package:be_still/utils/app_dialog.dart';
 
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:contacts_service/contacts_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:easy_rich_text/easy_rich_text.dart';
+import 'package:provider/provider.dart';
 
 class UpdateView extends StatefulWidget {
   static const routeName = '/update';
 
+  final PrayerDataModel? prayerData;
+
   @override
-  UpdateView();
+  UpdateView(this.prayerData);
 
   @override
   _UpdateView createState() => _UpdateView();
@@ -34,7 +47,7 @@ class _UpdateView extends State<UpdateView> {
     Navigator.pop(context);
   }
 
-  _textLink([String phoneNumber]) async {
+  _textLink(String phoneNumber) async {
     await sendSMS(message: '', recipients: [phoneNumber]).catchError((onError) {
       print(onError);
     });
@@ -43,21 +56,37 @@ class _UpdateView extends State<UpdateView> {
 
   _openShareModal(BuildContext context, String phoneNumber, String email,
       String identifier) async {
-    await Provider.of<PrayerProvider>(context, listen: false).getContacts();
+    try {
+      await Provider.of<PrayerProviderV2>(context, listen: false).getContacts();
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    }
     var updatedPhone = '';
     var updatedEmail = '';
     localContacts =
-        Provider.of<PrayerProvider>(context, listen: false).localContacts;
+        Provider.of<PrayerProviderV2>(context, listen: false).localContacts;
     var latestContact =
         localContacts.where((element) => element.identifier == identifier);
 
     for (var contact in latestContact) {
-      final phoneNumber =
-          contact.phones.length > 0 ? contact.phones.toList()[0].value : null;
-      final email =
-          contact.emails.length > 0 ? contact.emails.toList()[0].value : null;
-      updatedPhone = phoneNumber;
-      updatedEmail = email;
+      final phoneNumber = (contact.phones ?? []).length > 0
+          ? (contact.phones ?? []).toList()[0].value
+          : null;
+      final email = (contact.emails ?? []).length > 0
+          ? (contact.emails ?? []).toList()[0].value
+          : null;
+      updatedPhone = phoneNumber ?? '';
+      updatedEmail = email ?? '';
     }
     AlertDialog dialog = AlertDialog(
         actionsPadding: EdgeInsets.all(0),
@@ -220,10 +249,15 @@ class _UpdateView extends State<UpdateView> {
   }
 
   Widget build(BuildContext context) {
-    final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
-    var updates = prayerData.updates;
-    updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
-    updates = updates.where((element) => element.deleteStatus != -1).toList();
+    // final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
+    List<UpdateModel> updates = widget.prayerData?.updates ?? [];
+    updates.sort((a, b) => (b.modifiedDate ?? DateTime.now())
+        .compareTo(a.modifiedDate ?? DateTime.now()));
+    updates =
+        updates.where((element) => element.status != Status.inactive).toList();
+    final creatorName = Provider.of<UserProviderV2>(context)
+        .getPrayerCreatorName(widget.prayerData?.createdBy ?? '');
+
     return Container(
       child: SingleChildScrollView(
         child: Container(
@@ -231,23 +265,30 @@ class _UpdateView extends State<UpdateView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              prayerData.prayer.groupId != '0'
-                  ? Container(
-                      margin: EdgeInsets.only(bottom: 15),
-                      child: Text(
-                        prayerData.prayer.creatorName,
-                        style: AppTextStyles.regularText18b.copyWith(
-                            color: AppColors.prayerPrimaryColor,
-                            fontWeight: FontWeight.w500),
-                        textAlign: TextAlign.left,
-                      ),
-                    )
-                  : Container(),
+              if (widget.prayerData?.isGroup ?? false)
+                Container(
+                  margin: EdgeInsets.only(bottom: 20),
+                  child: Text(
+                    creatorName,
+                    style: AppTextStyles.boldText16.copyWith(
+                      color: AppColors.lightBlue4,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
               for (int i = 0; i < updates.length; i++)
-                _buildDetail('', updates[i].modifiedOn, updates[i].description,
-                    prayerData.tags, context),
-              _buildDetail('Initial Prayer | ', prayerData.prayer.createdOn,
-                  prayerData.prayer.description, prayerData.tags, context),
+                _buildDetail(
+                    '',
+                    updates[i].modifiedDate,
+                    updates[i].description,
+                    widget.prayerData?.tags ?? <TagModel>[],
+                    context),
+              _buildDetail(
+                  'Initial Prayer | ',
+                  widget.prayerData?.createdDate ?? DateTime.now(),
+                  widget.prayerData?.description ?? '',
+                  widget.prayerData?.tags,
+                  context),
             ],
           ),
         ),
@@ -255,7 +296,11 @@ class _UpdateView extends State<UpdateView> {
     );
   }
 
-  Widget _buildDetail(time, modifiedOn, description, tags, context) {
+  Widget _buildDetail(
+      time, modifiedOn, description, List<TagModel>? tags, context) {
+    // final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    bool isOwner = widget.prayerData?.createdBy == userId;
     return Container(
       child: Column(
         children: <Widget>[
@@ -306,24 +351,34 @@ class _UpdateView extends State<UpdateView> {
               child: Row(
                 children: [
                   Flexible(
-                    child: EasyRichText(
-                      description,
-                      defaultStyle: AppTextStyles.regularText16b
-                          .copyWith(color: AppColors.prayerTextColor),
-                      patternList: [
-                        for (var i = 0; i < tags.length; i++)
-                          EasyRichTextPattern(
-                              targetString: tags[i].displayName.trim(),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  _openShareModal(context, tags[i].phoneNumber,
-                                      tags[i].email, tags[i].identifier);
-                                },
-                              style: AppTextStyles.regularText15.copyWith(
-                                  color: AppColors.lightBlue2,
-                                  decoration: TextDecoration.underline))
-                      ],
-                    ),
+                    child: isOwner
+                        ? EasyRichText(
+                            description,
+                            defaultStyle: AppTextStyles.regularText16b
+                                .copyWith(color: AppColors.prayerTextColor),
+                            patternList: [
+                              for (var i = 0; i < (tags ?? []).length; i++)
+                                EasyRichTextPattern(
+                                    targetString:
+                                        (tags?[i].displayName ?? '').trim(),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        _openShareModal(
+                                            context,
+                                            tags?[i].phoneNumber ?? '',
+                                            tags?[i].email ?? '',
+                                            tags?[i].contactIdentifier ?? '');
+                                      },
+                                    style: AppTextStyles.regularText15.copyWith(
+                                        color: AppColors.lightBlue2,
+                                        decoration: TextDecoration.underline))
+                            ],
+                          )
+                        : Text(
+                            description,
+                            style: AppTextStyles.regularText16b
+                                .copyWith(color: AppColors.prayerTextColor),
+                          ),
                   ),
                 ],
               ),

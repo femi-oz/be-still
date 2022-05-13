@@ -1,5 +1,6 @@
 import 'package:be_still/models/error_log.model.dart';
 import 'package:be_still/models/http_exception.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
@@ -14,6 +15,7 @@ class LogService {
       if (_firebaseAuth.currentUser == null) return null;
       _errorLogCollectionReference.doc(_logId).set(ErrorLog(
               location: location,
+              id: _logId,
               message: message,
               createdBy: userId,
               modifiedBy: userId,
@@ -21,7 +23,7 @@ class LogService {
               modifiedOn: DateTime.now())
           .toJson());
     } catch (e) {
-      throw HttpException(e.message);
+      throw HttpException(StringUtils.getErrorMessage(e));
     }
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/providers/auth_provider.dart';
+import 'package:be_still/models/v2/user.model.dart';
+import 'package:be_still/providers/v2/auth_provider.dart';
 import 'package:be_still/screens/security/Forget_Password/Widgets/sucess.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -32,11 +33,11 @@ class _ForgetPasswordState extends State<ForgetPassword> {
 
   _forgotPassword() async {
     setState(() => _autoValidate = true);
-    if (!_formKey1.currentState.validate()) return;
-    _formKey1.currentState.save();
+    if (!_formKey1.currentState!.validate()) return;
+    _formKey1.currentState!.save();
     try {
       BeStilDialog.showLoading(context, 'Sending Mail');
-      await Provider.of<AuthenticationProvider>(context, listen: false)
+      await Provider.of<AuthenticationProviderV2>(context, listen: false)
           .sendPasswordResetEmail(_emailController.text);
 
       setState(() => step += 1);
@@ -44,11 +45,13 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
-      BeStilDialog.showErrorDialog(context, e, null, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.errorOccured, UserDataModel(), s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
 
-      BeStilDialog.showErrorDialog(context, e, null, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), UserDataModel(), s);
     }
   }
 
@@ -236,7 +239,11 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     return Form(
       key: _formKey1,
       // ignore: deprecated_member_use
-      autovalidate: _autoValidate,
+      // autovalidate: _autoValidate,
+
+      autovalidateMode: _autoValidate
+          ? AutovalidateMode.onUserInteraction
+          : AutovalidateMode.disabled,
       child: Column(
         children: <Widget>[
           CustomInput(

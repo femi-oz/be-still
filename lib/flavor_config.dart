@@ -17,10 +17,10 @@ class FlavorValues {
   //Add other flavor specific values, e.g database name
 
   FlavorValues({
-    @required this.country,
-    @required this.packageName,
-    @required this.dynamicLink,
-    @required this.appUrl,
+    required this.country,
+    required this.packageName,
+    required this.dynamicLink,
+    required this.appUrl,
   });
 }
 
@@ -30,13 +30,17 @@ class FlavorConfig {
   final Color color;
   final FlavorValues values;
 
-  static FlavorConfig _instance;
+  static FlavorConfig _instance = FlavorConfig(
+      flavor: Flavor.PROD,
+      values: FlavorValues(
+          appUrl: '', country: '', dynamicLink: '', packageName: ''));
 
-  factory FlavorConfig(
-      {@required Flavor flavor,
-      Color color: Colors.blue,
-      @required FlavorValues values}) {
-    _instance ??= FlavorConfig._internal(
+  factory FlavorConfig({
+    required Flavor flavor,
+    Color color: Colors.blue,
+    required FlavorValues values,
+  }) {
+    _instance = FlavorConfig._internal(
         flavor, StringUtils.enumName(flavor.toString()), color, values);
     return _instance;
   }

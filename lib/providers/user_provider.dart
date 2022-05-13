@@ -1,43 +1,101 @@
-import 'package:be_still/locator.dart';
-import 'package:be_still/models/user.model.dart';
-import 'package:be_still/services/user_service.dart';
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:be_still/locator.dart';
+// import 'package:be_still/models/user.model.dart';
+// import 'package:be_still/services/user_service.dart';
+// import 'package:flutter/material.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 
-class UserProvider with ChangeNotifier {
-  UserService _userService = locator<UserService>();
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+// class UserProvider with ChangeNotifier {
+//   UserService _userService = locator<UserService>();
+//   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  UserModel _currentUser;
-  UserModel get currentUser => _currentUser;
+//   UserModel _currentUser = UserModel.defaultValue();
+//   UserModel get currentUser => _currentUser;
 
-  List<UserModel> _allUsers;
-  List<UserModel> get allUsers => _allUsers;
+//   UserModel _selectedUser = UserModel.defaultValue();
+//   UserModel get selectedUser => _selectedUser;
 
-  Future setCurrentUser(bool isLocalAuth) async {
-    var keyRefernence = _firebaseAuth.currentUser.uid;
-    _currentUser = await _userService.getCurrentUser(keyRefernence);
-    notifyListeners();
-  }
+//   String _userToken = '';
+//   String get userToken => _userToken;
 
-  Future setAllUsers(String userId) async {
-    var users = await _userService.getAllUsers();
+//   List<UserModel> _allUsers = <UserModel>[];
+//   List<UserModel> get allUsers => _allUsers;
 
-    _allUsers =
-        users.where((e) => e.firstName != null || e.lastName != null).toList();
-    _allUsers = _allUsers.where((e) => e.id != userId).toList();
-    notifyListeners();
-  }
+//   Future setCurrentUser(bool isLocalAuth) async {
+//     try {
+//       final keyRefernence = _firebaseAuth.currentUser?.uid;
+//       _currentUser = await _userService.getCurrentUser(keyRefernence ?? '');
+//       notifyListeners();
+//     } catch (e) {
+//       rethrow;
+//     }
+//   }
 
-  Future<void> clearCurrentUser() => _currentUser = null;
+//   Future getUserById(String id) async {
+//     try {
+//       return _userService.getUserByIdFuture(id).then((event) {
+//         _selectedUser = event;
+//         notifyListeners();
+//       });
+//     } catch (e) {
+//       rethrow;
+//     }
+//   }
 
-  updateEmail(String newEmail, String userId) async {
-    await _userService.updateEmail(newEmail, userId);
-    setCurrentUser(false);
-  }
+//   Future returnUserToken(String id) async {
+//     try {
+//       await _userService.getUserByIdFuture(id).then((value) {
+//         _userToken = value.pushToken ?? '';
+//         notifyListeners();
+//       });
+//     } catch (e) {
+//       rethrow;
+//     }
+//   }
 
-  updatePassword(String newPassword) async {
-    await _userService.updatePassword(newPassword);
-    setCurrentUser(false);
-  }
-}
+//   Future setAllUsers(String userId) async {
+//     try {
+//       _userService.getAllUsers().then((e) {
+//         _allUsers = e.toList();
+//         _allUsers = _allUsers.where((e) => e.id != userId).toList();
+//         notifyListeners();
+//       });
+//     } catch (e) {
+//       rethrow;
+//     }
+//   }
+
+//   void clearCurrentUser() {
+//     try {
+//       _currentUser = UserModel.defaultValue();
+//     } catch (e) {
+//       rethrow;
+//     }
+//   }
+
+//   Future updateEmail(String newEmail, String userId) async {
+//     try {
+//       await _userService.updateEmail(newEmail, userId);
+
+//       setCurrentUser(false);
+//     } catch (e) {
+//       rethrow;
+//     }
+//   }
+
+//   Future updatePassword(String newPassword) async {
+//     try {
+//       await _userService.updatePassword(newPassword);
+//       setCurrentUser(false);
+//     } catch (e) {
+//       rethrow;
+//     }
+//   }
+
+//   Future removePushToken(String userId) async {
+//     try {
+//       await _userService.removePushToken(userId);
+//     } catch (e) {
+//       rethrow;
+//     }
+//   }
+// }

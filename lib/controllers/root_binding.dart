@@ -4,6 +4,6 @@ import 'package:get/get.dart';
 class RootBinding extends Bindings {
   Future<void> dependencies() async {
     // State
-    Get.put<AppCOntroller>(AppCOntroller());
+    Get.put<AppController>(AppController());
   }
 }

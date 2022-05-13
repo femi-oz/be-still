@@ -2,52 +2,64 @@ import 'dart:convert';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/enums/prayer_list.enum.dart';
 import 'package:be_still/enums/time_range.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/notification.model.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
+import 'package:be_still/models/v2/local_notification.model.dart';
+import 'package:be_still/models/v2/notification_message.model.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
+import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/local_notification.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:provider/provider.dart';
 
 class ReminderPicker extends StatefulWidget {
   final Function onCancel;
   final bool hideActionuttons;
-  final LocalNotificationModel reminder;
+  final bool isGroup;
+  final LocalNotificationDataModel? reminder;
   final String type;
+  final String entityId;
+  final bool popTwice;
+  final PrayerDataModel? prayerData;
 
   @override
-  ReminderPicker({
-    @required this.hideActionuttons,
-    @required this.onCancel,
-    @required this.reminder,
-    @required this.type,
-  });
+  ReminderPicker(
+      {required this.hideActionuttons,
+      required this.onCancel,
+      this.reminder,
+      required this.type,
+      required this.entityId,
+      required this.isGroup,
+      this.popTwice = true,
+      this.prayerData});
   _ReminderPickerState createState() => _ReminderPickerState();
 }
 
 class _ReminderPickerState extends State<ReminderPicker> {
   double itemExtent = 30.0;
 
-  int selectedHour;
+  int selectedHour = 0;
 
-  String selectedFrequency;
-  int selectedDayOfWeek;
-  String selectedPeriod;
-  int selectedMinute;
-  int selectedYear;
-  String selectedMonth;
-  int selectedDayOfMonth;
+  String selectedFrequency = '';
+  int selectedDayOfWeek = 0;
+  String selectedPeriod = '';
+  int selectedMinute = 0;
+  int selectedYear = 0;
+  String selectedMonth = '';
+  int selectedDayOfMonth = 0;
 
   List<String> periodOfDay = [PeriodOfDay.am, PeriodOfDay.pm];
   List<int> hoursOfTheDay = new List<int>.generate(12, (i) => i + 1);
@@ -58,19 +70,37 @@ class _ReminderPickerState extends State<ReminderPicker> {
   @override
   void initState() {
     if (widget.reminder != null) {
-      selectedHour = int.parse(widget.reminder?.selectedHour);
-      selectedMinute = int.parse(widget.reminder?.selectedMinute);
-      selectedDayOfWeek = LocalNotification.daysOfWeek
-          .indexOf(widget.reminder?.selectedDay?.capitalizeFirst);
-      selectedPeriod = widget.reminder?.period;
-      selectedFrequency = widget.reminder?.frequency;
-      selectedYear = int.parse(widget.reminder?.selectedYear);
-      selectedMonth = widget.reminder?.selectedMonth;
-      selectedDayOfMonth = int.parse(widget.reminder?.selectedDayOfMonth);
+      selectedHour = widget.reminder?.scheduleDate?.hour ?? 0;
+
+      selectedMinute = widget.reminder?.scheduleDate?.minute ?? 0;
+      final scheduledDate = tz.TZDateTime.local(
+        widget.reminder?.scheduleDate?.year ?? 0,
+        widget.reminder?.scheduleDate?.month ?? 0,
+        widget.reminder?.scheduleDate?.day ?? 0,
+        widget.reminder?.scheduleDate?.hour ?? 0,
+        widget.reminder?.scheduleDate?.minute ?? 0,
+        widget.reminder?.scheduleDate?.second ?? 0,
+      );
+      selectedDayOfWeek = scheduledDate.weekday - 1;
+      selectedPeriod = DateFormat('a')
+          .format(widget.reminder?.scheduleDate ?? DateTime.now());
+      selectedFrequency = widget.reminder?.frequency ?? '';
+      selectedYear = widget.reminder?.scheduleDate?.year ?? 0;
+      selectedMonth = LocalNotification
+          .months[(widget.reminder?.scheduleDate?.month ?? 0) - 1];
+      selectedDayOfMonth = widget.reminder?.scheduleDate?.day ?? 0;
     } else {
       selectedHour = DateTime.now().hour == 0 ? 12 : DateTime.now().hour;
       selectedMinute = minInTheHour[0];
-      selectedDayOfWeek = DateTime.now().weekday - 1;
+      final scheduledDate = tz.TZDateTime.local(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
+        DateTime.now().hour,
+        DateTime.now().minute,
+        DateTime.now().second,
+      );
+      selectedDayOfWeek = scheduledDate.weekday - 1;
       selectedPeriod =
           DateTime.now().hour > 12 ? PeriodOfDay.pm : PeriodOfDay.am;
       selectedFrequency = Frequency.one_time;
@@ -81,54 +111,45 @@ class _ReminderPickerState extends State<ReminderPicker> {
     super.initState();
   }
 
-  storeNotification(
-    String notificationText,
-    String userId,
-    String title,
-    String description,
-    String frequency,
-    tz.TZDateTime scheduledDate,
-    String prayerid,
-    String selectedDay,
-    String period,
-    String selectedHour,
-    String selectedMinute,
-    String selectedYear,
-  ) async {
-    await Provider.of<NotificationProvider>(context, listen: false)
+  void clearSearch() async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    await Provider.of<MiscProviderV2>(context, listen: false)
+        .setSearchMode(false);
+    await Provider.of<MiscProviderV2>(context, listen: false)
+        .setSearchQuery('');
+    await Provider.of<PrayerProviderV2>(context, listen: false)
+        .searchPrayers('', userId ?? '');
+  }
+
+  Future<void> storeNotification({
+    required String notificationText,
+    required String frequency,
+    required tz.TZDateTime scheduledDate,
+  }) async {
+    await Provider.of<NotificationProviderV2>(context, listen: false)
         .addLocalNotification(
+      widget.prayerData?.id ?? '',
       LocalNotification.localNotificationID,
-      prayerid,
       notificationText,
-      userId,
-      prayerid,
-      title,
-      description,
-      frequency,
       widget.type,
+      frequency,
       scheduledDate,
-      selectedDay,
-      period,
-      selectedHour,
-      selectedMinute,
-      selectedYear,
-      selectedMonth,
-      selectedDayOfMonth.toString(),
     );
+
     BeStilDialog.hideLoading(context);
     setState(() {});
     if (widget.type == NotificationType.reminder) {
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
 
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
+      AppController appController = Get.find();
+      appController.setCurrentPage(appController.currentPage, true, 0);
     } else
       widget.onCancel();
     setState(() => null);
   }
 
-  updatePrayerTime(
+  Future<void> updatePrayerTime(
     String selectedDay,
     String selectedPeriod,
     String selectedFrequency,
@@ -139,42 +160,53 @@ class _ReminderPickerState extends State<ReminderPicker> {
     String notificationText,
     String selectedYear,
   ) async {
-    await Provider.of<NotificationProvider>(context, listen: false)
-        .updateLocalNotification(
-      selectedFrequency,
-      scheduledDate,
-      selectedDay,
-      selectedPeriod,
-      selectedHour,
-      selectedMinute,
-      widget.reminder?.id,
-      userId,
-      notificationText,
-      selectedYear,
-      selectedMonth,
-      selectedDayOfMonth.toString(),
-    );
+    try {
+      await Provider.of<NotificationProviderV2>(context, listen: false)
+          .updateLocalNotification(
+              scheduledDate,
+              widget.reminder?.id ?? '',
+              notificationText,
+              widget.reminder?.localNotificationId ?? 0,
+              widget.reminder?.type ?? '',
+              widget.reminder?.status ?? '',
+              selectedFrequency);
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    }
 
     setState(() {});
     if (widget.type == NotificationType.reminder) {
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
+      if (widget.popTwice) {
+        Navigator.pop(context);
+      }
 
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(0, true);
-    } else
+      AppController appController = Get.find();
+      appController.setCurrentPage(appController.currentPage, true, 0);
+    } else {
+      Navigator.pop(context);
       widget.onCancel();
+    }
   }
 
-  setNotification() async {
-    print(selectedPeriod);
-    // AM 22= 22-12
-    // pm 12 = 12+12
-    final hour = selectedPeriod == PeriodOfDay.am && selectedHour > 12
+  Future<void> setNotification() async {
+    var hour = selectedPeriod == PeriodOfDay.am && selectedHour >= 12
         ? selectedHour - 12
         : selectedPeriod == PeriodOfDay.pm && selectedHour < 12
             ? selectedHour + 12
             : selectedHour;
+
     DateTime date = DateTime(
         selectedYear,
         LocalNotification.months.indexOf(selectedMonth) + 1,
@@ -184,13 +216,22 @@ class _ReminderPickerState extends State<ReminderPicker> {
 
     if (selectedFrequency == Frequency.one_time &&
         date.isBefore(DateTime.now())) {
+      final e = PlatformException(
+          code: '', message: 'Please select a date in the future.');
+      final s = StackTrace.fromString(e.message ?? '');
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      var e = Exception('Please select a date in the future.');
-      BeStilDialog.showErrorDialog(context, e, user, null);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
       return;
     }
     try {
+      BeStilDialog.showLoading(context);
+
+      if (hour == 0) {
+        hour = 12;
+      }
+
       var _selectedMinuteString =
           selectedMinute < 10 ? '0$selectedMinute' : '$selectedMinute';
       var _selectedHourString = hour < 10
@@ -198,9 +239,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
           : hour > 12
               ? (hour - 12).toString()
               : '$hour ';
-      BeStilDialog.showLoading(context);
-      final userId =
-          Provider.of<UserProvider>(context, listen: false).currentUser.id;
+      final userId = FirebaseAuth.instance.currentUser?.uid;
       var suffix = "th";
       var digit = selectedDayOfMonth % 10;
       if ((digit > 0 && digit < 4) &&
@@ -213,99 +252,97 @@ class _ReminderPickerState extends State<ReminderPicker> {
               ? '$selectedFrequency,  $selectedMonth $selectedDayOfMonth$suffix, $selectedYear $_selectedHourString:$_selectedMinuteString $selectedPeriod'
               : '$selectedFrequency, $_selectedHourString:$_selectedMinuteString $selectedPeriod';
 
-      final prayerData =
-          Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
+      // final prayerData =
+      //     Provider.of<PrayerProvider>(context, listen: false).currentPrayer;
       final title = '$selectedFrequency reminder to pray';
-      final description = prayerData?.prayer?.description ?? '';
+      final description = widget.prayerData?.description ?? '';
 
       final scheduleDate = LocalNotification.scheduleDate(
         hour,
         selectedMinute,
-        selectedDayOfWeek + 1,
+        selectedDayOfWeek,
         selectedPeriod,
         selectedYear,
         selectedMonth,
         selectedDayOfMonth,
         selectedFrequency == Frequency.one_time,
       );
-      print(scheduleDate);
-      final payload = NotificationMessage(
-          entityId: prayerData?.userPrayer?.id ?? '', type: widget.type);
-      await LocalNotification.setLocalNotification(
-        context: context,
-        title: title,
-        description: widget.type == NotificationType.prayer_time
-            ? 'It is time to pray!'
-            : description,
-        scheduledDate: scheduleDate,
-        payload: jsonEncode(payload.toJson()),
-        frequency: selectedFrequency,
-        localNotificationId: widget.reminder?.localNotificationId ?? null,
-      );
+
+      final payload = NotificationMessageModel(
+          entityId: widget.entityId,
+          type: widget.type,
+          isGroup: widget.isGroup);
+      if (Settings.enabledReminderPermission) {
+        await LocalNotification.setLocalNotification(
+            context: context,
+            title: title,
+            description: widget.type == NotificationType.prayer_time
+                ? 'It is time to pray!'
+                : description,
+            scheduledDate: scheduleDate,
+            payload: jsonEncode(payload.toJson()),
+            frequency: selectedFrequency,
+            localNotificationId: widget.reminder?.localNotificationId ?? null);
+      }
       if (widget.reminder != null)
-        updatePrayerTime(
-          LocalNotification.daysOfWeek[selectedDayOfWeek],
-          selectedPeriod,
-          selectedFrequency,
-          _selectedHourString,
-          _selectedMinuteString,
-          scheduleDate,
-          userId,
-          notificationText,
-          selectedYear.toString(),
-        );
+        await updatePrayerTime(
+            LocalNotification.daysOfWeek[selectedDayOfWeek],
+            selectedPeriod,
+            selectedFrequency,
+            _selectedHourString,
+            _selectedMinuteString,
+            scheduleDate,
+            userId ?? '',
+            notificationText,
+            selectedYear.toString());
       else
         await storeNotification(
-          notificationText,
-          userId,
-          title,
-          description,
-          selectedFrequency,
-          scheduleDate,
-          widget.type == NotificationType.prayer_time
-              ? ''
-              : prayerData?.userPrayer?.id,
-          LocalNotification.daysOfWeek[selectedDayOfWeek],
-          selectedPeriod,
-          _selectedHourString,
-          _selectedMinuteString,
-          selectedYear.toString(),
-        );
+            notificationText: notificationText,
+            scheduledDate: scheduleDate,
+            frequency: selectedFrequency);
+
+      clearSearch();
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
   _deleteReminder() async {
     try {
-      await Provider.of<NotificationProvider>(context, listen: false)
-          .deleteLocalNotification(widget.reminder.id);
+      await Provider.of<NotificationProviderV2>(context, listen: false)
+          .deleteLocalNotification(widget.reminder?.id ?? '',
+              widget.reminder?.localNotificationId ?? 0);
       setState(() {});
       if (widget.type == NotificationType.reminder) {
+        if (widget.popTwice) Navigator.pop(context);
         Navigator.pop(context);
 
-        AppCOntroller appCOntroller = Get.find();
-        appCOntroller.setCurrentPage(0, true);
+        AppController appController = Get.find();
+        appController.setCurrentPage(appController.currentPage, true, 0);
       } else
         widget.onCancel();
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -321,6 +358,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                 .indexOf(LocalNotification.daysOfWeek[selectedDayOfWeek]));
     FixedExtentScrollController periodController = FixedExtentScrollController(
         initialItem: periodOfDay.indexOf(selectedPeriod));
+
     FixedExtentScrollController hourController = FixedExtentScrollController(
         initialItem: hoursOfTheDay
             .indexOf(selectedHour > 12 ? selectedHour - 12 : selectedHour));
@@ -372,9 +410,11 @@ class _ReminderPickerState extends State<ReminderPicker> {
                               backgroundColor: Colors.transparent,
                               scrollController: frequencyController,
                               itemExtent: itemExtent,
-                              onSelectedItemChanged: (i) => setState(() =>
-                                  selectedFrequency =
-                                      LocalNotification.frequency[i]),
+                              onSelectedItemChanged: (i) {
+                                print(selectedHour);
+                                setState(() => selectedFrequency =
+                                    LocalNotification.frequency[i]);
+                              },
                               children: <Widget>[
                                 ...LocalNotification.frequency
                                     .map((i) => Align(
@@ -612,9 +652,9 @@ class _ReminderPickerState extends State<ReminderPicker> {
               : Column(
                   children: [
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: 40),
                       width: double.infinity,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           GestureDetector(
                             onTap: () {
@@ -622,7 +662,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
                             },
                             child: Container(
                               height: 38.0,
-                              width: MediaQuery.of(context).size.width * .35,
+                              width: MediaQuery.of(context).size.width * .32,
                               decoration: BoxDecoration(
                                 color: AppColors.grey.withOpacity(0.5),
                                 border: Border.all(
@@ -631,22 +671,19 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                 ),
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Text('CANCEL',
-                                      style: AppTextStyles.boldText20.copyWith(
-                                          color: AppColors.white, height: 1.5)),
-                                ],
+                              child: Center(
+                                child: Text('CANCEL',
+                                    style: AppTextStyles.boldText20.copyWith(
+                                        color: AppColors.white, height: 1.2)),
                               ),
                             ),
                           ),
+                          SizedBox(width: 15),
                           GestureDetector(
                             onTap: setNotification,
                             child: Container(
                               height: 38.0,
-                              width: MediaQuery.of(context).size.width * .35,
+                              width: MediaQuery.of(context).size.width * .32,
                               decoration: BoxDecoration(
                                 color: Colors.blue,
                                 border: Border.all(
@@ -655,14 +692,10 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                 ),
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Text('SAVE',
-                                      style: AppTextStyles.boldText20.copyWith(
-                                          color: AppColors.white, height: 1.5)),
-                                ],
+                              child: Center(
+                                child: Text('SAVE',
+                                    style: AppTextStyles.boldText20.copyWith(
+                                        color: AppColors.white, height: 1.2)),
                               ),
                             ),
                           ),
@@ -686,14 +719,10 @@ class _ReminderPickerState extends State<ReminderPicker> {
                                 ),
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Text('DELETE REMINDER',
-                                      style: AppTextStyles.boldText20.copyWith(
-                                          color: AppColors.white, height: 1.5)),
-                                ],
+                              child: Center(
+                                child: Text('DELETE REMINDER',
+                                    style: AppTextStyles.boldText20.copyWith(
+                                        color: AppColors.white, height: 1.2)),
                               ),
                             ),
                           )

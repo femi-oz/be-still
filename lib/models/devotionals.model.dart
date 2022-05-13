@@ -1,12 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class DevotionalModel {
-  String id;
-  String title;
-  String link;
-  String period;
-  String type;
-  String description;
+  final String? id;
+  final String? title;
+  final String? link;
+  final String? period;
+  final String? type;
+  final String? description;
 
   DevotionalModel({
     this.id,
@@ -16,13 +14,22 @@ class DevotionalModel {
     this.description,
     this.period,
   });
-  DevotionalModel.fromData(DocumentSnapshot<Map<String, dynamic>> snapshot)
-      : id = snapshot.id,
-        title = snapshot.data()['title'],
-        type = snapshot.data()['type'],
-        description = snapshot.data()['description'],
-        period = snapshot.data()['period'],
-        link = snapshot.data()['link'];
+
+  factory DevotionalModel.fromData(Map<String, dynamic> data, String did) {
+    final id = did;
+    final title = data['title'] ?? '';
+    final type = data['type'] ?? '';
+    final description = data['description'] ?? '';
+    final period = data['period'] ?? '';
+    final link = data['link'] ?? '';
+    return DevotionalModel(
+        id: id,
+        title: title,
+        link: link,
+        type: type,
+        description: description,
+        period: period);
+  }
 
   Map<String, dynamic> toJson() {
     return {

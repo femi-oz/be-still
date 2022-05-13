@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 
 class MenuButton extends StatelessWidget {
   final Function onPressed;
-  final IconData icon;
+  final IconData? icon;
   final String text;
   final bool isActive;
   final bool isDisable;
-  final String suffix;
+  final String? suffix;
   MenuButton({
-    this.onPressed,
-    this.text,
+    required this.onPressed,
+    required this.text,
     this.icon,
     this.suffix,
     this.isActive: false,
@@ -59,7 +59,7 @@ class MenuButton extends StatelessWidget {
             ),
             suffix != null
                 ? Text(
-                    suffix,
+                    suffix ?? '',
                     style: AppTextStyles.boldText14.copyWith(
                         color: AppColors.lightBlue4
                             .withOpacity(isDisable ? 0.5 : 1)),

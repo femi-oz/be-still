@@ -1,11 +1,13 @@
+import 'dart:io';
+
 import 'package:be_still/enums/interval.dart';
-import 'package:be_still/enums/settings_key.dart';
 import 'package:be_still/enums/sort_by.dart';
-import 'package:be_still/models/duration.model.dart';
-import 'package:be_still/models/settings.model.dart';
-import 'package:be_still/providers/settings_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/models/v2/duration.model.dart';
+import 'package:be_still/models/v2/user.model.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/custom_toggle.dart';
 import 'package:be_still/widgets/custom_picker.dart';
@@ -14,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class MyListSettings extends StatefulWidget {
-  final SettingsModel settings;
+  final UserDataModel settings;
   final Function onDispose;
   MyListSettings(this.settings, this.onDispose);
   @override
@@ -28,26 +30,39 @@ class _MyListSettingsState extends State<MyListSettings> {
   List<int> snoozeWeeks = new List<int>.generate(52, (i) => i + 1);
   List<int> snoozeMins = new List<int>.generate(60, (i) => i + 1);
   List<int> snoozeDays = new List<int>.generate(31, (i) => i + 1);
-  String selectedInterval;
-  int selectedDuration;
+  String selectedInterval = '';
+  int selectedDuration = 0;
 
   _setAutoDelete(e) {
-    Provider.of<SettingsProvider>(context, listen: false).updateSettings(
-        Provider.of<UserProvider>(context, listen: false).currentUser.id,
-        key: SettingsKey.archiveAutoDeleteMins,
-        value: e,
-        settingsId: widget.settings.id);
+    try {
+      Provider.of<UserProviderV2>(context, listen: false)
+          .updateUserSettings('archiveAutoDeleteMinutes', e);
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    }
   }
 
   @override
   deactivate() {
-    widget.onDispose(selectedDuration, selectedInterval, widget.settings.id);
+    widget.onDispose(selectedDuration, selectedInterval);
     super.deactivate();
   }
 
   initState() {
-    selectedInterval = widget.settings.defaultSnoozeFrequency;
-    selectedDuration = widget.settings.defaultSnoozeDuration;
+    selectedInterval = widget.settings.defaultSnoozeFrequency ?? '';
+    selectedDuration = widget.settings.defaultSnoozeDuration ?? 0;
     snoozeDuration = widget.settings.defaultSnoozeFrequency == "Weeks"
         ? snoozeWeeks
         : widget.settings.defaultSnoozeFrequency == "Months"
@@ -58,21 +73,20 @@ class _MyListSettingsState extends State<MyListSettings> {
     super.initState();
   }
 
-  List<LookUp> autoDeleteInterval = [
-    LookUp(text: IntervalRange.thirtyMinutes, value: 30),
-    LookUp(text: IntervalRange.thirtyDays, value: 43200),
-    LookUp(text: IntervalRange.ninetyDays, value: 129600),
-    LookUp(text: IntervalRange.oneYear, value: 525600),
-    LookUp(text: IntervalRange.twoYears, value: 1051200),
-    LookUp(text: IntervalRange.never, value: 0),
+  List<LookUpV2> autoDeleteInterval = [
+    LookUpV2(text: IntervalRange.thirtyMinutes, value: 30),
+    LookUpV2(text: IntervalRange.thirtyDays, value: 43200),
+    LookUpV2(text: IntervalRange.ninetyDays, value: 129600),
+    LookUpV2(text: IntervalRange.oneYear, value: 525600),
+    LookUpV2(text: IntervalRange.twoYears, value: 1051200),
+    LookUpV2(text: IntervalRange.never, value: 0),
   ];
 
   List<String> defaultSortBy = [SortType.date, SortType.tag];
   List<String> archiveSortBy = [SortType.date, SortType.tag, SortType.answered];
   @override
   Widget build(BuildContext context) {
-    final settingsProvider = Provider.of<SettingsProvider>(context);
-    final userId = Provider.of<UserProvider>(context).currentUser.id;
+    final settingsProvider = Provider.of<UserProviderV2>(context);
     final snoozeDurationController = FixedExtentScrollController(
         initialItem: snoozeDuration.contains(selectedDuration)
             ? snoozeDuration.indexOf(selectedDuration)
@@ -208,17 +222,15 @@ class _MyListSettingsState extends State<MyListSettings> {
                 autoDeleteInterval,
                 _setAutoDelete,
                 true,
-                widget.settings.archiveAutoDeleteMins,
+                widget.settings.archiveAutoDeleteMinutes ?? 0,
               ),
             ),
             SizedBox(height: 15),
             CustomToggle(
               title: 'Include Answered Prayers in Auto Delete?',
-              onChange: (value) => settingsProvider.updateSettings(userId,
-                  key: SettingsKey.includeAnsweredPrayerAutoDelete,
-                  value: value,
-                  settingsId: widget.settings.id),
-              value: widget.settings.includeAnsweredPrayerAutoDelete,
+              onChange: (value) => settingsProvider.updateUserSettings(
+                  'includeAnsweredPrayerAutoDelete', value),
+              value: widget.settings.includeAnsweredPrayerAutoDelete ?? false,
             ),
             SizedBox(height: 80),
           ],

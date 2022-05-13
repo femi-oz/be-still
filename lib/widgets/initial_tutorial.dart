@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class TutorialTarget {
-  static TutorialCoachMark tutorialCoachMark;
-  static void showTutorial(
-      context, _keyButton, _keyButton2, _keyButton3, _keyButton4, _keyButton5) {
-    List<TargetFocus> targets = [];
+  static TutorialCoachMark? tutorialCoachMark;
+  List<TargetFocus> targets = [];
+
+  void showTutorial(context, _keyButton, _keyButton2, _keyButton3, _keyButton4,
+      _keyButton5, _keyButton6) {
     targets.add(TargetFocus(
         identify: "welcome",
         targetPosition: TargetPosition(Size.zero, Offset.zero),
@@ -22,7 +23,7 @@ class TutorialTarget {
                 context,
                 'Welcome to Be Still!',
                 1,
-                null,
+                '',
                 "Next Tip",
                 StringUtils.quickTipWelcome,
                 StringUtils.quickTipWelcome2,
@@ -36,10 +37,10 @@ class TutorialTarget {
           ),
           child: _buildBody(
             context,
-            'MY LIST',
+            'MY PRAYERS',
             2,
-            null,
-            " List",
+            '',
+            " My Prayers",
             "Tap",
             StringUtils.quickTipList,
           ))
@@ -73,7 +74,7 @@ class TutorialTarget {
             context,
             'FILTERS',
             4,
-            null,
+            '',
             " Filters",
             "Use",
             StringUtils.quickTipFilters,
@@ -90,7 +91,7 @@ class TutorialTarget {
             context,
             'ADD A PRAYER',
             5,
-            null,
+            '',
             " Add",
             "Tap",
             StringUtils.quickTipAdd,
@@ -103,8 +104,8 @@ class TutorialTarget {
           customPosition: CustomTargetContentPosition(
             bottom: 100,
           ),
-          child: _buildBody(context, 'PRAYER MODE', 6, null, '',
-              StringUtils.quickTipPray, ''))
+          child: _buildBody(
+              context, 'PRAYER MODE', 6, '', '', StringUtils.quickTipPray, ''))
     ]));
     targets
         .add(TargetFocus(identify: "more", keyTarget: _keyButton4, contents: [
@@ -113,8 +114,42 @@ class TutorialTarget {
           customPosition: CustomTargetContentPosition(
             bottom: 100,
           ),
-          child: _buildBody(context, 'MORE', 7, null, ' More', 'Tap the',
+          child: _buildBody(context, 'MORE', 7, '', ' More', 'Tap the',
               StringUtils.quickTipMore))
+    ]));
+    targets
+        .add(TargetFocus(identify: "groups", keyTarget: _keyButton6, contents: [
+      TargetContent(
+          align: ContentAlign.custom,
+          customPosition: CustomTargetContentPosition(
+            bottom: 100,
+          ),
+          child: _buildBody(
+            context,
+            'GROUPS',
+            8,
+            '',
+            " Groups",
+            "Tap",
+            StringUtils.groupTipList,
+          ))
+    ]));
+    targets
+        .add(TargetFocus(identify: "groups", keyTarget: _keyButton6, contents: [
+      TargetContent(
+          align: ContentAlign.custom,
+          customPosition: CustomTargetContentPosition(
+            bottom: 100,
+          ),
+          child: _buildBody(
+            context,
+            'GROUPS',
+            9,
+            '',
+            "",
+            "",
+            StringUtils.groupTipList2,
+          ))
     ]));
 
     tutorialCoachMark = TutorialCoachMark(
@@ -140,15 +175,15 @@ class TutorialTarget {
     )..show();
   }
 
-  static Widget _buildBody(BuildContext context, String title, int id,
-      String image, String boldText, String suffix, String prefix) {
+  Widget _buildBody(BuildContext context, String title, int id, String image,
+      String boldText, String suffix, String prefix) {
     return GestureDetector(
       onHorizontalDragUpdate: (details) {
         int sensitivity = 8;
         if (details.delta.dx > sensitivity) {
-          if (id > 1) tutorialCoachMark.previous();
+          if (id > 1) tutorialCoachMark?.previous();
         } else if (details.delta.dx < -sensitivity) {
-          if (id < 7) tutorialCoachMark.next();
+          if (id < 9) tutorialCoachMark?.next();
         }
       },
       child: Container(
@@ -166,7 +201,7 @@ class TutorialTarget {
                 children: <Widget>[
                   IconButton(
                     padding: EdgeInsets.zero,
-                    onPressed: () => tutorialCoachMark.skip(),
+                    onPressed: () => tutorialCoachMark?.skip(),
                     icon: Icon(
                       AppIcons.bestill_close,
                       color: AppColors.grey4,
@@ -215,14 +250,14 @@ class TutorialTarget {
                   ),
                 ),
               ),
-              image != null ? Image.asset(image) : Container(),
+              image.isNotEmpty ? Image.asset(image) : Container(),
               SizedBox(height: 10),
               Container(
                 width: double.infinity,
                 child: InkWell(
-                  onTap: () => id == 7
-                      ? tutorialCoachMark.skip()
-                      : tutorialCoachMark.next(),
+                  onTap: () => id == 9
+                      ? tutorialCoachMark?.skip()
+                      : tutorialCoachMark?.next(),
                   child: Container(
                     padding: EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
@@ -238,7 +273,7 @@ class TutorialTarget {
                     child: Column(
                       children: <Widget>[
                         Text(
-                          id == 7 ? 'LET\'S GO' : 'NEXT TIP',
+                          id == 9 ? 'LET\'S GO' : 'NEXT TIP',
                           style: AppTextStyles.boldText24
                               .copyWith(color: Colors.white),
                           textAlign: TextAlign.center,
@@ -251,7 +286,7 @@ class TutorialTarget {
               Padding(
                 padding: EdgeInsets.all(5.0),
                 child: Text(
-                  '$id/7',
+                  '$id/9',
                   style: AppTextStyles.regularText12.copyWith(
                       color: AppColors.darkBlue, height: 1, fontSize: 10),
                 ),

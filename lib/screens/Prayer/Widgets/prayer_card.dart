@@ -1,52 +1,137 @@
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/enums/status.dart';
+import 'package:be_still/enums/time_range.dart';
+import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/notification.model.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/models/v2/followed_prayer.model.dart';
+import 'package:be_still/models/v2/follower.model.dart';
+import 'package:be_still/models/v2/group.model.dart';
+import 'package:be_still/models/v2/local_notification.model.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
+import 'package:be_still/models/v2/tag.model.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/theme_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/reminder_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:be_still/models/prayer.model.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:be_still/widgets/snooze_prayer.dart';
 import 'dart:math' as math;
 
 class PrayerCard extends StatefulWidget {
-  final CombinePrayerStream prayerData;
+  final PrayerDataModel prayer;
   final String timeago;
 
-  PrayerCard({@required this.prayerData, @required this.timeago});
+  PrayerCard({required this.prayer, required this.timeago});
 
   @override
   _PrayerCardState createState() => _PrayerCardState();
 }
 
 class _PrayerCardState extends State<PrayerCard> {
-  LocalNotificationModel reminder;
+  // LocalNotificationModel reminder = LocalNotificationModel.defaultValue();
   final SlidableController slidableController = SlidableController();
 
-  initState() {
-    super.initState();
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
   }
 
   bool get hasReminder {
-    var reminders = Provider.of<NotificationProvider>(context)
+    final reminders = Provider.of<NotificationProviderV2>(context)
         .localNotifications
         .where((e) => e.type == NotificationType.reminder)
         .toList();
-    reminder = reminders.firstWhere(
-        (reminder) => reminder.entityId == widget.prayerData.userPrayer.id,
-        orElse: () => null);
-    if (reminder == null)
+    return reminders.any(
+      (reminder) => reminder.prayerId == widget.prayer.id,
+    );
+  }
+
+  bool get isReminderActive {
+    final reminders = Provider.of<NotificationProviderV2>(context)
+        .localNotifications
+        .where((e) => e.type == NotificationType.reminder)
+        .toList();
+    LocalNotificationDataModel rem = reminders.firstWhere(
+        (reminder) => reminder.prayerId == widget.prayer.id,
+        orElse: () => LocalNotificationDataModel());
+    if ((rem.id ?? '').isNotEmpty) {
+      if (rem.frequency != Frequency.one_time) {
+        return true;
+      } else {
+        if ((rem.scheduleDate ?? DateTime.now().subtract(Duration(hours: 1)))
+            .isAfter(DateTime.now())) {
+          return true;
+        } else {
+          Provider.of<NotificationProviderV2>(context).deleteLocalNotification(
+              rem.id ?? '', rem.localNotificationId ?? 0);
+          return false;
+        }
+      }
+    } else {
       return false;
-    else {
-      return true;
+    }
+  }
+
+  // recurring
+  // one time, check if the reminder is past
+
+  void _onMarkAsAnswered() async {
+    BeStilDialog.showLoading(context);
+
+    try {
+      var notifications =
+          Provider.of<NotificationProviderV2>(context, listen: false)
+              .localNotifications
+              .where((e) =>
+                  e.prayerId == widget.prayer.id &&
+                  e.type == NotificationType.reminder)
+              .toList();
+      notifications.forEach((e) async =>
+          await Provider.of<NotificationProviderV2>(context, listen: false)
+              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .markPrayerAsAnswered(
+              widget.prayer.id ?? '', widget.prayer.followers ?? []);
+      BeStilDialog.hideLoading(context);
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    }
+  }
+
+  void _unMarkAsAnswered() async {
+    try {
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .unMarkPrayerAsAnswered(widget.prayer.id ?? '');
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -54,14 +139,23 @@ class _PrayerCardState extends State<PrayerCard> {
     BeStilDialog.showLoading(context);
 
     try {
-      await Provider.of<PrayerProvider>(context, listen: false).unArchivePrayer(
-          widget.prayerData.userPrayer.id, widget.prayerData.prayer.id);
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .unArchivePrayer(widget.prayer.id ?? '',
+              widget.prayer.followers ?? <FollowerModel>[], false);
       BeStilDialog.hideLoading(context);
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -70,29 +164,35 @@ class _PrayerCardState extends State<PrayerCard> {
 
     try {
       var notifications =
-          Provider.of<NotificationProvider>(context, listen: false)
+          Provider.of<NotificationProviderV2>(context, listen: false)
               .localNotifications
               .where((e) =>
-                  e.entityId == widget.prayerData.userPrayer.id &&
+                  e.prayerId == widget.prayer.id &&
                   e.type == NotificationType.reminder)
               .toList();
       notifications.forEach((e) async =>
-          await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id));
+          await Provider.of<NotificationProviderV2>(context, listen: false)
+              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
 
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .archivePrayer(widget.prayerData.userPrayer.id);
+      await Provider.of<PrayerProviderV2>(context, listen: false).archivePrayer(
+          widget.prayer.id ?? '',
+          widget.prayer.followers ?? [],
+          NotificationType.archived_prayers,
+          widget.prayer.groupId ?? '',
+          widget.prayer.description ?? '');
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
@@ -100,101 +200,154 @@ class _PrayerCardState extends State<PrayerCard> {
     BeStilDialog.showLoading(context);
 
     try {
-      await Provider.of<PrayerProvider>(context, listen: false).unSnoozePrayer(
-          widget.prayerData.prayer.id,
-          DateTime.now(),
-          widget.prayerData.userPrayer.id);
-      BeStilDialog.hideLoading(context);
-    } catch (e, s) {
-      BeStilDialog.hideLoading(context);
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
-
-  void _onMarkAsAnswered() async {
-    BeStilDialog.showLoading(context);
-
-    try {
-      var notifications =
-          Provider.of<NotificationProvider>(context, listen: false)
-              .localNotifications
-              .where((e) =>
-                  e.entityId == widget.prayerData.userPrayer.id &&
-                  e.type == NotificationType.reminder)
-              .toList();
-      notifications.forEach((e) async =>
-          await Provider.of<NotificationProvider>(context, listen: false)
-              .deleteLocalNotification(e.id));
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .markPrayerAsAnswered(
-              widget.prayerData.prayer.id, widget.prayerData.userPrayer.id);
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .unSnoozePrayer(
+        widget.prayer.id ?? '',
+      );
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
+
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    }
-  }
-
-  void _unMarkAsAnswered() async {
-    try {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .unMarkPrayerAsAnswered(
-              widget.prayerData.prayer.id, widget.prayerData.userPrayer.id);
-    } on HttpException catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
-    } catch (e, s) {
-      final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
   }
 
   Widget _buildMenu() {
-    return PrayerMenu(
-        context, hasReminder, reminder, () => updateUI(), widget.prayerData);
+    return PrayerMenu(context, hasReminder, _reminder(widget.prayer),
+        () => updateUI(), widget.prayer);
+  }
+
+  LocalNotificationDataModel _reminder(PrayerDataModel? prayerData) {
+    final reminders =
+        Provider.of<NotificationProviderV2>(context, listen: false)
+            .localNotifications;
+    return reminders.firstWhere(
+        (reminder) => reminder.prayerId == (prayerData?.id ?? ''),
+        orElse: () => LocalNotificationDataModel());
   }
 
   updateUI() {
     setState(() {});
   }
 
-  Future<void> _setCurrentPrayer() async {
+  void _unFollowPrayer() async {
+    BeStilDialog.showLoading(context);
+
     try {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayer(widget.prayerData.userPrayer.id);
+      var notifications =
+          Provider.of<NotificationProviderV2>(context, listen: false)
+              .localNotifications
+              .where((e) =>
+                  e.prayerId == widget.prayer.id &&
+                  e.type == NotificationType.reminder)
+              .toList();
+      notifications.forEach((e) async =>
+          await Provider.of<NotificationProviderV2>(context, listen: false)
+              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
+      final currentGroup =
+          Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      final follower = (widget.prayer.followers ?? []).firstWhere(
+          (e) => e.userId == FirebaseAuth.instance.currentUser?.uid,
+          orElse: () => FollowerModel());
+      final prayer = (user.prayers ?? []).firstWhere(
+          (e) => e.prayerId == widget.prayer.id,
+          orElse: () => FollowedPrayer());
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .unFollowPrayer(
+              widget.prayer.id ?? '',
+              currentGroup.id ?? '',
+              (user.prayers ?? []).map((e) => e.prayerId ?? '').toList(),
+              prayer,
+              follower);
+      BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
+
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     } catch (e, s) {
       BeStilDialog.hideLoading(context);
       final user =
-          Provider.of<UserProvider>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(context, e, user, s);
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
     }
+  }
+
+  Future<void> _setCurrentPrayer() async {
+    try {
+      Provider.of<PrayerProviderV2>(context, listen: false)
+          .getPrayer(prayerId: widget.prayer.id ?? '');
+    } on HttpException catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      BeStilDialog.hideLoading(context);
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    }
+  }
+
+  bool get isAdmin {
+    final group = Provider.of<GroupProviderV2>(context, listen: false)
+        .userGroups
+        .firstWhere((element) => element.id == widget.prayer.groupId,
+            orElse: () => GroupDataModel());
+    final isAdmin = (group.users ?? []).any((element) =>
+        element.role == GroupUserRole.admin &&
+        element.userId == FirebaseAuth.instance.currentUser?.uid);
+    return isAdmin;
   }
 
   @override
   Widget build(BuildContext context) {
-    final _user = Provider.of<UserProvider>(context).currentUser;
-    var tags = '';
-    final eTags = widget.prayerData.tags.map((e) => e.displayName).toSet();
-    widget.prayerData.tags.retainWhere((x) => eTags.remove(x.displayName));
-    widget.prayerData.tags.forEach((element) {
-      tags += ' ' + element.displayName;
-    });
+    final _user = FirebaseAuth.instance.currentUser?.uid;
+    final creatorName = Provider.of<UserProviderV2>(context)
+        .getPrayerCreatorName(widget.prayer.createdBy ?? '');
+    bool isOwner = widget.prayer.createdBy == _user;
+    var idSet = <String>{};
+    List<String> tags = [];
+    List<String> allTags =
+        (widget.prayer.tags ?? []).map((e) => e.displayName ?? '').toList();
+    for (var tag in allTags) {
+      if (idSet.add(tag)) {
+        tags.add(tag);
+      }
+    }
+
+    bool isGroupPrayer = widget.prayer.isGroup ?? false;
+
+    bool showOption = false;
+    if (isGroupPrayer && isAdmin) {
+      showOption = true;
+    } else if (isGroupPrayer && !isAdmin) {
+      showOption = false;
+    } else if (!isGroupPrayer) {
+      showOption = true;
+    }
+
+    bool isFollowing = false;
+    isFollowing = (widget.prayer.followers ?? []).any(
+        (element) => element.userId == FirebaseAuth.instance.currentUser?.uid);
+
     return Container(
       color: Colors.transparent,
       margin: EdgeInsets.symmetric(vertical: 7.0),
@@ -233,7 +386,7 @@ class _PrayerCardState extends State<PrayerCard> {
                             children: <Widget>[
                               Row(
                                 children: [
-                                  widget.prayerData.prayer.isAnswer
+                                  widget.prayer.isAnswered ?? false
                                       ? Padding(
                                           padding: const EdgeInsets.only(
                                               top: 5, bottom: 5, right: 8),
@@ -244,7 +397,7 @@ class _PrayerCardState extends State<PrayerCard> {
                                           ),
                                         )
                                       : SizedBox(),
-                                  widget.prayerData.userPrayer.isSnoozed
+                                  widget.prayer.status == Status.snoozed
                                       ? Padding(
                                           padding: const EdgeInsets.only(
                                               top: 5, bottom: 5, right: 8),
@@ -255,7 +408,7 @@ class _PrayerCardState extends State<PrayerCard> {
                                           ),
                                         )
                                       : SizedBox(),
-                                  hasReminder
+                                  hasReminder && isReminderActive
                                       ? Padding(
                                           padding:
                                               const EdgeInsets.only(right: 5.0),
@@ -290,15 +443,24 @@ class _PrayerCardState extends State<PrayerCard> {
                                                                     .symmetric(
                                                                 vertical: 30),
                                                         child: ReminderPicker(
+                                                          isGroup: false,
+                                                          entityId:
+                                                              (widget.prayer)
+                                                                      .id ??
+                                                                  '',
                                                           type: NotificationType
                                                               .reminder,
                                                           hideActionuttons:
                                                               false,
+                                                          popTwice: false,
                                                           onCancel: () =>
                                                               Navigator.of(
                                                                       context)
                                                                   .pop(),
-                                                          reminder: reminder,
+                                                          reminder: _reminder(
+                                                              widget.prayer),
+                                                          prayerData:
+                                                              widget.prayer,
                                                         ),
                                                       ),
                                                     ],
@@ -318,16 +480,16 @@ class _PrayerCardState extends State<PrayerCard> {
                                           ),
                                         )
                                       : SizedBox(),
-                                  widget.prayerData.prayer.userId != _user?.id
+                                  widget.prayer.userId != _user
                                       ? Text(
-                                          widget.prayerData.prayer.creatorName,
+                                          creatorName,
                                           style:
                                               AppTextStyles.boldText14.copyWith(
                                             color: AppColors.lightBlue4,
                                           ),
                                         )
                                       : Container(),
-                                  widget.prayerData.userPrayer.isFavorite
+                                  ((widget.prayer).isFavorite ?? false)
                                       ? Padding(
                                           padding: const EdgeInsets.only(
                                               top: 3, bottom: 3, right: 8),
@@ -345,7 +507,10 @@ class _PrayerCardState extends State<PrayerCard> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
                                     Expanded(
-                                      child: widget.prayerData.tags.length > 0
+                                      child: (widget.prayer.tags ??
+                                                      <TagModel>[])
+                                                  .length >
+                                              0
                                           ? Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.end,
@@ -362,7 +527,7 @@ class _PrayerCardState extends State<PrayerCard> {
                                                           EdgeInsets.symmetric(
                                                               vertical: 3),
                                                       child: Text(
-                                                        tags,
+                                                        tags.join(', '),
                                                         style: TextStyle(
                                                           color: AppColors.red,
                                                           fontSize: 10,
@@ -420,7 +585,7 @@ class _PrayerCardState extends State<PrayerCard> {
                     Container(
                       width: MediaQuery.of(context).size.width * 0.8,
                       child: Text(
-                        widget.prayerData.prayer.description,
+                        widget.prayer.description ?? '',
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.regularText15
@@ -440,12 +605,12 @@ class _PrayerCardState extends State<PrayerCard> {
 
             showModalBottomSheet(
               context: context,
-              barrierColor: Provider.of<ThemeProvider>(context, listen: false)
+              barrierColor: Provider.of<ThemeProviderV2>(context, listen: false)
                       .isDarkModeEnabled
                   ? AppColors.backgroundColor[0].withOpacity(0.5)
                   : Color(0xFF021D3C).withOpacity(0.7),
               backgroundColor:
-                  Provider.of<ThemeProvider>(context, listen: false)
+                  Provider.of<ThemeProviderV2>(context, listen: false)
                           .isDarkModeEnabled
                       ? AppColors.backgroundColor[0].withOpacity(0.5)
                       : Color(0xFF021D3C).withOpacity(0.7),
@@ -457,64 +622,73 @@ class _PrayerCardState extends State<PrayerCard> {
           }, false)
         ],
         secondaryActions: <Widget>[
-          _buildSlideItem(
-              AppIcons.bestill_answered,
-              widget.prayerData.prayer.isAnswer ? 'Unmark' : 'Answered',
-              () => widget.prayerData.prayer.isAnswer
-                  ? _unMarkAsAnswered()
-                  : _onMarkAsAnswered(),
-              false),
-          _buildSlideItem(
-              AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
-              widget.prayerData.userPrayer.isArchived ? 'Unarchive' : 'Archive',
-              () => widget.prayerData.userPrayer.isArchived
-                  ? _unArchive()
-                  : _onArchive(),
-              false),
-          widget.prayerData.userPrayer.isArchived ||
-                  widget.prayerData.prayer.isAnswer
-              ? _buildSlideItem(
-                  AppIcons.bestill_snooze, 'Snooze', () => null, true)
-              : _buildSlideItem(
-                  AppIcons.bestill_snooze,
-                  widget.prayerData.userPrayer.isSnoozed
-                      ? 'Unsnooze'
-                      : 'Snooze',
-                  () => widget.prayerData.userPrayer.isSnoozed
-                      ? _unSnoozePrayer()
-                      : showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return Dialog(
-                              insetPadding: EdgeInsets.all(20),
-                              backgroundColor: AppColors.prayerCardBgColor,
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(color: AppColors.darkBlue),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10.0),
+          if (isFollowing)
+            _buildSlideItem(Icons.star, 'Unfollow', () async {
+              _unFollowPrayer();
+            }, false),
+          if (showOption)
+            _buildSlideItem(
+                AppIcons.bestill_icons_bestill_archived_icon_revised_drk,
+                widget.prayer.status == Status.archived
+                    ? 'Unarchive'
+                    : 'Archive',
+                () => widget.prayer.status == Status.archived
+                    ? _unArchive()
+                    : _onArchive(),
+                !isOwner && !isAdmin),
+          if (showOption)
+            _buildSlideItem(
+                AppIcons.bestill_answered,
+                widget.prayer.isAnswered ?? false ? 'Unmark' : 'Answered',
+                () => widget.prayer.isAnswered ?? false
+                    ? _unMarkAsAnswered()
+                    : _onMarkAsAnswered(),
+                !isOwner && !isAdmin),
+          if (!isGroupPrayer)
+            widget.prayer.status == Status.archived ||
+                    (widget.prayer.isAnswered == true)
+                ? _buildSlideItem(
+                    AppIcons.bestill_snooze, 'Snooze', () => null, true)
+                : _buildSlideItem(
+                    AppIcons.bestill_snooze,
+                    widget.prayer.status == Status.snoozed
+                        ? 'Unsnooze'
+                        : 'Snooze',
+                    () => widget.prayer.status == Status.snoozed
+                        ? _unSnoozePrayer()
+                        : showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Dialog(
+                                insetPadding: EdgeInsets.all(20),
+                                backgroundColor: AppColors.prayerCardBgColor,
+                                shape: RoundedRectangleBorder(
+                                  side: BorderSide(color: AppColors.darkBlue),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10.0),
+                                  ),
                                 ),
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 30),
-                                      child: SnoozePrayer(widget.prayerData,
-                                          popTwice: false)),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                  false),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 30),
+                                        child: SnoozePrayer(widget.prayer,
+                                            popTwice: !isOwner)),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                    !isOwner),
         ],
       ),
     );
   }
 
   Widget _buildSlideItem(
-      IconData icon, String label, Function _onTap, bool isDisabled) {
+      IconData icon, String label, Function() _onTap, bool isDisabled) {
     return Container(
       decoration: BoxDecoration(
           color: AppColors.prayerCardBgColor,
@@ -530,7 +704,7 @@ class _PrayerCardState extends State<PrayerCard> {
                   angle: 90 * math.pi / 180,
                   child: Icon(
                     icon,
-                    color: Provider.of<ThemeProvider>(context, listen: false)
+                    color: Provider.of<ThemeProviderV2>(context, listen: false)
                             .isDarkModeEnabled
                         ? isDisabled
                             ? AppColors.white.withOpacity(0.4)
@@ -543,7 +717,7 @@ class _PrayerCardState extends State<PrayerCard> {
                 )
               : Icon(
                   icon,
-                  color: Provider.of<ThemeProvider>(context, listen: false)
+                  color: Provider.of<ThemeProviderV2>(context, listen: false)
                           .isDarkModeEnabled
                       ? isDisabled
                           ? AppColors.white.withOpacity(0.4)
@@ -554,15 +728,15 @@ class _PrayerCardState extends State<PrayerCard> {
                   size: 18,
                 ),
         ),
-        foregroundColor:
-            Provider.of<ThemeProvider>(context, listen: false).isDarkModeEnabled
-                ? isDisabled
-                    ? AppColors.white.withOpacity(0.4)
-                    : AppColors.white
-                : isDisabled
-                    ? AppColors.lightBlue3.withOpacity(0.4)
-                    : AppColors.lightBlue3,
-        onTap: _onTap,
+        foregroundColor: Provider.of<ThemeProviderV2>(context, listen: false)
+                .isDarkModeEnabled
+            ? isDisabled
+                ? AppColors.white.withOpacity(0.4)
+                : AppColors.white
+            : isDisabled
+                ? AppColors.lightBlue3.withOpacity(0.4)
+                : AppColors.lightBlue3,
+        onTap: isDisabled ? () {} : _onTap,
       ),
     );
   }

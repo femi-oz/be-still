@@ -5,4 +5,7 @@ class Status {
   static const archived = 'Archived';
   static const answered = 'Answered';
   static const snoozed = 'Snoozed';
+  static const following = 'Following';
+  static const favorite = 'Favorite';
+  static const deleted = 'Deleted';
 }

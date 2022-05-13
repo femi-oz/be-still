@@ -1,25 +1,22 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/models/notification.model.dart';
-import 'package:be_still/providers/auth_provider.dart';
-import 'package:be_still/providers/misc_provider.dart';
-import 'package:be_still/providers/notification_provider.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/theme_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
-import 'package:be_still/screens/entry_screen.dart';
+import 'package:be_still/models/v2/notification_message.model.dart';
+import 'package:be_still/models/v2/user.model.dart';
+import 'package:be_still/providers/v2/auth_provider.dart';
+import 'package:be_still/providers/v2/notification_provider.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/theme_provider.dart';
 import 'package:be_still/screens/security/Login/login_screen.dart';
 import 'package:be_still/screens/splash/splash_screen.dart';
 import 'package:be_still/utils/app_dialog.dart';
-import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/settings.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-import 'package:flutter/foundation.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -37,8 +34,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
-  Future<void> _initializeFlutterFireFuture;
-
+  late Future<void> _initializeFlutterFireFuture;
+  static FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   Future<void> _testAsyncErrorOnInit() async {
     Future<void>.delayed(const Duration(milliseconds: 2), () {
       final List<int> list = <int>[];
@@ -48,22 +46,81 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    // initDynamicLinks();
-    SystemChrome.setEnabledSystemUIOverlays(
-        [SystemUiOverlay.top, SystemUiOverlay.bottom]);
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
-    WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<ThemeProvider>(context, listen: false).setDefaultTheme();
-    });
-    Provider.of<NotificationProvider>(context, listen: false)
-        .initLocal(context);
-    _initializeFlutterFireFuture = _initializeFlutterFire();
-    _getPermissions();
+    try {
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+          overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+      ]);
+      WidgetsBinding.instance?.addObserver(this);
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
+        Provider.of<ThemeProviderV2>(context, listen: false).setDefaultTheme();
+      });
+      Provider.of<NotificationProviderV2>(context, listen: false)
+          .initLocal(context);
+      _initializeFlutterFireFuture = _initializeFlutterFire();
+
+      _getPermissions();
+
+      var initializationSettingsAndroid =
+          AndroidInitializationSettings('@mipmap/ic_launcher');
+      var initializationSettingsIOs = IOSInitializationSettings();
+      var initSetttings = InitializationSettings(
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsIOs);
+
+      _flutterLocalNotificationsPlugin.initialize(initSetttings,
+          onSelectNotification: _onSelectNotification);
+
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+        showNotification(message);
+      });
+      FirebaseMessaging.onMessageOpenedApp.listen((message) {
+        AppController appController = Get.find();
+        appController.setCurrentPage(14, false, 0);
+      });
+      FirebaseMessaging.instance.getInitialMessage().then((value) {
+        if (value != null) {
+          AppController appController = Get.find();
+          appController.setCurrentPage(14, false, 0);
+        }
+      });
+    } catch (e, s) {
+      BeStilDialog.showErrorDialog(context, StringUtils.errorOccured, null, s);
+    }
 
     super.initState();
+  }
+
+  Future<void> showNotification(RemoteMessage message) async {
+    var androidChannelSpecifics = AndroidNotificationDetails(
+      'CHANNEL_ID',
+      'CHANNEL_NAME',
+      channelDescription: "CHANNEL_DESCRIPTION",
+      importance: Importance.high,
+      priority: Priority.high,
+      playSound: true,
+      // timeoutAfter: 10000,
+      styleInformation: BigTextStyleInformation(''),
+    );
+    var iosChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        android: androidChannelSpecifics, iOS: iosChannelSpecifics);
+    await _flutterLocalNotificationsPlugin.show(
+      0,
+      message.notification?.title ?? '',
+      message.notification?.body ?? '',
+      platformChannelSpecifics,
+      payload: "{\"type\": \"fcm message\"}",
+    );
+  }
+
+  Future _onSelectNotification(String? payload) async {
+    // Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+    //   return EntryScreen();
+    // }));
+    AppController appController = Get.find();
+    appController.setCurrentPage(14, false, 0);
   }
 
   void _getPermissions() async {
@@ -73,7 +130,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             Settings.enabledContactPermission = p == PermissionStatus.granted);
       }
     } catch (e, s) {
-      BeStilDialog.showErrorDialog(context, e, null, s);
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), UserDataModel(), s);
     }
   }
 
@@ -88,11 +146,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
 
     // Pass all uncaught errors to Crashlytics.
-    Function originalOnError = FlutterError.onError;
+    Function(FlutterErrorDetails)? originalOnError = FlutterError.onError;
     FlutterError.onError = (FlutterErrorDetails errorDetails) async {
       await FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
       // Forward to original handler.
-      originalOnError(errorDetails);
+      if (originalOnError != null) originalOnError(errorDetails);
     };
 
     if (_kShouldTestAsyncErrorOnInit) {
@@ -102,88 +160,97 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance?.removeObserver(this);
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
-    switch (state) {
-      case AppLifecycleState.resumed:
-        await Future.delayed(Duration(milliseconds: 1000));
-        var backgroundTime =
-            DateTime.fromMillisecondsSinceEpoch(Settings.backgroundTime);
+    try {
+      switch (state) {
+        case AppLifecycleState.resumed:
+          await Future.delayed(Duration(milliseconds: 1000));
+          var backgroundTime =
+              DateTime.fromMillisecondsSinceEpoch(Settings.backgroundTime);
 
-        if (DateTime.now().difference(backgroundTime) > Duration(hours: 48)) {
-          await Provider.of<AuthenticationProvider>(context, listen: false)
-              .signOut();
-          await NavigationService.instance.navigateTo(LoginScreen.routeName);
-        }
-        final userId =
-            Provider.of<UserProvider>(context, listen: false).currentUser?.id;
-        final notifications =
-            Provider.of<NotificationProvider>(context, listen: false)
-                .localNotifications;
-        if (userId != null)
-          Provider.of<PrayerProvider>(context, listen: false)
-              .checkPrayerValidity(userId, notifications);
-        print(
-            'message -- didChangeAppLifecycleState before ===> ${Provider.of<NotificationProvider>(context, listen: false).message}');
+          if (DateTime.now().difference(backgroundTime) > Duration(hours: 48)) {
+            await Provider.of<AuthenticationProviderV2>(context, listen: false)
+                .signOut();
+            await NavigationService.instance.navigateTo(LoginScreen.routeName);
+          }
 
-        await Provider.of<NotificationProvider>(context, listen: false)
-            .initLocal(context);
-        print(
-            'message -- didChangeAppLifecycleState after ===> ${Provider.of<NotificationProvider>(context, listen: false).message}');
+          print(
+              'message -- didChangeAppLifecycleState before ===> ${Provider.of<NotificationProviderV2>(context, listen: false).message}');
 
-        var message =
-            Provider.of<NotificationProvider>(context, listen: false).message;
-        if (message != null) {
-          print('AppLifecycleState resume ===> ${message.entityId}');
-          await gotoPage(message);
-          Provider.of<NotificationProvider>(context, listen: false)
-              .clearMessage();
-        }
-        // do check, route, clear message
-        break;
-      case AppLifecycleState.inactive:
-        Settings.backgroundTime = DateTime.now().millisecondsSinceEpoch;
-        print('AppLifecycleState inactive ===> ');
-        break;
-      case AppLifecycleState.paused:
-        print('AppLifecycleState paused ===> ');
-        Settings.backgroundTime = DateTime.now().millisecondsSinceEpoch;
-        break;
-      case AppLifecycleState.detached:
-        print('AppLifecycleState detached ===> ');
-        Settings.backgroundTime = DateTime.now().millisecondsSinceEpoch;
-        break;
+          await Provider.of<NotificationProviderV2>(context, listen: false)
+              .initLocal(context);
+          print(
+              'message -- didChangeAppLifecycleState after ===> ${Provider.of<NotificationProviderV2>(context, listen: false).message}');
+
+          var message =
+              Provider.of<NotificationProviderV2>(context, listen: false)
+                  .message;
+          if ((message.entityId ?? '').isNotEmpty) {
+            print('AppLifecycleState resume ===> ${message.entityId}');
+            await gotoPage(message);
+            Provider.of<NotificationProviderV2>(context, listen: false)
+                .clearMessage();
+          }
+          // do check, route, clear message
+          break;
+        case AppLifecycleState.inactive:
+          Settings.backgroundTime = DateTime.now().millisecondsSinceEpoch;
+          print('AppLifecycleState inactive ===> ');
+          break;
+        case AppLifecycleState.paused:
+          print('AppLifecycleState paused ===> ');
+          Settings.backgroundTime = DateTime.now().millisecondsSinceEpoch;
+          break;
+        case AppLifecycleState.detached:
+          print('AppLifecycleState detached ===> ');
+          Settings.backgroundTime = DateTime.now().millisecondsSinceEpoch;
+          break;
+      }
+    } catch (e, s) {
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.errorOccured, UserDataModel(), s);
     }
   }
 
-  gotoPage(NotificationMessage message) async {
-    if (message.type == NotificationType.prayer_time) {
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(2, false);
-    }
-    if (message.type == NotificationType.reminder) {
-      await Provider.of<PrayerProvider>(context, listen: false)
-          .setPrayer(message.entityId);
-      // Future.delayed(Duration)
-      AppCOntroller appCOntroller = Get.find();
-      appCOntroller.setCurrentPage(7, false);
+  gotoPage(NotificationMessageModel message) async {
+    try {
+      if (message.type == NotificationType.prayer_time) {
+        AppController appController = Get.find();
+        appController.setCurrentPage(2, false, 0);
+      }
+      if (message.type == NotificationType.reminder) {
+        if (message.isGroup ?? false) {
+          AppController appController = Get.find();
+          appController.setCurrentPage(9, false, 0);
+        } else {
+          Provider.of<PrayerProviderV2>(context, listen: false)
+              .setCurrentPrayerId(message.entityId ?? '');
+          AppController appController = Get.find();
+          appController.setCurrentPage(7, false, 0);
+        }
+      }
+    } catch (e, s) {
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.errorOccured, UserDataModel(), s);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeProvider>(
+    return Consumer<ThemeProviderV2>(
       builder: (ctx, theme, _) => FutureBuilder(
         future: _initializeFlutterFireFuture,
-        builder: (contect, snapshot) => MaterialApp(
-          builder: (BuildContext context, Widget child) {
+        builder: (contect, snapshot) => GetMaterialApp(
+          builder: (BuildContext context, Widget? child) {
             final MediaQueryData data = MediaQuery.of(context);
             return MediaQuery(
-                data: data.copyWith(textScaleFactor: 1), child: child);
+                data: data.copyWith(textScaleFactor: 1),
+                child: child ?? SizedBox.shrink());
           },
           title: 'Be Still',
           debugShowCheckedModeBanner: false,

@@ -1,10 +1,15 @@
-import 'package:be_still/models/prayer.model.dart';
-import 'package:be_still/providers/prayer_provider.dart';
-import 'package:be_still/providers/user_provider.dart';
+import 'package:be_still/enums/status.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
+import 'package:be_still/models/v2/tag.model.dart';
+import 'package:be_still/models/v2/update.model.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/providers/v2/user_provider.dart';
+import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
-import 'package:be_still/utils/settings.dart';
+import 'package:be_still/utils/string_utils.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:easy_rich_text/easy_rich_text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
@@ -13,9 +18,9 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class UpdateView extends StatefulWidget {
-  final CombinePrayerStream data;
+  final PrayerDataModel prayer;
   @override
-  UpdateView(this.data);
+  UpdateView(this.prayer);
 
   @override
   _UpdateViewState createState() => _UpdateViewState();
@@ -25,7 +30,6 @@ class _UpdateViewState extends State<UpdateView> {
   Iterable<Contact> localContacts = [];
 
   _emailLink(String payload, context) async {
-    payload = payload == null ? '' : payload;
     final Email email = Email(
       body: '',
       recipients: [payload],
@@ -45,21 +49,30 @@ class _UpdateViewState extends State<UpdateView> {
 
   _openShareModal(BuildContext context, String phoneNumber, String email,
       String identifier) async {
-    await Provider.of<PrayerProvider>(context, listen: false).getContacts();
+    try {
+      await Provider.of<PrayerProviderV2>(context, listen: false).getContacts();
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    }
     var updatedPhone = '';
     var updatedEmail = '';
     localContacts =
-        Provider.of<PrayerProvider>(context, listen: false).localContacts;
+        Provider.of<PrayerProviderV2>(context, listen: false).localContacts;
     var latestContact =
         localContacts.where((element) => element.identifier == identifier);
 
     for (var contact in latestContact) {
-      final phoneNumber =
-          contact.phones.length > 0 ? contact.phones.toList()[0].value : null;
-      final email =
-          contact.emails.length > 0 ? contact.emails.toList()[0].value : null;
-      updatedPhone = phoneNumber;
-      updatedEmail = email;
+      final phoneNumber = (contact.phones ?? []).length > 0
+          ? (contact.phones ?? []).toList()[0].value
+          : null;
+      final email = (contact.emails ?? []).length > 0
+          ? (contact.emails ?? []).toList()[0].value
+          : null;
+      updatedPhone = phoneNumber ?? '';
+      updatedEmail = email ?? '';
     }
     AlertDialog dialog = AlertDialog(
         actionsPadding: EdgeInsets.all(0),
@@ -222,10 +235,14 @@ class _UpdateViewState extends State<UpdateView> {
   }
 
   Widget build(BuildContext context) {
-    final _currentUser = Provider.of<UserProvider>(context).currentUser;
-    var updates = widget.data.updates;
-    updates.sort((a, b) => b.modifiedOn.compareTo(a.modifiedOn));
-    updates = updates.where((element) => element.deleteStatus != -1).toList();
+    var updates = widget.prayer.updates ?? <UpdateModel>[];
+    updates.sort((a, b) => (b.modifiedDate ?? DateTime.now())
+        .compareTo(a.modifiedDate ?? DateTime.now()));
+    updates =
+        updates.where((element) => element.status != Status.deleted).toList();
+
+    final creatorName = Provider.of<UserProviderV2>(context)
+        .getPrayerCreatorName(widget.prayer.createdBy ?? '');
 
     return Container(
       child: SingleChildScrollView(
@@ -234,16 +251,14 @@ class _UpdateViewState extends State<UpdateView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              widget.data.prayer.userId != _currentUser.id
+              widget.prayer.userId != FirebaseAuth.instance.currentUser?.uid
                   ? Container(
                       margin: EdgeInsets.only(bottom: 20),
                       child: Text(
-                        widget.data.prayer.creatorName,
-                        style: AppTextStyles.boldText20.copyWith(
-                            color: Settings.isDarkMode
-                                ? Color(0xFF009FD0)
-                                : Color(0xFF003B87)),
-                        textAlign: TextAlign.center,
+                        creatorName,
+                        style: AppTextStyles.regularText18b.copyWith(
+                            color: AppColors.lightBlue4,
+                            fontWeight: FontWeight.w500),
                       ),
                     )
                   : Container(),
@@ -261,7 +276,8 @@ class _UpdateViewState extends State<UpdateView> {
                               children: <Widget>[
                                 Text(
                                   DateFormat('hh:mma | MM.dd.yyyy')
-                                      .format(updates[i].createdOn)
+                                      .format(updates[i].createdDate ??
+                                          DateTime.now())
                                       .toLowerCase(),
                                   style: AppTextStyles.regularText18b.copyWith(
                                       color: AppColors.prayerModeBorder),
@@ -285,7 +301,7 @@ class _UpdateViewState extends State<UpdateView> {
                                 children: [
                                   Flexible(
                                     child: EasyRichText(
-                                      updates[i].description,
+                                      updates[i].description ?? '',
                                       defaultStyle:
                                           AppTextStyles.regularText16b.copyWith(
                                         color: AppColors.prayerTextColor,
@@ -293,20 +309,27 @@ class _UpdateViewState extends State<UpdateView> {
                                       textAlign: TextAlign.left,
                                       patternList: [
                                         for (var i = 0;
-                                            i < widget.data.tags.length;
+                                            i <
+                                                (widget.prayer.tags ??
+                                                        <TagModel>[])
+                                                    .length;
                                             i++)
                                           EasyRichTextPattern(
                                               targetString: widget
-                                                  .data.tags[i].displayName,
+                                                  .prayer.tags?[i].displayName,
                                               recognizer: TapGestureRecognizer()
                                                 ..onTap = () {
                                                   _openShareModal(
                                                       context,
-                                                      widget.data.tags[i]
-                                                          .phoneNumber,
-                                                      widget.data.tags[i].email,
-                                                      widget.data.tags[i]
-                                                          .identifier);
+                                                      widget.prayer.tags?[i]
+                                                              .phoneNumber ??
+                                                          '',
+                                                      widget.prayer.tags?[i]
+                                                              .email ??
+                                                          '',
+                                                      widget.prayer.tags?[i]
+                                                              .contactIdentifier ??
+                                                          '');
                                                 },
                                               style: AppTextStyles.regularText15
                                                   .copyWith(
@@ -323,7 +346,7 @@ class _UpdateViewState extends State<UpdateView> {
                                 children: [
                                   Flexible(
                                     child: EasyRichText(
-                                      updates[i].description,
+                                      updates[i].description ?? '',
                                       defaultStyle:
                                           AppTextStyles.regularText16b.copyWith(
                                         color: AppColors.prayerTextColor,
@@ -331,20 +354,27 @@ class _UpdateViewState extends State<UpdateView> {
                                       textAlign: TextAlign.left,
                                       patternList: [
                                         for (var i = 0;
-                                            i < widget.data.tags.length;
+                                            i <
+                                                (widget.prayer.tags ??
+                                                        <TagModel>[])
+                                                    .length;
                                             i++)
                                           EasyRichTextPattern(
                                               targetString: widget
-                                                  .data.tags[i].displayName,
+                                                  .prayer.tags?[i].displayName,
                                               recognizer: TapGestureRecognizer()
                                                 ..onTap = () {
                                                   _openShareModal(
                                                       context,
-                                                      widget.data.tags[i]
-                                                          .phoneNumber,
-                                                      widget.data.tags[i].email,
-                                                      widget.data.tags[i]
-                                                          .identifier);
+                                                      widget.prayer.tags?[i]
+                                                              .phoneNumber ??
+                                                          '',
+                                                      widget.prayer.tags?[i]
+                                                              .email ??
+                                                          '',
+                                                      widget.prayer.tags?[i]
+                                                              .contactIdentifier ??
+                                                          '');
                                                 },
                                               style: AppTextStyles.regularText15
                                                   .copyWith(
@@ -377,8 +407,9 @@ class _UpdateViewState extends State<UpdateView> {
                                     color: AppColors.prayerModeBorder),
                               ),
                               Text(
-                                DateFormat('MM.dd.yyyy')
-                                    .format(widget.data.prayer.createdOn),
+                                DateFormat('MM.dd.yyyy').format(
+                                    widget.prayer.createdDate ??
+                                        DateTime.now()),
                                 style: AppTextStyles.regularText18b.copyWith(
                                     color: AppColors.prayerModeBorder),
                               ),
@@ -400,7 +431,7 @@ class _UpdateViewState extends State<UpdateView> {
                         children: [
                           Flexible(
                             child: EasyRichText(
-                              widget.data.prayer.description,
+                              widget.prayer.description ?? '',
                               defaultStyle:
                                   AppTextStyles.regularText16b.copyWith(
                                 color: AppColors.prayerTextColor,
@@ -408,18 +439,25 @@ class _UpdateViewState extends State<UpdateView> {
                               textAlign: TextAlign.left,
                               patternList: [
                                 for (var i = 0;
-                                    i < widget.data.tags.length;
+                                    i <
+                                        (widget.prayer.tags ?? <TagModel>[])
+                                            .length;
                                     i++)
                                   EasyRichTextPattern(
                                       targetString:
-                                          widget.data.tags[i].displayName,
+                                          widget.prayer.tags?[i].displayName,
                                       recognizer: TapGestureRecognizer()
                                         ..onTap = () {
                                           _openShareModal(
                                               context,
-                                              widget.data.tags[i].phoneNumber,
-                                              widget.data.tags[i].email,
-                                              widget.data.tags[i].identifier);
+                                              widget.prayer.tags?[i]
+                                                      .phoneNumber ??
+                                                  '',
+                                              widget.prayer.tags?[i].email ??
+                                                  '',
+                                              widget.prayer.tags?[i]
+                                                      .contactIdentifier ??
+                                                  '');
                                         },
                                       style: AppTextStyles.regularText15
                                           .copyWith(

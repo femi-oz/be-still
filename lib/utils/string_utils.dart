@@ -1,5 +1,6 @@
 import 'package:be_still/enums/error_type.dart';
 import 'package:be_still/utils/settings.dart';
+import 'package:get/get.dart';
 
 class StringUtils {
   static String enumName(String enumToString) {
@@ -7,12 +8,16 @@ class StringUtils {
     return paths[paths.length - 1];
   }
 
+  // static const String joinRequestStatusPending = '0';
+  // static const String joinRequestStatusApproved = '1';
+  // static const String joinRequestStatusDenied = '-1';
+  static const String joinRequestSent = 'Your request is pending';
   static const String errorOccured = 'An error occured.';
   static const String reloginErrorOccured =
       'You have to be recently logged in the perform this action. Please re-login';
   static String backgroundImage = 'assets/images/bestill_arrows-bg-lt.png';
 
-  static String drawerBackgroundImage([bool isDarkMode]) {
+  static String drawerBackgroundImage() {
     String retVal;
     switch (Settings.isDarkMode) {
       case true:
@@ -41,6 +46,10 @@ class StringUtils {
       " to begin the tour, or close this window to begin using Be Still right away.";
   static String quickTipList =
       " at any time to view all the prayers in your current prayer list.";
+  static String groupTipList =
+      " to create or find a Prayer Group in which you can share prayers with other people.";
+  static String groupTipList2 =
+      " After you create, or find and join a group, tap the group name to view the shared prayers in the group prayer list. You can follow prayers in the group, which adds them to your current prayer list and includes them in your personal prayer time.";
   static String quickTipQuickAccess =
       "You can swipe right or left on any prayer in your prayer list to display common actions.";
   static String quickTipFilters =
@@ -51,12 +60,21 @@ class StringUtils {
       "Tap the Be Still logo to view your prayers one at a time in a distraction-free zone during your prayer time.";
   static String quickTipMore =
       " icon to access recommended online Bibles, learn more about the app in the help section, or log out.";
+  static String unathorized =
+      "You're unathorized to perform this action. Kindly log in";
+  static String documentDoesNotExist = "Document does not exist.";
+
+  static String getErrorMessage(e) {
+    return (e?.message != null ? e.message : StringUtils.errorOccured) ??
+        StringUtils.errorOccured;
+  }
+
   static generateExceptionMessage(exceptionCode) {
     String errorMessage;
     switch (exceptionCode) {
       case ErrorType.emailAlreadyExists:
         errorMessage =
-            "The email has already been registered. Please login or reset your password.";
+            "That email address is already in use. Please select another one.";
         break;
       case ErrorType.invalidEmail:
         errorMessage = "Email format is wrong";
@@ -64,9 +82,11 @@ class StringUtils {
       case ErrorType.wrongPassword:
         errorMessage = "Username / Password is incorrect";
         break;
+      case ErrorType.userNotFound:
+        errorMessage = "Username / Password is incorrect";
+        break;
       case ErrorType.notAvailable:
-        errorMessage =
-            "Finger Print / Face ID is not supported on your device.";
+        errorMessage = "This option is unavailable on this device.";
         break;
       case ErrorType.userNotFound:
         errorMessage = "User with this email doesn't exist.";
@@ -97,7 +117,9 @@ class StringUtils {
 }
 
 extension StringExtension on String {
-  String capitalize() {
-    return "${this[0].toUpperCase()}${this.substring(1)}";
+  String sentenceCase() {
+    List<String> strings = this.split(' ');
+    strings = strings.map((e) => e.capitalizeFirst ?? '').toList();
+    return strings.join(' ');
   }
 }
