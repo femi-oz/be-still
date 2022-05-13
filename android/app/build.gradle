@@ -116,7 +116,7 @@ android {
             dimension "app"
             resValue "string", "app_name", "Be Still"
             versionNameSuffix "-store"
-            applicationId "org.second.bestill"
+            applicationId "org.second.bestill.V2"
         }
     }
 }
