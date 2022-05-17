@@ -186,9 +186,9 @@ class MigrationService {
                   frequency: r.frequency,
                   scheduleDate: DateTime(
                     int.parse(r.selectedYear ?? '0'),
-                    LocalNotification.months.indexOf(r.selectedMonth ?? ''),
+                    getMonth(r),
                     int.parse(r.selectedDayOfMonth ?? '0'),
-                    int.parse(r.selectedHour ?? '0'),
+                    getHour(r),
                     int.parse(r.selectedMinute ?? '0'),
                   ),
                   createdBy: FirebaseAuth.instance.currentUser?.uid,
@@ -204,6 +204,7 @@ class MigrationService {
 
   Future<void> migrateUserReminders(String userId) async {
     oldReminders = await _oldNotificationService.getLocalNotifications(userId);
+
     oldReminders
         .where((element) => element.type == NotificationType.prayer_time)
         .toList()
@@ -219,9 +220,9 @@ class MigrationService {
               frequency: r.frequency,
               scheduleDate: DateTime(
                 int.parse(r.selectedYear ?? '0'),
-                LocalNotification.months.indexOf(r.selectedMonth ?? ''),
+                getMonth(r),
                 int.parse(r.selectedDayOfMonth ?? '0'),
-                int.parse(r.selectedHour ?? '0'),
+                getHour(r),
                 int.parse(r.selectedMinute ?? '0'),
               ),
               createdBy: FirebaseAuth.instance.currentUser?.uid,
@@ -231,5 +232,21 @@ class MigrationService {
           .toJson();
       _localNotificationCollectionReference.add(newReminders);
     });
+  }
+
+  int getMonth(LocalNotificationModel r) {
+    final selectedMonth =
+        LocalNotification.months.indexOf(r.selectedMonth ?? 'January') + 1;
+    return selectedMonth;
+  }
+
+  int getHour(LocalNotificationModel r) {
+    var selectedHour = int.parse(r.selectedHour ?? '0');
+    if (r.period == 'PM' && selectedHour != 12) {
+      selectedHour = 12 + selectedHour;
+    } else if (r.period == 'AM' && selectedHour == 12) {
+      selectedHour = 0;
+    }
+    return selectedHour;
   }
 }
