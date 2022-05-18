@@ -27,6 +27,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class MigrationService {
   final _oldUserService = locator<UserService>();
@@ -187,7 +188,7 @@ class MigrationService {
                   scheduleDate: DateTime(
                     int.parse(r.selectedYear ?? '0'),
                     getMonth(r),
-                    getDay(r),
+                    int.parse(r.selectedDayOfMonth ?? '0'),
                     getHour(r),
                     int.parse(r.selectedMinute ?? '0'),
                   ),
@@ -205,6 +206,33 @@ class MigrationService {
   Future<void> migrateUserReminders(String userId) async {
     oldReminders = await _oldNotificationService.getLocalNotifications(userId);
 
+    tz.TZDateTime _scheduleTime(LocalNotificationModel r) {
+      final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+      tz.TZDateTime scheduledDate = tz.TZDateTime(
+          tz.local,
+          int.parse(r.selectedYear ?? '0'),
+          LocalNotification.months.indexOf(r.selectedMonth ?? 'January') + 1,
+          int.parse(r.selectedDayOfMonth ?? '0'),
+          int.parse(r.selectedHour ?? '0'));
+      int day =
+          LocalNotification.daysOfWeek.indexOf(r.selectedDay ?? 'Mon') + 1;
+
+      if (scheduledDate.isBefore(now)) {
+        scheduledDate = scheduledDate.add(Duration(days: day));
+      }
+      return scheduledDate;
+    }
+
+    DateTime _weeklyScheduleDate(LocalNotificationModel r) {
+      tz.TZDateTime scheduledDate = _scheduleTime(r);
+      int day =
+          LocalNotification.daysOfWeek.indexOf(r.selectedDay ?? 'Mon') + 1;
+      while (scheduledDate.weekday != day) {
+        scheduledDate = scheduledDate.add(Duration(days: day));
+      }
+      return scheduledDate;
+    }
+
     oldReminders
         .where((element) => element.type == NotificationType.prayer_time)
         .toList()
@@ -218,13 +246,15 @@ class MigrationService {
               localNotificationId: r.localNotificationId,
               type: r.type,
               frequency: r.frequency,
-              scheduleDate: DateTime(
-                int.parse(r.selectedYear ?? '0'),
-                getMonth(r),
-                getDay(r),
-                getHour(r),
-                int.parse(r.selectedMinute ?? '0'),
-              ),
+              scheduleDate: r.frequency == 'Weekly'
+                  ? _weeklyScheduleDate(r)
+                  : DateTime(
+                      int.parse(r.selectedYear ?? '0'),
+                      getMonth(r),
+                      int.parse(r.selectedDayOfMonth ?? '0'),
+                      getHour(r),
+                      int.parse(r.selectedMinute ?? '0'),
+                    ),
               createdBy: FirebaseAuth.instance.currentUser?.uid,
               createdDate: DateTime.now(),
               modifiedBy: FirebaseAuth.instance.currentUser?.uid,
@@ -238,12 +268,6 @@ class MigrationService {
     final selectedMonth =
         LocalNotification.months.indexOf(r.selectedMonth ?? 'January') + 1;
     return selectedMonth;
-  }
-
-  int getDay(LocalNotificationModel r) {
-    final selectedDay =
-        LocalNotification.daysOfWeek.indexOf(r.selectedDay ?? 'Sun') + 1;
-    return selectedDay;
   }
 
   int getHour(LocalNotificationModel r) {
