@@ -187,7 +187,7 @@ class MigrationService {
                   scheduleDate: DateTime(
                     int.parse(r.selectedYear ?? '0'),
                     getMonth(r),
-                    int.parse(r.selectedDayOfMonth ?? '0'),
+                    getDay(r),
                     getHour(r),
                     int.parse(r.selectedMinute ?? '0'),
                   ),
@@ -221,7 +221,7 @@ class MigrationService {
               scheduleDate: DateTime(
                 int.parse(r.selectedYear ?? '0'),
                 getMonth(r),
-                int.parse(r.selectedDayOfMonth ?? '0'),
+                getDay(r),
                 getHour(r),
                 int.parse(r.selectedMinute ?? '0'),
               ),
@@ -238,6 +238,12 @@ class MigrationService {
     final selectedMonth =
         LocalNotification.months.indexOf(r.selectedMonth ?? 'January') + 1;
     return selectedMonth;
+  }
+
+  int getDay(LocalNotificationModel r) {
+    final selectedDay =
+        LocalNotification.daysOfWeek.indexOf(r.selectedDay ?? 'Sun') + 1;
+    return selectedDay;
   }
 
   int getHour(LocalNotificationModel r) {

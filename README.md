@@ -1,16 +1,19 @@
 # be_still
 
-A new Flutter project.
+# store release signing info
+keystore - store-keystore.jks
+password - Pa$$word1
+alias - store-bestill
+# test release signing info
+keystore - test-android.jks
+password - Pa$$w0rd1
+alias - test-bestill
+# dev release signing info
+keystore - dev-android.jks
+password - Pa$$w0rd1
+alias - dev-bestill
 
-## Getting Started
+# package info
+package name - org.second.bestill
+bundle id - org.second.bestill.v2
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
