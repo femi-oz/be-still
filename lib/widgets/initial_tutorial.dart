@@ -108,16 +108,6 @@ class TutorialTarget {
               context, 'PRAYER MODE', 6, '', '', StringUtils.quickTipPray, ''))
     ]));
     targets
-        .add(TargetFocus(identify: "more", keyTarget: _keyButton4, contents: [
-      TargetContent(
-          align: ContentAlign.custom,
-          customPosition: CustomTargetContentPosition(
-            bottom: 100,
-          ),
-          child: _buildBody(context, 'MORE', 7, '', ' More', 'Tap the',
-              StringUtils.quickTipMore))
-    ]));
-    targets
         .add(TargetFocus(identify: "groups", keyTarget: _keyButton6, contents: [
       TargetContent(
           align: ContentAlign.custom,
@@ -127,7 +117,7 @@ class TutorialTarget {
           child: _buildBody(
             context,
             'GROUPS',
-            8,
+            7,
             '',
             " Groups",
             "Tap",
@@ -144,12 +134,22 @@ class TutorialTarget {
           child: _buildBody(
             context,
             'GROUPS',
-            9,
+            8,
             '',
             "",
             "",
             StringUtils.groupTipList2,
           ))
+    ]));
+    targets
+        .add(TargetFocus(identify: "more", keyTarget: _keyButton4, contents: [
+      TargetContent(
+          align: ContentAlign.custom,
+          customPosition: CustomTargetContentPosition(
+            bottom: 100,
+          ),
+          child: _buildBody(context, 'MORE', 9, '', ' More', 'Tap the',
+              StringUtils.quickTipMore))
     ]));
 
     tutorialCoachMark = TutorialCoachMark(
