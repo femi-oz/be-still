@@ -88,7 +88,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                     child: Column(
                       children: <Widget>[
                         Text(
-                          'RECOVER PASSWORD',
+                          'RESET PASSWORD',
                           style: AppTextStyles.boldText24.copyWith(
                               color: Settings.isDarkMode
                                   ? AppColors.lightBlue3

@@ -574,7 +574,10 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                                     _formKey.currentState!.save();
                                     _verifyPassword(_user, type, ctx);
                                   },
-                                  child: Text('Submit',
+                                  child: Text(
+                                      type == _ModalType.password
+                                          ? 'Submit'
+                                          : 'Save',
                                       style: AppTextStyles.regularText15
                                           .copyWith(color: Colors.white)))
                             ])
