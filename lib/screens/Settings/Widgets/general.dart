@@ -409,12 +409,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               title: 'Allow Be Still to access contacts?',
               value: Settings.enabledContactPermission,
             ),
-            SizedBox(height: 15),
-            CustomToggle(
-              onChange: (value) => _setReminderPermission(),
-              title: 'Enable notifications for reminders?',
-              value: Settings.enabledReminderPermission,
-            ),
             SizedBox(height: 20),
             CustomSectionHeder('App Appearance'),
             SizedBox(height: 35),
