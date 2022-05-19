@@ -240,6 +240,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
   void _setDefaults() {
     Settings.rememberMe = false;
+    Settings.lastUser = '';
     Settings.enableLocalAuth = false;
     Settings.setenableLocalAuth = false;
   }
@@ -250,10 +251,8 @@ class _GeneralSettingsState extends State<GeneralSettings> {
           .updateEmail(_newEmail.text.trim(), user.id ?? '');
       final newUser = user..email = _newEmail.text.trim();
       Settings.lastUser = jsonEncode(newUser.toJson2());
-      BeStilDialog.showSuccessDialog(
-        context,
-        'Your email has been updated successfully. Verify your new email and re-login!',
-      );
+      BeStilDialog.showSuccessDialog(context,
+          'Your email has been updated successfully. Verify your new email and re-login!');
       _newEmail.clear();
       Future.delayed(Duration(seconds: 2), () async {
         await Provider.of<AuthenticationProviderV2>(context, listen: false)
@@ -268,18 +267,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       _newEmail.clear();
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      if (e.message !=
-          'The email address is already in use by another account.')
-        BeStilDialog.showErrorDialog(
-            context, StringUtils.getErrorMessage(e), user, s);
-    } catch (e, s) {
-      String message = StringUtils.getErrorMessage(e);
-      if (message ==
-          'The email address is already in use by another account.') {
-        message =
-            'That email address is already in use. Please select another email.';
-      }
 
+      BeStilDialog.showErrorDialog(context, e.message ?? '', user, s);
+    } catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
 

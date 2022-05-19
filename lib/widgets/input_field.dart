@@ -75,7 +75,8 @@ class _CustomInputState extends State<CustomInput> {
         controller: widget.controller,
         keyboardType: widget.keyboardType,
         textCapitalization: TextCapitalization.sentences,
-        style: AppTextStyles.regularText15,
+        style: AppTextStyles.regularText15
+            .copyWith(height: widget.maxLines > 1 ? 1.55 : 1),
         focusNode: widget.focusNode,
         cursorColor: widget.color == null ? AppColors.lightBlue4 : widget.color,
         maxLines: widget.maxLines,

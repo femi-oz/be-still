@@ -505,6 +505,7 @@ class _PrayerCardState extends State<PrayerCard> {
                               Expanded(
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
+                                  // crossAxisAlignment: CrossAxisAlignment.baseline,
                                   children: <Widget>[
                                     Expanded(
                                       child: (widget.prayer.tags ??
@@ -529,9 +530,10 @@ class _PrayerCardState extends State<PrayerCard> {
                                                       child: Text(
                                                         tags.join(', '),
                                                         style: TextStyle(
-                                                          color: AppColors.red,
-                                                          fontSize: 10,
-                                                        ),
+                                                            color:
+                                                                AppColors.red,
+                                                            fontSize: 10,
+                                                            height: 1.2),
                                                         maxLines: 1,
                                                         overflow: TextOverflow
                                                             .ellipsis,
