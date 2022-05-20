@@ -510,6 +510,17 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                 .firstWhere((g) => g.userId == _currentUser.id)
                 .role ==
             GroupUserRole.admin;
+    bool isModerator =
+        (Provider.of<GroupProviderV2>(context).currentGroup.users ?? [])
+                .firstWhere((g) => g.userId == _currentUser.id)
+                .role ==
+            GroupUserRole.moderator;
+    bool isMember =
+        (Provider.of<GroupProviderV2>(context).currentGroup.users ?? [])
+                .firstWhere((g) => g.userId == _currentUser.id)
+                .role ==
+            GroupUserRole.member;
+
     bool isOwner = widget.prayerData?.createdBy == _currentUser.id;
 
     return Container(
@@ -825,8 +836,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                 : AppColors.white,
                         icon: Icons.info,
                         text: 'Flag as inappropriate',
-                        isDisabled: isOwner || isAdmin,
-                        onPress: () => isOwner || isAdmin
+                        isDisabled: isOwner || !isMember,
+                        onPress: () => isOwner || !isMember
                             ? () {}
                             : _flagAsInappropriate(group)),
                   ],
