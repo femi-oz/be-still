@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/v2/group.model.dart';
+import 'package:be_still/models/v2/group_user.model.dart';
 import 'package:be_still/models/v2/notification.model.dart';
 import 'package:be_still/models/v2/request.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
@@ -415,6 +416,18 @@ class GroupProviderV2 with ChangeNotifier {
         return Future.error(StringUtils.unathorized);
       await _groupService.updateGroupUserSettings(group, key, value);
       await setUserGroups(userGroupsId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> editUserRole(
+      GroupUserDataModel userData, String role, String groupId) async {
+    try {
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
+      await _groupService.editUserRole(
+          userData: userData, role: role, groupId: groupId);
     } catch (e) {
       rethrow;
     }

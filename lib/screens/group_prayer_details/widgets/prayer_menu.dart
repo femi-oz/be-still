@@ -596,8 +596,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                       icon: AppIcons.bestill_edit,
-                      isDisabled: !isOwner && !isAdmin,
-                      onPress: !isOwner && !isAdmin
+                      isDisabled: !isOwner && isMember,
+                      onPress: !isOwner && isMember
                           ? () {}
                           : () async {
                               try {
@@ -648,8 +648,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                       icon: AppIcons.bestill_update,
-                      isDisabled: !isOwner && !isAdmin,
-                      onPress: !isOwner && !isAdmin
+                      isDisabled: !isOwner && isMember,
+                      onPress: !isOwner && isMember
                           ? () {}
                           : () async {
                               try {
@@ -749,9 +749,9 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
-                      isDisabled: !isOwner && !isAdmin,
+                      isDisabled: !isOwner && isMember,
                       icon: AppIcons.bestill_answered,
-                      onPress: () => !isOwner && !isAdmin
+                      onPress: () => !isOwner && isMember
                           ? () {}
                           : widget.prayerData?.isAnswered ?? false
                               ? _unMarkAsAnswered()
@@ -776,7 +776,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                     LongButton(
                       textColor: AppColors.lightBlue3,
                       hasIcon: true,
-                      isDisabled: !isOwner && !isAdmin,
+                      isDisabled: !isOwner && isMember,
                       backgroundColor:
                           Provider.of<ThemeProviderV2>(context, listen: false)
                                   .isDarkModeEnabled
@@ -784,7 +784,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               : AppColors.white,
                       icon: AppIcons
                           .bestill_icons_bestill_archived_icon_revised_drk,
-                      onPress: () => !isOwner && !isAdmin
+                      onPress: () => !isOwner && isMember
                           ? () {}
                           : widget.prayerData?.status == Status.archived
                               ? _unArchive(widget.prayerData)
@@ -801,8 +801,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                       icon: Icons.delete_forever,
-                      isDisabled: !isOwner && !isAdmin,
-                      onPress: !isOwner && !isAdmin
+                      isDisabled: !isOwner && isMember,
+                      onPress: !isOwner && isMember
                           ? () {}
                           : () {
                               _openDeleteConfirmation(context);

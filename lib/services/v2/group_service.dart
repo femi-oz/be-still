@@ -208,6 +208,63 @@ class GroupServiceV2 {
     }
   }
 
+  Future<void> editUserRole(
+      {required GroupUserDataModel userData,
+      required String role,
+      required String groupId}) async {
+    try {
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
+
+      final updatePayload = GroupUserDataModel(
+              id: userData.id,
+              userId: userData.userId,
+              role: role,
+              enableNotificationForNewPrayers:
+                  userData.enableNotificationForNewPrayers,
+              enableNotificationForUpdates:
+                  userData.enableNotificationForUpdates,
+              notifyMeOfFlaggedPrayers: userData.notifyMeOfFlaggedPrayers,
+              notifyWhenNewMemberJoins: userData.notifyWhenNewMemberJoins,
+              createdBy: userData.createdBy,
+              createdDate: userData.createdDate ?? DateTime.now(),
+              modifiedBy: userData.modifiedBy,
+              modifiedDate: DateTime.now(),
+              status: userData.status)
+          .toJson();
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+
+      batch.update(_groupDataCollectionReference.doc(groupId), {
+        'users': FieldValue.arrayRemove([
+          {
+            'id': userData.id,
+            'userId': userData.userId,
+            'role': userData.role,
+            'enableNotificationForNewPrayers':
+                userData.enableNotificationForNewPrayers,
+            'enableNotificationForUpdates':
+                userData.enableNotificationForUpdates,
+            'notifyMeOfFlaggedPrayers': userData.notifyMeOfFlaggedPrayers,
+            'notifyWhenNewMemberJoins': userData.notifyWhenNewMemberJoins,
+            'createdBy': userData.createdBy,
+            'createdDate':
+                Timestamp.fromDate(userData.createdDate ?? DateTime.now()),
+            'modifiedBy': userData.modifiedBy,
+            'modifiedDate':
+                Timestamp.fromDate(userData.modifiedDate ?? DateTime.now()),
+            'status': userData.status
+          }
+        ])
+      });
+      batch.update(_groupDataCollectionReference.doc(groupId), {
+        'users': FieldValue.arrayUnion([updatePayload])
+      });
+      batch.commit();
+    } catch (e) {
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
   Future<void> requestToJoinGroup(
       {required String groupId,
       required String message,
