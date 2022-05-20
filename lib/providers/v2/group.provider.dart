@@ -356,24 +356,28 @@ class GroupProviderV2 with ChangeNotifier {
   }
 
   Future<void> acceptRequest(
-      GroupDataModel group, RequestModel request, String notificationId) async {
+      GroupDataModel group, RequestModel request, String senderId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       return await _groupService.acceptJoinRequest(
-          group: group, request: request, notificationId: notificationId);
+          group: group, request: request, senderId: senderId);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> requestToJoinGroup(String groupId, String message,
-      String receiverId, List<String> tokens, List<String> userGroupsId) async {
+  Future<void> requestToJoinGroup(
+      String groupId,
+      String message,
+      List<String> receiverId,
+      List<String> tokens,
+      List<String> userGroupsId) async {
     try {
       await _groupService.requestToJoinGroup(
         groupId: groupId,
         message: message,
-        receiverId: receiverId,
+        receiverIds: receiverId,
         tokens: tokens,
       );
       setUserGroups(userGroupsId);
@@ -392,12 +396,13 @@ class GroupProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> denyRequest(GroupDataModel group, RequestModel request) async {
+  Future<void> denyRequest(
+      GroupDataModel group, RequestModel request, String senderId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       return await _groupService.denyJoinRequest(
-          group: group, request: request);
+          group: group, request: request, senderId: senderId);
     } catch (e) {
       rethrow;
     }

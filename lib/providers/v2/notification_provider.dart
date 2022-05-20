@@ -52,6 +52,9 @@ class NotificationProviderV2 with ChangeNotifier {
   List<NotificationModel> _requestAccepted = [];
   List<NotificationModel> get requestAccepted => _requestAccepted;
 
+  List<NotificationModel> _requestDenied = [];
+  List<NotificationModel> get requestDenied => _requestDenied;
+
   List<NotificationModel> _newPrayers = [];
   List<NotificationModel> get newPrayers => _newPrayers;
 
@@ -156,6 +159,10 @@ class NotificationProviderV2 with ChangeNotifier {
 
         _requestAccepted = notifications
             .where((e) => e.type == NotificationType.accept_request)
+            .toList();
+
+        _requestDenied = notifications
+            .where((e) => e.type == NotificationType.deny_request)
             .toList();
 
         _newPrayers = notifications

@@ -127,7 +127,11 @@ class GroupServiceV2 {
             .where((e) => e.status == Status.active)
             .toList();
         for (final req in activeRequests) {
-          acceptJoinRequest(group: group, request: req);
+          acceptJoinRequest(
+            group: group,
+            request: req,
+            senderId: req.userId,
+          );
         }
         // add each to group
         // send notification that they joined
@@ -268,7 +272,7 @@ class GroupServiceV2 {
   Future<void> requestToJoinGroup(
       {required String groupId,
       required String message,
-      required String receiverId,
+      required List<String> receiverIds,
       required List<String> tokens}) async {
     try {
       if (_firebaseAuth.currentUser == null)
@@ -283,33 +287,34 @@ class GroupServiceV2 {
         modifiedDate: DateTime.now(),
       ).toJson();
 
-      await _groupDataCollectionReference.doc(groupId).update({
-        "requests": FieldValue.arrayUnion([request])
-      });
-
-      final notId = Uuid().v1();
-      final doc = NotificationModel(
-        id: notId,
-        message: message,
-        status: Status.active,
-        tokens: tokens,
-        isSent: 0,
-        senderId: _firebaseAuth.currentUser?.uid,
-        type: NotificationType.request,
-        groupId: groupId,
-        prayerId: '',
-        receiverId: receiverId,
-        modifiedBy: _firebaseAuth.currentUser?.uid,
-        createdBy: _firebaseAuth.currentUser?.uid,
-        createdDate: DateTime.now(),
-        modifiedDate: DateTime.now(),
-      ).toJson();
+      // await _groupDataCollectionReference.doc(groupId).update({
+      //   "requests": FieldValue.arrayUnion([request])
+      // });
 
       WriteBatch batch = FirebaseFirestore.instance.batch();
       batch.update(_groupDataCollectionReference.doc(groupId), {
         "requests": FieldValue.arrayUnion([request])
       });
-      batch.set(_notificationCollectionReference.doc(notId), doc);
+      for (final receiverId in receiverIds) {
+        final notId = Uuid().v1();
+        final doc = NotificationModel(
+          id: notId,
+          message: message,
+          status: Status.active,
+          tokens: tokens,
+          isSent: 0,
+          senderId: _firebaseAuth.currentUser?.uid,
+          type: NotificationType.request,
+          groupId: groupId,
+          prayerId: '',
+          receiverId: receiverId,
+          modifiedBy: _firebaseAuth.currentUser?.uid,
+          createdBy: _firebaseAuth.currentUser?.uid,
+          createdDate: DateTime.now(),
+          modifiedDate: DateTime.now(),
+        ).toJson();
+        batch.set(_notificationCollectionReference.doc(notId), doc);
+      }
       batch.commit();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -319,19 +324,40 @@ class GroupServiceV2 {
   Future<void> acceptJoinRequest(
       {required GroupDataModel group,
       required RequestModel request,
-      String? notificationId}) async {
+      required senderId}) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
 
-      // final newRequest = RequestModel(
-      //     id: request.id,
-      //     userId: request.userId,
-      //     createdBy: request.createdBy,
-      //     createdDate: request.createdDate,
-      //     modifiedBy: request.modifiedBy,
-      //     modifiedDate: request.modifiedDate,
-      //     status: request.status);
+      final notifications = await _notificationCollectionReference
+          .where('senderId', isEqualTo: senderId)
+          .where('status', isEqualTo: Status.active)
+          .get()
+          .then((value) => value.docs
+              .map((e) => NotificationModel.fromJson(e.data()))
+              .toList());
+      final notificationIds = notifications
+          .where((element) => element.type == NotificationType.request)
+          .map((e) => e.id)
+          .toList();
+      final receiverNotifications = notifications
+          .where((element) => element.type == NotificationType.request)
+          .toList();
+      final receiverIds = receiverNotifications
+          .where((element) =>
+              element.receiverId != FirebaseAuth.instance.currentUser?.uid)
+          .map((e) => e.receiverId)
+          .toList();
+
+      final currentUser = await _userService
+          .getUserByIdFuture(FirebaseAuth.instance.currentUser?.uid ?? '');
+      final userName =
+          (currentUser.firstName ?? '') + ' ' + (currentUser.lastName ?? '');
+      final newUser =
+          await _userService.getUserByIdFuture(request.userId ?? '');
+      final newUserName =
+          (newUser.firstName ?? '') + ' ' + (newUser.lastName ?? '');
+
       final user = GroupUserDataModel(
           id: request.userId,
           role: GroupUserRole.member,
@@ -370,9 +396,6 @@ class GroupServiceV2 {
 
       WriteBatch batch = FirebaseFirestore.instance.batch();
       batch.update(_groupDataCollectionReference.doc(group.id), {
-        'users': FieldValue.arrayUnion([user.toJson()])
-      });
-      batch.update(_groupDataCollectionReference.doc(group.id), {
         'requests': FieldValue.arrayRemove([
           {
             'id': request.id,
@@ -385,19 +408,45 @@ class GroupServiceV2 {
           }
         ])
       });
+      batch.update(_groupDataCollectionReference.doc(group.id), {
+        'users': FieldValue.arrayUnion([user.toJson()])
+      });
+
       batch.update(_userDataCollectionReference.doc(request.userId), {
         'groups': FieldValue.arrayUnion([group.id])
       });
 
       batch.set(_notificationCollectionReference.doc(notId), doc);
-      // final notifications = await _notificationCollectionReference
-      //     .where('id', isEqualTo: notificationId)
-      //     .get()
-      //     .then((value) =>
-      //         value.docs.map((e) => NotificationModel.fromJson(e.data())));
-      if ((notificationId ?? '').isNotEmpty)
-        batch.update(_notificationCollectionReference.doc(notificationId),
-            {'status': Status.inactive});
+
+      if (notificationIds.isNotEmpty)
+        for (final id in notificationIds) {
+          batch.update(_notificationCollectionReference.doc(id),
+              {'status': Status.inactive});
+        }
+      if (receiverIds.isNotEmpty)
+        for (final receiverId in receiverIds) {
+          final notifId = Uuid().v1();
+
+          final acceptedDoc = NotificationModel(
+            id: notifId,
+            message:
+                "$userName has approved $newUserName's request to join group ${group.name}",
+            status: Status.active,
+            isSent: 0,
+            senderId: _firebaseAuth.currentUser?.uid,
+            tokens: [],
+            type: NotificationType.accept_request,
+            groupId: group.id,
+            prayerId: '',
+            receiverId: receiverId,
+            modifiedBy: _firebaseAuth.currentUser?.uid,
+            createdBy: _firebaseAuth.currentUser?.uid,
+            createdDate: DateTime.now(),
+            modifiedDate: DateTime.now(),
+          ).toJson();
+
+          batch.set(_notificationCollectionReference.doc(notifId), acceptedDoc);
+        }
 
       batch.commit();
     } catch (e) {
@@ -559,17 +608,52 @@ class GroupServiceV2 {
   }
 
   Future<void> denyJoinRequest(
-      {required GroupDataModel group, required RequestModel request}) async {
+      {required GroupDataModel group,
+      required RequestModel request,
+      required String senderId}) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
+
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
+
+      final notifications = await _notificationCollectionReference
+          .where('senderId', isEqualTo: senderId)
+          .where('status', isEqualTo: Status.active)
+          .get()
+          .then((value) => value.docs
+              .map((e) => NotificationModel.fromJson(e.data()))
+              .toList());
+      final notificationIds = notifications
+          .where((element) => element.type == NotificationType.request)
+          .map((e) => e.id)
+          .toList();
+      final receiverNotifications = notifications
+          .where((element) => element.type == NotificationType.request)
+          .toList();
+      final receiverIds = receiverNotifications
+          .where((element) =>
+              element.receiverId != FirebaseAuth.instance.currentUser?.uid)
+          .map((e) => e.receiverId)
+          .toList();
+
+      final currentUser = await _userService
+          .getUserByIdFuture(FirebaseAuth.instance.currentUser?.uid ?? '');
+      final userName =
+          (currentUser.firstName ?? '') + ' ' + (currentUser.lastName ?? '');
+      final newUser =
+          await _userService.getUserByIdFuture(request.userId ?? '');
+      final newUserName =
+          (newUser.firstName ?? '') + ' ' + (newUser.lastName ?? '');
 
       final createdDate =
           Timestamp.fromDate(request.createdDate ?? DateTime.now());
       final modifiedDate =
           Timestamp.fromDate(request.modifiedDate ?? DateTime.now());
 
-      _groupDataCollectionReference.doc(group.id).update({
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      batch.update(_groupDataCollectionReference.doc(group.id), {
         'requests': FieldValue.arrayRemove([
           {
             'id': request.id,
@@ -582,6 +666,57 @@ class GroupServiceV2 {
           }
         ])
       });
+
+      if (notificationIds.isNotEmpty)
+        for (final id in notificationIds) {
+          batch.update(_notificationCollectionReference.doc(id),
+              {'status': Status.inactive});
+        }
+      if (receiverIds.isNotEmpty)
+        for (final receiverId in receiverIds) {
+          final notifId = Uuid().v1();
+
+          final denyDoc = NotificationModel(
+            id: notifId,
+            message:
+                "$userName has denied $newUserName's request to join group ${group.name}",
+            status: Status.active,
+            isSent: 0,
+            senderId: _firebaseAuth.currentUser?.uid,
+            tokens: [],
+            type: NotificationType.deny_request,
+            groupId: group.id,
+            prayerId: '',
+            receiverId: receiverId,
+            modifiedBy: _firebaseAuth.currentUser?.uid,
+            createdBy: _firebaseAuth.currentUser?.uid,
+            createdDate: DateTime.now(),
+            modifiedDate: DateTime.now(),
+          ).toJson();
+
+          batch.set(_notificationCollectionReference.doc(notifId), denyDoc);
+        }
+
+      batch.commit();
+
+      // final createdDate =
+      //     Timestamp.fromDate(request.createdDate ?? DateTime.now());
+      // final modifiedDate =
+      //     Timestamp.fromDate(request.modifiedDate ?? DateTime.now());
+
+      // _groupDataCollectionReference.doc(group.id).update({
+      //   'requests': FieldValue.arrayRemove([
+      //     {
+      //       'id': request.id,
+      //       'userId': request.userId,
+      //       'createdBy': request.createdBy,
+      //       'createdDate': createdDate,
+      //       'modifiedBy': request.modifiedBy,
+      //       'modifiedDate': modifiedDate,
+      //       'status': request.status
+      //     }
+      //   ])
+      // });
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

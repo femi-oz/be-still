@@ -35,8 +35,9 @@ class _GroupCardState extends State<GroupCard> {
 
   Future<void> _requestToJoinGroup(GroupDataModel groupData, String userId,
       String userName, UserDataModel admin) async {
+    BeStilDialog.showLoading(context);
+
     try {
-      BeStilDialog.showLoading(context);
       List<String> tokens = [];
       String adminId = (groupData.users ?? <GroupUserDataModel>[])
               .firstWhere((element) => element.role == GroupUserRole.admin)
@@ -51,22 +52,21 @@ class _GroupCardState extends State<GroupCard> {
 
       final receiverIds = [adminId, ...moderatorIds];
 
-      receiverIds.forEach((id) async {
-        final user =
-            await Provider.of<UserProviderV2>(context).getUserDataById(id);
+      for (final id in receiverIds) {
+        final user = await Provider.of<UserProviderV2>(context, listen: false)
+            .getUserDataById(id);
         final devices = user.devices ?? <DeviceModel>[];
         if (user.enableNotificationsForAllGroups ?? false) {
           tokens = devices.map((e) => e.token ?? '').toList();
         }
-        await Provider.of<GroupProviderV2>(context, listen: false)
-            .requestToJoinGroup(
-                groupData.id ?? '',
-                '$userName has requested to join your group',
-                id,
-                tokens,
-                _user.groups ?? []);
-      });
-
+      }
+      await Provider.of<GroupProviderV2>(context, listen: false)
+          .requestToJoinGroup(
+              groupData.id ?? '',
+              '$userName has requested to join your group',
+              receiverIds,
+              tokens,
+              _user.groups ?? []);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppController appController = Get.find();
