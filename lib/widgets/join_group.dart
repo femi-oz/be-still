@@ -238,7 +238,7 @@ class JoinGroup {
           .requestToJoinGroup(
               groupData.group?.id ?? '',
               '$userName has requested to join your group',
-              adminId,
+              [],
               (adminData.devices ?? []).map((e) => e.token ?? '').toList(),
               adminData.groups ?? []);
 
