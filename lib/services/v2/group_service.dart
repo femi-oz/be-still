@@ -229,7 +229,7 @@ class GroupServiceV2 {
               createdBy: userData.createdBy,
               createdDate: userData.createdDate ?? DateTime.now(),
               modifiedBy: userData.modifiedBy,
-              modifiedDate: DateTime.now(),
+              modifiedDate: userData.modifiedDate ?? DateTime.now(),
               status: userData.status)
           .toJson();
       WriteBatch batch = FirebaseFirestore.instance.batch();

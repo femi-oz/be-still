@@ -38,23 +38,34 @@ class _GroupCardState extends State<GroupCard> {
     try {
       BeStilDialog.showLoading(context);
       List<String> tokens = [];
-      final devices = admin.devices ?? <DeviceModel>[];
-      if (admin.enableNotificationsForAllGroups ?? false) {
-        tokens = devices.map((e) => e.token ?? '').toList();
-      }
-      String adminDataId = (groupData.users ?? <GroupUserDataModel>[])
+      String adminId = (groupData.users ?? <GroupUserDataModel>[])
               .firstWhere((element) => element.role == GroupUserRole.admin)
               .userId ??
           '';
+      final moderatorIds = (groupData.users ?? <GroupUserDataModel>[])
+          .where((element) => element.role == GroupUserRole.moderator)
+          .map((e) => e.userId ?? '')
+          .toList();
       final _user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      await Provider.of<GroupProviderV2>(context, listen: false)
-          .requestToJoinGroup(
-              groupData.id ?? '',
-              '$userName has requested to join your group',
-              adminDataId,
-              tokens,
-              _user.groups ?? []);
+
+      final receiverIds = [adminId, ...moderatorIds];
+
+      receiverIds.forEach((id) async {
+        final user =
+            await Provider.of<UserProviderV2>(context).getUserDataById(id);
+        final devices = user.devices ?? <DeviceModel>[];
+        if (user.enableNotificationsForAllGroups ?? false) {
+          tokens = devices.map((e) => e.token ?? '').toList();
+        }
+        await Provider.of<GroupProviderV2>(context, listen: false)
+            .requestToJoinGroup(
+                groupData.id ?? '',
+                '$userName has requested to join your group',
+                id,
+                tokens,
+                _user.groups ?? []);
+      });
 
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
