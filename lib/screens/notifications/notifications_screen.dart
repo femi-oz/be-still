@@ -246,6 +246,23 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
+  Future deleteInappropriateNotification(String senderId) async {
+    try {
+      await Provider.of<NotificationProviderV2>(context, listen: false)
+          .deleteInappropriateNotificatoin(senderId);
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    }
+  }
+
   gotoGroup(NotificationModel? notification) async {
     BeStilDialog.showLoading(context);
 
@@ -298,7 +315,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           .setGroupPrayers(notification.groupId ?? '');
       Provider.of<PrayerProviderV2>(context, listen: false)
           .setCurrentPrayerId(notification.prayerId ?? '');
-      await deleteNotification(notification.id ?? '');
+      if (notification.type == NotificationType.inappropriate_content) {
+        deleteInappropriateNotification(notification.senderId ?? '');
+      } else {
+        await deleteNotification(notification.id ?? '');
+      }
 
       BeStilDialog.hideLoading(context);
       AppController appController = Get.find();

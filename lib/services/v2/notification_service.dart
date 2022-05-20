@@ -248,6 +248,30 @@ class NotificationServiceV2 {
     }
   }
 
+  Future<void> cancelInappropriateNotification(String senderId) async {
+    try {
+      final notifications = await _notificationCollectionReference
+          .where('senderId', isEqualTo: senderId)
+          .where('status', isEqualTo: Status.active)
+          .get()
+          .then((value) => value.docs
+              .map((e) => NotificationModel.fromJson(e.data()))
+              .toList());
+      final notificationIds = notifications
+          .where((element) =>
+              element.type == NotificationType.inappropriate_content)
+          .map((e) => e.id)
+          .toList();
+      for (final notificationId in notificationIds) {
+        _notificationCollectionReference
+            .doc(notificationId)
+            .update({'status': Status.inactive});
+      }
+    } catch (e) {
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
   Future<void> addSMS({
     String? senderId,
     String? message,

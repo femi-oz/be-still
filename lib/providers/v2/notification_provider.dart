@@ -282,6 +282,16 @@ class NotificationProviderV2 with ChangeNotifier {
     }
   }
 
+  Future deleteInappropriateNotificatoin(String senderId) async {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      return await _notificationService
+          .cancelInappropriateNotification(senderId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future sendPushNotification(
       String message, String type, String senderName, List<String> tokens,
       {String? groupId, String? prayerId, String? receiverId}) async {

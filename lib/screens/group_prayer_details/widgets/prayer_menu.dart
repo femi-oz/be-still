@@ -154,27 +154,35 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     BeStilDialog.showLoading(context);
 
     try {
+      List<String> tokens = [];
+
       final adminId = (group.users ?? [])
           .firstWhere((e) => e.role == GroupUserRole.admin)
           .userId;
+      final moderatorIds = (group.users ?? [])
+          .where((e) => e.role == GroupUserRole.moderator)
+          .map((e) => e.userId)
+          .toList();
+      final receiverIds = [adminId, ...moderatorIds];
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      final adminData =
-          await Provider.of<UserProviderV2>(context, listen: false)
-              .getUserDataById(adminId ?? '');
-      List<String> tokens = [];
-      final devices = adminData.devices ?? <DeviceModel>[];
-      if (adminData.enableNotificationsForAllGroups ?? false) {
-        tokens = devices.map((e) => e.token ?? '').toList();
+      for (var id in receiverIds) {
+        final adminData =
+            await Provider.of<UserProviderV2>(context, listen: false)
+                .getUserDataById(id ?? '');
+        final devices = adminData.devices ?? <DeviceModel>[];
+        if (adminData.enableNotificationsForAllGroups ?? false) {
+          tokens = devices.map((e) => e.token ?? '').toList();
+        }
+        await Provider.of<NotificationProviderV2>(context, listen: false)
+            .flagAsInappropriate(
+                widget.prayerData?.id ?? '',
+                widget.prayerData?.groupId ?? '',
+                id ?? '',
+                (user.firstName ?? '') + ' ' + (user.lastName ?? ''),
+                tokens,
+                group.name ?? '');
       }
-      await Provider.of<NotificationProviderV2>(context, listen: false)
-          .flagAsInappropriate(
-              widget.prayerData?.id ?? '',
-              widget.prayerData?.groupId ?? '',
-              adminId ?? '',
-              (user.firstName ?? '') + ' ' + (user.lastName ?? ''),
-              tokens,
-              group.name ?? '');
 
       clearSearch();
 
