@@ -192,6 +192,11 @@ class _GroupScreenState extends State<GroupScreen> {
                                           (e) => e.role == GroupUserRole.admin)
                                       .map((e) => e.userId)
                                       .contains(_userId);
+                                  bool isModerator = (e.users ?? [])
+                                      .where((e) =>
+                                          e.role == GroupUserRole.moderator)
+                                      .map((e) => e.userId)
+                                      .contains(_userId);
                                   return Column(
                                     children: [
                                       LongButton(
@@ -238,7 +243,16 @@ class _GroupScreenState extends State<GroupScreen> {
                                                     fontSize: 12),
                                                 textAlign: TextAlign.center,
                                               )
-                                            : null,
+                                            : isModerator
+                                                ? Text(
+                                                    "Moderator",
+                                                    style: TextStyle(
+                                                        color: AppColors
+                                                            .lightBlue3,
+                                                        fontSize: 12),
+                                                    textAlign: TextAlign.center,
+                                                  )
+                                                : null,
                                         onPressMore: () => showModalBottomSheet(
                                           context: context,
                                           barrierColor:

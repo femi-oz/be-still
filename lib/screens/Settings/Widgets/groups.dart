@@ -31,19 +31,25 @@ class _GroupsSettingsState extends State<GroupsSettings> {
 
   Future<void> _changeMemberRole(GroupDataModel group, String userId) async {
     try {
+      bool isCurrentUser =
+          userId == FirebaseAuth.instance.currentUser?.uid ? true : false;
+
       final groupUserData =
           (group.users ?? []).firstWhere((element) => element.userId == userId);
       final newRole = groupUserData.role == GroupUserRole.moderator
           ? GroupUserRole.member
           : GroupUserRole.moderator;
 
-      final message = 'User is now a $newRole';
+      final message =
+          isCurrentUser ? 'You are now a $newRole' : 'User is now a $newRole';
 
       BeStilDialog.showLoading(context);
       await Provider.of<GroupProviderV2>(context, listen: false)
           .editUserRole(groupUserData, newRole, group.id ?? '');
       BeStilDialog.hideLoading(context);
-      Navigator.pop(context);
+      if (!isCurrentUser) {
+        Navigator.pop(context);
+      }
       BeStilDialog.showSuccessDialog(context, message);
     } on HttpException catch (e, s) {
       final user =
@@ -193,8 +199,13 @@ class _GroupsSettingsState extends State<GroupsSettings> {
 
   void _showMemberAlert(
       String userId, GroupDataModel group, String role) async {
+    bool currentUserIsAdmin = false;
+    bool currentUserIsModerator = false;
+    bool currentUserIsMember = false;
     bool userIsAdmin = false;
     bool userIsModerator = false;
+    bool showRemoveControl = false;
+    bool showDemoteControl = false;
     UserDataModel user =
         await Provider.of<UserProviderV2>(context, listen: false)
             .getUserDataById(userId);
@@ -204,17 +215,54 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     final groupUserData = (group.users ?? []).firstWhere(
         (element) => element.userId == userId,
         orElse: () => GroupUserDataModel());
-    userIsAdmin = user.id == _currentUser.id && role == GroupUserRole.admin
-        ? true
-        : false;
+    currentUserIsAdmin = (group.users ?? []).any((element) =>
+        element.userId == _currentUser.id &&
+        element.role == GroupUserRole.admin);
+
+    currentUserIsModerator = (group.users ?? []).any((element) =>
+        element.userId == _currentUser.id &&
+        element.role == GroupUserRole.moderator);
+
+    currentUserIsMember = (group.users ?? []).any((element) =>
+        element.userId == _currentUser.id &&
+        element.role == GroupUserRole.member);
+
+    userIsAdmin = groupUserData.role == GroupUserRole.admin ? true : false;
     userIsModerator =
         groupUserData.role == GroupUserRole.moderator ? true : false;
+
+    if (currentUserIsAdmin) {
+      if (userIsAdmin) {
+        showRemoveControl = false;
+        showDemoteControl = false;
+      } else if (userIsModerator) {
+        showRemoveControl = true;
+        showDemoteControl = true;
+      } else {
+        showRemoveControl = true;
+        showDemoteControl = true;
+      }
+    }
+
+    if (currentUserIsModerator) {
+      if (userIsAdmin) {
+        showRemoveControl = false;
+        showDemoteControl = false;
+      } else if (userIsModerator) {
+        showRemoveControl = false;
+        showDemoteControl = false;
+      } else {
+        showRemoveControl = true;
+        showDemoteControl = false;
+      }
+    }
+
     final adminMessage =
         'Has been an admin since ${f.format(groupUserData.createdDate ?? DateTime.now())}';
     final moderatorMessage =
         'Has been a moderator since ${f.format(groupUserData.modifiedDate ?? DateTime.now())}';
     final memberMessage =
-        'Has been a member since ${f.format(groupUserData.modifiedDate ?? DateTime.now())}';
+        'Has been a member since ${f.format(groupUserData.createdDate ?? DateTime.now())}';
 
     setState(() {});
 
@@ -276,7 +324,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      !userIsAdmin
+                      showRemoveControl
                           ? Container(
                               height: 30,
                               margin: EdgeInsets.only(top: 20, bottom: 0),
@@ -316,7 +364,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                               ),
                             )
                           : Container(),
-                      !userIsAdmin
+                      showDemoteControl
                           ? Container(
                               height: 30,
                               margin: EdgeInsets.only(top: 20, bottom: 0),
@@ -989,22 +1037,19 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                         if (isAdmin || isModerator)
                           CustomToggle(
                             title: 'Require admin approval to join group?',
-                            onChange: isModerator
-                                ? () {}
-                                : (value) {
-                                    _groupProvider.editGroup(
-                                        group.id ?? '',
-                                        group.name ?? '',
-                                        group.purpose ?? '',
-                                        value,
-                                        group.organization ?? '',
-                                        group.location ?? '',
-                                        group.type ?? '',
-                                        _currentUser.groups ?? []);
-                                  },
-                            value: isModerator
-                                ? false
-                                : group.requireAdminApproval ?? false,
+                            onChange: (value) {
+                              _groupProvider.editGroup(
+                                  group.id ?? '',
+                                  group.name ?? '',
+                                  group.purpose ?? '',
+                                  value,
+                                  group.organization ?? '',
+                                  group.location ?? '',
+                                  group.type ?? '',
+                                  _currentUser.groups ?? []);
+                            },
+                            value: group.requireAdminApproval ?? false,
+                            disabled: isModerator,
                           ),
                         SizedBox(height: 25),
                         Column(
@@ -1260,6 +1305,36 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   child: Container(
                                     child: Text(
                                       'LEAVE GROUP',
+                                      style: AppTextStyles.boldText20
+                                          .copyWith(color: AppColors.red),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Container(),
+                        SizedBox(height: 20),
+                        isModerator
+                            ? GestureDetector(
+                                onTap: () {
+                                  _changeMemberRole(
+                                      group, _currentUser.id ?? '');
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 20),
+                                  width: double.infinity,
+                                  padding: EdgeInsets.symmetric(vertical: 7),
+                                  decoration: BoxDecoration(
+                                    color: Colors.transparent,
+                                    border: Border.all(
+                                      color: AppColors.red,
+                                      width: 1,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Container(
+                                    child: Text(
+                                      'REMOVE ME AS MODERATOR',
                                       style: AppTextStyles.boldText20
                                           .copyWith(color: AppColors.red),
                                       textAlign: TextAlign.center,

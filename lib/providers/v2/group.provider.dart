@@ -60,22 +60,34 @@ class GroupProviderV2 with ChangeNotifier {
                 element.role == GroupUserRole.admin &&
                 element.userId == FirebaseAuth.instance.currentUser?.uid))
             .toList();
+        final isModeratorGroups = userGroups
+            .where((element) => (element.users ?? []).any((element) =>
+                element.role == GroupUserRole.moderator &&
+                element.userId == FirebaseAuth.instance.currentUser?.uid))
+            .toList();
 
         isAdminGroups.sort((a, b) => (a.name ?? '')
             .toLowerCase()
             .compareTo((b.name ?? '').toLowerCase()));
-
-        final isNotAdminGroups = userGroups
-            .where((element) => (element.users ?? []).any((element) =>
-                element.role != GroupUserRole.admin &&
-                element.userId == FirebaseAuth.instance.currentUser?.uid))
-            .toList();
-
-        isNotAdminGroups.sort((a, b) => (a.name ?? '')
+        isModeratorGroups.sort((a, b) => (a.name ?? '')
             .toLowerCase()
             .compareTo((b.name ?? '').toLowerCase()));
 
-        _userGroups = [...isAdminGroups, ...isNotAdminGroups];
+        final isMemberGroups = userGroups
+            .where((element) => (element.users ?? []).any((element) =>
+                element.role == GroupUserRole.member &&
+                element.userId == FirebaseAuth.instance.currentUser?.uid))
+            .toList();
+
+        isMemberGroups.sort((a, b) => (a.name ?? '')
+            .toLowerCase()
+            .compareTo((b.name ?? '').toLowerCase()));
+
+        _userGroups = [
+          ...isAdminGroups,
+          ...isModeratorGroups,
+          ...isMemberGroups
+        ];
 
         notifyListeners();
       });
