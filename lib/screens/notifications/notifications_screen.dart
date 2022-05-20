@@ -2,9 +2,7 @@ import 'dart:async';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/v2/device.model.dart';
 import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/models/v2/notification.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
@@ -1029,7 +1027,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               margin: EdgeInsets.only(
                   left: MediaQuery.of(context).size.width * 0.1),
               child: Text(
-                NotificationType.accept_request,
+                NotificationType.deny_request,
                 textAlign: TextAlign.center,
                 style: AppTextStyles.boldText24.copyWith(
                   color: AppColors.white,

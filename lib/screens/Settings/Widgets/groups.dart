@@ -201,7 +201,6 @@ class _GroupsSettingsState extends State<GroupsSettings> {
       String userId, GroupDataModel group, String role) async {
     bool currentUserIsAdmin = false;
     bool currentUserIsModerator = false;
-    bool currentUserIsMember = false;
     bool userIsAdmin = false;
     bool userIsModerator = false;
     bool showRemoveControl = false;
@@ -222,10 +221,6 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     currentUserIsModerator = (group.users ?? []).any((element) =>
         element.userId == _currentUser.id &&
         element.role == GroupUserRole.moderator);
-
-    currentUserIsMember = (group.users ?? []).any((element) =>
-        element.userId == _currentUser.id &&
-        element.role == GroupUserRole.member);
 
     userIsAdmin = groupUserData.role == GroupUserRole.admin ? true : false;
     userIsModerator =

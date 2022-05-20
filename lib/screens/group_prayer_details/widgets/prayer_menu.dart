@@ -510,11 +510,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                 .firstWhere((g) => g.userId == _currentUser.id)
                 .role ==
             GroupUserRole.admin;
-    bool isModerator =
-        (Provider.of<GroupProviderV2>(context).currentGroup.users ?? [])
-                .firstWhere((g) => g.userId == _currentUser.id)
-                .role ==
-            GroupUserRole.moderator;
+
     bool isMember =
         (Provider.of<GroupProviderV2>(context).currentGroup.users ?? [])
                 .firstWhere((g) => g.userId == _currentUser.id)
