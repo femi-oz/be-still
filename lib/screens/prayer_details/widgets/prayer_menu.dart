@@ -917,8 +917,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           icon: widget.prayerData?.isFavorite ?? false
                               ? Icons.favorite_border_outlined
                               : Icons.favorite,
-                          isDisabled: !isOwner,
-                          onPress: !isOwner
+                          isDisabled: (!isOwner || isAnswered || isArchived),
+                          onPress: (!isOwner || isAnswered || isArchived)
                               ? () {}
                               : () => widget.prayerData?.isFavorite ?? false
                                   ? _unMarkPrayerAsFavorite(widget.prayerData)

@@ -65,6 +65,8 @@ class CustomInput extends StatefulWidget {
 class _CustomInputState extends State<CustomInput> {
   bool _isTextNotEmpty = false;
 
+  bool _obscurePassword = true;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -75,11 +77,22 @@ class _CustomInputState extends State<CustomInput> {
         controller: widget.controller,
         keyboardType: widget.keyboardType,
         textCapitalization: TextCapitalization.sentences,
-        style: AppTextStyles.regularText15,
+        style: AppTextStyles.regularText15
+            .copyWith(height: widget.maxLines > 1 ? 1.55 : 1),
         focusNode: widget.focusNode,
         cursorColor: widget.color == null ? AppColors.lightBlue4 : widget.color,
         maxLines: widget.maxLines,
         decoration: InputDecoration(
+          suffixIcon: widget.isPassword || widget.obScurePassword
+              ? InkWell(
+                  onTap: () => setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      }),
+                  child: Icon(
+                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                    color: AppColors.lightBlue4,
+                  ))
+              : SizedBox(),
           suffixText: (widget.showSuffix && _isTextNotEmpty) ||
                   (widget.showSuffix && widget.controller.text != '')
               ? widget.label
@@ -118,7 +131,7 @@ class _CustomInputState extends State<CustomInput> {
           fillColor: AppColors.textFieldBackgroundColor,
           filled: true,
         ),
-        obscureText: widget.obScurePassword,
+        obscureText: widget.obScurePassword ? _obscurePassword : false,
         validator: (String? value) => _validatorFn(value ?? ""),
         onFieldSubmitted: (val) => {
           widget.isSearch ? _searchPrayer(val) : null,
