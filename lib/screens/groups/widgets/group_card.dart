@@ -57,7 +57,9 @@ class _GroupCardState extends State<GroupCard> {
             .getUserDataById(id);
         final devices = user.devices ?? <DeviceModel>[];
         if (user.enableNotificationsForAllGroups ?? false) {
-          tokens = devices.map((e) => e.token ?? '').toList();
+          devices.forEach((e) {
+            tokens.add(e.token ?? '');
+          });
         }
       }
       await Provider.of<GroupProviderV2>(context, listen: false)
