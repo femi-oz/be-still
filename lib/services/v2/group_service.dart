@@ -630,11 +630,15 @@ class GroupServiceV2 {
               .map((e) => NotificationModel.fromJson(e.data()))
               .toList());
       final notificationIds = notifications
-          .where((element) => element.type == NotificationType.request)
+          .where((element) =>
+              element.type == NotificationType.request &&
+              element.groupId == group.id)
           .map((e) => e.id)
           .toList();
       final receiverNotifications = notifications
-          .where((element) => element.type == NotificationType.request)
+          .where((element) =>
+              element.type == NotificationType.request &&
+              element.groupId == group.id)
           .toList();
       final receiverIds = receiverNotifications
           .where((element) =>
