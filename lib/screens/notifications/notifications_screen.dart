@@ -503,21 +503,20 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                 child: Column(
                                   children: <Widget>[
                                     Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
                                       children: <Widget>[
                                         Expanded(
                                           child: Text(
-                                            (groupName(notification.groupId ??
-                                                    '') ??
-                                                ''),
-                                            style: AppTextStyles.regularText15b
-                                                .copyWith(
-                                                    fontSize: 14,
-                                                    color: AppColors.lightBlue4,
-                                                    overflow:
-                                                        TextOverflow.ellipsis),
-                                          ),
+                                              (groupName(notification.groupId ??
+                                                      '') ??
+                                                  ''),
+                                              style: AppTextStyles
+                                                  .regularText15b
+                                                  .copyWith(
+                                                      fontSize: 14,
+                                                      color:
+                                                          AppColors.lightBlue4,
+                                                      overflow: TextOverflow
+                                                          .ellipsis)),
                                         ),
                                         SizedBox(width: 20),
                                         Row(
@@ -638,51 +637,35 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             child: Column(
                               children: <Widget>[
                                 Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     Expanded(
-                                      child: Column(
-                                        children: <Widget>[
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(
-                                                  (groupName(notification
-                                                              .groupId ??
-                                                          '') ??
-                                                      ''),
-                                                  style: AppTextStyles
-                                                      .regularText15b
-                                                      .copyWith(
-                                                          fontSize: 14,
-                                                          color: AppColors
-                                                              .lightBlue4,
-                                                          overflow: TextOverflow
-                                                              .ellipsis),
-                                                ),
-                                              ),
-                                              SizedBox(width: 20),
-                                              Row(
-                                                children: <Widget>[
-                                                  Text(
-                                                    DateFormat('MM.dd.yyyy')
-                                                        .format(notification
-                                                                .createdDate ??
-                                                            DateTime.now()),
-                                                    style: AppTextStyles
-                                                        .regularText15b
-                                                        .copyWith(
-                                                            fontSize: 14,
-                                                            color: AppColors
-                                                                .lightBlue4),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ],
+                                      child: Text(
+                                        (groupName(
+                                                notification.groupId ?? '') ??
+                                            ''),
+                                        style: AppTextStyles.regularText15b
+                                            .copyWith(
+                                                fontSize: 14,
+                                                color: AppColors.lightBlue4,
+                                                overflow:
+                                                    TextOverflow.ellipsis),
                                       ),
+                                    ),
+                                    SizedBox(width: 20),
+                                    Row(
+                                      children: <Widget>[
+                                        Text(
+                                          DateFormat('MM.dd.yyyy').format(
+                                              notification.createdDate ??
+                                                  DateTime.now()),
+                                          style: AppTextStyles.regularText15b
+                                              .copyWith(
+                                                  fontSize: 14,
+                                                  color: AppColors.lightBlue4),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -784,49 +767,31 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                 Row(
                                   children: <Widget>[
                                     Expanded(
-                                      child: Column(
-                                        children: <Widget>[
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(
-                                                  (groupName(notification
-                                                              .groupId ??
-                                                          '') ??
-                                                      ''),
-                                                  style: AppTextStyles
-                                                      .regularText15b
-                                                      .copyWith(
-                                                          fontSize: 14,
-                                                          color: AppColors
-                                                              .lightBlue4,
-                                                          overflow: TextOverflow
-                                                              .ellipsis),
-                                                ),
-                                              ),
-                                              SizedBox(width: 20),
-                                              Row(
-                                                children: <Widget>[
-                                                  Text(
-                                                    DateFormat('MM.dd.yyyy')
-                                                        .format(notification
-                                                                .createdDate ??
-                                                            DateTime.now()),
-                                                    style: AppTextStyles
-                                                        .regularText15b
-                                                        .copyWith(
-                                                            fontSize: 14,
-                                                            color: AppColors
-                                                                .lightBlue4),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ],
+                                      child: Text(
+                                        (groupName(
+                                                notification.groupId ?? '') ??
+                                            ''),
+                                        style: AppTextStyles.regularText15b
+                                            .copyWith(
+                                                fontSize: 14,
+                                                color: AppColors.lightBlue4,
+                                                overflow:
+                                                    TextOverflow.ellipsis),
                                       ),
+                                    ),
+                                    SizedBox(width: 20),
+                                    Row(
+                                      children: <Widget>[
+                                        Text(
+                                          DateFormat('MM.dd.yyyy').format(
+                                              notification.createdDate ??
+                                                  DateTime.now()),
+                                          style: AppTextStyles.regularText15b
+                                              .copyWith(
+                                                  fontSize: 14,
+                                                  color: AppColors.lightBlue4),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -925,55 +890,36 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                               children: <Widget>[
                                 Row(
                                   children: <Widget>[
-                                    Expanded(
-                                      child: Column(
-                                        children: <Widget>[
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              groupName(notification.groupId ??
-                                                          '') !=
-                                                      ''
-                                                  ? Expanded(
-                                                      child: Text(
-                                                        groupName(notification
-                                                                    .groupId ??
-                                                                '') ??
-                                                            '',
-                                                        style: AppTextStyles
-                                                            .regularText15b
-                                                            .copyWith(
-                                                                fontSize: 14,
-                                                                color: AppColors
-                                                                    .lightBlue4,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis),
-                                                      ),
-                                                    )
-                                                  : SizedBox(),
-                                              SizedBox(width: 20),
-                                              Row(
-                                                children: <Widget>[
-                                                  Text(
-                                                    DateFormat('MM.dd.yyyy')
-                                                        .format(notification
-                                                                .createdDate ??
-                                                            DateTime.now()),
-                                                    style: AppTextStyles
-                                                        .regularText15b
-                                                        .copyWith(
-                                                            fontSize: 14,
-                                                            color: AppColors
-                                                                .lightBlue4),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
+                                    groupName(notification.groupId ?? '') != ''
+                                        ? Expanded(
+                                            child: Text(
+                                                groupName(
+                                                        notification.groupId ??
+                                                            '') ??
+                                                    '',
+                                                style: AppTextStyles
+                                                    .regularText15b
+                                                    .copyWith(
+                                                        fontSize: 14,
+                                                        color: AppColors
+                                                            .lightBlue4,
+                                                        overflow: TextOverflow
+                                                            .ellipsis)),
+                                          )
+                                        : SizedBox(),
+                                    SizedBox(width: 20),
+                                    Row(
+                                      children: <Widget>[
+                                        Text(
+                                          DateFormat('MM.dd.yyyy').format(
+                                              notification.createdDate ??
+                                                  DateTime.now()),
+                                          style: AppTextStyles.regularText15b
+                                              .copyWith(
+                                                  fontSize: 14,
+                                                  color: AppColors.lightBlue4),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -1074,7 +1020,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                       children: <Widget>[
                                         Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                              MainAxisAlignment.end,
                                           children: <Widget>[
                                             groupName(notification.groupId ??
                                                         '') !=
@@ -1092,6 +1038,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           color: AppColors
                                                               .lightBlue4,
                                                         ),
+                                                        textAlign:
+                                                            TextAlign.end,
                                                         overflow: TextOverflow
                                                             .ellipsis),
                                                   )
@@ -1394,6 +1342,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                   : SizedBox.shrink(),
                                               SizedBox(width: 20),
                                               Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
                                                 children: <Widget>[
                                                   Container(
                                                     width:
@@ -1402,16 +1352,19 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                                 .width *
                                                             0.3,
                                                     child: Text(
-                                                      (groupName(notification
-                                                                  .groupId ??
-                                                              '') ??
-                                                          ''),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                          color: AppColors
-                                                              .lightBlue4),
-                                                    ).marginOnly(right: 2),
+                                                            (groupName(notification
+                                                                        .groupId ??
+                                                                    '') ??
+                                                                ''),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            style: TextStyle(
+                                                                color: AppColors
+                                                                    .lightBlue4),
+                                                            textAlign:
+                                                                TextAlign.end)
+                                                        .marginOnly(right: 2),
                                                   ),
                                                   Text(
                                                     '|',
@@ -1900,16 +1853,19 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                           .width *
                                                       0.3,
                                                   child: Text(
-                                                    (groupName(notification
-                                                                .groupId ??
-                                                            '') ??
-                                                        ''),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                        color: AppColors
-                                                            .lightBlue4),
-                                                  ).marginOnly(right: 2),
+                                                          (groupName(
+                                                                  notification
+                                                                          .groupId ??
+                                                                      '') ??
+                                                              ''),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: TextStyle(
+                                                              color: AppColors
+                                                                  .lightBlue4),
+                                                          textAlign:
+                                                              TextAlign.end)
+                                                      .marginOnly(right: 2),
                                                 ),
                                                 Text(
                                                   '|',
