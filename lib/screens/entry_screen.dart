@@ -470,7 +470,7 @@ class _EntryScreenState extends State<EntryScreen> {
             title: "More",
             padding: 7),
         TabNavigationItem(
-            page: AddUpdate(), //13
+            page: SizedBox(), //13
             icon: Icon(
               Icons.more_horiz,
               size: 20,
