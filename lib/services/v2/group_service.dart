@@ -124,7 +124,7 @@ class GroupServiceV2 {
           .then((value) => GroupDataModel.fromJson(value.data()!, value.id));
       if (!requireAdminApproval) {
         final activeRequests = (group.requests ?? [])
-            .where((e) => e.status == Status.active)
+            .where((e) => e.status == RequestStatus.pending)
             .toList();
         for (final req in activeRequests) {
           acceptJoinRequest(group: group, request: req);
@@ -333,14 +333,20 @@ class GroupServiceV2 {
       });
 
       batch.set(_notificationCollectionReference.doc(notId), doc);
-      // final notifications = await _notificationCollectionReference
-      //     .where('id', isEqualTo: notificationId)
-      //     .get()
-      //     .then((value) =>
-      //         value.docs.map((e) => NotificationModel.fromJson(e.data())));
-      if ((notificationId ?? '').isNotEmpty)
+
+      if ((notificationId ?? '').isNotEmpty || notificationId == null) {
+        final notifications = await _notificationCollectionReference
+            .where('groupId', isEqualTo: group.id)
+            .where('type', isEqualTo: NotificationType.request)
+            .get();
+        notifications.docs.forEach((element) {
+          element.reference.delete();
+        });
+      }
+      if ((notificationId ?? '').isNotEmpty) {
         batch.update(_notificationCollectionReference.doc(notificationId),
             {'status': Status.inactive});
+      }
 
       batch.commit();
     } catch (e) {
