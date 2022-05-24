@@ -31,6 +31,7 @@ import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:cron/cron.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -46,6 +47,7 @@ class EntryScreen extends StatefulWidget {
 }
 
 late TutorialCoachMark tutorialCoachMark;
+FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
 class _EntryScreenState extends State<EntryScreen> {
   // BuildContext bcontext;
@@ -62,6 +64,7 @@ class _EntryScreenState extends State<EntryScreen> {
       final miscProvider = Provider.of<MiscProviderV2>(context, listen: false);
 
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
+        analytics.logAppOpen();
         final user = await Provider.of<UserProviderV2>(context, listen: false)
             .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
         Provider.of<PrayerProviderV2>(context, listen: false)

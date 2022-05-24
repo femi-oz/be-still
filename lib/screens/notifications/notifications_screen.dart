@@ -246,10 +246,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
-  Future deleteInappropriateNotification(String senderId) async {
+  Future deleteInappropriateNotification(
+      String senderId, String prayerId) async {
     try {
       await Provider.of<NotificationProviderV2>(context, listen: false)
-          .deleteInappropriateNotificatoin(senderId);
+          .deleteInappropriateNotification(senderId, prayerId);
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
@@ -316,7 +317,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       Provider.of<PrayerProviderV2>(context, listen: false)
           .setCurrentPrayerId(notification.prayerId ?? '');
       if (notification.type == NotificationType.inappropriate_content) {
-        deleteInappropriateNotification(notification.senderId ?? '');
+        deleteInappropriateNotification(
+            notification.senderId ?? '', notification.prayerId ?? '');
       } else {
         await deleteNotification(notification.id ?? '');
       }

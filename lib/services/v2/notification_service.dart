@@ -248,7 +248,8 @@ class NotificationServiceV2 {
     }
   }
 
-  Future<void> cancelInappropriateNotification(String senderId) async {
+  Future<void> cancelInappropriateNotification(
+      String senderId, String prayerId) async {
     try {
       final notifications = await _notificationCollectionReference
           .where('senderId', isEqualTo: senderId)
@@ -259,7 +260,8 @@ class NotificationServiceV2 {
               .toList());
       final notificationIds = notifications
           .where((element) =>
-              element.type == NotificationType.inappropriate_content)
+              element.type == NotificationType.inappropriate_content &&
+              element.prayerId == prayerId)
           .map((e) => e.id)
           .toList();
       for (final notificationId in notificationIds) {
