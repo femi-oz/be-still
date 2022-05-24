@@ -360,7 +360,7 @@ class GroupProviderV2 with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      return await _groupService.acceptJoinRequest(
+      await _groupService.acceptJoinRequest(
           group: group, request: request, senderId: senderId);
     } catch (e) {
       rethrow;
