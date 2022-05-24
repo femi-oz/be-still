@@ -269,12 +269,14 @@ class GroupServiceV2 {
     }
   }
 
-  Future<void> requestToJoinGroup(
-      {required String groupId,
-      required String message,
-      required List<String> receiverIds,
-      required List<String> tokens}) async {
+  Future<void> requestToJoinGroup({
+    required String groupId,
+    required String message,
+    required List<String> receiverIds,
+  }) async {
     try {
+      List<String> tokens = [];
+
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       final request = RequestModel(
@@ -287,15 +289,15 @@ class GroupServiceV2 {
         modifiedDate: DateTime.now(),
       ).toJson();
 
-      // await _groupDataCollectionReference.doc(groupId).update({
-      //   "requests": FieldValue.arrayUnion([request])
-      // });
-
       WriteBatch batch = FirebaseFirestore.instance.batch();
       batch.update(_groupDataCollectionReference.doc(groupId), {
         "requests": FieldValue.arrayUnion([request])
       });
       for (final receiverId in receiverIds) {
+        final user = await _userService.getUserByIdFuture(receiverId);
+        if (user.enableNotificationsForAllGroups ?? false) {
+          tokens = (user.devices ?? []).map((e) => e.token ?? '').toList();
+        }
         final notId = Uuid().v1();
         final doc = NotificationModel(
           id: notId,

@@ -38,7 +38,6 @@ class _GroupCardState extends State<GroupCard> {
     BeStilDialog.showLoading(context);
 
     try {
-      List<String> tokens = [];
       String adminId = (groupData.users ?? <GroupUserDataModel>[])
               .firstWhere((element) => element.role == GroupUserRole.admin)
               .userId ??
@@ -51,23 +50,11 @@ class _GroupCardState extends State<GroupCard> {
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
 
       final receiverIds = [adminId, ...moderatorIds];
-
-      for (final id in receiverIds) {
-        final user = await Provider.of<UserProviderV2>(context, listen: false)
-            .getUserDataById(id);
-        final devices = user.devices ?? <DeviceModel>[];
-        if (user.enableNotificationsForAllGroups ?? false) {
-          devices.forEach((e) {
-            tokens.add(e.token ?? '');
-          });
-        }
-      }
       await Provider.of<GroupProviderV2>(context, listen: false)
           .requestToJoinGroup(
               groupData.id ?? '',
               '$userName has requested to join your group',
               receiverIds,
-              tokens,
               _user.groups ?? []);
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);

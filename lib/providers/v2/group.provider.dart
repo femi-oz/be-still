@@ -367,18 +367,13 @@ class GroupProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> requestToJoinGroup(
-      String groupId,
-      String message,
-      List<String> receiverId,
-      List<String> tokens,
-      List<String> userGroupsId) async {
+  Future<void> requestToJoinGroup(String groupId, String message,
+      List<String> receiverId, List<String> userGroupsId) async {
     try {
       await _groupService.requestToJoinGroup(
         groupId: groupId,
         message: message,
         receiverIds: receiverId,
-        tokens: tokens,
       );
       setUserGroups(userGroupsId);
     } catch (e) {
