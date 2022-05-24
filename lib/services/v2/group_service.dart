@@ -334,13 +334,13 @@ class GroupServiceV2 {
 
       batch.set(_notificationCollectionReference.doc(notId), doc);
 
-      if ((notificationId ?? '').isNotEmpty || notificationId == null) {
+      if ((notificationId ?? '').isEmpty || notificationId == null) {
         final notifications = await _notificationCollectionReference
             .where('groupId', isEqualTo: group.id)
             .where('type', isEqualTo: NotificationType.request)
             .get();
         notifications.docs.forEach((element) {
-          element.reference.delete();
+          batch.update(element.reference, {'status': Status.inactive});
         });
       }
       if ((notificationId ?? '').isNotEmpty) {

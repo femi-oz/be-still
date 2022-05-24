@@ -81,6 +81,14 @@ class LocalNotification {
       localNotificationID += 1;
     }
     print(localNotificationID);
+    const IOSNotificationDetails iOSPlatformChannelSpecifics =
+        IOSNotificationDetails(threadIdentifier: 'thread_id');
+    const AndroidNotificationDetails androidNotificationAndroidSpecifics =
+        AndroidNotificationDetails('groupChannelId', 'groupChannelName',
+            channelDescription: 'groupChannelDescription',
+            importance: Importance.max,
+            priority: Priority.high,
+            groupKey: 'groupKey');
     await _flutterLocalNotificationsPlugin
         .zonedSchedule(
           localNotificationID,
@@ -88,10 +96,8 @@ class LocalNotification {
           description,
           scheduledDate,
           const NotificationDetails(
-              android: AndroidNotificationDetails(
-                  'your channel id', 'your channel name',
-                  channelDescription: 'your channel description'),
-              iOS: IOSNotificationDetails()),
+              android: androidNotificationAndroidSpecifics,
+              iOS: iOSPlatformChannelSpecifics),
           payload: payload ?? '',
           androidAllowWhileIdle: true,
           uiLocalNotificationDateInterpretation:
