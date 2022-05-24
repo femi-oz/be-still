@@ -259,7 +259,7 @@ class _ReminderPickerState extends State<ReminderPicker> {
 
       final scheduleDate = LocalNotification.scheduleDate(
           hour,
-          42,
+          13,
           selectedDayOfWeek,
           selectedPeriod,
           selectedYear,

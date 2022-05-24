@@ -730,13 +730,13 @@ class PrayerServiceV2 {
           .where((element) => element.isAnswered == false)
           .toList();
     }
-    // final filteredPrayers = mappedPrayers
-    //     .where((prayer) => (prayer.archivedDate ?? DateTime.now())
-    //         .add(Duration(minutes: autoDeletePeriod))
-    //         .isBefore(DateTime.now()))
-    //     .toList();
+    final filteredPrayers = mappedPrayers
+        .where((prayer) => (prayer.archivedDate ?? DateTime.now())
+            .add(Duration(minutes: autoDeletePeriod))
+            .isBefore(DateTime.now()))
+        .toList();
 
-    mappedPrayers.forEach((prayer) async {
+    filteredPrayers.forEach((prayer) async {
       _prayerDataCollectionReference
           .doc(prayer.id)
           .update({'status': Status.deleted});
