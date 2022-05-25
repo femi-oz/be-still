@@ -17,6 +17,7 @@ import 'package:be_still/services/v2/user_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quiver/iterables.dart';
 import 'package:rxdart/rxdart.dart';
@@ -24,6 +25,8 @@ import 'package:uuid/uuid.dart';
 
 class GroupServiceV2 {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
   UserServiceV2 _userService = locator<UserServiceV2>();
   PrayerServiceV2 _prayerService = locator<PrayerServiceV2>();
 
@@ -455,6 +458,7 @@ class GroupServiceV2 {
         }
 
       batch.commit();
+      analytics.logJoinGroup(groupId: group.id ?? '');
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -516,6 +520,7 @@ class GroupServiceV2 {
       ).toJson();
       batch.set(_notificationCollectionReference.doc(notId), doc);
       batch.commit();
+      analytics.logJoinGroup(groupId: group.id ?? '');
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

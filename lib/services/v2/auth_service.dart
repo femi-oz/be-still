@@ -70,7 +70,8 @@ class AuthenticationServiceV2 {
         final message = StringUtils.generateExceptionMessage(e.code);
         throw HttpException(message);
       }
-      await analytics.logLogin(loginMethod: 'email/password');
+      await analytics.logLogin(loginMethod: 'email');
+      await analytics.setUserId(id: FirebaseAuth.instance.currentUser?.uid);
       return UserVerify(error: null, needsVerification: needsVerification);
     } on FirebaseException catch (e) {
       final message = StringUtils.generateExceptionMessage(e.code);

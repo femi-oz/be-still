@@ -47,7 +47,6 @@ class EntryScreen extends StatefulWidget {
 }
 
 late TutorialCoachMark tutorialCoachMark;
-FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
 class _EntryScreenState extends State<EntryScreen> {
   // BuildContext bcontext;
@@ -64,7 +63,6 @@ class _EntryScreenState extends State<EntryScreen> {
       final miscProvider = Provider.of<MiscProviderV2>(context, listen: false);
 
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
-        analytics.logAppOpen();
         final user = await Provider.of<UserProviderV2>(context, listen: false)
             .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
         Provider.of<PrayerProviderV2>(context, listen: false)
