@@ -55,15 +55,22 @@ class _EntryScreenState extends State<EntryScreen> {
   bool _isSearchMode = false;
   void _switchSearchMode(bool value) => _isSearchMode = value;
 
-  final cron = Cron();
-
   initState() {
+    final cron = Cron();
+
     try {
       final miscProvider = Provider.of<MiscProviderV2>(context, listen: false);
 
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
         final user = await Provider.of<UserProviderV2>(context, listen: false)
             .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
+        cron.schedule(Schedule.parse('*/1 * * * *'), () async {
+          await Provider.of<NotificationProviderV2>(context, listen: false)
+              .setLocalNotifications();
+          await Provider.of<PrayerProviderV2>(context, listen: false)
+              .autoDeleteArchivePrayers(user.archiveAutoDeleteMinutes ?? 0,
+                  user.includeAnsweredPrayerAutoDelete ?? false);
+        });
         Provider.of<PrayerProviderV2>(context, listen: false)
             .setPrayerFilterOptions(Status.active);
         if (miscProvider.initialLoad) {
@@ -470,7 +477,7 @@ class _EntryScreenState extends State<EntryScreen> {
             title: "More",
             padding: 7),
         TabNavigationItem(
-            page: AddUpdate(), //13
+            page: SizedBox(), //13
             icon: Icon(
               Icons.more_horiz,
               size: 20,

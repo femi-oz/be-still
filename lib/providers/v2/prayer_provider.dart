@@ -352,6 +352,16 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
+  Future<void> autoDeleteArchivePrayers(
+      int value, bool includeAnsweredPrayerAutoDelete) async {
+    try {
+      await _prayerService.autoDeleteArchivePrayers(
+          value, includeAnsweredPrayerAutoDelete);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> editUpdate(
       String description, String prayerId, UpdateModel update) async {
     try {

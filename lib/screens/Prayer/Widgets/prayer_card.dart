@@ -489,17 +489,21 @@ class _PrayerCardState extends State<PrayerCard> {
                                           ),
                                         )
                                       : Container(),
-                                  ((widget.prayer).isFavorite ?? false)
-                                      ? Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 3, bottom: 3, right: 8),
-                                          child: Icon(
-                                            Icons.favorite,
-                                            color: AppColors.lightBlue3,
-                                            size: 14,
-                                          ),
-                                        )
-                                      : SizedBox(),
+                                  widget.prayer.status == Status.archived ||
+                                          widget.prayer.status ==
+                                              Status.answered
+                                      ? SizedBox()
+                                      : ((widget.prayer).isFavorite ?? false)
+                                          ? Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 3, bottom: 3, right: 8),
+                                              child: Icon(
+                                                Icons.favorite,
+                                                color: AppColors.lightBlue3,
+                                                size: 14,
+                                              ),
+                                            )
+                                          : SizedBox(),
                                 ],
                               ),
                               Expanded(

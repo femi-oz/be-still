@@ -77,7 +77,7 @@ class StringUtils {
             "That email address is already in use. Please select another one.";
         break;
       case ErrorType.invalidEmail:
-        errorMessage = "Email format is wrong";
+        errorMessage = "Please enter a valid email address.";
         break;
       case ErrorType.wrongPassword:
         errorMessage = "Username / Password is incorrect";

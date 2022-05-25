@@ -216,145 +216,126 @@ class _SharingSettingsState extends State<SharingSettings> {
     _churchPhone.text = sharingSettings.churchPhone ?? '';
     _churchLink.text = sharingSettings.churchWebFormUrl ?? '';
     final alert = AlertDialog(
-      insetPadding: EdgeInsets.all(10),
-      backgroundColor: AppColors.backgroundColor[1],
-      content: SingleChildScrollView(
-        child: Container(
-          width: MediaQuery.of(context).size.width - 100,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Form(
-                // ignore: deprecated_member_use
-                // autovalidate: _autoValidate,
-                autovalidateMode: _autoValidate == true
-                    ? AutovalidateMode.onUserInteraction
-                    : AutovalidateMode.disabled,
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (type == _ModalType.email)
-                      Text(
-                        'Update  Email',
-                        style: AppTextStyles.boldText20,
-                      )
-                    else if (type == _ModalType.church)
-                      Text(
-                        'Update  Church',
-                        style: AppTextStyles.boldText20,
-                      )
-                    else if (type == _ModalType.link)
-                      Text(
-                        'Update Web Prayer Form',
-                        style: AppTextStyles.boldText20,
-                      )
-                    else if (type == _ModalType.phone)
-                      Text(
-                        'Update Phone',
-                        style: AppTextStyles.boldText20,
-                      ),
-                    SizedBox(height: 10.0),
-                    type == _ModalType.church
-                        ? CustomInput(
-                            isSearch: false,
-                            isRequired: false,
-                            showSuffix: false,
-                            label: 'Enter Church Name',
-                            controller: _churchName)
-                        : type == _ModalType.email
+        insetPadding: EdgeInsets.all(10),
+        backgroundColor: AppColors.backgroundColor[1],
+        content: SingleChildScrollView(
+            child: Container(
+                width: MediaQuery.of(context).size.width - 100,
+                child: Column(mainAxisSize: MainAxisSize.min, children: [
+                  Form(
+                      autovalidateMode: _autoValidate == true
+                          ? AutovalidateMode.onUserInteraction
+                          : AutovalidateMode.disabled,
+                      key: _formKey,
+                      child: Column(mainAxisSize: MainAxisSize.min, children: [
+                        if (type == _ModalType.email)
+                          Text(
+                            'Update  Email',
+                            style: AppTextStyles.boldText20,
+                          )
+                        else if (type == _ModalType.church)
+                          Text(
+                            'Update  Church',
+                            style: AppTextStyles.boldText20,
+                          )
+                        else if (type == _ModalType.link)
+                          Text(
+                            'Update Web Prayer Form',
+                            style: AppTextStyles.boldText20,
+                          )
+                        else if (type == _ModalType.phone)
+                          Text(
+                            'Update Phone',
+                            style: AppTextStyles.boldText20,
+                          ),
+                        SizedBox(height: 10.0),
+                        type == _ModalType.church
                             ? CustomInput(
                                 isSearch: false,
                                 isRequired: false,
                                 showSuffix: false,
-                                keyboardType: TextInputType.emailAddress,
-                                isEmail: true,
-                                label: 'Enter Church Email',
-                                controller: _churchEmail)
-                            : type == _ModalType.phone
+                                label: 'Enter Church Name',
+                                controller: _churchName)
+                            : type == _ModalType.email
                                 ? CustomInput(
                                     isSearch: false,
                                     isRequired: false,
                                     showSuffix: false,
-                                    keyboardType: TextInputType.number,
-                                    isPhone: true,
-                                    label: 'Enter Church Phone',
-                                    controller: _churchPhone)
-                                : type == _ModalType.link
+                                    keyboardType: TextInputType.emailAddress,
+                                    isEmail: true,
+                                    label: 'Enter Church Email',
+                                    controller: _churchEmail)
+                                : type == _ModalType.phone
                                     ? CustomInput(
                                         isSearch: false,
-                                        isLink: false,
                                         isRequired: false,
                                         showSuffix: false,
-                                        label:
-                                            'Enter Church Web Prayer Form Link',
-                                        controller: _churchLink)
-                                    : SizedBox.shrink(),
-                    SizedBox(height: 10.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                AppColors.grey.withOpacity(0.5)),
-                          ),
-                          onPressed: () {
-                            _churchEmail.clear();
-                            _churchName.clear();
-                            _churchPhone.clear();
-                            _churchLink.clear();
-                            Navigator.of(context).pop();
-                          },
-                          child: Text(
-                            'Cancel',
-                            style: AppTextStyles.regularText15.copyWith(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                AppColors.lightBlue3),
-                          ),
-                          onPressed: () {
-                            setState(() => _autoValidate = true);
-                            if (!_formKey.currentState!.validate()) return null;
-                            _formKey.currentState!.save();
-                            switch (type) {
-                              case _ModalType.church:
-                                _updateChurch();
-                                break;
-                              case _ModalType.email:
-                                _updateEmail();
-                                break;
-                              case _ModalType.phone:
-                                _updatePhone();
-                                break;
-                              case _ModalType.link:
-                                _updateLink();
-                                break;
-                              default:
-                            }
-                          },
-                          child: Text(
-                            'Submit',
-                            style: AppTextStyles.regularText15.copyWith(
-                              color: Colors.white,
-                            ),
-                          ),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                                        keyboardType: TextInputType.number,
+                                        isPhone: true,
+                                        label: 'Enter Church Phone',
+                                        controller: _churchPhone)
+                                    : type == _ModalType.link
+                                        ? CustomInput(
+                                            isSearch: false,
+                                            isLink: false,
+                                            isRequired: false,
+                                            showSuffix: false,
+                                            label:
+                                                'Enter Church Web Prayer Form Link',
+                                            controller: _churchLink)
+                                        : SizedBox.shrink(),
+                        SizedBox(height: 10.0),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              TextButton(
+                                  style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              AppColors.grey.withOpacity(0.5))),
+                                  onPressed: () {
+                                    _churchEmail.clear();
+                                    _churchName.clear();
+                                    _churchPhone.clear();
+                                    _churchLink.clear();
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('Cancel',
+                                      style: AppTextStyles.regularText15
+                                          .copyWith(color: Colors.white))),
+                              TextButton(
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            AppColors.lightBlue3),
+                                  ),
+                                  onPressed: () {
+                                    setState(() => _autoValidate = true);
+                                    if (!_formKey.currentState!.validate())
+                                      return null;
+                                    _formKey.currentState!.save();
+                                    switch (type) {
+                                      case _ModalType.church:
+                                        _updateChurch();
+                                        break;
+                                      case _ModalType.email:
+                                        _updateEmail();
+                                        break;
+                                      case _ModalType.phone:
+                                        _updatePhone();
+                                        break;
+                                      case _ModalType.link:
+                                        _updateLink();
+                                        break;
+                                      default:
+                                    }
+                                  },
+                                  child: Text('Save',
+                                      style: AppTextStyles.regularText15
+                                          .copyWith(color: Colors.white)))
+                            ])
+                      ]))
+                ]))));
     showDialog(
         context: ctx,
         builder: (BuildContext context) {
