@@ -131,7 +131,7 @@ class AuthenticationServiceV2 {
           lastName: lastName,
           dateOfBirth: dob);
       await sendEmailVerification();
-      await analytics.logSignUp(signUpMethod: 'email');
+      // await analytics.logSignUp(signUpMethod: 'email');
     } on FirebaseException catch (e) {
       final message = StringUtils.generateExceptionMessage(e.code);
 

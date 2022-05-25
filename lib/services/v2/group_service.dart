@@ -266,6 +266,8 @@ class GroupServiceV2 {
       batch.update(_groupDataCollectionReference.doc(groupId), {
         'users': FieldValue.arrayUnion([updatePayload])
       });
+      batch.update(_userDataCollectionReference.doc(userData.userId),
+          {'modifiedDate': DateTime.now()});
       batch.commit();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
