@@ -8,6 +8,7 @@ import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/message.model.dart';
 import 'package:be_still/models/v2/message_template.dart';
 import 'package:be_still/models/v2/notification.model.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/services/v2/group_service.dart';
 import 'package:be_still/services/v2/prayer_service.dart';
 import 'package:be_still/services/v2/user_service.dart';
@@ -64,6 +65,7 @@ class NotificationServiceV2 {
   }
 
   Future<void> sendPrayerNotification({
+    PrayerDataModel? prayerData,
     required String message,
     required String type,
     required String groupId,
@@ -78,7 +80,9 @@ class NotificationServiceV2 {
           .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
 
       final group = await _groupService.getGroup(groupId);
-      final prayer = await _prayerService.getPrayerFuture(prayerId);
+      final prayer = prayerData != null
+          ? prayerData
+          : await _prayerService.getPrayerFuture(prayerId);
 
       if (type == NotificationType.prayer ||
           type == NotificationType.edited_prayers ||

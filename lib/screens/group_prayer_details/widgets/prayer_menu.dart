@@ -243,23 +243,27 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
             widget.prayerData?.id ?? '',
             type,
             widget.prayerData?.groupId ?? '',
-            widget.prayerData?.description ?? '');
+            widget.prayerData?.description ?? '',
+            prayerData: widget.prayerData);
   }
 
   void _onMarkAsAnswered() async {
     BeStilDialog.showLoading(context);
 
     try {
-      var notifications =
+      final notifications =
           Provider.of<NotificationProviderV2>(context, listen: false)
               .localNotifications
               .where((e) =>
                   e.prayerId == widget.prayerData?.id &&
                   e.type == NotificationType.reminder)
               .toList();
-      notifications.forEach((e) async =>
-          await Provider.of<NotificationProviderV2>(context, listen: false)
-              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
+      for (var notification in notifications) {
+        await Provider.of<NotificationProviderV2>(context, listen: false)
+            .deleteLocalNotification(
+                notification.id ?? '', notification.localNotificationId ?? 0);
+      }
+
       _sendPrayerNotification(NotificationType.answered_prayers);
       await Provider.of<PrayerProviderV2>(context, listen: false)
           .markPrayerAsAnswered(

@@ -9,6 +9,7 @@ import 'package:be_still/models/v2/device.model.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/notification.model.dart';
 import 'package:be_still/models/v2/notification_message.model.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/services/v2/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -375,9 +376,11 @@ class NotificationProviderV2 with ChangeNotifier {
   }
 
   Future sendPrayerNotification(
-      String prayerId, String type, String groupId, String message) async {
+      String prayerId, String type, String groupId, String message,
+      {PrayerDataModel? prayerData}) async {
     try {
       _notificationService.sendPrayerNotification(
+        prayerData: prayerData,
         message: message,
         type: type,
         groupId: groupId,
