@@ -33,7 +33,7 @@ class _GroupPrayerFiltersState extends State<GroupPrayerFilters> {
                   '')
               .toUpperCase();
       String heading =
-          '${status == Status.active ? '$group (ACTIVE)' : "$group (${status.toUpperCase()})"}';
+          '${status == Status.active ? '$group' : "$group (${status.toUpperCase()})"}';
       await Provider.of<MiscProviderV2>(context, listen: false)
           .setPageTitle(heading);
       setState(() {});

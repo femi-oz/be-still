@@ -288,6 +288,7 @@ class GroupProviderV2 with ChangeNotifier {
           organization: organization,
           location: location,
           type: type);
+      //set group users
       await setUserGroups(userGroupsId);
       await setCurrentGroupById(groupId);
       return groupId;

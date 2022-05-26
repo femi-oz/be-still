@@ -95,7 +95,11 @@ class NotificationProviderV2 with ChangeNotifier {
     tz.setLocalLocation(tz.getLocation(currentTimeZone));
     var initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
-    var initializationSettingsIOs = IOSInitializationSettings();
+    var initializationSettingsIOs = IOSInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
     var initSetttings = InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsIOs);
 

@@ -288,6 +288,7 @@ class PrayerServiceV2 {
               groupId: prayerToRemove.groupId);
           batch.update(_prayerDataCollectionReference.doc(prayerId), {
             'status': Status.archived,
+            'isFavorite': false,
             'followers': FieldValue.arrayRemove([
               {
                 'id': follower.id,
@@ -318,8 +319,11 @@ class PrayerServiceV2 {
             : null;
         WriteBatch batch = FirebaseFirestore.instance.batch();
 
-        batch.update(_prayerDataCollectionReference.doc(prayerId),
-            {'status': Status.archived, 'autoDeleteDate': autoDeleteDate});
+        batch.update(_prayerDataCollectionReference.doc(prayerId), {
+          'status': Status.archived,
+          'autoDeleteDate': autoDeleteDate,
+          'isFavorite': false,
+        });
         batch.commit();
       }
     } catch (e) {
@@ -588,6 +592,7 @@ class PrayerServiceV2 {
               .firstWhere((element) => element.prayerId == prayerId);
           batch.update(_prayerDataCollectionReference.doc(prayerId), {
             'isAnswered': true,
+            'isFavorite': false,
             'status': Status.archived,
             'archivedDate': DateTime.now(),
             'followers': FieldValue.arrayRemove([
@@ -621,6 +626,7 @@ class PrayerServiceV2 {
             : null;
         batch.update(_prayerDataCollectionReference.doc(prayerId), {
           'isAnswered': true,
+          'isFavorite': false,
           'status': Status.archived,
           'autoDeleteDate': autoDeleteDate,
           'archivedDate': DateTime.now()
@@ -730,13 +736,13 @@ class PrayerServiceV2 {
           .where((element) => element.isAnswered == false)
           .toList();
     }
-    // final filteredPrayers = mappedPrayers
-    //     .where((prayer) => (prayer.archivedDate ?? DateTime.now())
-    //         .add(Duration(minutes: autoDeletePeriod))
-    //         .isBefore(DateTime.now()))
-    //     .toList();
+    final filteredPrayers = mappedPrayers
+        .where((prayer) => (prayer.archivedDate ?? DateTime.now())
+            .add(Duration(minutes: autoDeletePeriod))
+            .isBefore(DateTime.now()))
+        .toList();
 
-    mappedPrayers.forEach((prayer) async {
+    filteredPrayers.forEach((prayer) async {
       _prayerDataCollectionReference
           .doc(prayer.id)
           .update({'status': Status.deleted});

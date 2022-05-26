@@ -79,7 +79,6 @@ class _GroupPrayersState extends State<GroupPrayers> {
   String get message {
     final filterOption =
         Provider.of<PrayerProviderV2>(context).groupFilterOption;
-
     if (filterOption.toLowerCase() == Status.active.toLowerCase()) {
       return 'You do not have any active prayers.';
     } else if (filterOption.toLowerCase() == Status.answered.toLowerCase()) {

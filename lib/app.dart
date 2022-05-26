@@ -64,12 +64,27 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
       var initializationSettingsAndroid =
           AndroidInitializationSettings('@mipmap/ic_launcher');
-      var initializationSettingsIOs = IOSInitializationSettings();
-      var initSetttings = InitializationSettings(
+
+      var initializationSettingsIOs = IOSInitializationSettings(
+          onDidReceiveLocalNotification: (_, __, ___, ____) {
+        Provider.of<NotificationProviderV2>(context, listen: false)
+            .setLocalNotifications();
+        _flutterLocalNotificationsPlugin.show(
+          _,
+          __,
+          ___,
+          NotificationDetails(
+              android: androidNotificationAndroidSpecifics,
+              iOS: iOSPlatformChannelSpecifics),
+          payload: "{\"type\": \"fcm message\"}",
+        );
+        print('on message');
+      });
+      var initSettings = InitializationSettings(
           android: initializationSettingsAndroid,
           iOS: initializationSettingsIOs);
 
-      _flutterLocalNotificationsPlugin.initialize(initSetttings,
+      _flutterLocalNotificationsPlugin.initialize(initSettings,
           onSelectNotification: _onSelectNotification);
 
       FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
@@ -92,6 +107,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.initState();
   }
 
+  final IOSNotificationDetails iOSPlatformChannelSpecifics =
+      IOSNotificationDetails(threadIdentifier: 'thread_id');
+  final AndroidNotificationDetails androidNotificationAndroidSpecifics =
+      AndroidNotificationDetails('groupChannelId', 'groupChannelName',
+          channelDescription: 'groupChannelDescription',
+          importance: Importance.max,
+          priority: Priority.high,
+          groupKey: 'groupKey');
   Future<void> showNotification(RemoteMessage message) async {
     var androidChannelSpecifics = AndroidNotificationDetails(
       'CHANNEL_ID',
@@ -103,14 +126,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       // timeoutAfter: 10000,
       styleInformation: BigTextStyleInformation(''),
     );
-    var iosChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        android: androidChannelSpecifics, iOS: iosChannelSpecifics);
+
     await _flutterLocalNotificationsPlugin.show(
       0,
       message.notification?.title ?? '',
       message.notification?.body ?? '',
-      platformChannelSpecifics,
+      NotificationDetails(
+          android: androidNotificationAndroidSpecifics,
+          iOS: iOSPlatformChannelSpecifics),
       payload: "{\"type\": \"fcm message\"}",
     );
   }

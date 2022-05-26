@@ -500,22 +500,27 @@ class _PrayerCardState extends State<PrayerCard> {
                                           ),
                                         )
                                       : Container(),
-                                  ((widget.prayer).isFavorite ?? false)
-                                      ? Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 3, bottom: 3, right: 8),
-                                          child: Icon(
-                                            Icons.favorite,
-                                            color: AppColors.lightBlue3,
-                                            size: 14,
-                                          ),
-                                        )
-                                      : SizedBox(),
+                                  widget.prayer.status == Status.archived ||
+                                          widget.prayer.status ==
+                                              Status.answered
+                                      ? SizedBox()
+                                      : ((widget.prayer).isFavorite ?? false)
+                                          ? Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 3, bottom: 3, right: 8),
+                                              child: Icon(
+                                                Icons.favorite,
+                                                color: AppColors.lightBlue3,
+                                                size: 14,
+                                              ),
+                                            )
+                                          : SizedBox(),
                                 ],
                               ),
                               Expanded(
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
+                                  // crossAxisAlignment: CrossAxisAlignment.baseline,
                                   children: <Widget>[
                                     Expanded(
                                       child: (widget.prayer.tags ??
@@ -540,9 +545,10 @@ class _PrayerCardState extends State<PrayerCard> {
                                                       child: Text(
                                                         tags.join(', '),
                                                         style: TextStyle(
-                                                          color: AppColors.red,
-                                                          fontSize: 10,
-                                                        ),
+                                                            color:
+                                                                AppColors.red,
+                                                            fontSize: 10,
+                                                            height: 1.2),
                                                         maxLines: 1,
                                                         overflow: TextOverflow
                                                             .ellipsis,

@@ -44,6 +44,7 @@ class UserProviderV2 with ChangeNotifier {
         // (event.prayers ?? []).map((e) => e.prayerId ?? '').toList()
         // await Provider.of<GroupProviderV2>(Get.context!, listen: false)
         //     .setUserGroups(event.groups ?? <String>[]);
+
         await Provider.of<GroupProviderV2>(Get.context!, listen: false)
             .onGroupChanges(event.groups ?? <String>[]);
 
@@ -123,20 +124,28 @@ class UserProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> setAutoDelete(int value) async {
-    try {
-      Timer.periodic(Duration(minutes: value), (timer) async {
-        if (value == 0) {
-          timer.cancel();
-        } else {
-          await _prayerService.autoDeleteArchivePrayers(
-              value, currentUser.includeAnsweredPrayerAutoDelete ?? false);
-        }
-      });
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // late Timer autoDeleteTimer;
+  // //on app load, set a time with value of autoDeleteDate
+  // //on update of autoDelete date, cancel and set new timer
+  // //when timer ends, call autoDelete method
+  // Future<void> setAutoDeleteTimer(int value) async {
+  //   try {
+  //     autoDeleteTimer = Timer.periodic(Duration(minutes: value), (timer) async {
+  //       if (value == 0) {
+  //         timer.cancel();
+  //       } else {
+  //         await _prayerService.autoDeleteArchivePrayers(
+  //             value, currentUser.includeAnsweredPrayerAutoDelete ?? false);
+  //       }
+  //     });
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
+
+  // Future<void> cancelAutoDeleteTimer() async {
+  //   autoDeleteTimer.cancel();
+  // }
 
   Future<void> updatePassword(String newPassword) async {
     try {

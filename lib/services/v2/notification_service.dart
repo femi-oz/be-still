@@ -85,7 +85,6 @@ class NotificationServiceV2 {
           : await _prayerService.getPrayerFuture(prayerId);
 
       if (type == NotificationType.prayer ||
-          type == NotificationType.edited_prayers ||
           type == NotificationType.prayer_updates) {
         _ids = (group.users ?? []).map((e) => e.userId ?? '').toList();
       } else {

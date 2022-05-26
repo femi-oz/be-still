@@ -258,15 +258,14 @@ class _ReminderPickerState extends State<ReminderPicker> {
       final description = widget.prayerData?.description ?? '';
 
       final scheduleDate = LocalNotification.scheduleDate(
-        hour,
-        selectedMinute,
-        selectedDayOfWeek,
-        selectedPeriod,
-        selectedYear,
-        selectedMonth,
-        selectedDayOfMonth,
-        selectedFrequency == Frequency.one_time,
-      );
+          hour,
+          selectedMinute,
+          selectedDayOfWeek,
+          selectedPeriod,
+          selectedYear,
+          selectedMonth,
+          selectedDayOfMonth,
+          selectedFrequency == Frequency.one_time);
 
       final payload = NotificationMessageModel(
           entityId: widget.entityId,
