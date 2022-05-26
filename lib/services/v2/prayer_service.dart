@@ -288,6 +288,7 @@ class PrayerServiceV2 {
               groupId: prayerToRemove.groupId);
           batch.update(_prayerDataCollectionReference.doc(prayerId), {
             'status': Status.archived,
+            'isFavorite': false,
             'followers': FieldValue.arrayRemove([
               {
                 'id': follower.id,
@@ -318,8 +319,11 @@ class PrayerServiceV2 {
             : null;
         WriteBatch batch = FirebaseFirestore.instance.batch();
 
-        batch.update(_prayerDataCollectionReference.doc(prayerId),
-            {'status': Status.archived, 'autoDeleteDate': autoDeleteDate});
+        batch.update(_prayerDataCollectionReference.doc(prayerId), {
+          'status': Status.archived,
+          'autoDeleteDate': autoDeleteDate,
+          'isFavorite': false,
+        });
         batch.commit();
       }
     } catch (e) {
@@ -588,6 +592,7 @@ class PrayerServiceV2 {
               .firstWhere((element) => element.prayerId == prayerId);
           batch.update(_prayerDataCollectionReference.doc(prayerId), {
             'isAnswered': true,
+            'isFavorite': false,
             'status': Status.archived,
             'archivedDate': DateTime.now(),
             'followers': FieldValue.arrayRemove([
@@ -621,6 +626,7 @@ class PrayerServiceV2 {
             : null;
         batch.update(_prayerDataCollectionReference.doc(prayerId), {
           'isAnswered': true,
+          'isFavorite': false,
           'status': Status.archived,
           'autoDeleteDate': autoDeleteDate,
           'archivedDate': DateTime.now()
