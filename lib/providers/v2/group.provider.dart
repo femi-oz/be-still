@@ -51,10 +51,7 @@ class GroupProviderV2 with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      _groupService
-          .getUserGroups(userGroupsId)
-          .asBroadcastStream()
-          .listen((userGroups) {
+      _groupService.getUserGroupsFuture(userGroupsId).then((userGroups) {
         final isAdminGroups = userGroups
             .where((element) => (element.users ?? []).any((element) =>
                 element.role == GroupUserRole.admin &&
