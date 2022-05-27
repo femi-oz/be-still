@@ -430,36 +430,6 @@ class GroupServiceV2 {
       });
 
       batch.set(_notificationCollectionReference.doc(notId), doc);
-<<<<<<< .mine
-
-
-
-
-
-
-
-
-
-
-
-
-
-=======
-
-      if ((notificationId ?? '').isEmpty || notificationId == null) {
-        final notifications = await _notificationCollectionReference
-            .where('groupId', isEqualTo: group.id)
-            .where('type', isEqualTo: NotificationType.request)
-            .get();
-        notifications.docs.forEach((element) {
-          batch.update(element.reference, {'status': Status.inactive});
-        });
-      }
-      if ((notificationId ?? '').isNotEmpty) {
-        batch.update(_notificationCollectionReference.doc(notificationId),
-            {'status': Status.inactive});
->>>>>>> .theirs
-      }
 
       if (notificationIds.isNotEmpty)
         for (final id in notificationIds) {
