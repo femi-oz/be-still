@@ -85,6 +85,17 @@ class NotificationProviderV2 with ChangeNotifier {
     _notifications = [];
     _prayerTimeNotifications = [];
     _localNotifications = [];
+    _answeredPrayers = [];
+    _archivedPrayers = [];
+    _editedPrayers = [];
+    _prayerUpdates = [];
+    _joinGroup = [];
+    _requestAccepted = [];
+    _requestDenied = [];
+    _inappropriateContent = [];
+    _leftGroup = [];
+    _requests = [];
+    _prayerTimeNotifications = [];
     _message = NotificationMessageModel.defaultValue();
   }
 
@@ -422,8 +433,8 @@ class NotificationProviderV2 with ChangeNotifier {
   }
 
   Future flush() async {
+    resetValues();
     await userNotificationStream.cancel();
     await localNotificationStream.cancel();
-    resetValues();
   }
 }

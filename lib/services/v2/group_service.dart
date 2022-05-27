@@ -242,6 +242,7 @@ class GroupServiceV2 {
       WriteBatch batch = FirebaseFirestore.instance.batch();
 
       batch.update(_groupDataCollectionReference.doc(groupId), {
+        'modifiedDate': DateTime.now(),
         'users': FieldValue.arrayRemove([
           {
             'id': userData.id,
@@ -420,6 +421,7 @@ class GroupServiceV2 {
         ])
       });
       batch.update(_groupDataCollectionReference.doc(group.id), {
+        'modifiedDate': DateTime.now(),
         'users': FieldValue.arrayUnion([user.toJson()])
       });
 
@@ -505,6 +507,7 @@ class GroupServiceV2 {
       WriteBatch batch = FirebaseFirestore.instance.batch();
 
       batch.update(_groupDataCollectionReference.doc(group.id), {
+        'modifiedDate': DateTime.now(),
         'users': FieldValue.arrayUnion([user.toJson()])
       });
 
@@ -680,6 +683,7 @@ class GroupServiceV2 {
 
       WriteBatch batch = FirebaseFirestore.instance.batch();
       batch.update(_groupDataCollectionReference.doc(group.id), {
+        'modifiedDate': DateTime.now(),
         'requests': FieldValue.arrayRemove([
           {
             'id': request.id,
