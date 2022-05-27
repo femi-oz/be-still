@@ -47,10 +47,7 @@ class UserProviderV2 with ChangeNotifier {
         //
 
         await Provider.of<GroupProviderV2>(Get.context!, listen: false)
-            .setUserGroups(event.groups ?? <String>[]);
-
-        // await Provider.of<GroupProviderV2>(Get.context!, listen: false)
-        //     .onGroupChanges(event.groups ?? <String>[]);
+            .onGroupChanges(event.groups ?? <String>[]);
 
         notifyListeners();
       });
