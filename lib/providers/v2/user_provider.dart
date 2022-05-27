@@ -44,6 +44,7 @@ class UserProviderV2 with ChangeNotifier {
         // (event.prayers ?? []).map((e) => e.prayerId ?? '').toList()
         // await Provider.of<GroupProviderV2>(Get.context!, listen: false)
         //     .setUserGroups(event.groups ?? <String>[]);
+        //
 
         await Provider.of<GroupProviderV2>(Get.context!, listen: false)
             .onGroupChanges(event.groups ?? <String>[]);
