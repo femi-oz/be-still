@@ -1930,8 +1930,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         Provider.of<NotificationProviderV2>(context).answeredPrayers;
     final inappropriateContent =
         Provider.of<NotificationProviderV2>(context).inappropriateContent;
-    final prayerUpdates =
+    final _prayerUpdates =
         Provider.of<NotificationProviderV2>(context).prayerUpdates;
+
+    final List<NotificationModel> _distinctPrayerUpdates = [];
+    var idSet = <String>{};
+    for (var e in _prayerUpdates) {
+      if (idSet.add(e.prayerId ?? '')) {
+        _distinctPrayerUpdates.add(e);
+      }
+    }
+
     final leftGroup = Provider.of<NotificationProviderV2>(context).leftGroup;
     final joinGroup = Provider.of<NotificationProviderV2>(context).joinGroup;
     final data = Provider.of<NotificationProviderV2>(context).notifications;
@@ -1974,8 +1983,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           inappropriateContent.length > 0
               ? _buildInapproriateContentPanel(inappropriateContent)
               : Container(),
-          prayerUpdates.length > 0
-              ? _buildPrayerUpdatesPanel(prayerUpdates)
+          _distinctPrayerUpdates.length > 0
+              ? _buildPrayerUpdatesPanel(_distinctPrayerUpdates)
               : Container(),
           leftGroup.length > 0 ? _buildUserLeftPanel(leftGroup) : Container(),
           joinGroup.length > 0 ? _buildUserJoinPanel(joinGroup) : Container()
