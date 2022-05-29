@@ -35,27 +35,27 @@ class _GroupCardState extends State<GroupCard> {
 
   Future<void> _requestToJoinGroup(GroupDataModel groupData, String userId,
       String userName, UserDataModel admin) async {
+    BeStilDialog.showLoading(context);
+
     try {
-      BeStilDialog.showLoading(context);
-      List<String> tokens = [];
-      final devices = admin.devices ?? <DeviceModel>[];
-      if (admin.enableNotificationsForAllGroups ?? false) {
-        tokens = devices.map((e) => e.token ?? '').toList();
-      }
-      String adminDataId = (groupData.users ?? <GroupUserDataModel>[])
+      String adminId = (groupData.users ?? <GroupUserDataModel>[])
               .firstWhere((element) => element.role == GroupUserRole.admin)
               .userId ??
           '';
+      final moderatorIds = (groupData.users ?? <GroupUserDataModel>[])
+          .where((element) => element.role == GroupUserRole.moderator)
+          .map((e) => e.userId ?? '')
+          .toList();
       final _user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
+
+      final receiverIds = [adminId, ...moderatorIds];
       await Provider.of<GroupProviderV2>(context, listen: false)
           .requestToJoinGroup(
               groupData.id ?? '',
               '$userName has requested to join your group',
-              adminDataId,
-              tokens,
+              receiverIds,
               _user.groups ?? []);
-
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
       AppController appController = Get.find();

@@ -12,7 +12,7 @@ class NotificationType {
   static const join_group = 'Member Joined Group';
   static const accept_request = ' Request Accepted';
   static const remove_from_group = 'Remove From Group';
-  // static const deny_request = ' Request Denied';
+  static const deny_request = ' Request Denied';
 
   static const prayer = 'New Prayers';
   static const edited_prayers = 'Edited Prayers';

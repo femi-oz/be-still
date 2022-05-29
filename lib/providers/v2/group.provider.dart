@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/v2/group.model.dart';
+import 'package:be_still/models/v2/group_user.model.dart';
 import 'package:be_still/models/v2/notification.model.dart';
 import 'package:be_still/models/v2/request.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
@@ -50,31 +51,40 @@ class GroupProviderV2 with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      _groupService
-          .getUserGroups(userGroupsId)
-          .asBroadcastStream()
-          .listen((userGroups) {
+      _groupService.getUserGroupsFuture(userGroupsId).then((userGroups) {
         final isAdminGroups = userGroups
             .where((element) => (element.users ?? []).any((element) =>
                 element.role == GroupUserRole.admin &&
+                element.userId == FirebaseAuth.instance.currentUser?.uid))
+            .toList();
+        final isModeratorGroups = userGroups
+            .where((element) => (element.users ?? []).any((element) =>
+                element.role == GroupUserRole.moderator &&
                 element.userId == FirebaseAuth.instance.currentUser?.uid))
             .toList();
 
         isAdminGroups.sort((a, b) => (a.name ?? '')
             .toLowerCase()
             .compareTo((b.name ?? '').toLowerCase()));
-
-        final isNotAdminGroups = userGroups
-            .where((element) => (element.users ?? []).any((element) =>
-                element.role != GroupUserRole.admin &&
-                element.userId == FirebaseAuth.instance.currentUser?.uid))
-            .toList();
-
-        isNotAdminGroups.sort((a, b) => (a.name ?? '')
+        isModeratorGroups.sort((a, b) => (a.name ?? '')
             .toLowerCase()
             .compareTo((b.name ?? '').toLowerCase()));
 
-        _userGroups = [...isAdminGroups, ...isNotAdminGroups];
+        final isMemberGroups = userGroups
+            .where((element) => (element.users ?? []).any((element) =>
+                element.role == GroupUserRole.member &&
+                element.userId == FirebaseAuth.instance.currentUser?.uid))
+            .toList();
+
+        isMemberGroups.sort((a, b) => (a.name ?? '')
+            .toLowerCase()
+            .compareTo((b.name ?? '').toLowerCase()));
+
+        _userGroups = [
+          ...isAdminGroups,
+          ...isModeratorGroups,
+          ...isMemberGroups
+        ];
 
         notifyListeners();
       });
@@ -276,8 +286,10 @@ class GroupProviderV2 with ChangeNotifier {
           location: location,
           type: type);
       //set group users
-      await setUserGroups(userGroupsId);
-      await setCurrentGroupById(groupId);
+      await _groupService.updateGroupUsers(groupId: groupId);
+
+      // await setUserGroups(userGroupsId);
+      // await setCurrentGroupById(groupId);
       return groupId;
     } catch (e) {
       rethrow;
@@ -344,25 +356,24 @@ class GroupProviderV2 with ChangeNotifier {
   }
 
   Future<void> acceptRequest(
-      GroupDataModel group, RequestModel request, String notificationId) async {
+      GroupDataModel group, RequestModel request, String senderId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      return await _groupService.acceptJoinRequest(
-          group: group, request: request, notificationId: notificationId);
+      await _groupService.acceptJoinRequest(
+          group: group, request: request, senderId: senderId);
     } catch (e) {
       rethrow;
     }
   }
 
   Future<void> requestToJoinGroup(String groupId, String message,
-      String receiverId, List<String> tokens, List<String> userGroupsId) async {
+      List<String> receiverId, List<String> userGroupsId) async {
     try {
       await _groupService.requestToJoinGroup(
         groupId: groupId,
         message: message,
-        receiverId: receiverId,
-        tokens: tokens,
+        receiverIds: receiverId,
       );
       setUserGroups(userGroupsId);
     } catch (e) {
@@ -380,12 +391,13 @@ class GroupProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> denyRequest(GroupDataModel group, RequestModel request) async {
+  Future<void> denyRequest(
+      GroupDataModel group, RequestModel request, String senderId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
       return await _groupService.denyJoinRequest(
-          group: group, request: request);
+          group: group, request: request, senderId: senderId);
     } catch (e) {
       rethrow;
     }
@@ -416,6 +428,18 @@ class GroupProviderV2 with ChangeNotifier {
         return Future.error(StringUtils.unathorized);
       await _groupService.updateGroupUserSettings(group, key, value);
       await setUserGroups(userGroupsId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> editUserRole(
+      GroupUserDataModel userData, String role, String groupId) async {
+    try {
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
+      await _groupService.editUserRole(
+          userData: userData, role: role, groupId: groupId);
     } catch (e) {
       rethrow;
     }

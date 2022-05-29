@@ -57,6 +57,7 @@ dependencies:
   firebase_dynamic_links: "2.0.10"
   get: "4.6.1"
   quiver: "3.0.1+1"
+  firebase_analytics: ^9.1.8
 
 
 

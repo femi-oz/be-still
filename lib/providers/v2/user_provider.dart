@@ -5,6 +5,7 @@ import 'package:be_still/models/v2/device.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
+import 'package:be_still/services/v2/group_service.dart';
 import 'package:be_still/services/v2/prayer_service.dart';
 import 'package:be_still/services/v2/user_service.dart';
 
@@ -15,7 +16,7 @@ import 'package:provider/provider.dart';
 
 class UserProviderV2 with ChangeNotifier {
   UserServiceV2 _userService = locator<UserServiceV2>();
-  PrayerServiceV2 _prayerService = locator<PrayerServiceV2>();
+  GroupServiceV2 _groupService = locator<GroupServiceV2>();
 
   UserDataModel _currentUser = UserDataModel();
   UserDataModel get currentUser => _currentUser;
@@ -42,11 +43,11 @@ class UserProviderV2 with ChangeNotifier {
         await Provider.of<PrayerProviderV2>(Get.context!, listen: false)
             .setPrayers();
         // (event.prayers ?? []).map((e) => e.prayerId ?? '').toList()
-        // await Provider.of<GroupProviderV2>(Get.context!, listen: false)
-        //     .setUserGroups(event.groups ?? <String>[]);
-
         await Provider.of<GroupProviderV2>(Get.context!, listen: false)
-            .onGroupChanges(event.groups ?? <String>[]);
+            .setUserGroups(event.groups ?? <String>[]);
+
+        // await Provider.of<GroupProviderV2>(Get.context!, listen: false)
+        //     .onGroupChanges(event.groups ?? <String>[]);
 
         notifyListeners();
       });

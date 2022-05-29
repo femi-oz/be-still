@@ -29,6 +29,41 @@ class _GroupsSettingsState extends State<GroupsSettings> {
   final f = new DateFormat('yyyy-MM-dd');
   late FirebaseMessaging messaging;
 
+  Future<void> _changeMemberRole(GroupDataModel group, String userId) async {
+    try {
+      bool isCurrentUser =
+          userId == FirebaseAuth.instance.currentUser?.uid ? true : false;
+
+      final groupUserData =
+          (group.users ?? []).firstWhere((element) => element.userId == userId);
+      final newRole = groupUserData.role == GroupUserRole.moderator
+          ? GroupUserRole.member
+          : GroupUserRole.moderator;
+
+      final message =
+          isCurrentUser ? 'You are now a $newRole' : 'User is now a $newRole';
+
+      BeStilDialog.showLoading(context);
+      await Provider.of<GroupProviderV2>(context, listen: false)
+          .editUserRole(groupUserData, newRole, group.id ?? '');
+      BeStilDialog.hideLoading(context);
+      if (!isCurrentUser) {
+        Navigator.pop(context);
+      }
+      BeStilDialog.showSuccessDialog(context, message);
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    }
+  }
+
   Future<void> _removeUserFromGroup(String userId, String groupId) async {
     try {
       final message = 'You have removed the user from your group';
@@ -164,24 +199,65 @@ class _GroupsSettingsState extends State<GroupsSettings> {
 
   void _showMemberAlert(
       String userId, GroupDataModel group, String role) async {
+    bool currentUserIsAdmin = false;
+    bool currentUserIsModerator = false;
     bool userIsAdmin = false;
+    bool userIsModerator = false;
+    bool showRemoveControl = false;
+    bool showDemoteControl = false;
     UserDataModel user =
         await Provider.of<UserProviderV2>(context, listen: false)
             .getUserDataById(userId);
-    try {
-      final _currentUser =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      userIsAdmin = user.id == _currentUser.id && role == GroupUserRole.admin
-          ? true
-          : false;
-    } catch (e, s) {
-      BeStilDialog.hideLoading(context);
 
-      final user =
-          Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), user, s);
+    final _currentUser =
+        Provider.of<UserProviderV2>(context, listen: false).currentUser;
+    final groupUserData = (group.users ?? []).firstWhere(
+        (element) => element.userId == userId,
+        orElse: () => GroupUserDataModel());
+    currentUserIsAdmin = (group.users ?? []).any((element) =>
+        element.userId == _currentUser.id &&
+        element.role == GroupUserRole.admin);
+
+    currentUserIsModerator = (group.users ?? []).any((element) =>
+        element.userId == _currentUser.id &&
+        element.role == GroupUserRole.moderator);
+
+    userIsAdmin = groupUserData.role == GroupUserRole.admin ? true : false;
+    userIsModerator =
+        groupUserData.role == GroupUserRole.moderator ? true : false;
+
+    if (currentUserIsAdmin) {
+      if (userIsAdmin) {
+        showRemoveControl = false;
+        showDemoteControl = false;
+      } else if (userIsModerator) {
+        showRemoveControl = true;
+        showDemoteControl = true;
+      } else {
+        showRemoveControl = true;
+        showDemoteControl = true;
+      }
     }
+
+    if (currentUserIsModerator) {
+      if (userIsAdmin) {
+        showRemoveControl = false;
+        showDemoteControl = false;
+      } else if (userIsModerator) {
+        showRemoveControl = false;
+        showDemoteControl = false;
+      } else {
+        showRemoveControl = true;
+        showDemoteControl = false;
+      }
+    }
+
+    final adminMessage =
+        'Has been an admin since ${f.format(groupUserData.createdDate ?? DateTime.now())}';
+    final moderatorMessage =
+        'Has been a moderator since ${f.format(groupUserData.modifiedDate ?? DateTime.now())}';
+    final memberMessage =
+        'Has been a member since ${f.format(groupUserData.createdDate ?? DateTime.now())}';
 
     setState(() {});
 
@@ -230,7 +306,11 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0, bottom: 20.0),
                         child: Text(
-                          'Has been a member since ${f.format(user.createdDate ?? DateTime.now())}',
+                          userIsAdmin
+                              ? adminMessage
+                              : userIsModerator
+                                  ? moderatorMessage
+                                  : memberMessage,
                           style: TextStyle(
                               color: AppColors.textFieldText,
                               fontSize: 12,
@@ -239,7 +319,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      !userIsAdmin
+                      showRemoveControl
                           ? Container(
                               height: 30,
                               margin: EdgeInsets.only(top: 20, bottom: 0),
@@ -260,11 +340,11 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   ),
                                   child: Container(
                                     child: Text(
-                                      'REMOVE',
+                                      'REMOVE FROM GROUP',
                                       style: TextStyle(
                                           color: AppColors.red,
                                           fontSize: 20,
-                                          fontWeight: FontWeight.w500),
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                   onPressed: () {
@@ -274,6 +354,43 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                     const title = 'Remove From Group';
                                     _openRemoveConfirmation(context, title,
                                         method, message, user, group);
+                                  },
+                                ),
+                              ),
+                            )
+                          : Container(),
+                      showDemoteControl
+                          ? Container(
+                              height: 30,
+                              margin: EdgeInsets.only(top: 20, bottom: 0),
+                              width: MediaQuery.of(context).size.width * 0.4,
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                border: Border.all(
+                                  color: AppColors.red,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: FittedBox(
+                                child: OutlinedButton(
+                                  style: ButtonStyle(
+                                    side: MaterialStateProperty.all<BorderSide>(
+                                        BorderSide(color: Colors.transparent)),
+                                  ),
+                                  child: Container(
+                                    child: Text(
+                                      userIsModerator
+                                          ? 'REMOVE AS MODERATOR'
+                                          : 'MAKE MODERATOR',
+                                      style: TextStyle(
+                                          color: AppColors.red,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    _changeMemberRole(group, user.id ?? '');
                                   },
                                 ),
                               ),
@@ -582,10 +699,16 @@ class _GroupsSettingsState extends State<GroupsSettings> {
     final members = groupMembers
         .where((element) => element.role == GroupUserRole.member)
         .toList();
+    final moderators = groupMembers
+        .where((element) => element.role == GroupUserRole.moderator)
+        .toList();
+    moderators.sort((a, b) => (getMemberName(a.userId ?? ''))
+        .toLowerCase()
+        .compareTo((getMemberName(b.userId ?? '')).toLowerCase()));
     members.sort((a, b) => (getMemberName(a.userId ?? ''))
         .toLowerCase()
         .compareTo((getMemberName(b.userId ?? '')).toLowerCase()));
-    final users = [admin, ...members];
+    final users = [admin, ...moderators, ...members];
     return users;
   }
 
@@ -918,9 +1041,12 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   group.organization ?? '',
                                   group.location ?? '',
                                   group.type ?? '',
-                                  _currentUser.groups ?? []);
+                                  (group.users ?? [])
+                                      .map((e) => e.userId ?? '')
+                                      .toList());
                             },
                             value: group.requireAdminApproval ?? false,
+                            disabled: isModerator,
                           ),
                         SizedBox(height: 25),
                         Column(
@@ -1176,6 +1302,36 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   child: Container(
                                     child: Text(
                                       'LEAVE GROUP',
+                                      style: AppTextStyles.boldText20
+                                          .copyWith(color: AppColors.red),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Container(),
+                        SizedBox(height: 20),
+                        isModerator
+                            ? GestureDetector(
+                                onTap: () {
+                                  _changeMemberRole(
+                                      group, _currentUser.id ?? '');
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 20),
+                                  width: double.infinity,
+                                  padding: EdgeInsets.symmetric(vertical: 7),
+                                  decoration: BoxDecoration(
+                                    color: Colors.transparent,
+                                    border: Border.all(
+                                      color: AppColors.red,
+                                      width: 1,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Container(
+                                    child: Text(
+                                      'REMOVE ME AS MODERATOR',
                                       style: AppTextStyles.boldText20
                                           .copyWith(color: AppColors.red),
                                       textAlign: TextAlign.center,

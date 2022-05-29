@@ -479,11 +479,11 @@ class PrayerProviderV2 with ChangeNotifier {
       final notifications = notProvider.localNotifications
           .where((e) => e.prayerId == prayerId)
           .toList();
-      notifications.forEach((element) {
-        if (element.localNotificationId != null)
-          notProvider
-              .cancelLocalNotificationById(element.localNotificationId ?? 0);
-      });
+      for (final notification in notifications) {
+        if (notification.localNotificationId != null)
+          notProvider.cancelLocalNotificationById(
+              notification.localNotificationId ?? 0);
+      }
     } catch (e) {
       rethrow;
     }

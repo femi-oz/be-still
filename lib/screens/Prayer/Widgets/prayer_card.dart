@@ -317,6 +317,17 @@ class _PrayerCardState extends State<PrayerCard> {
     return isAdmin;
   }
 
+  bool get isModerator {
+    final group = Provider.of<GroupProviderV2>(context, listen: false)
+        .userGroups
+        .firstWhere((element) => element.id == widget.prayer.groupId,
+            orElse: () => GroupDataModel());
+    final isModerator = (group.users ?? []).any((element) =>
+        element.role == GroupUserRole.moderator &&
+        element.userId == FirebaseAuth.instance.currentUser?.uid);
+    return isModerator;
+  }
+
   @override
   Widget build(BuildContext context) {
     final _user = FirebaseAuth.instance.currentUser?.uid;
@@ -336,7 +347,7 @@ class _PrayerCardState extends State<PrayerCard> {
     bool isGroupPrayer = widget.prayer.isGroup ?? false;
 
     bool showOption = false;
-    if (isGroupPrayer && isAdmin) {
+    if (isGroupPrayer && (isAdmin || isModerator)) {
       showOption = true;
     } else if (isGroupPrayer && !isAdmin) {
       showOption = false;
@@ -641,7 +652,7 @@ class _PrayerCardState extends State<PrayerCard> {
                 () => widget.prayer.status == Status.archived
                     ? _unArchive()
                     : _onArchive(),
-                !isOwner && !isAdmin),
+                !isOwner && !isAdmin && !isModerator),
           if (showOption)
             _buildSlideItem(
                 AppIcons.bestill_answered,
@@ -649,7 +660,7 @@ class _PrayerCardState extends State<PrayerCard> {
                 () => widget.prayer.isAnswered ?? false
                     ? _unMarkAsAnswered()
                     : _onMarkAsAnswered(),
-                !isOwner && !isAdmin),
+                !isOwner && !isAdmin && !isModerator),
           if (!isGroupPrayer)
             widget.prayer.status == Status.archived ||
                     (widget.prayer.isAnswered == true)
