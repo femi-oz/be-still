@@ -87,7 +87,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                 _organizationController.text,
                 _locationController.text,
                 group.type ?? GroupType.private,
-                _user.groups ?? []);
+                (group.users ?? []).map((e) => e.id ?? '').toList());
       }
       if (groupId.isNotEmpty) {
         await Provider.of<GroupProviderV2>(context, listen: false)

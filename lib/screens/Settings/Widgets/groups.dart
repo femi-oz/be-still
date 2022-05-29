@@ -1042,7 +1042,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   group.location ?? '',
                                   group.type ?? '',
                                   (group.users ?? [])
-                                      .map((e) => e.id ?? '')
+                                      .map((e) => e.userId ?? '')
                                       .toList());
                             },
                             value: group.requireAdminApproval ?? false,

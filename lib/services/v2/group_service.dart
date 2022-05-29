@@ -471,6 +471,8 @@ class GroupServiceV2 {
         }
 
       batch.commit();
+      updateGroupUsers(
+          userIds: (group.users ?? []).map((e) => e.id ?? '').toList());
       analytics.logJoinGroup(groupId: group.id ?? '');
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -534,6 +536,8 @@ class GroupServiceV2 {
       ).toJson();
       batch.set(_notificationCollectionReference.doc(notId), doc);
       batch.commit();
+      updateGroupUsers(
+          userIds: (group.users ?? []).map((e) => e.id ?? '').toList());
       analytics.logJoinGroup(groupId: group.id ?? '');
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
