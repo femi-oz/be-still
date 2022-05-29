@@ -38,6 +38,9 @@ class UserProviderV2 with ChangeNotifier {
           .asBroadcastStream()
           .listen((event) async {
         _currentUser = event;
+        if (_currentUser.email != FirebaseAuth.instance.currentUser?.email) {
+          await _userService.revertEmail();
+        }
         await Provider.of<PrayerProviderV2>(Get.context!, listen: false)
             .checkPrayerValidity();
         await Provider.of<PrayerProviderV2>(Get.context!, listen: false)
