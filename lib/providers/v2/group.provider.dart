@@ -47,8 +47,6 @@ class GroupProviderV2 with ChangeNotifier {
   String _groupJoinId = '';
   String get groupJoinId => _groupJoinId;
 
-  late StreamSubscription groupChangeStream;
-
   Future<void> setUserGroups(List<String> userGroupsId) async {
     try {
       if (_firebaseAuth.currentUser == null)
@@ -128,10 +126,7 @@ class GroupProviderV2 with ChangeNotifier {
 
   Future<void> onGroupChanges(List<String> ids) async {
     try {
-      groupChangeStream = _groupService
-          .getUserGroupEmpty(ids)
-          .asBroadcastStream()
-          .listen((event) {
+      _groupService.getUserGroupEmpty(ids).asBroadcastStream().listen((event) {
         setUserGroups(ids);
       });
     } catch (e) {
@@ -457,7 +452,6 @@ class GroupProviderV2 with ChangeNotifier {
     _currentGroup = GroupDataModel();
     _isEdit = false;
     _groupJoinId = '';
-    await groupChangeStream.cancel();
     notifyListeners();
   }
 }
