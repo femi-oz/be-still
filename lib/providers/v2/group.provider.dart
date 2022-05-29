@@ -291,7 +291,7 @@ class GroupProviderV2 with ChangeNotifier {
           location: location,
           type: type);
       //set group users
-      await _groupService.updateGroupUsers(userIds: userGroupsId);
+      await _groupService.updateGroupUsers(groupId: groupId);
 
       // await setUserGroups(userGroupsId);
       // await setCurrentGroupById(groupId);

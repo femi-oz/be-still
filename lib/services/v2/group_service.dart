@@ -275,8 +275,7 @@ class GroupServiceV2 {
       // batch.update(_userDataCollectionReference.doc(userData.userId),
       //     {'modifiedDate': DateTime.now()});
       batch.commit();
-      updateGroupUsers(
-          userIds: (group.users ?? []).map((e) => e.id ?? '').toList());
+      updateGroupUsers(groupId: group.id);
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -336,11 +335,16 @@ class GroupServiceV2 {
     }
   }
 
-  Future<void> updateGroupUsers({required List<String> userIds}) async {
-    for (final id in userIds) {
-      if (id.isNotEmpty)
+  Future<void> updateGroupUsers({required groupId}) async {
+    final group = await _groupDataCollectionReference
+        .doc(groupId)
+        .get()
+        .then((value) => GroupDataModel.fromJson(value.data()!, value.id));
+    final users = (group.users ?? <GroupUserDataModel>[]);
+    for (final user in users) {
+      if ((user.userId ?? '').isNotEmpty)
         _userDataCollectionReference
-            .doc(id)
+            .doc((user.userId ?? ''))
             .update({'modifiedDate': DateTime.now()});
     }
   }
@@ -478,8 +482,7 @@ class GroupServiceV2 {
         }
 
       batch.commit();
-      updateGroupUsers(
-          userIds: (group.users ?? []).map((e) => e.id ?? '').toList());
+      updateGroupUsers(groupId: group.id);
       analytics.logJoinGroup(groupId: group.id ?? '');
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -543,8 +546,7 @@ class GroupServiceV2 {
       ).toJson();
       batch.set(_notificationCollectionReference.doc(notId), doc);
       batch.commit();
-      updateGroupUsers(
-          userIds: (group.users ?? []).map((e) => e.id ?? '').toList());
+      updateGroupUsers(groupId: group.id);
       analytics.logJoinGroup(groupId: group.id ?? '');
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
@@ -862,8 +864,7 @@ class GroupServiceV2 {
       });
 
       batch.commit();
-      updateGroupUsers(
-          userIds: (group.users ?? []).map((e) => e.id ?? '').toList());
+      updateGroupUsers(groupId: group.id);
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -883,8 +884,7 @@ class GroupServiceV2 {
       _groupDataCollectionReference
           .doc(group.id)
           .update({'users': mappedUsers});
-      updateGroupUsers(
-          userIds: (group.users ?? []).map((e) => e.id ?? '').toList());
+      updateGroupUsers(groupId: group.id);
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
