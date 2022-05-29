@@ -1041,7 +1041,9 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   group.organization ?? '',
                                   group.location ?? '',
                                   group.type ?? '',
-                                  _currentUser.groups ?? []);
+                                  (group.users ?? [])
+                                      .map((e) => e.id ?? '')
+                                      .toList());
                             },
                             value: group.requireAdminApproval ?? false,
                             disabled: isModerator,

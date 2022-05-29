@@ -329,6 +329,15 @@ class GroupServiceV2 {
     }
   }
 
+  Future<void> updateGroupUsers({required List<String> userIds}) async {
+    for (final id in userIds) {
+      if (id.isNotEmpty)
+        _userDataCollectionReference
+            .doc(id)
+            .update({'modifiedDate': DateTime.now()});
+    }
+  }
+
   Future<void> acceptJoinRequest(
       {required GroupDataModel group,
       required RequestModel request,

@@ -53,10 +53,7 @@ class GroupProviderV2 with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-      _groupService
-          .getUserGroups(userGroupsId)
-          .asBroadcastStream()
-          .listen((userGroups) {
+      _groupService.getUserGroupsFuture(userGroupsId).then((userGroups) {
         final isAdminGroups = userGroups
             .where((element) => (element.users ?? []).any((element) =>
                 element.role == GroupUserRole.admin &&
@@ -294,8 +291,10 @@ class GroupProviderV2 with ChangeNotifier {
           location: location,
           type: type);
       //set group users
-      await setUserGroups(userGroupsId);
-      await setCurrentGroupById(groupId);
+      await _groupService.updateGroupUsers(userIds: userGroupsId);
+
+      // await setUserGroups(userGroupsId);
+      // await setCurrentGroupById(groupId);
       return groupId;
     } catch (e) {
       rethrow;
