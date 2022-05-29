@@ -239,6 +239,11 @@ class GroupServiceV2 {
               modifiedDate: userData.modifiedDate ?? DateTime.now(),
               status: userData.status)
           .toJson();
+
+      final group = await _groupDataCollectionReference
+          .doc(groupId)
+          .get()
+          .then((value) => GroupDataModel.fromJson(value.data()!, value.id));
       WriteBatch batch = FirebaseFirestore.instance.batch();
 
       batch.update(_groupDataCollectionReference.doc(groupId), {
@@ -267,9 +272,11 @@ class GroupServiceV2 {
       batch.update(_groupDataCollectionReference.doc(groupId), {
         'users': FieldValue.arrayUnion([updatePayload])
       });
-      batch.update(_userDataCollectionReference.doc(userData.userId),
-          {'modifiedDate': DateTime.now()});
+      // batch.update(_userDataCollectionReference.doc(userData.userId),
+      //     {'modifiedDate': DateTime.now()});
       batch.commit();
+      updateGroupUsers(
+          userIds: (group.users ?? []).map((e) => e.id ?? '').toList());
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -568,6 +575,8 @@ class GroupServiceV2 {
             (e) => e.groupId == groupId,
             orElse: () => FollowedPrayer(),
           );
+          final groupIdToRemove =
+              (user.groups ?? []).firstWhere((element) => element == group.id);
 
           WriteBatch batch = FirebaseFirestore.instance.batch();
           for (final not in notifications) {
@@ -582,6 +591,9 @@ class GroupServiceV2 {
 
           batch.update(_userDataCollectionReference.doc(element.userId), {
             'prayers': FieldValue.arrayRemove([prayerToRemove.toJson()])
+          });
+          batch.update(_userDataCollectionReference.doc(element.userId), {
+            'groups': FieldValue.arrayRemove([groupIdToRemove])
           });
 
           batch.delete(
@@ -850,6 +862,8 @@ class GroupServiceV2 {
       });
 
       batch.commit();
+      updateGroupUsers(
+          userIds: (group.users ?? []).map((e) => e.id ?? '').toList());
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
@@ -869,6 +883,8 @@ class GroupServiceV2 {
       _groupDataCollectionReference
           .doc(group.id)
           .update({'users': mappedUsers});
+      updateGroupUsers(
+          userIds: (group.users ?? []).map((e) => e.id ?? '').toList());
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }
