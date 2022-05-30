@@ -92,8 +92,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       if (groupId.isNotEmpty) {
         await Provider.of<GroupProviderV2>(context, listen: false)
             .setCurrentGroupById(groupId);
-        await Provider.of<PrayerProviderV2>(context, listen: false)
-            .setGroupPrayers(groupId);
+        // await Provider.of<PrayerProviderV2>(context, listen: false)
+        //     .setGroupPrayers(groupId);
         setState(() {
           newGroupId = groupId;
           _step++;

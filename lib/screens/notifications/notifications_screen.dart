@@ -270,8 +270,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     try {
       await Provider.of<GroupProviderV2>(context, listen: false)
           .setCurrentGroupById(notification?.groupId ?? '');
-      await Provider.of<PrayerProviderV2>(context, listen: false)
-          .setGroupPrayers(notification?.groupId ?? '');
+      // await Provider.of<PrayerProviderV2>(context, listen: false)
+      //     .setGroupPrayers(notification?.groupId ?? '');
       deleteNotification(notification?.id ?? '');
       BeStilDialog.hideLoading(context);
 
@@ -312,8 +312,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       if ((notification.groupId ?? '').isNotEmpty)
         await Provider.of<GroupProviderV2>(context, listen: false)
             .setCurrentGroupById(notification.groupId ?? '');
-      await Provider.of<PrayerProviderV2>(context, listen: false)
-          .setGroupPrayers(notification.groupId ?? '');
+      // await Provider.of<PrayerProviderV2>(context, listen: false)
+      //     .setGroupPrayers(notification.groupId ?? '');
       Provider.of<PrayerProviderV2>(context, listen: false)
           .setCurrentPrayerId(notification.prayerId ?? '');
       if (notification.type == NotificationType.inappropriate_content) {

@@ -8,7 +8,9 @@ import 'package:be_still/models/v2/follower.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/models/v2/update.model.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/services/v2/group_service.dart';
 import 'package:be_still/services/v2/notification_service.dart';
 import 'package:be_still/services/v2/prayer_service.dart';
 import 'package:be_still/services/v2/user_service.dart';
@@ -141,13 +143,18 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> setGroupPrayers(String groupId) async {
+  Future<void> setGroupPrayers() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
+      final groupId = Provider.of<GroupProviderV2>(Get.context!, listen: false)
+              .currentGroup
+              .id ??
+          '';
       groupPrayerStream = _prayerService
           .getGroupPrayers(groupId)
           .asBroadcastStream()
           .listen((event) {
+        print(groupId);
         _groupPrayers = event;
         filterGroupPrayers();
         notifyListeners();
@@ -155,6 +162,10 @@ class PrayerProviderV2 with ChangeNotifier {
     } catch (e) {
       rethrow;
     }
+  }
+
+  closeGroupPrayers() {
+    groupPrayerStream.cancel();
   }
 
   Future setCurrentPrayerId(String prayerId) async {
