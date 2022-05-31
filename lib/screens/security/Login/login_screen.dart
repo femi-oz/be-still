@@ -333,8 +333,8 @@ class _LoginScreenState extends State<LoginScreen> {
           .setCurrentUser();
       Settings.lastUser = jsonEncode(user.toJson2());
       Settings.userPassword = _passwordController.text;
-      if (Settings.enabledReminderPermission)
-        LocalNotification.setNotificationsOnNewDevice(context);
+
+      LocalNotification.setNotificationsOnNewDevice(context);
 
       BeStilDialog.hideLoading(context);
       await setRouteDestination();

@@ -2105,14 +2105,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     final _prayerUpdates =
         Provider.of<NotificationProviderV2>(context).prayerUpdates;
 
-    final List<NotificationModel> _distinctPrayerUpdates = [];
-    var idSet = <String>{};
-    for (var e in _prayerUpdates) {
-      if (idSet.add(e.prayerId ?? '')) {
-        _distinctPrayerUpdates.add(e);
-      }
-    }
-
     final leftGroup = Provider.of<NotificationProviderV2>(context).leftGroup;
     final joinGroup = Provider.of<NotificationProviderV2>(context).joinGroup;
     final data = Provider.of<NotificationProviderV2>(context).notifications;
@@ -2158,8 +2150,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           inappropriateContent.length > 0
               ? _buildInapproriateContentPanel(inappropriateContent)
               : Container(),
-          _distinctPrayerUpdates.length > 0
-              ? _buildPrayerUpdatesPanel(_distinctPrayerUpdates)
+          _prayerUpdates.length > 0
+              ? _buildPrayerUpdatesPanel(_prayerUpdates)
               : Container(),
           leftGroup.length > 0 ? _buildUserLeftPanel(leftGroup) : Container(),
           joinGroup.length > 0 ? _buildUserJoinPanel(joinGroup) : Container()

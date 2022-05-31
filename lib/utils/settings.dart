@@ -85,12 +85,6 @@ class Settings {
   static set enabledContactPermission(bool isContactEnabled) =>
       sharedPrefs?.setBool(CONTACT_PERMISSION, isContactEnabled);
 
-  static set enabledReminderPermission(bool isReminderEnabled) =>
-      sharedPrefs?.setBool(REMINDER_PERMISSION, isReminderEnabled);
-
   static bool get enabledContactPermission =>
       sharedPrefs?.getBool(CONTACT_PERMISSION) ?? false;
-
-  static bool get enabledReminderPermission =>
-      sharedPrefs?.getBool(REMINDER_PERMISSION) ?? true;
 }
