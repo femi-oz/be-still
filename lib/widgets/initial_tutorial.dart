@@ -1,15 +1,19 @@
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class TutorialTarget {
   static TutorialCoachMark? tutorialCoachMark;
   List<TargetFocus> targets = [];
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   void showTutorial(context, _keyButton, _keyButton2, _keyButton3, _keyButton4,
-      _keyButton5, _keyButton6) {
+      _keyButton5, _keyButton6) async {
+    await analytics.logTutorialBegin();
+
     targets.add(TargetFocus(
         identify: "welcome",
         targetPosition: TargetPosition(Size.zero, Offset.zero),
@@ -108,16 +112,6 @@ class TutorialTarget {
               context, 'PRAYER MODE', 6, '', '', StringUtils.quickTipPray, ''))
     ]));
     targets
-        .add(TargetFocus(identify: "more", keyTarget: _keyButton4, contents: [
-      TargetContent(
-          align: ContentAlign.custom,
-          customPosition: CustomTargetContentPosition(
-            bottom: 100,
-          ),
-          child: _buildBody(context, 'MORE', 7, '', ' More', 'Tap the',
-              StringUtils.quickTipMore))
-    ]));
-    targets
         .add(TargetFocus(identify: "groups", keyTarget: _keyButton6, contents: [
       TargetContent(
           align: ContentAlign.custom,
@@ -127,7 +121,7 @@ class TutorialTarget {
           child: _buildBody(
             context,
             'GROUPS',
-            8,
+            7,
             '',
             " Groups",
             "Tap",
@@ -144,12 +138,22 @@ class TutorialTarget {
           child: _buildBody(
             context,
             'GROUPS',
-            9,
+            8,
             '',
             "",
             "",
             StringUtils.groupTipList2,
           ))
+    ]));
+    targets
+        .add(TargetFocus(identify: "more", keyTarget: _keyButton4, contents: [
+      TargetContent(
+          align: ContentAlign.custom,
+          customPosition: CustomTargetContentPosition(
+            bottom: 100,
+          ),
+          child: _buildBody(context, 'MORE', 9, '', ' More', 'Tap the',
+              StringUtils.quickTipMore))
     ]));
 
     tutorialCoachMark = TutorialCoachMark(
@@ -160,8 +164,9 @@ class TutorialTarget {
       hideSkip: true,
       paddingFocus: 10,
       opacityShadow: 0.8,
-      onFinish: () {
+      onFinish: () async {
         print("finish");
+        await analytics.logTutorialComplete();
       },
       onClickTarget: (target) {
         print('onClickTarget: $target');
@@ -256,7 +261,7 @@ class TutorialTarget {
                 width: double.infinity,
                 child: InkWell(
                   onTap: () => id == 9
-                      ? tutorialCoachMark?.skip()
+                      ? tutorialCoachMark?.finish()
                       : tutorialCoachMark?.next(),
                   child: Container(
                     padding: EdgeInsets.all(16.0),

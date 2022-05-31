@@ -93,6 +93,19 @@ class _PrayerMenuState extends State<PrayerMenu> {
         e.userId == FirebaseAuth.instance.currentUser?.uid);
   }
 
+  bool get isModerator {
+    final group = Provider.of<GroupProviderV2>(context, listen: false)
+        .allGroups
+        .firstWhere(
+          (e) => e.id == widget.prayerData?.groupId,
+          orElse: () => GroupDataModel(),
+        );
+
+    return (group.users ?? []).any((e) =>
+        e.role == GroupUserRole.moderator &&
+        e.userId == FirebaseAuth.instance.currentUser?.uid);
+  }
+
   clearSearch() async {
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (Provider.of<MiscProviderV2>(context, listen: false).search) {
@@ -405,7 +418,12 @@ class _PrayerMenuState extends State<PrayerMenu> {
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       await Provider.of<PrayerProviderV2>(context, listen: false)
           .markPrayerAsAnswered(
-              prayerData?.id ?? '', widget.prayerData?.followers ?? []);
+        widget.prayerData?.id ?? '',
+        widget.prayerData?.followers ?? [],
+        NotificationType.answered_prayers,
+        widget.prayerData?.groupId ?? '',
+        widget.prayerData?.description ?? '',
+      );
       clearSearch();
 
       BeStilDialog.hideLoading(context);
@@ -896,9 +914,9 @@ class _PrayerMenuState extends State<PrayerMenu> {
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
-                          isDisabled: !isOwner && !isAdmin,
+                          isDisabled: !isOwner && !isAdmin && !isModerator,
                           icon: AppIcons.bestill_answered,
-                          onPress: !isOwner && !isAdmin
+                          onPress: !isOwner && !isAdmin && !isModerator
                               ? () {}
                               : () => widget.prayerData?.isAnswered == true
                                   ? _unMarkAsAnswered(widget.prayerData)
@@ -917,8 +935,8 @@ class _PrayerMenuState extends State<PrayerMenu> {
                           icon: widget.prayerData?.isFavorite ?? false
                               ? Icons.favorite_border_outlined
                               : Icons.favorite,
-                          isDisabled: !isOwner,
-                          onPress: !isOwner
+                          isDisabled: (!isOwner || isAnswered || isArchived),
+                          onPress: (!isOwner || isAnswered || isArchived)
                               ? () {}
                               : () => widget.prayerData?.isFavorite ?? false
                                   ? _unMarkPrayerAsFavorite(widget.prayerData)
@@ -930,7 +948,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                         LongButton(
                           textColor: AppColors.lightBlue3,
                           hasIcon: true,
-                          isDisabled: !isOwner && !isAdmin,
+                          isDisabled: !isOwner && !isAdmin && !isModerator,
                           backgroundColor: Provider.of<ThemeProviderV2>(context,
                                       listen: false)
                                   .isDarkModeEnabled
@@ -938,7 +956,7 @@ class _PrayerMenuState extends State<PrayerMenu> {
                               : AppColors.white,
                           icon: AppIcons
                               .bestill_icons_bestill_archived_icon_revised_drk,
-                          onPress: !isOwner && !isAdmin
+                          onPress: !isOwner && !isAdmin && !isModerator
                               ? () {}
                               : () =>
                                   widget.prayerData?.status == Status.archived

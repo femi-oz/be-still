@@ -6,6 +6,7 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/followed_prayer.model.dart';
 import 'package:be_still/models/v2/follower.model.dart';
 import 'package:be_still/models/v2/message_template.dart';
+import 'package:be_still/models/v2/notification.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/models/v2/update.model.dart';
@@ -32,6 +33,10 @@ class PrayerServiceV2 {
 
   final CollectionReference<Map<String, dynamic>> _userDataCollectionReference =
       FirebaseFirestore.instance.collection('users');
+
+  final CollectionReference<Map<String, dynamic>>
+      _notificationCollectionReference =
+      FirebaseFirestore.instance.collection("notifications");
 
   final CollectionReference<Map<String, dynamic>>
       _messageTemplateCollectionReference =
@@ -288,6 +293,7 @@ class PrayerServiceV2 {
               groupId: prayerToRemove.groupId);
           batch.update(_prayerDataCollectionReference.doc(prayerId), {
             'status': Status.archived,
+            'isFavorite': false,
             'followers': FieldValue.arrayRemove([
               {
                 'id': follower.id,
@@ -318,8 +324,11 @@ class PrayerServiceV2 {
             : null;
         WriteBatch batch = FirebaseFirestore.instance.batch();
 
-        batch.update(_prayerDataCollectionReference.doc(prayerId),
-            {'status': Status.archived, 'autoDeleteDate': autoDeleteDate});
+        batch.update(_prayerDataCollectionReference.doc(prayerId), {
+          'status': Status.archived,
+          'autoDeleteDate': autoDeleteDate,
+          'isFavorite': false,
+        });
         batch.commit();
       }
     } catch (e) {
@@ -571,23 +580,50 @@ class PrayerServiceV2 {
     }
   }
 
-  Future<void> markPrayerAsAnswered(
-      {required String prayerId,
-      required List<FollowerModel> followers}) async {
+  Future<void> markPrayerAsAnswered({
+    required String prayerId,
+    required List<FollowerModel> followers,
+    String? message,
+    List<String>? tokens,
+    required String type,
+    required String groupId,
+  }) async {
     try {
-      WriteBatch batch = FirebaseFirestore.instance.batch();
-
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
 
       if (followers.isNotEmpty) {
-        followers.forEach((follower) async {
+        for (final follower in followers) {
+          WriteBatch batch = FirebaseFirestore.instance.batch();
+
+          final doc = NotificationModel(
+            message: message,
+            status: Status.active,
+            tokens: tokens,
+            isSent: 0,
+            type: type,
+            groupId: groupId,
+            prayerId: prayerId,
+            receiverId: follower.userId,
+            senderId: _firebaseAuth.currentUser?.uid,
+            modifiedBy: _firebaseAuth.currentUser?.uid,
+            createdBy: _firebaseAuth.currentUser?.uid,
+            createdDate: DateTime.now(),
+            modifiedDate: DateTime.now(),
+          ).toJson();
+          _notificationCollectionReference.add(doc).then((value) {
+            _notificationCollectionReference
+                .doc(value.id)
+                .update({'id': value.id});
+          });
           UserDataModel user =
               await _userService.getUserByIdFuture(follower.userId ?? '');
           final prayerToRemove = (user.prayers ?? [])
               .firstWhere((element) => element.prayerId == prayerId);
+          // batch.set(_notificationCollectionReference.doc(), doc);
           batch.update(_prayerDataCollectionReference.doc(prayerId), {
             'isAnswered': true,
+            'isFavorite': false,
             'status': Status.archived,
             'archivedDate': DateTime.now(),
             'followers': FieldValue.arrayRemove([
@@ -608,9 +644,14 @@ class PrayerServiceV2 {
           batch.update(_userDataCollectionReference.doc(follower.userId), {
             'prayers': FieldValue.arrayRemove([prayerToRemove.toJson()]),
           });
+          batch.update(_userDataCollectionReference.doc(follower.userId), {
+            'modifiedDate': DateTime.now(),
+          });
           batch.commit();
-        });
+        }
       } else {
+        WriteBatch batch = FirebaseFirestore.instance.batch();
+
         UserDataModel user = await _userService
             .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
 
@@ -621,6 +662,7 @@ class PrayerServiceV2 {
             : null;
         batch.update(_prayerDataCollectionReference.doc(prayerId), {
           'isAnswered': true,
+          'isFavorite': false,
           'status': Status.archived,
           'autoDeleteDate': autoDeleteDate,
           'archivedDate': DateTime.now()
@@ -715,6 +757,33 @@ class PrayerServiceV2 {
     }
   }
 
+  Future<void> updatePrayerAutoDelete() async {
+    final user = await _userDataCollectionReference
+        .doc(FirebaseAuth.instance.currentUser?.uid)
+        .get()
+        .then(((doc) => UserDataModel.fromJson(doc.data()!, doc.id)));
+
+    final answeredPrayersToUpdate = await _prayerDataCollectionReference
+        .where('isAnswered', isEqualTo: true)
+        .where('autoDeleteDate', isEqualTo: null)
+        .get()
+        .then((event) => event.docs
+            .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
+            .toList());
+
+    final autoDeleteDate = (user.archiveAutoDeleteMinutes ?? 0) > 0
+        ? DateTime.now()
+            .add(Duration(minutes: user.archiveAutoDeleteMinutes ?? 0))
+        : null;
+
+    for (final prayer in answeredPrayersToUpdate) {
+      if (prayer.autoDeleteDate == null)
+        _prayerDataCollectionReference
+            .doc(prayer.id)
+            .update({'autoDeleteDate': autoDeleteDate});
+    }
+  }
+
   Future<void> autoDeleteArchivePrayers(
       int autoDeletePeriod, bool includeAnsweredPrayers) async {
     final archivedPrayers = await _prayerDataCollectionReference
@@ -730,13 +799,13 @@ class PrayerServiceV2 {
           .where((element) => element.isAnswered == false)
           .toList();
     }
-    // final filteredPrayers = mappedPrayers
-    //     .where((prayer) => (prayer.archivedDate ?? DateTime.now())
-    //         .add(Duration(minutes: autoDeletePeriod))
-    //         .isBefore(DateTime.now()))
-    //     .toList();
+    final filteredPrayers = mappedPrayers
+        .where((prayer) => (prayer.archivedDate ?? DateTime.now())
+            .add(Duration(minutes: autoDeletePeriod))
+            .isBefore(DateTime.now()))
+        .toList();
 
-    mappedPrayers.forEach((prayer) async {
+    filteredPrayers.forEach((prayer) async {
       _prayerDataCollectionReference
           .doc(prayer.id)
           .update({'status': Status.deleted});

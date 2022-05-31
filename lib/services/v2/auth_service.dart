@@ -8,20 +8,23 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 class AuthenticationServiceV2 {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final _localAuth = LocalAuthentication();
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   Future<bool> biometricAuthentication() async {
     if (Settings.enableLocalAuth) {
       try {
         final isAuthenticated = await _localAuth.authenticate(
-          localizedReason: 'authenticate to access',
-          useErrorDialogs: true,
-          stickyAuth: true,
-          biometricOnly: true,
-        );
+            localizedReason: 'authenticate to access',
+            options: AuthenticationOptions(
+              useErrorDialogs: true,
+              stickyAuth: true,
+              biometricOnly: true,
+            ));
         if (!isAuthenticated) {
           _localAuth.stopAuthentication();
           signOut();
@@ -68,6 +71,8 @@ class AuthenticationServiceV2 {
         final message = StringUtils.generateExceptionMessage(e.code);
         throw HttpException(message);
       }
+      await analytics.logLogin(loginMethod: 'email');
+      await analytics.setUserId(id: FirebaseAuth.instance.currentUser?.uid);
       return UserVerify(error: null, needsVerification: needsVerification);
     } on FirebaseException catch (e) {
       final message = StringUtils.generateExceptionMessage(e.code);
@@ -99,11 +104,11 @@ class AuthenticationServiceV2 {
     } on FirebaseException catch (e) {
       final message = StringUtils.generateExceptionMessage(e.code);
 
-      throw HttpException(message);
+      // throw HttpException(message);
     } catch (e) {
       final message = StringUtils.getErrorMessage(e);
 
-      throw HttpException(message);
+      // throw HttpException(message);
     }
   }
 
@@ -127,6 +132,7 @@ class AuthenticationServiceV2 {
           lastName: lastName,
           dateOfBirth: dob);
       await sendEmailVerification();
+      // await analytics.logSignUp(signUpMethod: 'email');
     } on FirebaseException catch (e) {
       final message = StringUtils.generateExceptionMessage(e.code);
 

@@ -109,22 +109,21 @@ class _AddPrayerState extends State<AddPrayer> {
                   prayerToEdit.id ?? '',
                   (prayerToEdit.updates ?? <UpdateModel>[])
                       .firstWhere((element) => element.id == update.id));
-          return;
-        }
-
-        final updateValue =
-            (prayerToEdit.updates ?? <UpdateModel>[]).firstWhere(
-          (element) => element.id == update.id,
-          orElse: () => UpdateModel(),
-        );
-
-        if (update.ctrl.text != updateValue.description) {
-          await Provider.of<PrayerProviderV2>(context, listen: false)
-              .editUpdate(
-            update.ctrl.text,
-            prayerToEdit.id ?? '',
-            updateValue,
+        } else {
+          final updateValue =
+              (prayerToEdit.updates ?? <UpdateModel>[]).firstWhere(
+            (element) => element.id == update.id,
+            orElse: () => UpdateModel(),
           );
+
+          if (update.ctrl.text != updateValue.description) {
+            await Provider.of<PrayerProviderV2>(context, listen: false)
+                .editUpdate(
+              update.ctrl.text,
+              prayerToEdit.id ?? '',
+              updateValue,
+            );
+          }
         }
       });
     }
@@ -208,12 +207,8 @@ class _AddPrayerState extends State<AddPrayer> {
                   .id ??
               '';
       await Provider.of<NotificationProviderV2>(context, listen: false)
-          .sendPrayerNotification(
-        prayerId,
-        NotificationType.edited_prayers,
-        groupId,
-        _descriptionController.text,
-      );
+          .sendPrayerNotification(prayerId, NotificationType.edited_prayers,
+              groupId, _descriptionController.text);
       await Provider.of<GroupProviderV2>(context, listen: false)
           .setCurrentGroupById(groupId);
       appController.setCurrentPage(8, true, 1);
@@ -256,8 +251,8 @@ class _AddPrayerState extends State<AddPrayer> {
                     true, contactList);
             await Provider.of<GroupProviderV2>(context, listen: false)
                 .setCurrentGroupById(selected?.id ?? '');
-            await Provider.of<PrayerProviderV2>(context, listen: false)
-                .setGroupPrayers(selected?.id ?? '');
+            // await Provider.of<PrayerProviderV2>(context, listen: false)
+            //     .setGroupPrayers(selected?.id ?? '');
             BeStilDialog.hideLoading(context);
             appController.setCurrentPage(8, true, 1);
           }

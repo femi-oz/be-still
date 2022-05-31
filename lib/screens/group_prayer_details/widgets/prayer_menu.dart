@@ -154,27 +154,35 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     BeStilDialog.showLoading(context);
 
     try {
+      List<String> tokens = [];
+
       final adminId = (group.users ?? [])
           .firstWhere((e) => e.role == GroupUserRole.admin)
           .userId;
+      final moderatorIds = (group.users ?? [])
+          .where((e) => e.role == GroupUserRole.moderator)
+          .map((e) => e.userId)
+          .toList();
+      final receiverIds = [adminId, ...moderatorIds];
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
-      final adminData =
-          await Provider.of<UserProviderV2>(context, listen: false)
-              .getUserDataById(adminId ?? '');
-      List<String> tokens = [];
-      final devices = adminData.devices ?? <DeviceModel>[];
-      if (adminData.enableNotificationsForAllGroups ?? false) {
-        tokens = devices.map((e) => e.token ?? '').toList();
+      for (var id in receiverIds) {
+        final adminData =
+            await Provider.of<UserProviderV2>(context, listen: false)
+                .getUserDataById(id ?? '');
+        final devices = adminData.devices ?? <DeviceModel>[];
+        if (adminData.enableNotificationsForAllGroups ?? false) {
+          tokens = devices.map((e) => e.token ?? '').toList();
+        }
+        await Provider.of<NotificationProviderV2>(context, listen: false)
+            .flagAsInappropriate(
+                widget.prayerData?.id ?? '',
+                widget.prayerData?.groupId ?? '',
+                id ?? '',
+                (user.firstName ?? '') + ' ' + (user.lastName ?? ''),
+                tokens,
+                group.name ?? '');
       }
-      await Provider.of<NotificationProviderV2>(context, listen: false)
-          .flagAsInappropriate(
-              widget.prayerData?.id ?? '',
-              widget.prayerData?.groupId ?? '',
-              adminId ?? '',
-              (user.firstName ?? '') + ' ' + (user.lastName ?? ''),
-              tokens,
-              group.name ?? '');
 
       clearSearch();
 
@@ -229,33 +237,46 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     }
   }
 
-  void _sendPrayerNotification(String type) async {
+  Future<void> _sendPrayerNotification(String type) async {
     await Provider.of<NotificationProviderV2>(context, listen: false)
         .sendPrayerNotification(
             widget.prayerData?.id ?? '',
             type,
             widget.prayerData?.groupId ?? '',
-            widget.prayerData?.description ?? '');
+            widget.prayerData?.description ?? '',
+            prayerData: widget.prayerData);
   }
 
   void _onMarkAsAnswered() async {
     BeStilDialog.showLoading(context);
 
     try {
-      var notifications =
+      final notifications =
           Provider.of<NotificationProviderV2>(context, listen: false)
               .localNotifications
               .where((e) =>
                   e.prayerId == widget.prayerData?.id &&
                   e.type == NotificationType.reminder)
               .toList();
-      notifications.forEach((e) async =>
-          await Provider.of<NotificationProviderV2>(context, listen: false)
-              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
-      _sendPrayerNotification(NotificationType.answered_prayers);
+      for (var notification in notifications) {
+        await Provider.of<NotificationProviderV2>(context, listen: false)
+            .deleteLocalNotification(
+                notification.id ?? '', notification.localNotificationId ?? 0);
+      }
+
+      // await _sendPrayerNotification(NotificationType.answered_prayers);
+
+      final group = await Provider.of<GroupProviderV2>(context, listen: false)
+          .getCurrentGroupById(widget.prayerData?.groupId ?? '');
+
       await Provider.of<PrayerProviderV2>(context, listen: false)
           .markPrayerAsAnswered(
-              widget.prayerData?.id ?? '', widget.prayerData?.followers ?? []);
+        widget.prayerData?.id ?? '',
+        widget.prayerData?.followers ?? [],
+        NotificationType.answered_prayers,
+        group.id ?? '',
+        widget.prayerData?.description ?? '',
+      );
       clearSearch();
       appController.setCurrentPage(8, false, 0);
       BeStilDialog.hideLoading(context);
@@ -510,6 +531,13 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                 .firstWhere((g) => g.userId == _currentUser.id)
                 .role ==
             GroupUserRole.admin;
+
+    bool isMember =
+        (Provider.of<GroupProviderV2>(context).currentGroup.users ?? [])
+                .firstWhere((g) => g.userId == _currentUser.id)
+                .role ==
+            GroupUserRole.member;
+
     bool isOwner = widget.prayerData?.createdBy == _currentUser.id;
 
     return Container(
@@ -585,8 +613,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                       icon: AppIcons.bestill_edit,
-                      isDisabled: !isOwner && !isAdmin,
-                      onPress: !isOwner && !isAdmin
+                      isDisabled: !isOwner && isMember,
+                      onPress: !isOwner && isMember
                           ? () {}
                           : () async {
                               try {
@@ -637,8 +665,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                       icon: AppIcons.bestill_update,
-                      isDisabled: !isOwner && !isAdmin,
-                      onPress: !isOwner && !isAdmin
+                      isDisabled: !isOwner && isMember,
+                      onPress: !isOwner && isMember
                           ? () {}
                           : () async {
                               try {
@@ -738,9 +766,9 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                   .isDarkModeEnabled
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
-                      isDisabled: !isOwner && !isAdmin,
+                      isDisabled: !isOwner && isMember,
                       icon: AppIcons.bestill_answered,
-                      onPress: () => !isOwner && !isAdmin
+                      onPress: () => !isOwner && isMember
                           ? () {}
                           : widget.prayerData?.isAnswered ?? false
                               ? _unMarkAsAnswered()
@@ -765,7 +793,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                     LongButton(
                       textColor: AppColors.lightBlue3,
                       hasIcon: true,
-                      isDisabled: !isOwner && !isAdmin,
+                      isDisabled: !isOwner && isMember,
                       backgroundColor:
                           Provider.of<ThemeProviderV2>(context, listen: false)
                                   .isDarkModeEnabled
@@ -773,7 +801,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               : AppColors.white,
                       icon: AppIcons
                           .bestill_icons_bestill_archived_icon_revised_drk,
-                      onPress: () => !isOwner && !isAdmin
+                      onPress: () => !isOwner && isMember
                           ? () {}
                           : widget.prayerData?.status == Status.archived
                               ? _unArchive(widget.prayerData)
@@ -790,8 +818,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                               ? AppColors.backgroundColor[0].withOpacity(0.7)
                               : AppColors.white,
                       icon: Icons.delete_forever,
-                      isDisabled: !isOwner && !isAdmin,
-                      onPress: !isOwner && !isAdmin
+                      isDisabled: !isOwner && isMember,
+                      onPress: !isOwner && isMember
                           ? () {}
                           : () {
                               _openDeleteConfirmation(context);
@@ -825,8 +853,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                 : AppColors.white,
                         icon: Icons.info,
                         text: 'Flag as inappropriate',
-                        isDisabled: isOwner || isAdmin,
-                        onPress: () => isOwner || isAdmin
+                        isDisabled: isOwner || !isMember,
+                        onPress: () => isOwner || !isMember
                             ? () {}
                             : _flagAsInappropriate(group)),
                   ],

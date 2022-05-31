@@ -31,6 +31,7 @@ import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:cron/cron.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -55,21 +56,28 @@ class _EntryScreenState extends State<EntryScreen> {
   bool _isSearchMode = false;
   void _switchSearchMode(bool value) => _isSearchMode = value;
 
-  final cron = Cron();
-
   initState() {
+    final cron = Cron();
+
     try {
       final miscProvider = Provider.of<MiscProviderV2>(context, listen: false);
 
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
         final user = await Provider.of<UserProviderV2>(context, listen: false)
             .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
+
+        cron.schedule(Schedule.parse('*/1 * * * *'), () async {
+          await Provider.of<NotificationProviderV2>(context, listen: false)
+              .setLocalNotifications();
+          //   await Provider.of<PrayerProviderV2>(context, listen: false)
+          //       .autoDeleteArchivePrayers(user.archiveAutoDeleteMinutes ?? 0,
+          //           user.includeAnsweredPrayerAutoDelete ?? false);
+        });
         Provider.of<PrayerProviderV2>(context, listen: false)
             .setPrayerFilterOptions(Status.active);
         if (miscProvider.initialLoad) {
           await _preLoadData();
           Future.delayed(Duration(milliseconds: 500));
-
           initDynamicLinks();
         }
         if ((user.enableNotificationsForAllGroups ?? false)) {

@@ -24,6 +24,7 @@ class BeStilDialog {
               ? DecorationImage(
                   image: AssetImage(StringUtils.backgroundImage),
                   alignment: Alignment.bottomCenter,
+                  fit: BoxFit.cover,
                 )
               : null,
         ),

@@ -46,6 +46,9 @@ class _GroupPrayersState extends State<GroupPrayers> {
         try {
           final group =
               Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
+          Provider.of<PrayerProviderV2>(context, listen: false)
+              .setGroupPrayers();
+
           await Provider.of<MiscProviderV2>(context, listen: false)
               .setPageTitle((group.name ?? '').toUpperCase());
           AppController appController = Get.find();
@@ -76,10 +79,11 @@ class _GroupPrayersState extends State<GroupPrayers> {
     super.didChangeDependencies();
   }
 
+  onDispose() {}
+
   String get message {
     final filterOption =
         Provider.of<PrayerProviderV2>(context).groupFilterOption;
-
     if (filterOption.toLowerCase() == Status.active.toLowerCase()) {
       return 'You do not have any active prayers.';
     } else if (filterOption.toLowerCase() == Status.answered.toLowerCase()) {

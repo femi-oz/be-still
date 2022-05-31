@@ -21,6 +21,7 @@ class LocalAuth extends StatelessWidget {
           image: DecorationImage(
             image: AssetImage(StringUtils.backgroundImage),
             alignment: Alignment.bottomCenter,
+            fit: BoxFit.cover,
           ),
         ),
         child: SingleChildScrollView(

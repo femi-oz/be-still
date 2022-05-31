@@ -327,12 +327,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
       final user = await Provider.of<UserProviderV2>(context, listen: false)
           .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .updatePrayerAutoDelete();
       await Provider.of<UserProviderV2>(context, listen: false)
           .setCurrentUser();
       Settings.lastUser = jsonEncode(user.toJson2());
       Settings.userPassword = _passwordController.text;
-      if (Settings.enabledReminderPermission)
-        LocalNotification.setNotificationsOnNewDevice(context);
+
+      LocalNotification.setNotificationsOnNewDevice(context);
 
       BeStilDialog.hideLoading(context);
       await setRouteDestination();
@@ -367,6 +369,8 @@ class _LoginScreenState extends State<LoginScreen> {
           .migrateUserData(FirebaseAuth.instance.currentUser?.uid ?? '');
       final user = await Provider.of<UserProviderV2>(context, listen: false)
           .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .updatePrayerAutoDelete();
       await Provider.of<UserProviderV2>(context, listen: false)
           .setCurrentUser();
       // if (Settings.enabledReminderPermission)
@@ -399,6 +403,8 @@ class _LoginScreenState extends State<LoginScreen> {
       if (isAuth) {
         await Provider.of<UserProviderV2>(context, listen: false)
             .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
+        await Provider.of<PrayerProviderV2>(context, listen: false)
+            .updatePrayerAutoDelete();
         await Provider.of<UserProviderV2>(context, listen: false)
             .setCurrentUser();
 
@@ -615,8 +621,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       width: 50.0,
       height: 50.0,
-      margin: EdgeInsets.only(left: 40),
-      padding: EdgeInsets.only(top: 15.0, right: 15.0),
+      // margin: EdgeInsets.only(left: 40),
+      // padding: EdgeInsets.only(top: 15.0, right: 15.0),
       child: GestureDetector(
           onTap: () => _debounce(() {
                 _bioLogin();
@@ -675,26 +681,26 @@ class _LoginScreenState extends State<LoginScreen> {
           SizedBox(height: 15.0),
           Stack(
             children: [
-              Align(
-                child: CustomInput(
-                  textkey: _passwordKey,
-                  isSearch: false,
-                  obScurePassword: true,
-                  label: 'Password',
-                  controller: _passwordController,
-                  keyboardType: TextInputType.visiblePassword,
-                  isRequired: true,
-                  textInputAction: TextInputAction.done,
-                  unfocus: true,
-                  submitForm: () => _login(),
-                  showSuffix: showSuffix,
-                  onTextchanged: (i) => setState(() => isFormValid =
-                      _usernameController.text.isNotEmpty &&
-                          _passwordController.text.isNotEmpty),
-                ),
+              CustomInput(
+                textkey: _passwordKey,
+                isSearch: false,
+                obScurePassword: true,
+                label: 'Password',
+                controller: _passwordController,
+                keyboardType: TextInputType.visiblePassword,
+                isRequired: true,
+                textInputAction: TextInputAction.done,
+                unfocus: true,
+                submitForm: () => _login(),
+                showSuffix: showSuffix,
+                onTextchanged: (i) => setState(() => isFormValid =
+                    _usernameController.text.isNotEmpty &&
+                        _passwordController.text.isNotEmpty),
               ),
-              Align(
-                  alignment: Alignment.bottomRight,
+              Positioned(
+                  top: 0,
+                  bottom: 0,
+                  right: 30,
                   child: Settings.enableLocalAuth
                       ? _bioButton()
                       : SizedBox.shrink())

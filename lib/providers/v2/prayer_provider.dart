@@ -8,7 +8,9 @@ import 'package:be_still/models/v2/follower.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/models/v2/update.model.dart';
+import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
+import 'package:be_still/services/v2/group_service.dart';
 import 'package:be_still/services/v2/notification_service.dart';
 import 'package:be_still/services/v2/prayer_service.dart';
 import 'package:be_still/services/v2/user_service.dart';
@@ -110,6 +112,7 @@ class PrayerProviderV2 with ChangeNotifier {
 
         Provider.of<MiscProviderV2>(Get.context!, listen: false)
             .setLoadStatus(false);
+
         filterPrayers();
         // notifyListeners();
       });
@@ -141,13 +144,18 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> setGroupPrayers(String groupId) async {
+  Future<void> setGroupPrayers() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
+      final groupId = Provider.of<GroupProviderV2>(Get.context!, listen: false)
+              .currentGroup
+              .id ??
+          '';
       groupPrayerStream = _prayerService
           .getGroupPrayers(groupId)
           .asBroadcastStream()
           .listen((event) {
+        print(groupId);
         _groupPrayers = event;
         filterGroupPrayers();
         notifyListeners();
@@ -155,6 +163,10 @@ class PrayerProviderV2 with ChangeNotifier {
     } catch (e) {
       rethrow;
     }
+  }
+
+  closeGroupPrayers() {
+    groupPrayerStream.cancel();
   }
 
   Future setCurrentPrayerId(String prayerId) async {
@@ -352,6 +364,16 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
+  Future<void> autoDeleteArchivePrayers(
+      int value, bool includeAnsweredPrayerAutoDelete) async {
+    try {
+      await _prayerService.autoDeleteArchivePrayers(
+          value, includeAnsweredPrayerAutoDelete);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> editUpdate(
       String description, String prayerId, UpdateModel update) async {
     try {
@@ -441,10 +463,21 @@ class PrayerProviderV2 with ChangeNotifier {
   }
 
   Future<void> markPrayerAsAnswered(
-      String prayerId, List<FollowerModel> followers) async {
+    String prayerId,
+    List<FollowerModel> followers,
+    String type,
+    String groupId,
+    String message,
+  ) async {
     try {
       await _prayerService.markPrayerAsAnswered(
-          prayerId: prayerId, followers: followers);
+        prayerId: prayerId,
+        followers: followers,
+        message: message,
+        type: type,
+        groupId: groupId,
+        tokens: [],
+      );
     } catch (e) {
       rethrow;
     }
@@ -469,11 +502,11 @@ class PrayerProviderV2 with ChangeNotifier {
       final notifications = notProvider.localNotifications
           .where((e) => e.prayerId == prayerId)
           .toList();
-      notifications.forEach((element) {
-        if (element.localNotificationId != null)
-          notProvider
-              .cancelLocalNotificationById(element.localNotificationId ?? 0);
-      });
+      for (final notification in notifications) {
+        if (notification.localNotificationId != null)
+          notProvider.cancelLocalNotificationById(
+              notification.localNotificationId ?? 0);
+      }
     } catch (e) {
       rethrow;
     }
@@ -581,6 +614,10 @@ class PrayerProviderV2 with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updatePrayerAutoDelete() async {
+    _prayerService.updatePrayerAutoDelete();
+  }
+
   void filterPrayers() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
@@ -627,7 +664,8 @@ class PrayerProviderV2 with ChangeNotifier {
             } else {
               answeredPrayersWithDelete = prayers
                   .where((PrayerDataModel data) =>
-                      (data.isAnswered ?? false) == true)
+                      (data.isAnswered ?? false) == true &&
+                      data.autoDeleteDate == null)
                   .toList();
             }
           }

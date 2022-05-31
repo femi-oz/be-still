@@ -8,6 +8,7 @@ import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/message.model.dart';
 import 'package:be_still/models/v2/message_template.dart';
 import 'package:be_still/models/v2/notification.model.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/services/v2/group_service.dart';
 import 'package:be_still/services/v2/prayer_service.dart';
 import 'package:be_still/services/v2/user_service.dart';
@@ -64,6 +65,7 @@ class NotificationServiceV2 {
   }
 
   Future<void> sendPrayerNotification({
+    PrayerDataModel? prayerData,
     required String message,
     required String type,
     required String groupId,
@@ -78,14 +80,16 @@ class NotificationServiceV2 {
           .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
 
       final group = await _groupService.getGroup(groupId);
-      final prayer = await _prayerService.getPrayerFuture(prayerId);
+      // final prayer = prayerData != null
+      //     ? prayerData
+      //     : await _prayerService.getPrayerFuture(prayerId);
 
       if (type == NotificationType.prayer ||
-          type == NotificationType.edited_prayers ||
           type == NotificationType.prayer_updates) {
         _ids = (group.users ?? []).map((e) => e.userId ?? '').toList();
       } else {
-        _ids = (prayer.followers ?? []).map((e) => e.userId ?? '').toList();
+        _ids =
+            (prayerData?.followers ?? []).map((e) => e.userId ?? '').toList();
       }
 
       _ids.removeWhere((e) => e == _firebaseAuth.currentUser?.uid);
@@ -243,6 +247,32 @@ class NotificationServiceV2 {
       _notificationCollectionReference
           .doc(notificationId)
           .update({'status': Status.inactive});
+    } catch (e) {
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
+  Future<void> cancelInappropriateNotification(
+      String senderId, String prayerId) async {
+    try {
+      final notifications = await _notificationCollectionReference
+          .where('senderId', isEqualTo: senderId)
+          .where('status', isEqualTo: Status.active)
+          .get()
+          .then((value) => value.docs
+              .map((e) => NotificationModel.fromJson(e.data()))
+              .toList());
+      final notificationIds = notifications
+          .where((element) =>
+              element.type == NotificationType.inappropriate_content &&
+              element.prayerId == prayerId)
+          .map((e) => e.id)
+          .toList();
+      for (final notificationId in notificationIds) {
+        _notificationCollectionReference
+            .doc(notificationId)
+            .update({'status': Status.inactive});
+      }
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

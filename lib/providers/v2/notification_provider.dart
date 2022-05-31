@@ -9,6 +9,7 @@ import 'package:be_still/models/v2/device.model.dart';
 import 'package:be_still/models/v2/local_notification.model.dart';
 import 'package:be_still/models/v2/notification.model.dart';
 import 'package:be_still/models/v2/notification_message.model.dart';
+import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/services/v2/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -52,6 +53,9 @@ class NotificationProviderV2 with ChangeNotifier {
   List<NotificationModel> _requestAccepted = [];
   List<NotificationModel> get requestAccepted => _requestAccepted;
 
+  List<NotificationModel> _requestDenied = [];
+  List<NotificationModel> get requestDenied => _requestDenied;
+
   List<NotificationModel> _newPrayers = [];
   List<NotificationModel> get newPrayers => _newPrayers;
 
@@ -81,6 +85,17 @@ class NotificationProviderV2 with ChangeNotifier {
     _notifications = [];
     _prayerTimeNotifications = [];
     _localNotifications = [];
+    _answeredPrayers = [];
+    _archivedPrayers = [];
+    _editedPrayers = [];
+    _prayerUpdates = [];
+    _joinGroup = [];
+    _requestAccepted = [];
+    _requestDenied = [];
+    _inappropriateContent = [];
+    _leftGroup = [];
+    _requests = [];
+    _prayerTimeNotifications = [];
     _message = NotificationMessageModel.defaultValue();
   }
 
@@ -91,7 +106,11 @@ class NotificationProviderV2 with ChangeNotifier {
     tz.setLocalLocation(tz.getLocation(currentTimeZone));
     var initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
-    var initializationSettingsIOs = IOSInitializationSettings();
+    var initializationSettingsIOs = IOSInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
     var initSetttings = InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsIOs);
 
@@ -158,13 +177,25 @@ class NotificationProviderV2 with ChangeNotifier {
             .where((e) => e.type == NotificationType.accept_request)
             .toList();
 
+        _requestDenied = notifications
+            .where((e) => e.type == NotificationType.deny_request)
+            .toList();
+
         _newPrayers = notifications
             .where((e) => e.type == NotificationType.prayer)
             .toList();
 
-        _prayerUpdates = notifications
+        final updates = notifications
             .where((e) => e.type == NotificationType.prayer_updates)
             .toList();
+
+        _prayerUpdates = [];
+        var idSet = <String>{};
+        for (var e in updates) {
+          if (idSet.add(e.prayerId ?? '')) {
+            _prayerUpdates.add(e);
+          }
+        }
 
         _editedPrayers = notifications
             .where((e) => e.type == NotificationType.edited_prayers)
@@ -178,7 +209,19 @@ class NotificationProviderV2 with ChangeNotifier {
             .where((e) => e.type == NotificationType.answered_prayers)
             .toList();
 
-        _notifications = notifications;
+        _notifications = [
+          ..._requests,
+          ..._inappropriateContent,
+          ..._leftGroup,
+          ..._joinGroup,
+          ..._requestAccepted,
+          ..._requestDenied,
+          ..._newPrayers,
+          ..._prayerUpdates,
+          ..._editedPrayers,
+          ..._archivedPrayers,
+          ..._answeredPrayers
+        ];
 
         notifyListeners();
       });
@@ -275,6 +318,17 @@ class NotificationProviderV2 with ChangeNotifier {
     }
   }
 
+  Future deleteInappropriateNotification(
+      String senderId, String prayerId) async {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      return await _notificationService.cancelInappropriateNotification(
+          senderId, prayerId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future sendPushNotification(
       String message, String type, String senderName, List<String> tokens,
       {String? groupId, String? prayerId, String? receiverId}) async {
@@ -349,7 +403,7 @@ class NotificationProviderV2 with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null) return null;
 
-      await LocalNotification.unschedule(localNotificationId);
+      // await LocalNotification.unschedule(localNotificationId);
       await _notificationService.removeLocalNotification(notificationId);
     } catch (e) {
       rethrow;
@@ -357,9 +411,11 @@ class NotificationProviderV2 with ChangeNotifier {
   }
 
   Future sendPrayerNotification(
-      String prayerId, String type, String groupId, String message) async {
+      String prayerId, String type, String groupId, String message,
+      {PrayerDataModel? prayerData}) async {
     try {
       _notificationService.sendPrayerNotification(
+        prayerData: prayerData,
         message: message,
         type: type,
         groupId: groupId,
@@ -397,8 +453,8 @@ class NotificationProviderV2 with ChangeNotifier {
   }
 
   Future flush() async {
+    resetValues();
     await userNotificationStream.cancel();
     await localNotificationStream.cancel();
-    resetValues();
   }
 }

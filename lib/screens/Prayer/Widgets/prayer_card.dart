@@ -101,7 +101,12 @@ class _PrayerCardState extends State<PrayerCard> {
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
       await Provider.of<PrayerProviderV2>(context, listen: false)
           .markPrayerAsAnswered(
-              widget.prayer.id ?? '', widget.prayer.followers ?? []);
+        widget.prayer.id ?? '',
+        widget.prayer.followers ?? [],
+        NotificationType.answered_prayers,
+        widget.prayer.groupId ?? '',
+        widget.prayer.description ?? '',
+      );
       BeStilDialog.hideLoading(context);
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
@@ -317,6 +322,17 @@ class _PrayerCardState extends State<PrayerCard> {
     return isAdmin;
   }
 
+  bool get isModerator {
+    final group = Provider.of<GroupProviderV2>(context, listen: false)
+        .userGroups
+        .firstWhere((element) => element.id == widget.prayer.groupId,
+            orElse: () => GroupDataModel());
+    final isModerator = (group.users ?? []).any((element) =>
+        element.role == GroupUserRole.moderator &&
+        element.userId == FirebaseAuth.instance.currentUser?.uid);
+    return isModerator;
+  }
+
   @override
   Widget build(BuildContext context) {
     final _user = FirebaseAuth.instance.currentUser?.uid;
@@ -336,7 +352,7 @@ class _PrayerCardState extends State<PrayerCard> {
     bool isGroupPrayer = widget.prayer.isGroup ?? false;
 
     bool showOption = false;
-    if (isGroupPrayer && isAdmin) {
+    if (isGroupPrayer && (isAdmin || isModerator)) {
       showOption = true;
     } else if (isGroupPrayer && !isAdmin) {
       showOption = false;
@@ -489,22 +505,27 @@ class _PrayerCardState extends State<PrayerCard> {
                                           ),
                                         )
                                       : Container(),
-                                  ((widget.prayer).isFavorite ?? false)
-                                      ? Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 3, bottom: 3, right: 8),
-                                          child: Icon(
-                                            Icons.favorite,
-                                            color: AppColors.lightBlue3,
-                                            size: 14,
-                                          ),
-                                        )
-                                      : SizedBox(),
+                                  widget.prayer.status == Status.archived ||
+                                          widget.prayer.status ==
+                                              Status.answered
+                                      ? SizedBox()
+                                      : ((widget.prayer).isFavorite ?? false)
+                                          ? Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 3, bottom: 3, right: 8),
+                                              child: Icon(
+                                                Icons.favorite,
+                                                color: AppColors.lightBlue3,
+                                                size: 14,
+                                              ),
+                                            )
+                                          : SizedBox(),
                                 ],
                               ),
                               Expanded(
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
+                                  // crossAxisAlignment: CrossAxisAlignment.baseline,
                                   children: <Widget>[
                                     Expanded(
                                       child: (widget.prayer.tags ??
@@ -529,9 +550,10 @@ class _PrayerCardState extends State<PrayerCard> {
                                                       child: Text(
                                                         tags.join(', '),
                                                         style: TextStyle(
-                                                          color: AppColors.red,
-                                                          fontSize: 10,
-                                                        ),
+                                                            color:
+                                                                AppColors.red,
+                                                            fontSize: 10,
+                                                            height: 1.2),
                                                         maxLines: 1,
                                                         overflow: TextOverflow
                                                             .ellipsis,
@@ -635,7 +657,7 @@ class _PrayerCardState extends State<PrayerCard> {
                 () => widget.prayer.status == Status.archived
                     ? _unArchive()
                     : _onArchive(),
-                !isOwner && !isAdmin),
+                !isOwner && !isAdmin && !isModerator),
           if (showOption)
             _buildSlideItem(
                 AppIcons.bestill_answered,
@@ -643,7 +665,7 @@ class _PrayerCardState extends State<PrayerCard> {
                 () => widget.prayer.isAnswered ?? false
                     ? _unMarkAsAnswered()
                     : _onMarkAsAnswered(),
-                !isOwner && !isAdmin),
+                !isOwner && !isAdmin && !isModerator),
           if (!isGroupPrayer)
             widget.prayer.status == Status.archived ||
                     (widget.prayer.isAnswered == true)

@@ -278,6 +278,7 @@ class _GroupToolsState extends State<GroupTools> {
           image: DecorationImage(
             image: AssetImage(StringUtils.backgroundImage),
             alignment: Alignment.bottomCenter,
+            fit: BoxFit.cover,
           ),
         ),
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <
