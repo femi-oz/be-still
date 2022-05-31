@@ -112,6 +112,7 @@ class PrayerProviderV2 with ChangeNotifier {
 
         Provider.of<MiscProviderV2>(Get.context!, listen: false)
             .setLoadStatus(false);
+
         filterPrayers();
         // notifyListeners();
       });
@@ -602,6 +603,10 @@ class PrayerProviderV2 with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updatePrayerAutoDelete() async {
+    _prayerService.updatePrayerAutoDelete();
+  }
+
   void filterPrayers() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
@@ -648,7 +653,8 @@ class PrayerProviderV2 with ChangeNotifier {
             } else {
               answeredPrayersWithDelete = prayers
                   .where((PrayerDataModel data) =>
-                      (data.isAnswered ?? false) == true)
+                      (data.isAnswered ?? false) == true &&
+                      data.autoDeleteDate == null)
                   .toList();
             }
           }

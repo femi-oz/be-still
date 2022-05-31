@@ -104,11 +104,11 @@ class AuthenticationServiceV2 {
     } on FirebaseException catch (e) {
       final message = StringUtils.generateExceptionMessage(e.code);
 
-      throw HttpException(message);
+      // throw HttpException(message);
     } catch (e) {
       final message = StringUtils.getErrorMessage(e);
 
-      throw HttpException(message);
+      // throw HttpException(message);
     }
   }
 

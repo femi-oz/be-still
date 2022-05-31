@@ -113,6 +113,17 @@ class UserServiceV2 {
     }
   }
 
+  Future<void> revertEmail() async {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      _userDataCollectionReference
+          .doc(_firebaseAuth.currentUser?.uid ?? '')
+          .update({'email': FirebaseAuth.instance.currentUser?.email});
+    } catch (e) {
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
   Future<void> updateEmail(
       {
 

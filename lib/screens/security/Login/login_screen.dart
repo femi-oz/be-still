@@ -327,6 +327,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
       final user = await Provider.of<UserProviderV2>(context, listen: false)
           .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .updatePrayerAutoDelete();
       await Provider.of<UserProviderV2>(context, listen: false)
           .setCurrentUser();
       Settings.lastUser = jsonEncode(user.toJson2());
@@ -367,6 +369,8 @@ class _LoginScreenState extends State<LoginScreen> {
           .migrateUserData(FirebaseAuth.instance.currentUser?.uid ?? '');
       final user = await Provider.of<UserProviderV2>(context, listen: false)
           .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .updatePrayerAutoDelete();
       await Provider.of<UserProviderV2>(context, listen: false)
           .setCurrentUser();
       // if (Settings.enabledReminderPermission)
@@ -399,6 +403,8 @@ class _LoginScreenState extends State<LoginScreen> {
       if (isAuth) {
         await Provider.of<UserProviderV2>(context, listen: false)
             .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
+        await Provider.of<PrayerProviderV2>(context, listen: false)
+            .updatePrayerAutoDelete();
         await Provider.of<UserProviderV2>(context, listen: false)
             .setCurrentUser();
 
