@@ -383,7 +383,7 @@ class NotificationProviderV2 with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null) return null;
 
-      await LocalNotification.unschedule(localNotificationId);
+      // await LocalNotification.unschedule(localNotificationId);
       await _notificationService.removeLocalNotification(notificationId);
     } catch (e) {
       rethrow;

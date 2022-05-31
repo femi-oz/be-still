@@ -271,18 +271,18 @@ class _ReminderPickerState extends State<ReminderPicker> {
           entityId: widget.entityId,
           type: widget.type,
           isGroup: widget.isGroup);
-      if (Settings.enabledReminderPermission) {
-        await LocalNotification.setLocalNotification(
-            context: context,
-            title: title,
-            description: widget.type == NotificationType.prayer_time
-                ? 'It is time to pray!'
-                : description,
-            scheduledDate: scheduleDate,
-            payload: jsonEncode(payload.toJson()),
-            frequency: selectedFrequency,
-            localNotificationId: widget.reminder?.localNotificationId ?? null);
-      }
+
+      await LocalNotification.setLocalNotification(
+          context: context,
+          title: title,
+          description: widget.type == NotificationType.prayer_time
+              ? 'It is time to pray!'
+              : description,
+          scheduledDate: scheduleDate,
+          payload: jsonEncode(payload.toJson()),
+          frequency: selectedFrequency,
+          localNotificationId: widget.reminder?.localNotificationId ?? null);
+
       if (widget.reminder != null)
         await updatePrayerTime(
             LocalNotification.daysOfWeek[selectedDayOfWeek],

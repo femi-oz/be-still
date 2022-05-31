@@ -226,18 +226,6 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     }
   }
 
-  Future<void> _setReminderPermission() async {
-    if (!Settings.enabledReminderPermission) {
-      Settings.enabledReminderPermission = true;
-      LocalNotification.setNotificationsOnNewDevice(context);
-    } else {
-      Settings.enabledReminderPermission = false;
-      Provider.of<NotificationProviderV2>(context, listen: false)
-          .cancelLocalNotifications();
-    }
-    setState(() {});
-  }
-
   void _setDefaults() {
     Settings.rememberMe = false;
     Settings.lastUser = '';
