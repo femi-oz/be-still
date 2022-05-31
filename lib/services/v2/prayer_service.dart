@@ -589,13 +589,13 @@ class PrayerServiceV2 {
     required String groupId,
   }) async {
     try {
-      WriteBatch batch = FirebaseFirestore.instance.batch();
-
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
 
       if (followers.isNotEmpty) {
-        followers.forEach((follower) async {
+        for (final follower in followers) {
+          WriteBatch batch = FirebaseFirestore.instance.batch();
+
           final doc = NotificationModel(
             message: message,
             status: Status.active,
@@ -644,9 +644,14 @@ class PrayerServiceV2 {
           batch.update(_userDataCollectionReference.doc(follower.userId), {
             'prayers': FieldValue.arrayRemove([prayerToRemove.toJson()]),
           });
+          batch.update(_userDataCollectionReference.doc(follower.userId), {
+            'modifiedDate': DateTime.now(),
+          });
           batch.commit();
-        });
+        }
       } else {
+        WriteBatch batch = FirebaseFirestore.instance.batch();
+
         UserDataModel user = await _userService
             .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
 
