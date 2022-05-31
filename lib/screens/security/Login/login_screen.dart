@@ -615,8 +615,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       width: 50.0,
       height: 50.0,
-      margin: EdgeInsets.only(left: 40),
-      padding: EdgeInsets.only(top: 15.0, right: 15.0),
+      // margin: EdgeInsets.only(left: 40),
+      // padding: EdgeInsets.only(top: 15.0, right: 15.0),
       child: GestureDetector(
           onTap: () => _debounce(() {
                 _bioLogin();
@@ -675,26 +675,26 @@ class _LoginScreenState extends State<LoginScreen> {
           SizedBox(height: 15.0),
           Stack(
             children: [
-              Align(
-                child: CustomInput(
-                  textkey: _passwordKey,
-                  isSearch: false,
-                  obScurePassword: true,
-                  label: 'Password',
-                  controller: _passwordController,
-                  keyboardType: TextInputType.visiblePassword,
-                  isRequired: true,
-                  textInputAction: TextInputAction.done,
-                  unfocus: true,
-                  submitForm: () => _login(),
-                  showSuffix: showSuffix,
-                  onTextchanged: (i) => setState(() => isFormValid =
-                      _usernameController.text.isNotEmpty &&
-                          _passwordController.text.isNotEmpty),
-                ),
+              CustomInput(
+                textkey: _passwordKey,
+                isSearch: false,
+                obScurePassword: true,
+                label: 'Password',
+                controller: _passwordController,
+                keyboardType: TextInputType.visiblePassword,
+                isRequired: true,
+                textInputAction: TextInputAction.done,
+                unfocus: true,
+                submitForm: () => _login(),
+                showSuffix: showSuffix,
+                onTextchanged: (i) => setState(() => isFormValid =
+                    _usernameController.text.isNotEmpty &&
+                        _passwordController.text.isNotEmpty),
               ),
-              Align(
-                  alignment: Alignment.bottomRight,
+              Positioned(
+                  top: 0,
+                  bottom: 0,
+                  right: 30,
                   child: Settings.enableLocalAuth
                       ? _bioButton()
                       : SizedBox.shrink())

@@ -19,11 +19,12 @@ class AuthenticationServiceV2 {
     if (Settings.enableLocalAuth) {
       try {
         final isAuthenticated = await _localAuth.authenticate(
-          localizedReason: 'authenticate to access',
-          useErrorDialogs: true,
-          stickyAuth: true,
-          biometricOnly: true,
-        );
+            localizedReason: 'authenticate to access',
+            options: AuthenticationOptions(
+              useErrorDialogs: true,
+              stickyAuth: true,
+              biometricOnly: true,
+            ));
         if (!isAuthenticated) {
           _localAuth.stopAuthentication();
           signOut();
