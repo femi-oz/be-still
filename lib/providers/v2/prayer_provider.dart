@@ -653,7 +653,8 @@ class PrayerProviderV2 with ChangeNotifier {
             } else {
               answeredPrayersWithDelete = prayers
                   .where((PrayerDataModel data) =>
-                      (data.isAnswered ?? false) == true)
+                      (data.isAnswered ?? false) == true &&
+                      data.autoDeleteDate == null)
                   .toList();
             }
           }

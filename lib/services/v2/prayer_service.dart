@@ -741,9 +741,10 @@ class PrayerServiceV2 {
         : null;
 
     for (final prayer in answeredPrayersToUpdate) {
-      _prayerDataCollectionReference
-          .doc(prayer.id)
-          .update({'autoDeleteDate': autoDeleteDate});
+      if (prayer.autoDeleteDate == null)
+        _prayerDataCollectionReference
+            .doc(prayer.id)
+            .update({'autoDeleteDate': autoDeleteDate});
     }
   }
 
