@@ -63,8 +63,8 @@ class _GroupScreenState extends State<GroupScreen> {
     try {
       await Provider.of<GroupProviderV2>(context, listen: false)
           .setCurrentGroupById(group.id ?? '');
-      await Provider.of<PrayerProviderV2>(context, listen: false)
-          .setGroupPrayers(group.id ?? '');
+      // await Provider.of<PrayerProviderV2>(context, listen: false)
+      //     .setGroupPrayers(group.id ?? '');
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
