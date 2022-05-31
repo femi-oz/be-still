@@ -294,10 +294,14 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
       notifications.forEach((e) async =>
           await Provider.of<NotificationProviderV2>(context, listen: false)
               .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
-      _sendPrayerNotification(NotificationType.answered_prayers);
       await Provider.of<PrayerProviderV2>(context, listen: false)
           .markPrayerAsAnswered(
-              widget.prayerData.id ?? '', widget.prayerData.followers ?? []);
+        widget.prayerData.id ?? '',
+        widget.prayerData.followers ?? [],
+        NotificationType.answered_prayers,
+        widget.prayerData.groupId ?? '',
+        widget.prayerData.description ?? '',
+      );
       // _deleteFollowedPrayers();
 
       BeStilDialog.hideLoading(context);
@@ -337,7 +341,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     }
   }
 
-  void _sendPrayerNotification(String type) async {
+  Future<void> _sendPrayerNotification(String type) async {
     await Provider.of<NotificationProviderV2>(context, listen: false)
         .sendPrayerNotification(
             widget.prayerData.id ?? '',

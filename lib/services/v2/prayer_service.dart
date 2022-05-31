@@ -6,6 +6,7 @@ import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/followed_prayer.model.dart';
 import 'package:be_still/models/v2/follower.model.dart';
 import 'package:be_still/models/v2/message_template.dart';
+import 'package:be_still/models/v2/notification.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/models/v2/update.model.dart';
@@ -32,6 +33,10 @@ class PrayerServiceV2 {
 
   final CollectionReference<Map<String, dynamic>> _userDataCollectionReference =
       FirebaseFirestore.instance.collection('users');
+
+  final CollectionReference<Map<String, dynamic>>
+      _notificationCollectionReference =
+      FirebaseFirestore.instance.collection("notifications");
 
   final CollectionReference<Map<String, dynamic>>
       _messageTemplateCollectionReference =
@@ -575,9 +580,14 @@ class PrayerServiceV2 {
     }
   }
 
-  Future<void> markPrayerAsAnswered(
-      {required String prayerId,
-      required List<FollowerModel> followers}) async {
+  Future<void> markPrayerAsAnswered({
+    required String prayerId,
+    required List<FollowerModel> followers,
+    String? message,
+    List<String>? tokens,
+    required String type,
+    required String groupId,
+  }) async {
     try {
       WriteBatch batch = FirebaseFirestore.instance.batch();
 
@@ -586,10 +596,31 @@ class PrayerServiceV2 {
 
       if (followers.isNotEmpty) {
         followers.forEach((follower) async {
+          final doc = NotificationModel(
+            message: message,
+            status: Status.active,
+            tokens: tokens,
+            isSent: 0,
+            type: type,
+            groupId: groupId,
+            prayerId: prayerId,
+            receiverId: follower.userId,
+            senderId: _firebaseAuth.currentUser?.uid,
+            modifiedBy: _firebaseAuth.currentUser?.uid,
+            createdBy: _firebaseAuth.currentUser?.uid,
+            createdDate: DateTime.now(),
+            modifiedDate: DateTime.now(),
+          ).toJson();
+          _notificationCollectionReference.add(doc).then((value) {
+            _notificationCollectionReference
+                .doc(value.id)
+                .update({'id': value.id});
+          });
           UserDataModel user =
               await _userService.getUserByIdFuture(follower.userId ?? '');
           final prayerToRemove = (user.prayers ?? [])
               .firstWhere((element) => element.prayerId == prayerId);
+          // batch.set(_notificationCollectionReference.doc(), doc);
           batch.update(_prayerDataCollectionReference.doc(prayerId), {
             'isAnswered': true,
             'isFavorite': false,

@@ -237,7 +237,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     }
   }
 
-  void _sendPrayerNotification(String type) async {
+  Future<void> _sendPrayerNotification(String type) async {
     await Provider.of<NotificationProviderV2>(context, listen: false)
         .sendPrayerNotification(
             widget.prayerData?.id ?? '',
@@ -264,10 +264,19 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                 notification.id ?? '', notification.localNotificationId ?? 0);
       }
 
-      _sendPrayerNotification(NotificationType.answered_prayers);
+      // await _sendPrayerNotification(NotificationType.answered_prayers);
+
+      final group = await Provider.of<GroupProviderV2>(context, listen: false)
+          .getCurrentGroupById(widget.prayerData?.groupId ?? '');
+
       await Provider.of<PrayerProviderV2>(context, listen: false)
           .markPrayerAsAnswered(
-              widget.prayerData?.id ?? '', widget.prayerData?.followers ?? []);
+        widget.prayerData?.id ?? '',
+        widget.prayerData?.followers ?? [],
+        NotificationType.answered_prayers,
+        group.id ?? '',
+        widget.prayerData?.description ?? '',
+      );
       clearSearch();
       appController.setCurrentPage(8, false, 0);
       BeStilDialog.hideLoading(context);

@@ -80,15 +80,16 @@ class NotificationServiceV2 {
           .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
 
       final group = await _groupService.getGroup(groupId);
-      final prayer = prayerData != null
-          ? prayerData
-          : await _prayerService.getPrayerFuture(prayerId);
+      // final prayer = prayerData != null
+      //     ? prayerData
+      //     : await _prayerService.getPrayerFuture(prayerId);
 
       if (type == NotificationType.prayer ||
           type == NotificationType.prayer_updates) {
         _ids = (group.users ?? []).map((e) => e.userId ?? '').toList();
       } else {
-        _ids = (prayer.followers ?? []).map((e) => e.userId ?? '').toList();
+        _ids =
+            (prayerData?.followers ?? []).map((e) => e.userId ?? '').toList();
       }
 
       _ids.removeWhere((e) => e == _firebaseAuth.currentUser?.uid);

@@ -463,10 +463,21 @@ class PrayerProviderV2 with ChangeNotifier {
   }
 
   Future<void> markPrayerAsAnswered(
-      String prayerId, List<FollowerModel> followers) async {
+    String prayerId,
+    List<FollowerModel> followers,
+    String type,
+    String groupId,
+    String message,
+  ) async {
     try {
       await _prayerService.markPrayerAsAnswered(
-          prayerId: prayerId, followers: followers);
+        prayerId: prayerId,
+        followers: followers,
+        message: message,
+        type: type,
+        groupId: groupId,
+        tokens: [],
+      );
     } catch (e) {
       rethrow;
     }
