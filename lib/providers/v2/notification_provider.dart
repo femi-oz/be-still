@@ -185,9 +185,17 @@ class NotificationProviderV2 with ChangeNotifier {
             .where((e) => e.type == NotificationType.prayer)
             .toList();
 
-        _prayerUpdates = notifications
+        final updates = notifications
             .where((e) => e.type == NotificationType.prayer_updates)
             .toList();
+
+        _prayerUpdates = [];
+        var idSet = <String>{};
+        for (var e in updates) {
+          if (idSet.add(e.prayerId ?? '')) {
+            _prayerUpdates.add(e);
+          }
+        }
 
         _editedPrayers = notifications
             .where((e) => e.type == NotificationType.edited_prayers)
@@ -201,7 +209,19 @@ class NotificationProviderV2 with ChangeNotifier {
             .where((e) => e.type == NotificationType.answered_prayers)
             .toList();
 
-        _notifications = notifications;
+        _notifications = [
+          ..._requests,
+          ..._inappropriateContent,
+          ..._leftGroup,
+          ..._joinGroup,
+          ..._requestAccepted,
+          ..._requestDenied,
+          ..._newPrayers,
+          ..._prayerUpdates,
+          ..._editedPrayers,
+          ..._archivedPrayers,
+          ..._answeredPrayers
+        ];
 
         notifyListeners();
       });
