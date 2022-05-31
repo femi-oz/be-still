@@ -110,6 +110,7 @@ class PrayerProviderV2 with ChangeNotifier {
 
         Provider.of<MiscProviderV2>(Get.context!, listen: false)
             .setLoadStatus(false);
+
         filterPrayers();
         // notifyListeners();
       });
@@ -589,6 +590,10 @@ class PrayerProviderV2 with ChangeNotifier {
 
     _filteredGroupPrayers = _groupDistinct;
     notifyListeners();
+  }
+
+  Future<void> updatePrayerAutoDelete() async {
+    _prayerService.updatePrayerAutoDelete();
   }
 
   void filterPrayers() async {

@@ -721,6 +721,32 @@ class PrayerServiceV2 {
     }
   }
 
+  Future<void> updatePrayerAutoDelete() async {
+    final user = await _userDataCollectionReference
+        .doc(FirebaseAuth.instance.currentUser?.uid)
+        .get()
+        .then(((doc) => UserDataModel.fromJson(doc.data()!, doc.id)));
+
+    final answeredPrayersToUpdate = await _prayerDataCollectionReference
+        .where('isAnswered', isEqualTo: true)
+        .where('autoDeleteDate', isEqualTo: null)
+        .get()
+        .then((event) => event.docs
+            .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
+            .toList());
+
+    final autoDeleteDate = (user.archiveAutoDeleteMinutes ?? 0) > 0
+        ? DateTime.now()
+            .add(Duration(minutes: user.archiveAutoDeleteMinutes ?? 0))
+        : null;
+
+    for (final prayer in answeredPrayersToUpdate) {
+      _prayerDataCollectionReference
+          .doc(prayer.id)
+          .update({'autoDeleteDate': autoDeleteDate});
+    }
+  }
+
   Future<void> autoDeleteArchivePrayers(
       int autoDeletePeriod, bool includeAnsweredPrayers) async {
     final archivedPrayers = await _prayerDataCollectionReference

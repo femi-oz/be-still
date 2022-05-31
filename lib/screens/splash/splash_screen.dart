@@ -137,6 +137,8 @@ class _SplashScreenState extends State<SplashScreen>
           if (isLoggedIn) {
             await Provider.of<UserProviderV2>(context, listen: false)
                 .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
+            await Provider.of<PrayerProviderV2>(context, listen: false)
+                .updatePrayerAutoDelete();
             await Provider.of<UserProviderV2>(context, listen: false)
                 .setCurrentUser();
             await setRouteDestination();
@@ -174,6 +176,8 @@ class _SplashScreenState extends State<SplashScreen>
           context, 'Please wait, your data is being migrated!');
       await _migrationService
           .migrateUserData(FirebaseAuth.instance.currentUser?.uid ?? '');
+      await Provider.of<PrayerProviderV2>(context, listen: false)
+          .updatePrayerAutoDelete();
       await Provider.of<UserProviderV2>(context, listen: false)
           .setCurrentUser();
 
