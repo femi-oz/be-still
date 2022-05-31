@@ -164,7 +164,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                       child: Container(
                         height: 30,
                         padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                         decoration: BoxDecoration(
                           color: Colors.blue,
                           border: Border.all(

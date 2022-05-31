@@ -391,11 +391,12 @@ class PrayerProviderV2 with ChangeNotifier {
       String type, String groupId, String description) async {
     try {
       await _prayerService.archivePrayer(
-          prayerId: prayerId,
-          followers: followers,
-          type: type,
-          groupId: groupId,
-          description: description);
+        prayerId: prayerId,
+        followers: followers,
+        type: type,
+        groupId: groupId,
+        description: description,
+      );
       notifyListeners();
     } catch (e) {
       rethrow;
@@ -497,15 +498,14 @@ class PrayerProviderV2 with ChangeNotifier {
       if (_firebaseAuth.currentUser == null) return null;
       await _prayerService.deletePrayer(
           groupId: groupId, prayerId: prayerId, followers: followers);
-      final notProvider =
-          Provider.of<NotificationProviderV2>(Get.context!, listen: false);
-      final notifications = notProvider.localNotifications
-          .where((e) => e.prayerId == prayerId)
-          .toList();
-      for (final notification in notifications) {
-        if (notification.localNotificationId != null)
-          notProvider.cancelLocalNotificationById(
-              notification.localNotificationId ?? 0);
+
+      final notifications =
+          await Provider.of<NotificationProviderV2>(Get.context!, listen: false)
+              .getLocalNotificationsByPrayerId(prayerId);
+
+      for (var e in notifications) {
+        await Provider.of<NotificationProviderV2>(Get.context!, listen: false)
+            .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0);
       }
     } catch (e) {
       rethrow;

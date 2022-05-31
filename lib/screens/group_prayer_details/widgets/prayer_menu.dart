@@ -252,19 +252,13 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
 
     try {
       final notifications =
-          Provider.of<NotificationProviderV2>(context, listen: false)
-              .localNotifications
-              .where((e) =>
-                  e.prayerId == widget.prayerData?.id &&
-                  e.type == NotificationType.reminder)
-              .toList();
-      for (var notification in notifications) {
-        await Provider.of<NotificationProviderV2>(context, listen: false)
-            .deleteLocalNotification(
-                notification.id ?? '', notification.localNotificationId ?? 0);
-      }
+          await Provider.of<NotificationProviderV2>(context, listen: false)
+              .getLocalNotificationsByPrayerId(widget.prayerData?.id ?? '');
 
-      // await _sendPrayerNotification(NotificationType.answered_prayers);
+      for (var e in notifications) {
+        await Provider.of<NotificationProviderV2>(context, listen: false)
+            .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0);
+      }
 
       final group = await Provider.of<GroupProviderV2>(context, listen: false)
           .getCurrentGroupById(widget.prayerData?.groupId ?? '');

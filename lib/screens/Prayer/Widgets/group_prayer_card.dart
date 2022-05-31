@@ -284,16 +284,14 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     BeStilDialog.showLoading(context);
 
     try {
-      var notifications =
-          Provider.of<NotificationProviderV2>(context, listen: false)
-              .localNotifications
-              .where((e) =>
-                  e.prayerId == widget.prayerData.id &&
-                  e.type == NotificationType.reminder)
-              .toList();
-      notifications.forEach((e) async =>
+      final notifications =
           await Provider.of<NotificationProviderV2>(context, listen: false)
-              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
+              .getLocalNotificationsByPrayerId(widget.prayerData.id ?? '');
+
+      for (var e in notifications) {
+        await Provider.of<NotificationProviderV2>(context, listen: false)
+            .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0);
+      }
       await Provider.of<PrayerProviderV2>(context, listen: false)
           .markPrayerAsAnswered(
         widget.prayerData.id ?? '',

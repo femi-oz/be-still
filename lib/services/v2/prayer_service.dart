@@ -216,10 +216,31 @@ class PrayerServiceV2 {
       final prayer = await getPrayerFuture(prayerId);
       final followers = prayer.followers ?? [];
       WriteBatch batch = FirebaseFirestore.instance.batch();
-      followers.forEach((follower) async {
+      for (var follower in followers) {
+        final doc = NotificationModel(
+          message: description,
+          status: Status.active,
+          tokens: [],
+          isSent: 0,
+          type: NotificationType.edited_prayers,
+          groupId: prayer.groupId,
+          prayerId: prayerId,
+          receiverId: follower.userId,
+          senderId: _firebaseAuth.currentUser?.uid,
+          modifiedBy: _firebaseAuth.currentUser?.uid,
+          createdBy: _firebaseAuth.currentUser?.uid,
+          createdDate: DateTime.now(),
+          modifiedDate: DateTime.now(),
+        ).toJson();
+        _notificationCollectionReference.add(doc).then((value) {
+          _notificationCollectionReference
+              .doc(value.id)
+              .update({'id': value.id});
+        });
+
         batch.update(_userDataCollectionReference.doc(follower.userId),
             {'prayerModifiedDate': DateTime.now()});
-      });
+      }
       batch.update(_prayerDataCollectionReference.doc(prayerId),
           {'description': description, 'modifiedDate': DateTime.now()});
       batch.commit();
@@ -273,13 +294,33 @@ class PrayerServiceV2 {
       required String description}) async {
     try {
       if (followers.isNotEmpty) {
-        await _notificationService.sendPrayerNotification(
+        // await _notificationService.sendPrayerNotification(
+        //     message: description,
+        //     type: type,
+        //     groupId: groupId,
+        //     prayerId: prayerId);
+        for (final follower in followers) {
+          WriteBatch batch = FirebaseFirestore.instance.batch();
+          final doc = NotificationModel(
             message: description,
+            status: Status.active,
+            tokens: [],
+            isSent: 0,
             type: type,
             groupId: groupId,
-            prayerId: prayerId);
-        followers.forEach((follower) async {
-          WriteBatch batch = FirebaseFirestore.instance.batch();
+            prayerId: prayerId,
+            receiverId: follower.userId,
+            senderId: _firebaseAuth.currentUser?.uid,
+            modifiedBy: _firebaseAuth.currentUser?.uid,
+            createdBy: _firebaseAuth.currentUser?.uid,
+            createdDate: DateTime.now(),
+            modifiedDate: DateTime.now(),
+          ).toJson();
+          _notificationCollectionReference.add(doc).then((value) {
+            _notificationCollectionReference
+                .doc(value.id)
+                .update({'id': value.id});
+          });
 
           UserDataModel user =
               await _userService.getUserByIdFuture(follower.userId ?? '');
@@ -310,10 +351,11 @@ class PrayerServiceV2 {
             ])
           });
           batch.update(_userDataCollectionReference.doc(follower.userId), {
+            'prayerModifiedDate': DateTime.now(),
             'prayers': FieldValue.arrayRemove([newPrayerToRemove.toJson()])
           });
           batch.commit();
-        });
+        }
       } else {
         UserDataModel user = await _userService
             .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
@@ -642,11 +684,10 @@ class PrayerServiceV2 {
             ])
           });
           batch.update(_userDataCollectionReference.doc(follower.userId), {
+            'prayerModifiedDate': DateTime.now(),
             'prayers': FieldValue.arrayRemove([prayerToRemove.toJson()]),
           });
-          batch.update(_userDataCollectionReference.doc(follower.userId), {
-            'modifiedDate': DateTime.now(),
-          });
+
           batch.commit();
         }
       } else {
