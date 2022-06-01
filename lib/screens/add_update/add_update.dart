@@ -130,20 +130,19 @@ class _AddUpdateState extends State<AddUpdate> {
             }
           });
         });
-
-        painter = TextPainter(
-          textDirection: TextDirection.ltr,
-          text: TextSpan(
-            text: val,
-          ),
-        );
-
-        painter.layout();
-        var lines = painter.computeLineMetrics();
-        setState(() {
-          numberOfLines = lines.length.toDouble();
-        });
       }
+      painter = TextPainter(
+        textDirection: TextDirection.ltr,
+        text: TextSpan(
+          text: val,
+        ),
+      );
+
+      painter.layout();
+      var lines = painter.computeLineMetrics();
+      setState(() {
+        numberOfLines = lines.length.toDouble();
+      });
     } catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
