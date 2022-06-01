@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:be_still/enums/interval.dart';
 import 'package:be_still/enums/sort_by.dart';
+import 'package:be_still/flavor_config.dart';
 import 'package:be_still/models/v2/duration.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
@@ -28,7 +29,10 @@ class _MyListSettingsState extends State<MyListSettings> {
   List<int> snoozeDuration = [];
   List<int> snoozeMonths = new List<int>.generate(12, (i) => i + 1);
   List<int> snoozeWeeks = new List<int>.generate(52, (i) => i + 1);
-  List<int> snoozeMins = new List<int>.generate(60, (i) => i + 1);
+  List<int> snoozeMins = new List<int>.generate(
+      60,
+      (i) =>
+          (FlavorConfig.isDev() || FlavorConfig.isStaging()) ? i + 1 : i + 2);
   List<int> snoozeDays = new List<int>.generate(31, (i) => i + 1);
   String selectedInterval = '';
   int selectedDuration = 0;
@@ -73,14 +77,23 @@ class _MyListSettingsState extends State<MyListSettings> {
     super.initState();
   }
 
-  List<LookUpV2> autoDeleteInterval = [
-    LookUpV2(text: IntervalRange.thirtyMinutes, value: 30),
-    LookUpV2(text: IntervalRange.thirtyDays, value: 43200),
-    LookUpV2(text: IntervalRange.ninetyDays, value: 129600),
-    LookUpV2(text: IntervalRange.oneYear, value: 525600),
-    LookUpV2(text: IntervalRange.twoYears, value: 1051200),
-    LookUpV2(text: IntervalRange.never, value: 0),
-  ];
+  List<LookUpV2> autoDeleteInterval =
+      FlavorConfig.isDev() || FlavorConfig.isStaging()
+          ? [
+              LookUpV2(text: IntervalRange.thirtyMinutes, value: 30),
+              LookUpV2(text: IntervalRange.thirtyDays, value: 43200),
+              LookUpV2(text: IntervalRange.ninetyDays, value: 129600),
+              LookUpV2(text: IntervalRange.oneYear, value: 525600),
+              LookUpV2(text: IntervalRange.twoYears, value: 1051200),
+              LookUpV2(text: IntervalRange.never, value: 0),
+            ]
+          : [
+              LookUpV2(text: IntervalRange.thirtyDays, value: 43200),
+              LookUpV2(text: IntervalRange.ninetyDays, value: 129600),
+              LookUpV2(text: IntervalRange.oneYear, value: 525600),
+              LookUpV2(text: IntervalRange.twoYears, value: 1051200),
+              LookUpV2(text: IntervalRange.never, value: 0),
+            ];
 
   List<String> defaultSortBy = [SortType.date, SortType.tag];
   List<String> archiveSortBy = [SortType.date, SortType.tag, SortType.answered];
