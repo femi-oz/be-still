@@ -50,6 +50,7 @@ class _AddPrayerState extends State<AddPrayer> {
   double numberOfLines = 5.0;
   bool showContactList = false;
   bool showDropdown = false;
+  bool getContactCalled = false;
 
   List<UpdateModel> updates = [];
   List<Backup> updateTextControllers = [];
@@ -382,6 +383,7 @@ class _AddPrayerState extends State<AddPrayer> {
       localContacts =
           _localContacts.where((e) => e.displayName != null).toList();
     }
+    getContactCalled = true;
     setState(() => {});
   }
 
@@ -401,8 +403,10 @@ class _AddPrayerState extends State<AddPrayer> {
       if (tagText.length > 0 && Settings.enabledContactPermission == false) {
         _getContactPermission();
       } else {
-        getContacts();
-
+        if (getContactCalled == false &&
+            Settings.enabledContactPermission == true) {
+          getContacts();
+        }
         final cursorPos =
             (backup == null ? _descriptionController : backup.ctrl)
                 .selection

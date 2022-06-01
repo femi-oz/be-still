@@ -39,6 +39,7 @@ class _AddUpdateState extends State<AddUpdate> {
   bool _autoValidate = false;
   final _prayerKey = GlobalKey();
   bool textWithSpace = false;
+  bool getContactCalled = false;
 
   List<String> tags = [];
   String tagText = '';
@@ -94,6 +95,7 @@ class _AddUpdateState extends State<AddUpdate> {
       final _localContacts =
           await ContactsService.getContacts(withThumbnails: false);
       localContacts = _localContacts.where((e) => e.displayName != null);
+      getContactCalled = true;
     }
   }
 
@@ -118,8 +120,10 @@ class _AddUpdateState extends State<AddUpdate> {
       if (tagText.length > 1 && Settings.enabledContactPermission == false) {
         _getContactPermission();
       } else {
-        getContacts();
-
+        if (getContactCalled == false &&
+            Settings.enabledContactPermission == true) {
+          getContacts();
+        }
         localContacts.forEach((s) {
           var displayName = s.displayName == null ? '' : s.displayName;
           var displayNameList =
@@ -130,19 +134,20 @@ class _AddUpdateState extends State<AddUpdate> {
             }
           });
         });
-      }
-      painter = TextPainter(
-        textDirection: TextDirection.ltr,
-        text: TextSpan(
-          text: val,
-        ),
-      );
 
-      painter.layout();
-      var lines = painter.computeLineMetrics();
-      setState(() {
-        numberOfLines = lines.length.toDouble();
-      });
+        painter = TextPainter(
+          textDirection: TextDirection.ltr,
+          text: TextSpan(
+            text: val,
+          ),
+        );
+
+        painter.layout();
+        var lines = painter.computeLineMetrics();
+        setState(() {
+          numberOfLines = lines.length.toDouble();
+        });
+      }
     } catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
