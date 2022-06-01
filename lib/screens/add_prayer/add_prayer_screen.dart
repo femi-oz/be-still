@@ -401,6 +401,8 @@ class _AddPrayerState extends State<AddPrayer> {
       if (tagText.length > 0 && Settings.enabledContactPermission == false) {
         _getContactPermission();
       } else {
+        getContacts();
+
         final cursorPos =
             (backup == null ? _descriptionController : backup.ctrl)
                 .selection

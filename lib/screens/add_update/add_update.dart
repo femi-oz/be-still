@@ -118,6 +118,8 @@ class _AddUpdateState extends State<AddUpdate> {
       if (tagText.length > 1 && Settings.enabledContactPermission == false) {
         _getContactPermission();
       } else {
+        getContacts();
+
         localContacts.forEach((s) {
           var displayName = s.displayName == null ? '' : s.displayName;
           var displayNameList =
