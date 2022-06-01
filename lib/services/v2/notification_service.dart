@@ -10,7 +10,6 @@ import 'package:be_still/models/v2/message_template.dart';
 import 'package:be_still/models/v2/notification.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/services/v2/group_service.dart';
-import 'package:be_still/services/v2/prayer_service.dart';
 import 'package:be_still/services/v2/user_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -74,7 +73,6 @@ class NotificationServiceV2 {
     try {
       final _userService = locator<UserServiceV2>();
       final _groupService = locator<GroupServiceV2>();
-      final _prayerService = locator<PrayerServiceV2>();
       List<String> _ids = [];
       final _user = await _userService
           .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');

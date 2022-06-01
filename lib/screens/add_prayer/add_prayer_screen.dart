@@ -312,7 +312,6 @@ class _AddPrayerState extends State<AddPrayer> {
 
   @override
   void initState() {
-    getContacts();
     final isEdit = Provider.of<PrayerProviderV2>(context, listen: false).isEdit;
     _descriptionController.text = isEdit
         ? (Provider.of<PrayerProviderV2>(context, listen: false).prayerToEdit)
@@ -386,29 +385,46 @@ class _AddPrayerState extends State<AddPrayer> {
     setState(() => {});
   }
 
+  void _getContactPermission() async {
+    try {
+      await Permission.contacts.request().then((p) =>
+          Settings.enabledContactPermission = p == PermissionStatus.granted);
+      getContacts();
+    } catch (e, s) {
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), UserDataModel(), s);
+    }
+  }
+
   void _onTextChange(String val, {Backup? backup}) {
     try {
-      final cursorPos = (backup == null ? _descriptionController : backup.ctrl)
-          .selection
-          .base
-          .offset;
-      final stringBeforeCursor = val.substring(0, cursorPos);
-      final tags = stringBeforeCursor.split(new RegExp(r"\s"));
-      tagText = tags.last.startsWith('@') ? tags.last : '';
-      setContactList(tagText);
-
-      if (tagText.length > 1) {
-        if (backup == null)
-          showContactList = true;
-        else
-          backup.showContactDropDown = true;
-        setLineCount(val);
+      if (tagText.length > 0 && Settings.enabledContactPermission == false) {
+        _getContactPermission();
       } else {
-        showContactList = false;
-        updateTextControllers = updateTextControllers
-            .map((e) => e..showContactDropDown = false)
-            .toList();
+        final cursorPos =
+            (backup == null ? _descriptionController : backup.ctrl)
+                .selection
+                .base
+                .offset;
+        final stringBeforeCursor = val.substring(0, cursorPos);
+        final tags = stringBeforeCursor.split(new RegExp(r"\s"));
+        tagText = tags.last.startsWith('@') ? tags.last : '';
+        setContactList(tagText);
+
+        if (tagText.length > 1) {
+          if (backup == null)
+            showContactList = true;
+          else
+            backup.showContactDropDown = true;
+          setLineCount(val);
+        } else {
+          showContactList = false;
+          updateTextControllers = updateTextControllers
+              .map((e) => e..showContactDropDown = false)
+              .toList();
+        }
       }
+
       setState(() {});
     } catch (e, s) {
       final user =

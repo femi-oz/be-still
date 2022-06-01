@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/v2/tag.model.dart';
+import 'package:be_still/models/v2/user.model.dart';
 
 import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
@@ -20,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:permission_handler/permission_handler.dart';
 
 import 'package:provider/provider.dart';
 
@@ -51,7 +53,6 @@ class _AddUpdateState extends State<AddUpdate> {
 
   @override
   void initState() {
-    getContacts();
     super.initState();
   }
 
@@ -96,6 +97,17 @@ class _AddUpdateState extends State<AddUpdate> {
     }
   }
 
+  void _getContactPermission() async {
+    try {
+      await Permission.contacts.request().then((p) =>
+          Settings.enabledContactPermission = p == PermissionStatus.granted);
+      getContacts();
+    } catch (e, s) {
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), UserDataModel(), s);
+    }
+  }
+
   void _onTextChange(String val) {
     try {
       var cursorPos = _descriptionController.selection.base.offset;
@@ -103,29 +115,33 @@ class _AddUpdateState extends State<AddUpdate> {
       tags = stringBeforeCursor.split(new RegExp(r"\s"));
       tagText = tags.last.startsWith('@') ? tags.last : '';
       tagList.clear();
-      localContacts.forEach((s) {
-        var displayName = s.displayName == null ? '' : s.displayName;
-        var displayNameList =
-            (displayName ?? '').toLowerCase().split(new RegExp(r"\s"));
-        displayNameList.forEach((e) {
-          if (('@' + e).toLowerCase().contains(tagText.toLowerCase())) {
-            tagList.add(displayName ?? '');
-          }
+      if (tagText.length > 1 && Settings.enabledContactPermission == false) {
+        _getContactPermission();
+      } else {
+        localContacts.forEach((s) {
+          var displayName = s.displayName == null ? '' : s.displayName;
+          var displayNameList =
+              (displayName ?? '').toLowerCase().split(new RegExp(r"\s"));
+          displayNameList.forEach((e) {
+            if (('@' + e).toLowerCase().contains(tagText.toLowerCase())) {
+              tagList.add(displayName ?? '');
+            }
+          });
         });
-      });
 
-      painter = TextPainter(
-        textDirection: TextDirection.ltr,
-        text: TextSpan(
-          text: val,
-        ),
-      );
+        painter = TextPainter(
+          textDirection: TextDirection.ltr,
+          text: TextSpan(
+            text: val,
+          ),
+        );
 
-      painter.layout();
-      var lines = painter.computeLineMetrics();
-      setState(() {
-        numberOfLines = lines.length.toDouble();
-      });
+        painter.layout();
+        var lines = painter.computeLineMetrics();
+        setState(() {
+          numberOfLines = lines.length.toDouble();
+        });
+      }
     } catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;

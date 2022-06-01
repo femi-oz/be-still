@@ -339,14 +339,14 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     }
   }
 
-  Future<void> _sendPrayerNotification(String type) async {
-    await Provider.of<NotificationProviderV2>(context, listen: false)
-        .sendPrayerNotification(
-            widget.prayerData.id ?? '',
-            type,
-            widget.prayerData.groupId ?? '',
-            widget.prayerData.description ?? '');
-  }
+  // Future<void> _sendPrayerNotification(String type) async {
+  //   await Provider.of<NotificationProviderV2>(context, listen: false)
+  //       .sendPrayerNotification(
+  //           widget.prayerData.id ?? '',
+  //           type,
+  //           widget.prayerData.groupId ?? '',
+  //           widget.prayerData.description ?? '');
+  // }
 
   @override
   Widget build(BuildContext context) {

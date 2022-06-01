@@ -18,7 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'utils/app_theme.dart';
 import './utils/routes.dart' as rt;
@@ -60,7 +59,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           .initLocal(context);
       _initializeFlutterFireFuture = _initializeFlutterFire();
 
-      _getPermissions();
+      // _getPermissions();
 
       var initializationSettingsAndroid =
           AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -116,16 +115,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           priority: Priority.high,
           groupKey: 'groupKey');
   Future<void> showNotification(RemoteMessage message) async {
-    var androidChannelSpecifics = AndroidNotificationDetails(
-      'CHANNEL_ID',
-      'CHANNEL_NAME',
-      channelDescription: "CHANNEL_DESCRIPTION",
-      importance: Importance.high,
-      priority: Priority.high,
-      playSound: true,
-      // timeoutAfter: 10000,
-      styleInformation: BigTextStyleInformation(''),
-    );
+    // var androidChannelSpecifics = AndroidNotificationDetails(
+    //   'CHANNEL_ID',
+    //   'CHANNEL_NAME',
+    //   channelDescription: "CHANNEL_DESCRIPTION",
+    //   importance: Importance.high,
+    //   priority: Priority.high,
+    //   playSound: true,
+    //   // timeoutAfter: 10000,
+    //   styleInformation: BigTextStyleInformation(''),
+    // );
 
     await _flutterLocalNotificationsPlugin.show(
       0,
@@ -146,17 +145,17 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     appController.setCurrentPage(14, false, 0);
   }
 
-  void _getPermissions() async {
-    try {
-      if (Settings.isAppInit) {
-        await Permission.contacts.request().then((p) =>
-            Settings.enabledContactPermission = p == PermissionStatus.granted);
-      }
-    } catch (e, s) {
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), UserDataModel(), s);
-    }
-  }
+  // void _getPermissions() async {
+  //   try {
+  //     if (Settings.isAppInit) {
+  //       await Permission.contacts.request().then((p) =>
+  //           Settings.enabledContactPermission = p == PermissionStatus.granted);
+  //     }
+  //   } catch (e, s) {
+  //     BeStilDialog.showErrorDialog(
+  //         context, StringUtils.getErrorMessage(e), UserDataModel(), s);
+  //   }
+  // }
 
   Future<void> _initializeFlutterFire() async {
     if (_kTestingCrashlytics) {
