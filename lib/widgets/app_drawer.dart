@@ -13,6 +13,7 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/initial_tutorial.dart';
+import 'package:be_still/widgets/terms_and_condition.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -369,6 +370,27 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             child: Text("QUICK TIPS",
                                 style: AppTextStyles.drawerMenu.copyWith(
                                     color: AppColors.drawerMenuColor)),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: InkWell(
+                            onTap: () => showDialog(
+                              context: context,
+                              builder: (context) {
+                                return Dialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(20)),
+                                    ),
+                                    child: TermsAndCondition());
+                              },
+                            ),
+                            child: Container(
+                              child: Text("TERMS AND CONDITION",
+                                  style: AppTextStyles.drawerMenu.copyWith(
+                                      color: AppColors.drawerMenuColor)),
+                            ),
                           ),
                         ),
                         Padding(
