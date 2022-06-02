@@ -59,8 +59,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           .initLocal(context);
       _initializeFlutterFireFuture = _initializeFlutterFire();
 
-      // _getPermissions();
-
       var initializationSettingsAndroid =
           AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -115,17 +113,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           priority: Priority.high,
           groupKey: 'groupKey');
   Future<void> showNotification(RemoteMessage message) async {
-    // var androidChannelSpecifics = AndroidNotificationDetails(
-    //   'CHANNEL_ID',
-    //   'CHANNEL_NAME',
-    //   channelDescription: "CHANNEL_DESCRIPTION",
-    //   importance: Importance.high,
-    //   priority: Priority.high,
-    //   playSound: true,
-    //   // timeoutAfter: 10000,
-    //   styleInformation: BigTextStyleInformation(''),
-    // );
-
     await _flutterLocalNotificationsPlugin.show(
       0,
       message.notification?.title ?? '',
@@ -138,24 +125,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   Future _onSelectNotification(String? payload) async {
-    // Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-    //   return EntryScreen();
-    // }));
     AppController appController = Get.find();
     appController.setCurrentPage(14, false, 0);
   }
-
-  // void _getPermissions() async {
-  //   try {
-  //     if (Settings.isAppInit) {
-  //       await Permission.contacts.request().then((p) =>
-  //           Settings.enabledContactPermission = p == PermissionStatus.granted);
-  //     }
-  //   } catch (e, s) {
-  //     BeStilDialog.showErrorDialog(
-  //         context, StringUtils.getErrorMessage(e), UserDataModel(), s);
-  //   }
-  // }
 
   Future<void> _initializeFlutterFire() async {
     if (_kTestingCrashlytics) {
