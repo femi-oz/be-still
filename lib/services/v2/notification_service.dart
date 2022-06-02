@@ -78,18 +78,7 @@ class NotificationServiceV2 {
           .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
 
       final group = await _groupService.getGroup(groupId);
-      // final prayer = prayerData != null
-      //     ? prayerData
-      //     : await _prayerService.getPrayerFuture(prayerId);
-
-      if (type == NotificationType.prayer ||
-          type == NotificationType.prayer_updates) {
-        _ids = (group.users ?? []).map((e) => e.userId ?? '').toList();
-      } else {
-        _ids =
-            (prayerData?.followers ?? []).map((e) => e.userId ?? '').toList();
-      }
-
+      _ids = (group.users ?? []).map((e) => e.userId ?? '').toList();
       _ids.removeWhere((e) => e == _firebaseAuth.currentUser?.uid);
 
       for (final id in _ids) {
@@ -97,17 +86,11 @@ class NotificationServiceV2 {
             (group.users ?? []).firstWhere((element) => element.userId == id);
         List<String> userTokens = [];
 
-        if (type == NotificationType.inappropriate_content) {
-          userTokens = await _userService.getUserByIdFuture(id).then((value) =>
-              (value.devices ?? []).map((e) => e.token ?? '').toList());
-        }
-
         final name = ((_user.firstName ?? '').capitalizeFirst ?? '') +
             ' ' +
             ((_user.lastName ?? '').capitalizeFirst ?? '');
 
-        if (type == NotificationType.prayer ||
-            type == NotificationType.edited_prayers) {
+        if (type == NotificationType.prayer) {
           if (member.enableNotificationForNewPrayers ?? false) {
             addNotification(
                 message: message.capitalizeFirst ?? '',
@@ -129,15 +112,6 @@ class NotificationServiceV2 {
                 tokens: userTokens,
                 type: type);
           }
-        } else {
-          addNotification(
-              message: message.capitalizeFirst ?? '',
-              senderName: name,
-              groupId: groupId,
-              receiverId: id,
-              prayerId: prayerId,
-              tokens: userTokens,
-              type: type);
         }
       }
     } catch (e) {
