@@ -800,6 +800,7 @@ class PrayerServiceV2 {
         .then(((doc) => UserDataModel.fromJson(doc.data()!, doc.id)));
 
     final answeredPrayersToUpdate = await _prayerDataCollectionReference
+        .where('userId', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
         .where('isAnswered', isEqualTo: true)
         .get()
         .then((event) => event.docs
@@ -807,7 +808,7 @@ class PrayerServiceV2 {
             .toList());
     final archivedPrayersToUpdate = await _prayerDataCollectionReference
         .where('status', isEqualTo: Status.archived)
-        .where('isAnswered', isEqualTo: false)
+        .where('userId', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
         .get()
         .then((event) => event.docs
             .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
@@ -816,7 +817,13 @@ class PrayerServiceV2 {
     final prayersToUpdate = [
       ...answeredPrayersToUpdate,
       ...archivedPrayersToUpdate
-    ];
+          .where((element) => element.isAnswered == false)
+          .toList()
+    ]
+        .where((element) =>
+            element.autoDeleteDate == null ||
+            (element.autoDeleteDate ?? DateTime.now()).isAfter(DateTime.now()))
+        .toList();
 
     final autoDeleteDate = (user.archiveAutoDeleteMinutes ?? 0) > 0
         ? DateTime.now()
@@ -824,12 +831,9 @@ class PrayerServiceV2 {
         : null;
 
     for (final prayer in prayersToUpdate) {
-      if (prayer.autoDeleteDate == null ||
-          (prayer.autoDeleteDate ?? DateTime.now()).isAfter(DateTime.now())) {
-        _prayerDataCollectionReference
-            .doc(prayer.id)
-            .update({'autoDeleteDate': autoDeleteDate});
-      }
+      _prayerDataCollectionReference
+          .doc(prayer.id)
+          .update({'autoDeleteDate': autoDeleteDate});
     }
   }
 
