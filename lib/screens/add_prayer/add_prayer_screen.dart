@@ -207,9 +207,7 @@ class _AddPrayerState extends State<AddPrayer> {
           (Provider.of<GroupProviderV2>(context, listen: false).currentGroup)
                   .id ??
               '';
-      // await Provider.of<NotificationProviderV2>(context, listen: false)
-      //     .sendPrayerNotification(prayerId, NotificationType.edited_prayers,
-      //         groupId, _descriptionController.text);
+
       await Provider.of<GroupProviderV2>(context, listen: false)
           .setCurrentGroupById(groupId);
       appController.setCurrentPage(8, true, 1);

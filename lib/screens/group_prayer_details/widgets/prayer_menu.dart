@@ -237,16 +237,6 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
     }
   }
 
-  // Future<void> _sendPrayerNotification(String type) async {
-  //   await Provider.of<NotificationProviderV2>(context, listen: false)
-  //       .sendPrayerNotification(
-  //           widget.prayerData?.id ?? '',
-  //           type,
-  //           widget.prayerData?.groupId ?? '',
-  //           widget.prayerData?.description ?? '',
-  //           prayerData: widget.prayerData);
-  // }
-
   void _onMarkAsAnswered() async {
     BeStilDialog.showLoading(context);
 

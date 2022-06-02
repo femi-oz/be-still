@@ -294,11 +294,6 @@ class PrayerServiceV2 {
       required String description}) async {
     try {
       if (followers.isNotEmpty) {
-        // await _notificationService.sendPrayerNotification(
-        //     message: description,
-        //     type: type,
-        //     groupId: groupId,
-        //     prayerId: prayerId);
         for (final follower in followers) {
           WriteBatch batch = FirebaseFirestore.instance.batch();
           final doc = NotificationModel(
@@ -811,13 +806,24 @@ class PrayerServiceV2 {
         .then((event) => event.docs
             .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
             .toList());
+    final archivedPrayersToUpdate = await _prayerDataCollectionReference
+        .where('status', isEqualTo: Status.archived)
+        .where('autoDeleteDate', isEqualTo: null)
+        .get()
+        .then((event) => event.docs
+            .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
+            .toList());
+    final prayersToUpdate = [
+      ...answeredPrayersToUpdate,
+      ...archivedPrayersToUpdate
+    ];
 
     final autoDeleteDate = (user.archiveAutoDeleteMinutes ?? 0) > 0
         ? DateTime.now()
             .add(Duration(minutes: user.archiveAutoDeleteMinutes ?? 0))
         : null;
 
-    for (final prayer in answeredPrayersToUpdate) {
+    for (final prayer in prayersToUpdate) {
       if (prayer.autoDeleteDate == null)
         _prayerDataCollectionReference
             .doc(prayer.id)
