@@ -30,7 +30,8 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
   List<int> snoozeWeeks = new List<int>.generate(52, (i) => i + 1);
   List<int> snoozeMins = new List<int>.generate(
       FlavorConfig.isProduction() || FlavorConfig.isStore() ? 59 : 60,
-      (i) => i + (FlavorConfig.isProduction() || FlavorConfig.isDev() ? 2 : 1));
+      (i) =>
+          i + (FlavorConfig.isProduction() || FlavorConfig.isStore() ? 2 : 1));
   List<int> snoozeDays = new List<int>.generate(31, (i) => i + 1);
   String selectedInterval = '';
   int selectedDuration = 0;
