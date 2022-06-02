@@ -68,7 +68,7 @@ class _MyListSettingsState extends State<MyListSettings> {
     widget.onDispose(selectedDuration, selectedInterval);
     if ((user.archiveAutoDeleteMinutes ?? 0) > 0 && autoDeleteValueChanged) {
       Provider.of<PrayerProviderV2>(context, listen: false)
-          .updatePrayerAutoDelete();
+          .updatePrayerAutoDelete(false);
     }
 
     super.deactivate();

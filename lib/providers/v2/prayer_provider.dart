@@ -613,8 +613,8 @@ class PrayerProviderV2 with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updatePrayerAutoDelete() async {
-    _prayerService.updatePrayerAutoDelete();
+  Future<void> updatePrayerAutoDelete(bool isInit) async {
+    _prayerService.updatePrayerAutoDelete(isInit);
   }
 
   void filterPrayers() async {

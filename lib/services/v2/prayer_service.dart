@@ -793,7 +793,8 @@ class PrayerServiceV2 {
     }
   }
 
-  Future<void> updatePrayerAutoDelete() async {
+  Future<void> updatePrayerAutoDelete(bool isInit) async {
+    var prayersToUpdate = [];
     final user = await _userDataCollectionReference
         .doc(FirebaseAuth.instance.currentUser?.uid)
         .get()
@@ -814,16 +815,26 @@ class PrayerServiceV2 {
             .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
             .toList());
 
-    final prayersToUpdate = [
-      ...answeredPrayersToUpdate,
-      ...archivedPrayersToUpdate
-          .where((element) => element.isAnswered == false)
-          .toList()
-    ]
-        .where((element) =>
-            element.autoDeleteDate == null ||
-            (element.autoDeleteDate ?? DateTime.now()).isAfter(DateTime.now()))
-        .toList();
+    if (isInit) {
+      prayersToUpdate = [
+        ...answeredPrayersToUpdate,
+        ...archivedPrayersToUpdate
+            .where((element) => element.isAnswered == false)
+            .toList()
+      ].where((element) => element.autoDeleteDate == null).toList();
+    } else {
+      prayersToUpdate = [
+        ...answeredPrayersToUpdate,
+        ...archivedPrayersToUpdate
+            .where((element) => element.isAnswered == false)
+            .toList()
+      ]
+          .where((element) =>
+              element.autoDeleteDate == null ||
+              (element.autoDeleteDate ?? DateTime.now())
+                  .isAfter(DateTime.now()))
+          .toList();
+    }
 
     final autoDeleteDate = (user.archiveAutoDeleteMinutes ?? 0) > 0
         ? DateTime.now()
