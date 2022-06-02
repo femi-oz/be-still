@@ -37,11 +37,13 @@ class _MyListSettingsState extends State<MyListSettings> {
   List<int> snoozeDays = new List<int>.generate(31, (i) => i + 1);
   String selectedInterval = '';
   int selectedDuration = 0;
+  bool autoDeleteValueChanged = false;
 
   _setAutoDelete(e) {
     try {
       Provider.of<UserProviderV2>(context, listen: false)
           .updateUserSettings('archiveAutoDeleteMinutes', e);
+      autoDeleteValueChanged = true;
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
@@ -64,7 +66,7 @@ class _MyListSettingsState extends State<MyListSettings> {
     final user =
         Provider.of<UserProviderV2>(context, listen: false).currentUser;
     widget.onDispose(selectedDuration, selectedInterval);
-    if ((user.archiveAutoDeleteMinutes ?? 0) > 0) {
+    if ((user.archiveAutoDeleteMinutes ?? 0) > 0 && autoDeleteValueChanged) {
       Provider.of<PrayerProviderV2>(context, listen: false)
           .updatePrayerAutoDelete();
     }
