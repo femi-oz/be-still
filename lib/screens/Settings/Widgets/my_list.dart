@@ -30,9 +30,9 @@ class _MyListSettingsState extends State<MyListSettings> {
   List<int> snoozeMonths = new List<int>.generate(12, (i) => i + 1);
   List<int> snoozeWeeks = new List<int>.generate(52, (i) => i + 1);
   List<int> snoozeMins = new List<int>.generate(
-      60,
+      FlavorConfig.isProduction() || FlavorConfig.isStore() ? 59 : 60,
       (i) =>
-          (FlavorConfig.isDev() || FlavorConfig.isStaging()) ? i + 1 : i + 2);
+          i + (FlavorConfig.isProduction() || FlavorConfig.isStore() ? 2 : 1));
   List<int> snoozeDays = new List<int>.generate(31, (i) => i + 1);
   String selectedInterval = '';
   int selectedDuration = 0;

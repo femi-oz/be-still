@@ -37,7 +37,7 @@ dependencies:
   package_info: "2.0.2"
   permission_handler: "7.1.0"
   contacts_service: "0.6.3"
-  firebase_messaging: "10.0.0"
+  firebase_messaging: "11.4.1"
   dio: "4.0.0"
   local_auth: "2.1.0"
   flutter_typeahead: "3.1.2"
