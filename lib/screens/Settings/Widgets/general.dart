@@ -19,6 +19,7 @@ import 'package:be_still/widgets/custom_section_header.dart';
 import 'package:be_still/widgets/custom_select_button.dart';
 import 'package:be_still/widgets/custom_toggle.dart';
 import 'package:be_still/widgets/input_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:package_info/package_info.dart';
@@ -233,10 +234,19 @@ class _GeneralSettingsState extends State<GeneralSettings> {
 
   void _updateEmail(UserDataModel user) async {
     try {
+      final allUsers =
+          Provider.of<UserProviderV2>(context, listen: false).allUsers;
+      bool emailCreated = allUsers.any(
+          (e) => e.email?.toLowerCase() == _newEmail.text.trim().toLowerCase());
+      if (emailCreated) {
+        const message = 'That email address is unavailable';
+        BeStilDialog.showErrorDialog(context, message, user, null);
+        return;
+      }
       await Provider.of<UserProviderV2>(context, listen: false)
           .updateEmail(_newEmail.text.trim(), user.id ?? '');
-      final newUser = user..email = _newEmail.text.trim();
-      Settings.lastUser = jsonEncode(newUser.toJson2());
+      // final newUser = user..email = FirebaseAuth.instance.currentUser?.email;
+      // Settings.lastUser = jsonEncode(newUser.toJson2());
       BeStilDialog.showSuccessDialog(context,
           'Your email has been updated successfully. Verify your new email and re-login!');
       _newEmail.clear();

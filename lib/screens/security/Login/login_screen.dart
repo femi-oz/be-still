@@ -331,7 +331,9 @@ class _LoginScreenState extends State<LoginScreen> {
           .updatePrayerAutoDelete();
       await Provider.of<UserProviderV2>(context, listen: false)
           .setCurrentUser();
-      Settings.lastUser = jsonEncode(user.toJson2());
+      final newUser = user..email = FirebaseAuth.instance.currentUser?.email;
+
+      Settings.lastUser = jsonEncode(newUser.toJson2());
       Settings.userPassword = _passwordController.text;
 
       LocalNotification.setNotificationsOnNewDevice(context);

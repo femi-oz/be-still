@@ -83,7 +83,6 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> setRouteDestination() async {
     try {
-      _getPermissions();
       final message =
           Provider.of<NotificationProviderV2>(context, listen: false).message;
       if ((message.entityId ?? '').isNotEmpty) {
