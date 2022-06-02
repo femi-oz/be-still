@@ -5,6 +5,7 @@ import 'package:be_still/enums/sort_by.dart';
 import 'package:be_still/flavor_config.dart';
 import 'package:be_still/models/v2/duration.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -60,7 +61,14 @@ class _MyListSettingsState extends State<MyListSettings> {
 
   @override
   deactivate() {
+    final user =
+        Provider.of<UserProviderV2>(context, listen: false).currentUser;
     widget.onDispose(selectedDuration, selectedInterval);
+    if ((user.archiveAutoDeleteMinutes ?? 0) > 0) {
+      Provider.of<PrayerProviderV2>(context, listen: false)
+          .updatePrayerAutoDelete();
+    }
+
     super.deactivate();
   }
 

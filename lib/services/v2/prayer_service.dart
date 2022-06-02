@@ -801,18 +801,18 @@ class PrayerServiceV2 {
 
     final answeredPrayersToUpdate = await _prayerDataCollectionReference
         .where('isAnswered', isEqualTo: true)
-        .where('autoDeleteDate', isEqualTo: null)
         .get()
         .then((event) => event.docs
             .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
             .toList());
     final archivedPrayersToUpdate = await _prayerDataCollectionReference
         .where('status', isEqualTo: Status.archived)
-        .where('autoDeleteDate', isEqualTo: null)
+        .where('isAnswered', isEqualTo: false)
         .get()
         .then((event) => event.docs
             .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
             .toList());
+
     final prayersToUpdate = [
       ...answeredPrayersToUpdate,
       ...archivedPrayersToUpdate
@@ -824,10 +824,12 @@ class PrayerServiceV2 {
         : null;
 
     for (final prayer in prayersToUpdate) {
-      if (prayer.autoDeleteDate == null)
+      if (prayer.autoDeleteDate == null ||
+          (prayer.autoDeleteDate ?? DateTime.now()).isAfter(DateTime.now())) {
         _prayerDataCollectionReference
             .doc(prayer.id)
             .update({'autoDeleteDate': autoDeleteDate});
+      }
     }
   }
 
