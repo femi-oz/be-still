@@ -825,8 +825,10 @@ class PrayerServiceV2 {
           answeredPrayers, autoDeleteAnsweredDate ?? DateTime.now());
     } else {
       final answeredPrayers = answeredPrayersToUpdate
-          .where((element) => (element.autoDeleteDate ?? DateTime.now())
-              .isBefore(DateTime.now()))
+          .where((element) =>
+              (element.autoDeleteDate ?? DateTime.now())
+                  .isBefore(DateTime.now()) &&
+              element.autoDeleteDate != null)
           .toList();
       updateIncludeAnsweredPrayers(answeredPrayers, null);
     }

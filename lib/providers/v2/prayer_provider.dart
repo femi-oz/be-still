@@ -633,8 +633,6 @@ class PrayerProviderV2 with ChangeNotifier {
       List<PrayerDataModel> allPrayers = [];
       List<PrayerDataModel> archivePrayersWithDelete = [];
       List<PrayerDataModel> archivePrayersWithoutDelete = [];
-      List<PrayerDataModel> answeredPrayersWithDelete = [];
-      List<PrayerDataModel> answeredPrayersWithoutDelete = [];
 
       final user = await _userService
           .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
@@ -658,8 +656,9 @@ class PrayerProviderV2 with ChangeNotifier {
           answeredPrayers = prayers
               .where((PrayerDataModel data) =>
                   (data.isAnswered ?? false) == true &&
-                  (data.autoDeleteDate ?? DateTime.now())
-                      .isAfter(DateTime.now()))
+                  (data.autoDeleteDate == null ||
+                      (data.autoDeleteDate ?? DateTime.now())
+                          .isAfter(DateTime.now())))
               .toList();
         } else {
           answeredPrayers = prayers
