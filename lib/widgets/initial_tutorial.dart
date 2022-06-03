@@ -154,7 +154,7 @@ class TutorialTarget {
           customPosition: CustomTargetContentPosition(
             bottom: 100,
           ),
-          child: _buildBody(context, 'MORE', 9, '', ' More', 'Tap the',
+          child: _buildBody(context, 'MORE', 8, '', ' More', 'Tap the',
               StringUtils.quickTipMore))
     ]));
 
@@ -188,13 +188,13 @@ class TutorialTarget {
       String boldText, String suffix, String prefix) {
     return GestureDetector(
       onHorizontalDragUpdate: (details) {
-        int sensitivity = 8;
+        int sensitivity = 7;
         if (details.delta.dx > sensitivity) {
           // if (id == 8) appController.setCurrentPage(3, true, 1);
           if (id > 1) tutorialCoachMark?.previous();
         } else if (details.delta.dx < -sensitivity) {
           // if (id == 7) appController.setCurrentPage(3, true, 1);
-          if (id < 9) tutorialCoachMark?.next();
+          if (id < 8) tutorialCoachMark?.next();
         }
       },
       child: Container(
@@ -268,7 +268,7 @@ class TutorialTarget {
                 child: InkWell(
                   onTap: () {
                     // if (id == 7) appController.setCurrentPage(3, true, 1);
-                    id == 9
+                    id == 8
                         ? tutorialCoachMark?.finish()
                         : tutorialCoachMark?.next();
                   },
@@ -287,7 +287,7 @@ class TutorialTarget {
                     child: Column(
                       children: <Widget>[
                         Text(
-                          id == 9 ? 'LET\'S GO' : 'NEXT TIP',
+                          id == 8 ? 'LET\'S GO' : 'NEXT TIP',
                           style: AppTextStyles.boldText24
                               .copyWith(color: Colors.white),
                           textAlign: TextAlign.center,
