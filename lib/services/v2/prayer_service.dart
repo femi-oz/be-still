@@ -696,11 +696,14 @@ class PrayerServiceV2 {
             ? DateTime.now()
                 .add(Duration(minutes: user.archiveAutoDeleteMinutes ?? 0))
             : null;
+        final autoDeleteAnsweredDate = DateTime.now()
+            .add(Duration(minutes: user.archiveAutoDeleteMinutes ?? 0));
         batch.update(_prayerDataCollectionReference.doc(prayerId), {
           'isAnswered': true,
           'isFavorite': false,
           'status': Status.archived,
           'autoDeleteDate': autoDeleteDate,
+          'autoDeleteAnsweredDate': autoDeleteAnsweredDate,
           'archivedDate': DateTime.now()
         });
         batch.commit();
@@ -793,8 +796,7 @@ class PrayerServiceV2 {
     }
   }
 
-  Future<void> updatePrayerAutoDelete(bool isInit) async {
-    var prayersToUpdate = [];
+  Future<void> updateAnsweredPrayerAutoDelete() async {
     final user = await _userDataCollectionReference
         .doc(FirebaseAuth.instance.currentUser?.uid)
         .get()
@@ -807,6 +809,36 @@ class PrayerServiceV2 {
         .then((event) => event.docs
             .map((e) => PrayerDataModel.fromJson(e.data(), e.id))
             .toList());
+    final autoDeleteAnsweredDate = (user.archiveAutoDeleteMinutes ?? 0) > 0
+        ? DateTime.now()
+            .add(Duration(minutes: user.archiveAutoDeleteMinutes ?? 0))
+        : null;
+
+    if (user.includeAnsweredPrayerAutoDelete ?? false == true) {
+      final answeredPrayers = answeredPrayersToUpdate
+          .where((element) =>
+              element.autoDeleteDate == null ||
+              (element.autoDeleteDate ?? DateTime.now())
+                  .isAfter(DateTime.now()))
+          .toList();
+      updateIncludeAnsweredPrayers(
+          answeredPrayers, autoDeleteAnsweredDate ?? DateTime.now());
+    } else {
+      final answeredPrayers = answeredPrayersToUpdate
+          .where((element) => (element.autoDeleteDate ?? DateTime.now())
+              .isBefore(DateTime.now()))
+          .toList();
+      updateIncludeAnsweredPrayers(answeredPrayers, null);
+    }
+  }
+
+  Future<void> updatePrayerAutoDelete(bool isInit) async {
+    var prayersToUpdate = [];
+    final user = await _userDataCollectionReference
+        .doc(FirebaseAuth.instance.currentUser?.uid)
+        .get()
+        .then(((doc) => UserDataModel.fromJson(doc.data()!, doc.id)));
+
     final archivedPrayersToUpdate = await _prayerDataCollectionReference
         .where('status', isEqualTo: Status.archived)
         .where('userId', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
@@ -816,19 +848,11 @@ class PrayerServiceV2 {
             .toList());
 
     if (isInit) {
-      prayersToUpdate = [
-        ...answeredPrayersToUpdate,
-        ...archivedPrayersToUpdate
-            .where((element) => element.isAnswered == false)
-            .toList()
-      ].where((element) => element.autoDeleteDate == null).toList();
+      prayersToUpdate = archivedPrayersToUpdate
+          .where((element) => element.autoDeleteDate == null)
+          .toList();
     } else {
-      prayersToUpdate = [
-        ...answeredPrayersToUpdate,
-        ...archivedPrayersToUpdate
-            .where((element) => element.isAnswered == false)
-            .toList()
-      ]
+      prayersToUpdate = archivedPrayersToUpdate
           .where((element) =>
               element.autoDeleteDate == null ||
               (element.autoDeleteDate ?? DateTime.now())
@@ -845,6 +869,15 @@ class PrayerServiceV2 {
       _prayerDataCollectionReference
           .doc(prayer.id)
           .update({'autoDeleteDate': autoDeleteDate});
+    }
+  }
+
+  void updateIncludeAnsweredPrayers(
+      List<PrayerDataModel> answeredPrayers, dynamic autoDeleteAnsweredDate) {
+    for (final prayer in answeredPrayers) {
+      _prayerDataCollectionReference
+          .doc(prayer.id)
+          .update({'autoDeleteAnsweredDate': autoDeleteAnsweredDate});
     }
   }
 

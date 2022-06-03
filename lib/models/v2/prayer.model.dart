@@ -15,6 +15,7 @@ class PrayerDataModel {
   DateTime? snoozeEndDate;
   String? snoozeFrequency;
   DateTime? autoDeleteDate;
+  DateTime? autoDeleteAnsweredDate;
   int? snoozeDuration;
   List<UpdateModel>? updates;
   List<TagModel>? tags;
@@ -38,6 +39,7 @@ class PrayerDataModel {
       this.groupId,
       this.snoozeEndDate,
       this.autoDeleteDate,
+      this.autoDeleteAnsweredDate,
       this.snoozeFrequency,
       this.snoozeDuration,
       this.updates,
@@ -65,6 +67,7 @@ class PrayerDataModel {
         : json['archivedDate']?.toDate();
     snoozeEndDate = json['snoozeEndDate']?.toDate();
     autoDeleteDate = json['autoDeleteDate']?.toDate();
+    autoDeleteAnsweredDate = json['autoDeleteAnsweredDate']?.toDate();
     snoozeFrequency = json['snoozeFrequency'];
     snoozeDuration = json['snoozeDuration'];
     if (json['updates'] != null) {
@@ -106,6 +109,7 @@ class PrayerDataModel {
     data['archivedDate'] = this.archivedDate;
     data['snoozeEndDate'] = this.snoozeEndDate;
     data['autoDeleteDate'] = this.autoDeleteDate;
+    data['autoDeleteAnsweredDate'] = this.autoDeleteAnsweredDate;
     data['snoozeFrequency'] = this.snoozeFrequency;
     data['snoozeDuration'] = this.snoozeDuration;
     if (this.updates != null) {

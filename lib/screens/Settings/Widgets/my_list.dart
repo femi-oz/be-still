@@ -110,6 +110,7 @@ class _MyListSettingsState extends State<MyListSettings> {
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<UserProviderV2>(context);
+    final prayerProvider = Provider.of<PrayerProviderV2>(context);
     final snoozeDurationController = FixedExtentScrollController(
         initialItem: snoozeDuration.contains(selectedDuration)
             ? snoozeDuration.indexOf(selectedDuration)
@@ -251,8 +252,11 @@ class _MyListSettingsState extends State<MyListSettings> {
             SizedBox(height: 15),
             CustomToggle(
               title: 'Include Answered Prayers in Auto Delete?',
-              onChange: (value) => settingsProvider.updateUserSettings(
-                  'includeAnsweredPrayerAutoDelete', value),
+              onChange: (value) {
+                settingsProvider.updateUserSettings(
+                    'includeAnsweredPrayerAutoDelete', value);
+                prayerProvider.updateAnsweredPrayerAutoDelete();
+              },
               value: widget.settings.includeAnsweredPrayerAutoDelete ?? false,
             ),
             SizedBox(height: 80),
