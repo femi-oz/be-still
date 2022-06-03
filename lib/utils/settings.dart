@@ -19,6 +19,7 @@ class Settings {
   static const String REMINDER_PERMISSION = 'reminder_permission';
   static const String BACKGROUND_TIME = 'background_time';
   static const String APP_INIT = 'app_init';
+  static const String HAS_CREATED_GROUP_PRAYER = 'has_created_group_prayer';
 
   static set themeMode(String mode) =>
       sharedPrefs?.setString(THEME_MODE_KEY, mode);
@@ -81,6 +82,12 @@ class Settings {
       sharedPrefs?.setBool(APP_INIT, isAppInit);
 
   static bool get isAppInit => sharedPrefs?.getBool(APP_INIT) ?? true;
+
+  static set hasCreatedGroupPrayer(bool hasCreatedGroupPrayer) =>
+      sharedPrefs?.setBool(HAS_CREATED_GROUP_PRAYER, hasCreatedGroupPrayer);
+
+  static bool get hasCreatedGroupPrayer =>
+      sharedPrefs?.getBool(HAS_CREATED_GROUP_PRAYER) ?? false;
 
   static set enabledContactPermission(bool isContactEnabled) =>
       sharedPrefs?.setBool(CONTACT_PERMISSION, isContactEnabled);

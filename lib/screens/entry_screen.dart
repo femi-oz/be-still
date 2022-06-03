@@ -194,6 +194,7 @@ class _EntryScreenState extends State<EntryScreen> {
   GlobalKey _keyButton4 = GlobalKey();
   GlobalKey _keyButton5 = GlobalKey();
   GlobalKey _keyButton6 = GlobalKey();
+  GlobalKey _keyButton7 = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -236,6 +237,7 @@ class _EntryScreenState extends State<EntryScreen> {
         _keyButton4,
         _keyButton5,
         _keyButton6,
+        _keyButton7,
         _scaffoldKey,
       ),
       endDrawerEnableOpenDragGesture: false,
@@ -432,7 +434,8 @@ class _EntryScreenState extends State<EntryScreen> {
             title: "More",
             padding: 7),
         TabNavigationItem(
-            page: GroupPrayers(_switchSearchMode, _isSearchMode), //8
+            page:
+                GroupPrayers(_switchSearchMode, _isSearchMode, _keyButton7), //8
             icon: Icon(
               Icons.more_horiz,
               size: 20,

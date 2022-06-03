@@ -20,6 +20,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final bool isGroup;
   final bool showOnlyTitle;
   final GlobalKey? globalKey;
+  final GlobalKey? searchGlobalKey;
   CustomAppBar({
     Key? key,
     this.switchSearchMode,
@@ -28,6 +29,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.showOnlyTitle = false,
     this.showPrayerActions = true,
     this.globalKey,
+    this.searchGlobalKey,
   })  : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -174,12 +176,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
                             width: 30,
                             child: Center(
                                 child: Icon(AppIcons.bestill_search,
+                                    key: widget.searchGlobalKey,
                                     color: AppColors.bottomNavIconColor,
                                     size: 18))))
-                    : SizedBox(
-                        height: 30,
-                        width: 30,
-                      ),
+                    : SizedBox(height: 30, width: 30),
                 widget.showPrayerActions && !widget.isSearchMode
                     ? SizedBox(width: 5)
                     : Container(),
