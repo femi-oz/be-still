@@ -60,17 +60,6 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     super.initState();
   }
 
-  // void _sendPrayerNotification(String type) async {
-  //   await Provider.of<NotificationProviderV2>(context, listen: false)
-  //       .sendPrayerNotification(
-  //           widget.prayerData.prayer?.id ?? '',
-  //           widget.prayerData.groupPrayer?.id ?? '',
-  //           type,
-  //           widget.prayerData.groupPrayer?.groupId ?? '',
-  //           context,
-  //           widget.prayerData.prayer?.description ?? '');
-  // }
-
   void _followPrayer() async {
     BeStilDialog.showLoading(context);
 
@@ -284,16 +273,14 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     BeStilDialog.showLoading(context);
 
     try {
-      var notifications =
-          Provider.of<NotificationProviderV2>(context, listen: false)
-              .localNotifications
-              .where((e) =>
-                  e.prayerId == widget.prayerData.id &&
-                  e.type == NotificationType.reminder)
-              .toList();
-      notifications.forEach((e) async =>
+      final notifications =
           await Provider.of<NotificationProviderV2>(context, listen: false)
-              .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0));
+              .getLocalNotificationsByPrayerId(widget.prayerData.id ?? '');
+
+      for (var e in notifications) {
+        await Provider.of<NotificationProviderV2>(context, listen: false)
+            .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0);
+      }
       await Provider.of<PrayerProviderV2>(context, listen: false)
           .markPrayerAsAnswered(
         widget.prayerData.id ?? '',
@@ -339,15 +326,6 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
       BeStilDialog.showErrorDialog(
           context, StringUtils.getErrorMessage(e), user, s);
     }
-  }
-
-  Future<void> _sendPrayerNotification(String type) async {
-    await Provider.of<NotificationProviderV2>(context, listen: false)
-        .sendPrayerNotification(
-            widget.prayerData.id ?? '',
-            type,
-            widget.prayerData.groupId ?? '',
-            widget.prayerData.description ?? '');
   }
 
   @override

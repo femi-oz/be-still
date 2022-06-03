@@ -13,6 +13,8 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/initial_tutorial.dart';
+import 'package:be_still/widgets/initial_tutorial_group.dart';
+import 'package:be_still/widgets/terms_and_condition.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +29,7 @@ class CustomDrawer extends StatefulWidget {
   final GlobalKey keyButton4;
   final GlobalKey keyButton5;
   final GlobalKey keyButton6;
+  final GlobalKey keyButton7;
   final scaffoldKey;
   CustomDrawer(
     this.setCurrentIndex,
@@ -36,6 +39,7 @@ class CustomDrawer extends StatefulWidget {
     this.keyButton4,
     this.keyButton5,
     this.keyButton6,
+    this.keyButton7,
     this.scaffoldKey,
   );
 
@@ -369,6 +373,27 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             child: Text("QUICK TIPS",
                                 style: AppTextStyles.drawerMenu.copyWith(
                                     color: AppColors.drawerMenuColor)),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: InkWell(
+                            onTap: () => showDialog(
+                              context: context,
+                              builder: (context) {
+                                return Dialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(20)),
+                                    ),
+                                    child: TermsAndCondition());
+                              },
+                            ),
+                            child: Container(
+                              child: Text("TERMS AND CONDITION",
+                                  style: AppTextStyles.drawerMenu.copyWith(
+                                      color: AppColors.drawerMenuColor)),
+                            ),
                           ),
                         ),
                         Padding(

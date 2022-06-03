@@ -328,10 +328,12 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = await Provider.of<UserProviderV2>(context, listen: false)
           .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
       await Provider.of<PrayerProviderV2>(context, listen: false)
-          .updatePrayerAutoDelete();
+          .updatePrayerAutoDelete(true);
       await Provider.of<UserProviderV2>(context, listen: false)
           .setCurrentUser();
-      Settings.lastUser = jsonEncode(user.toJson2());
+      final newUser = user..email = FirebaseAuth.instance.currentUser?.email;
+
+      Settings.lastUser = jsonEncode(newUser.toJson2());
       Settings.userPassword = _passwordController.text;
 
       LocalNotification.setNotificationsOnNewDevice(context);
@@ -370,7 +372,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = await Provider.of<UserProviderV2>(context, listen: false)
           .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
       await Provider.of<PrayerProviderV2>(context, listen: false)
-          .updatePrayerAutoDelete();
+          .updatePrayerAutoDelete(true);
       await Provider.of<UserProviderV2>(context, listen: false)
           .setCurrentUser();
       // if (Settings.enabledReminderPermission)
@@ -404,7 +406,7 @@ class _LoginScreenState extends State<LoginScreen> {
         await Provider.of<UserProviderV2>(context, listen: false)
             .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
         await Provider.of<PrayerProviderV2>(context, listen: false)
-            .updatePrayerAutoDelete();
+            .updatePrayerAutoDelete(true);
         await Provider.of<UserProviderV2>(context, listen: false)
             .setCurrentUser();
 

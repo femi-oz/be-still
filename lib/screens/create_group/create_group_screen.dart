@@ -4,7 +4,6 @@ import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/group_type.dart';
 import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
-import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_form.dart';
 import 'package:be_still/screens/create_group/widgets/create_group_succesful.dart';

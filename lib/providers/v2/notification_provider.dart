@@ -18,7 +18,6 @@ import 'package:get/get.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:be_still/services/v2/notification_service.dart';
-import 'package:be_still/utils/local_notification.dart';
 import 'package:flutter/material.dart';
 
 class NotificationProviderV2 with ChangeNotifier {

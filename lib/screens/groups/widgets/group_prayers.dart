@@ -11,21 +11,22 @@ import 'package:be_still/screens/Prayer/Widgets/group_prayer_card.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
+import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_bar.dart';
 import 'package:be_still/widgets/custom_long_button.dart';
+import 'package:be_still/widgets/initial_tutorial_group.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class GroupPrayers extends StatefulWidget {
+  final GlobalKey<State<StatefulWidget>> keyButton;
+
   final Function switchSearchMode;
   final bool isSearchMode;
-  GroupPrayers(
-    this.switchSearchMode,
-    this.isSearchMode,
-  );
+  GroupPrayers(this.switchSearchMode, this.isSearchMode, this.keyButton);
   @override
   _GroupPrayersState createState() => _GroupPrayersState();
 }
@@ -44,6 +45,8 @@ class _GroupPrayersState extends State<GroupPrayers> {
     if (_isInit) {
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
         try {
+          if (!Settings.hasCreatedGroupPrayer)
+            TutorialTargetGroup().showTutorial(context, widget.keyButton);
           final group =
               Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
           Provider.of<PrayerProviderV2>(context, listen: false)
@@ -109,6 +112,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
           showPrayerActions: true,
           isSearchMode: widget.isSearchMode,
           switchSearchMode: (bool val) => widget.switchSearchMode(val),
+          searchGlobalKey: widget.keyButton,
         ),
         body: Container(
           height: MediaQuery.of(context).size.height * 1,

@@ -10,7 +10,6 @@ import 'package:be_still/models/v2/message_template.dart';
 import 'package:be_still/models/v2/notification.model.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/services/v2/group_service.dart';
-import 'package:be_still/services/v2/prayer_service.dart';
 import 'package:be_still/services/v2/user_service.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -74,24 +73,12 @@ class NotificationServiceV2 {
     try {
       final _userService = locator<UserServiceV2>();
       final _groupService = locator<GroupServiceV2>();
-      final _prayerService = locator<PrayerServiceV2>();
       List<String> _ids = [];
       final _user = await _userService
           .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
 
       final group = await _groupService.getGroup(groupId);
-      // final prayer = prayerData != null
-      //     ? prayerData
-      //     : await _prayerService.getPrayerFuture(prayerId);
-
-      if (type == NotificationType.prayer ||
-          type == NotificationType.prayer_updates) {
-        _ids = (group.users ?? []).map((e) => e.userId ?? '').toList();
-      } else {
-        _ids =
-            (prayerData?.followers ?? []).map((e) => e.userId ?? '').toList();
-      }
-
+      _ids = (group.users ?? []).map((e) => e.userId ?? '').toList();
       _ids.removeWhere((e) => e == _firebaseAuth.currentUser?.uid);
 
       for (final id in _ids) {
@@ -99,17 +86,11 @@ class NotificationServiceV2 {
             (group.users ?? []).firstWhere((element) => element.userId == id);
         List<String> userTokens = [];
 
-        if (type == NotificationType.inappropriate_content) {
-          userTokens = await _userService.getUserByIdFuture(id).then((value) =>
-              (value.devices ?? []).map((e) => e.token ?? '').toList());
-        }
-
         final name = ((_user.firstName ?? '').capitalizeFirst ?? '') +
             ' ' +
             ((_user.lastName ?? '').capitalizeFirst ?? '');
 
-        if (type == NotificationType.prayer ||
-            type == NotificationType.edited_prayers) {
+        if (type == NotificationType.prayer) {
           if (member.enableNotificationForNewPrayers ?? false) {
             addNotification(
                 message: message.capitalizeFirst ?? '',
@@ -131,15 +112,6 @@ class NotificationServiceV2 {
                 tokens: userTokens,
                 type: type);
           }
-        } else {
-          addNotification(
-              message: message.capitalizeFirst ?? '',
-              senderName: name,
-              groupId: groupId,
-              receiverId: id,
-              prayerId: prayerId,
-              tokens: userTokens,
-              type: type);
         }
       }
     } catch (e) {

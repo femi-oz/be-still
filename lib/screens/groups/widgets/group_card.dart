@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/request_status.dart';
 import 'package:be_still/enums/user_role.dart';
-import 'package:be_still/models/v2/device.model.dart';
 import 'package:be_still/models/v2/group.model.dart';
 import 'package:be_still/models/v2/group_user.model.dart';
 import 'package:be_still/models/v2/user.model.dart';

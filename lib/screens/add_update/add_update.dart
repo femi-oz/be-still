@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/models/v2/tag.model.dart';
+import 'package:be_still/models/v2/user.model.dart';
 
 import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
@@ -20,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:permission_handler/permission_handler.dart';
 
 import 'package:provider/provider.dart';
 
@@ -37,6 +39,7 @@ class _AddUpdateState extends State<AddUpdate> {
   bool _autoValidate = false;
   final _prayerKey = GlobalKey();
   bool textWithSpace = false;
+  bool getContactCalled = false;
 
   List<String> tags = [];
   String tagText = '';
@@ -51,7 +54,6 @@ class _AddUpdateState extends State<AddUpdate> {
 
   @override
   void initState() {
-    getContacts();
     super.initState();
   }
 
@@ -93,39 +95,62 @@ class _AddUpdateState extends State<AddUpdate> {
       final _localContacts =
           await ContactsService.getContacts(withThumbnails: false);
       localContacts = _localContacts.where((e) => e.displayName != null);
+      getContactCalled = true;
     }
   }
 
-  void _onTextChange(String val) {
+  void _getContactPermission() async {
     try {
-      var cursorPos = _descriptionController.selection.base.offset;
+      await Permission.contacts.request().then((p) =>
+          Settings.enabledContactPermission = p == PermissionStatus.granted);
+      getContacts();
+    } catch (e, s) {
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), UserDataModel(), s);
+    }
+  }
+
+  Future<void> _onTextChange(String val) async {
+    try {
+      final status = await Permission.contacts.status;
+      final cursorPos = _descriptionController.selection.base.offset;
       var stringBeforeCursor = val.substring(0, cursorPos);
       tags = stringBeforeCursor.split(new RegExp(r"\s"));
       tagText = tags.last.startsWith('@') ? tags.last : '';
       tagList.clear();
-      localContacts.forEach((s) {
-        var displayName = s.displayName == null ? '' : s.displayName;
-        var displayNameList =
-            (displayName ?? '').toLowerCase().split(new RegExp(r"\s"));
-        displayNameList.forEach((e) {
-          if (('@' + e).toLowerCase().contains(tagText.toLowerCase())) {
-            tagList.add(displayName ?? '');
-          }
+      if (tagText.length > 1 &&
+          Settings.enabledContactPermission == false &&
+          status != PermissionStatus.denied) {
+        _getContactPermission();
+      } else {
+        if (getContactCalled == false &&
+            Settings.enabledContactPermission == true) {
+          getContacts();
+        }
+        localContacts.forEach((s) {
+          var displayName = s.displayName == null ? '' : s.displayName;
+          var displayNameList =
+              (displayName ?? '').toLowerCase().split(new RegExp(r"\s"));
+          displayNameList.forEach((e) {
+            if (('@' + e).toLowerCase().contains(tagText.toLowerCase())) {
+              tagList.add(displayName ?? '');
+            }
+          });
         });
-      });
 
-      painter = TextPainter(
-        textDirection: TextDirection.ltr,
-        text: TextSpan(
-          text: val,
-        ),
-      );
+        painter = TextPainter(
+          textDirection: TextDirection.ltr,
+          text: TextSpan(
+            text: val,
+          ),
+        );
 
-      painter.layout();
-      var lines = painter.computeLineMetrics();
-      setState(() {
-        numberOfLines = lines.length.toDouble();
-      });
+        painter.layout();
+        var lines = painter.computeLineMetrics();
+        setState(() {
+          numberOfLines = lines.length.toDouble();
+        });
+      }
     } catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;

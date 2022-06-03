@@ -31,7 +31,6 @@ import 'package:be_still/utils/settings.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/app_drawer.dart';
 import 'package:cron/cron.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -69,9 +68,6 @@ class _EntryScreenState extends State<EntryScreen> {
         cron.schedule(Schedule.parse('*/1 * * * *'), () async {
           await Provider.of<NotificationProviderV2>(context, listen: false)
               .setLocalNotifications();
-          //   await Provider.of<PrayerProviderV2>(context, listen: false)
-          //       .autoDeleteArchivePrayers(user.archiveAutoDeleteMinutes ?? 0,
-          //           user.includeAnsweredPrayerAutoDelete ?? false);
         });
         Provider.of<PrayerProviderV2>(context, listen: false)
             .setPrayerFilterOptions(Status.active);
@@ -195,6 +191,7 @@ class _EntryScreenState extends State<EntryScreen> {
   GlobalKey _keyButton4 = GlobalKey();
   GlobalKey _keyButton5 = GlobalKey();
   GlobalKey _keyButton6 = GlobalKey();
+  GlobalKey _keyButton7 = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -237,6 +234,7 @@ class _EntryScreenState extends State<EntryScreen> {
         _keyButton4,
         _keyButton5,
         _keyButton6,
+        _keyButton7,
         _scaffoldKey,
       ),
       endDrawerEnableOpenDragGesture: false,
@@ -433,7 +431,8 @@ class _EntryScreenState extends State<EntryScreen> {
             title: "More",
             padding: 7),
         TabNavigationItem(
-            page: GroupPrayers(_switchSearchMode, _isSearchMode), //8
+            page:
+                GroupPrayers(_switchSearchMode, _isSearchMode, _keyButton7), //8
             icon: Icon(
               Icons.more_horiz,
               size: 20,

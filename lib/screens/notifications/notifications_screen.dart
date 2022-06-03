@@ -319,6 +319,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       if (notification.type == NotificationType.inappropriate_content) {
         deleteInappropriateNotification(
             notification.senderId ?? '', notification.prayerId ?? '');
+      } else if (notification.type == NotificationType.inappropriate_content) {
+        final _prayerUpdates =
+            Provider.of<NotificationProviderV2>(context, listen: false)
+                .prayerUpdates;
+        _prayerUpdates
+            .where((element) => element.prayerId == notification.prayerId)
+            .forEach((element) {
+          deleteNotification(element.id ?? '');
+        });
       } else {
         await deleteNotification(notification.id ?? '');
       }
@@ -1956,7 +1965,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       key: Key(notification.id ?? ''),
                       direction: DismissDirection.horizontal,
                       onDismissed: (direction) {
-                        deleteNotification(notification.id ?? '');
+                        final _prayerUpdates =
+                            Provider.of<NotificationProviderV2>(context,
+                                    listen: false)
+                                .prayerUpdates;
+                        _prayerUpdates
+                            .where((element) =>
+                                element.prayerId == notification.prayerId)
+                            .forEach((element) {
+                          deleteNotification(element.id ?? '');
+                        });
                       },
                       child: GestureDetector(
                           onLongPressEnd: null,

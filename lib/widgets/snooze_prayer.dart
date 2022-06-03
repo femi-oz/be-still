@@ -1,5 +1,6 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/flavor_config.dart';
 import 'package:be_still/models/v2/prayer.model.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
 import 'package:be_still/providers/v2/notification_provider.dart';
@@ -27,7 +28,10 @@ class _SnoozePrayerState extends State<SnoozePrayer> {
   List<int> snoozeDuration = [];
   List<int> snoozeMonths = new List<int>.generate(12, (i) => i + 1);
   List<int> snoozeWeeks = new List<int>.generate(52, (i) => i + 1);
-  List<int> snoozeMins = new List<int>.generate(60, (i) => i + 1);
+  List<int> snoozeMins = new List<int>.generate(
+      FlavorConfig.isProduction() || FlavorConfig.isStore() ? 59 : 60,
+      (i) =>
+          i + (FlavorConfig.isProduction() || FlavorConfig.isStore() ? 2 : 1));
   List<int> snoozeDays = new List<int>.generate(31, (i) => i + 1);
   String selectedInterval = '';
   int selectedDuration = 0;

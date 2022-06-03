@@ -10,7 +10,6 @@ import 'package:be_still/models/v2/tag.model.dart';
 import 'package:be_still/models/v2/update.model.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
-import 'package:be_still/services/v2/group_service.dart';
 import 'package:be_still/services/v2/notification_service.dart';
 import 'package:be_still/services/v2/prayer_service.dart';
 import 'package:be_still/services/v2/user_service.dart';
@@ -391,11 +390,12 @@ class PrayerProviderV2 with ChangeNotifier {
       String type, String groupId, String description) async {
     try {
       await _prayerService.archivePrayer(
-          prayerId: prayerId,
-          followers: followers,
-          type: type,
-          groupId: groupId,
-          description: description);
+        prayerId: prayerId,
+        followers: followers,
+        type: type,
+        groupId: groupId,
+        description: description,
+      );
       notifyListeners();
     } catch (e) {
       rethrow;
@@ -497,15 +497,14 @@ class PrayerProviderV2 with ChangeNotifier {
       if (_firebaseAuth.currentUser == null) return null;
       await _prayerService.deletePrayer(
           groupId: groupId, prayerId: prayerId, followers: followers);
-      final notProvider =
-          Provider.of<NotificationProviderV2>(Get.context!, listen: false);
-      final notifications = notProvider.localNotifications
-          .where((e) => e.prayerId == prayerId)
-          .toList();
-      for (final notification in notifications) {
-        if (notification.localNotificationId != null)
-          notProvider.cancelLocalNotificationById(
-              notification.localNotificationId ?? 0);
+
+      final notifications =
+          await Provider.of<NotificationProviderV2>(Get.context!, listen: false)
+              .getLocalNotificationsByPrayerId(prayerId);
+
+      for (var e in notifications) {
+        await Provider.of<NotificationProviderV2>(Get.context!, listen: false)
+            .deleteLocalNotification(e.id ?? '', e.localNotificationId ?? 0);
       }
     } catch (e) {
       rethrow;
@@ -614,8 +613,12 @@ class PrayerProviderV2 with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updatePrayerAutoDelete() async {
-    _prayerService.updatePrayerAutoDelete();
+  Future<void> updatePrayerAutoDelete(bool isInit) async {
+    _prayerService.updatePrayerAutoDelete(isInit);
+  }
+
+  Future<void> updateAnsweredPrayerAutoDelete() async {
+    _prayerService.updateAnsweredPrayerAutoDelete();
   }
 
   void filterPrayers() async {
@@ -630,8 +633,6 @@ class PrayerProviderV2 with ChangeNotifier {
       List<PrayerDataModel> allPrayers = [];
       List<PrayerDataModel> archivePrayersWithDelete = [];
       List<PrayerDataModel> archivePrayersWithoutDelete = [];
-      List<PrayerDataModel> answeredPrayersWithDelete = [];
-      List<PrayerDataModel> answeredPrayersWithoutDelete = [];
 
       final user = await _userService
           .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
@@ -651,35 +652,21 @@ class PrayerProviderV2 with ChangeNotifier {
             .toList();
       }
       if (_filterOption == Status.answered) {
-        for (var prayer in prayers) {
-          if (prayer.autoDeleteDate != null) {
-            if (user.includeAnsweredPrayerAutoDelete ?? false) {
-              answeredPrayersWithDelete = prayers
-                  .where((PrayerDataModel data) =>
-                      data.status == Status.archived &&
-                      (data.autoDeleteDate ?? DateTime.now())
-                          .isAfter(DateTime.now()) &&
-                      (data.isAnswered ?? false) == true)
-                  .toList();
-            } else {
-              answeredPrayersWithDelete = prayers
-                  .where((PrayerDataModel data) =>
-                      (data.isAnswered ?? false) == true &&
-                      data.autoDeleteDate == null)
-                  .toList();
-            }
-          }
-          answeredPrayersWithoutDelete = prayers
+        if (user.includeAnsweredPrayerAutoDelete ?? false) {
+          answeredPrayers = prayers
               .where((PrayerDataModel data) =>
-                  (data.status == Status.archived) &&
-                  data.autoDeleteDate == null &&
-                  (data.isAnswered ?? false) == true)
+                  (data.isAnswered ?? false) == true &&
+                  (data.autoDeleteDate == null ||
+                      (data.autoDeleteDate ?? DateTime.now())
+                          .isAfter(DateTime.now())))
+              .toList();
+        } else {
+          answeredPrayers = prayers
+              .where((PrayerDataModel data) =>
+                  (data.isAnswered ?? false) == true &&
+                  data.autoDeleteAnsweredDate != null)
               .toList();
         }
-        answeredPrayers = [
-          ...answeredPrayersWithDelete,
-          ...answeredPrayersWithoutDelete
-        ];
       }
       if (_filterOption == Status.archived) {
         for (var prayer in prayers) {

@@ -101,12 +101,14 @@ class AuthenticationServiceV2 {
         await user.sendEmailVerification(actionCodeSettings);
         signOut();
       }
-    } on FirebaseException catch (e) {
-      final message = StringUtils.generateExceptionMessage(e.code);
+    }
+    // on FirebaseException catch (e) {
+    //   // final message = StringUtils.generateExceptionMessage(e.code);
 
-      // throw HttpException(message);
-    } catch (e) {
-      final message = StringUtils.getErrorMessage(e);
+    //   // throw HttpException(message);
+    // }
+    catch (e) {
+      // final message = StringUtils.getErrorMessage(e);
 
       // throw HttpException(message);
     }

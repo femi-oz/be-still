@@ -1,4 +1,3 @@
-import 'package:be_still/screens/add_update/add_update.dart';
 import 'package:be_still/screens/create_group/create_group_screen.dart';
 import 'package:be_still/screens/entry_screen.dart';
 import 'package:be_still/screens/notifications/notifications_screen.dart';
