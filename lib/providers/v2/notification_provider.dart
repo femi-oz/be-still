@@ -308,10 +308,11 @@ class NotificationProviderV2 with ChangeNotifier {
     }
   }
 
-  Future cancelNotification(String notificationId) async {
+  Future cancelNotification(String notificationId, {String? prayerId}) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
-      return await _notificationService.cancelPushNotification(notificationId);
+      return await _notificationService.cancelPushNotification(
+          notificationId, prayerId);
     } catch (e) {
       rethrow;
     }
