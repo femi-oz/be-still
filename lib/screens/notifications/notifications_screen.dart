@@ -229,10 +229,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         });
   }
 
-  Future deleteNotification(String id) async {
+  Future deleteNotification(String id, {String? prayerId}) async {
     try {
       await Provider.of<NotificationProviderV2>(context, listen: false)
-          .cancelNotification(id);
+          .cancelNotification(id, prayerId: prayerId);
     } on HttpException catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;
@@ -306,7 +306,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
-  gotoPrayer(NotificationModel notification) async {
+  gotoPrayer(NotificationModel notification, {String? prayerId}) async {
     BeStilDialog.showLoading(context);
     try {
       if ((notification.groupId ?? '').isNotEmpty)
@@ -319,8 +319,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       if (notification.type == NotificationType.inappropriate_content) {
         deleteInappropriateNotification(
             notification.senderId ?? '', notification.prayerId ?? '');
+      } else if (notification.type == NotificationType.inappropriate_content) {
+        final _prayerUpdates =
+            Provider.of<NotificationProviderV2>(context, listen: false)
+                .prayerUpdates;
+        _prayerUpdates
+            .where((element) => element.prayerId == notification.prayerId)
+            .forEach((element) {
+          deleteNotification(element.id ?? '', prayerId: prayerId);
+        });
       } else {
-        await deleteNotification(notification.id ?? '');
+        await deleteNotification(notification.id ?? '', prayerId: prayerId);
       }
 
       BeStilDialog.hideLoading(context);
@@ -1956,12 +1965,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       key: Key(notification.id ?? ''),
                       direction: DismissDirection.horizontal,
                       onDismissed: (direction) {
-                        deleteNotification(notification.id ?? '');
+                        deleteNotification(notification.id ?? '',
+                            prayerId: notification.prayerId);
                       },
                       child: GestureDetector(
                           onLongPressEnd: null,
                           onTap: () async {
-                            gotoPrayer(notification);
+                            gotoPrayer(notification,
+                                prayerId: notification.prayerId);
                           },
                           child: Container(
                               margin: EdgeInsets.only(left: 20.0),
