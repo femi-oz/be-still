@@ -68,9 +68,6 @@ class _EntryScreenState extends State<EntryScreen> {
         cron.schedule(Schedule.parse('*/1 * * * *'), () async {
           await Provider.of<NotificationProviderV2>(context, listen: false)
               .setLocalNotifications();
-          //   await Provider.of<PrayerProviderV2>(context, listen: false)
-          //       .autoDeleteArchivePrayers(user.archiveAutoDeleteMinutes ?? 0,
-          //           user.includeAnsweredPrayerAutoDelete ?? false);
         });
         Provider.of<PrayerProviderV2>(context, listen: false)
             .setPrayerFilterOptions(Status.active);

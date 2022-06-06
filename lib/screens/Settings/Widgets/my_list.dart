@@ -5,6 +5,7 @@ import 'package:be_still/enums/sort_by.dart';
 import 'package:be_still/flavor_config.dart';
 import 'package:be_still/models/v2/duration.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
+import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/essentials.dart';
@@ -36,11 +37,13 @@ class _MyListSettingsState extends State<MyListSettings> {
   List<int> snoozeDays = new List<int>.generate(31, (i) => i + 1);
   String selectedInterval = '';
   int selectedDuration = 0;
+  bool autoDeleteValueChanged = false;
 
   _setAutoDelete(e) {
     try {
       Provider.of<UserProviderV2>(context, listen: false)
           .updateUserSettings('archiveAutoDeleteMinutes', e);
+      autoDeleteValueChanged = true;
     } on HttpException catch (e, s) {
       BeStilDialog.hideLoading(context);
 
@@ -60,7 +63,14 @@ class _MyListSettingsState extends State<MyListSettings> {
 
   @override
   deactivate() {
+    final user =
+        Provider.of<UserProviderV2>(context, listen: false).currentUser;
     widget.onDispose(selectedDuration, selectedInterval);
+    if ((user.archiveAutoDeleteMinutes ?? 0) > 0 && autoDeleteValueChanged) {
+      Provider.of<PrayerProviderV2>(context, listen: false)
+          .updatePrayerAutoDelete(false);
+    }
+
     super.deactivate();
   }
 
@@ -100,6 +110,7 @@ class _MyListSettingsState extends State<MyListSettings> {
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<UserProviderV2>(context);
+    final prayerProvider = Provider.of<PrayerProviderV2>(context);
     final snoozeDurationController = FixedExtentScrollController(
         initialItem: snoozeDuration.contains(selectedDuration)
             ? snoozeDuration.indexOf(selectedDuration)
@@ -241,8 +252,11 @@ class _MyListSettingsState extends State<MyListSettings> {
             SizedBox(height: 15),
             CustomToggle(
               title: 'Include Answered Prayers in Auto Delete?',
-              onChange: (value) => settingsProvider.updateUserSettings(
-                  'includeAnsweredPrayerAutoDelete', value),
+              onChange: (value) {
+                settingsProvider.updateUserSettings(
+                    'includeAnsweredPrayerAutoDelete', value);
+                prayerProvider.updateAnsweredPrayerAutoDelete();
+              },
               value: widget.settings.includeAnsweredPrayerAutoDelete ?? false,
             ),
             SizedBox(height: 80),

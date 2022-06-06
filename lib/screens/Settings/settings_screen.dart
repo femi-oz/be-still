@@ -60,6 +60,7 @@ class _SettingsScreenPage extends State<SettingsScreen>
   @override
   void dispose() {
     tabController.dispose();
+
     super.dispose();
   }
 

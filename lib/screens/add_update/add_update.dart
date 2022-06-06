@@ -110,14 +110,17 @@ class _AddUpdateState extends State<AddUpdate> {
     }
   }
 
-  void _onTextChange(String val) {
+  Future<void> _onTextChange(String val) async {
     try {
-      var cursorPos = _descriptionController.selection.base.offset;
+      final status = await Permission.contacts.status;
+      final cursorPos = _descriptionController.selection.base.offset;
       var stringBeforeCursor = val.substring(0, cursorPos);
       tags = stringBeforeCursor.split(new RegExp(r"\s"));
       tagText = tags.last.startsWith('@') ? tags.last : '';
       tagList.clear();
-      if (tagText.length > 1 && Settings.enabledContactPermission == false) {
+      if (tagText.length > 1 &&
+          Settings.enabledContactPermission == false &&
+          status != PermissionStatus.denied) {
         _getContactPermission();
       } else {
         if (getContactCalled == false &&

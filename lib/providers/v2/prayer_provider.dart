@@ -613,8 +613,12 @@ class PrayerProviderV2 with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updatePrayerAutoDelete() async {
-    _prayerService.updatePrayerAutoDelete();
+  Future<void> updatePrayerAutoDelete(bool isInit) async {
+    _prayerService.updatePrayerAutoDelete(isInit);
+  }
+
+  Future<void> updateAnsweredPrayerAutoDelete() async {
+    _prayerService.updateAnsweredPrayerAutoDelete();
   }
 
   void filterPrayers() async {
@@ -629,8 +633,6 @@ class PrayerProviderV2 with ChangeNotifier {
       List<PrayerDataModel> allPrayers = [];
       List<PrayerDataModel> archivePrayersWithDelete = [];
       List<PrayerDataModel> archivePrayersWithoutDelete = [];
-      List<PrayerDataModel> answeredPrayersWithDelete = [];
-      List<PrayerDataModel> answeredPrayersWithoutDelete = [];
 
       final user = await _userService
           .getUserByIdFuture(_firebaseAuth.currentUser?.uid ?? '');
@@ -650,35 +652,21 @@ class PrayerProviderV2 with ChangeNotifier {
             .toList();
       }
       if (_filterOption == Status.answered) {
-        for (var prayer in prayers) {
-          if (prayer.autoDeleteDate != null) {
-            if (user.includeAnsweredPrayerAutoDelete ?? false) {
-              answeredPrayersWithDelete = prayers
-                  .where((PrayerDataModel data) =>
-                      data.status == Status.archived &&
-                      (data.autoDeleteDate ?? DateTime.now())
-                          .isAfter(DateTime.now()) &&
-                      (data.isAnswered ?? false) == true)
-                  .toList();
-            } else {
-              answeredPrayersWithDelete = prayers
-                  .where((PrayerDataModel data) =>
-                      (data.isAnswered ?? false) == true &&
-                      data.autoDeleteDate == null)
-                  .toList();
-            }
-          }
-          answeredPrayersWithoutDelete = prayers
+        if (user.includeAnsweredPrayerAutoDelete ?? false) {
+          answeredPrayers = prayers
               .where((PrayerDataModel data) =>
-                  (data.status == Status.archived) &&
-                  data.autoDeleteDate == null &&
-                  (data.isAnswered ?? false) == true)
+                  (data.isAnswered ?? false) == true &&
+                  (data.autoDeleteDate == null ||
+                      (data.autoDeleteDate ?? DateTime.now())
+                          .isAfter(DateTime.now())))
+              .toList();
+        } else {
+          answeredPrayers = prayers
+              .where((PrayerDataModel data) =>
+                  (data.isAnswered ?? false) == true &&
+                  data.autoDeleteAnsweredDate != null)
               .toList();
         }
-        answeredPrayers = [
-          ...answeredPrayersWithDelete,
-          ...answeredPrayersWithoutDelete
-        ];
       }
       if (_filterOption == Status.archived) {
         for (var prayer in prayers) {

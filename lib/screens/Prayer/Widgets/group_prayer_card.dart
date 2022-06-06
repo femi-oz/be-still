@@ -60,17 +60,6 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
     super.initState();
   }
 
-  // void _sendPrayerNotification(String type) async {
-  //   await Provider.of<NotificationProviderV2>(context, listen: false)
-  //       .sendPrayerNotification(
-  //           widget.prayerData.prayer?.id ?? '',
-  //           widget.prayerData.groupPrayer?.id ?? '',
-  //           type,
-  //           widget.prayerData.groupPrayer?.groupId ?? '',
-  //           context,
-  //           widget.prayerData.prayer?.description ?? '');
-  // }
-
   void _followPrayer() async {
     BeStilDialog.showLoading(context);
 
@@ -338,15 +327,6 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
           context, StringUtils.getErrorMessage(e), user, s);
     }
   }
-
-  // Future<void> _sendPrayerNotification(String type) async {
-  //   await Provider.of<NotificationProviderV2>(context, listen: false)
-  //       .sendPrayerNotification(
-  //           widget.prayerData.id ?? '',
-  //           type,
-  //           widget.prayerData.groupId ?? '',
-  //           widget.prayerData.description ?? '');
-  // }
 
   @override
   Widget build(BuildContext context) {

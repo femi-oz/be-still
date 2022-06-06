@@ -51,6 +51,7 @@ class _AddPrayerState extends State<AddPrayer> {
   bool showContactList = false;
   bool showDropdown = false;
   bool getContactCalled = false;
+  bool deniedTapped = false;
 
   List<UpdateModel> updates = [];
   List<Backup> updateTextControllers = [];
@@ -207,9 +208,7 @@ class _AddPrayerState extends State<AddPrayer> {
           (Provider.of<GroupProviderV2>(context, listen: false).currentGroup)
                   .id ??
               '';
-      await Provider.of<NotificationProviderV2>(context, listen: false)
-          .sendPrayerNotification(prayerId, NotificationType.edited_prayers,
-              groupId, _descriptionController.text);
+
       await Provider.of<GroupProviderV2>(context, listen: false)
           .setCurrentGroupById(groupId);
       appController.setCurrentPage(8, true, 1);
@@ -252,8 +251,6 @@ class _AddPrayerState extends State<AddPrayer> {
                     true, contactList);
             await Provider.of<GroupProviderV2>(context, listen: false)
                 .setCurrentGroupById(selected?.id ?? '');
-            // await Provider.of<PrayerProviderV2>(context, listen: false)
-            //     .setGroupPrayers(selected?.id ?? '');
             BeStilDialog.hideLoading(context);
             appController.setCurrentPage(8, true, 1);
           }
@@ -389,18 +386,28 @@ class _AddPrayerState extends State<AddPrayer> {
 
   void _getContactPermission() async {
     try {
-      await Permission.contacts.request().then((p) =>
-          Settings.enabledContactPermission = p == PermissionStatus.granted);
+      await Permission.contacts.request().then((p) {
+        if (p == PermissionStatus.granted) {
+          Settings.enabledContactPermission = true;
+        } else {
+          Settings.enabledContactPermission = false;
+          deniedTapped = true;
+        }
+        return Settings.enabledContactPermission =
+            p == PermissionStatus.granted;
+      });
       getContacts();
     } catch (e, s) {
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), UserDataModel(), s);
+      // BeStilDialog.showErrorDialog(
+      //     context, StringUtils.getErrorMessage(e), UserDataModel(), s);
     }
   }
 
-  void _onTextChange(String val, {Backup? backup}) {
+  Future<void> _onTextChange(String val, {Backup? backup}) async {
     try {
-      if (tagText.length > 0 && Settings.enabledContactPermission == false) {
+      if (tagText.length > 0 &&
+          Settings.enabledContactPermission == false &&
+          !deniedTapped) {
         _getContactPermission();
       } else {
         if (getContactCalled == false &&

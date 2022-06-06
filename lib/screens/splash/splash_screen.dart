@@ -83,7 +83,6 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> setRouteDestination() async {
     try {
-      _getPermissions();
       final message =
           Provider.of<NotificationProviderV2>(context, listen: false).message;
       if ((message.entityId ?? '').isNotEmpty) {
@@ -138,7 +137,7 @@ class _SplashScreenState extends State<SplashScreen>
             await Provider.of<UserProviderV2>(context, listen: false)
                 .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
             await Provider.of<PrayerProviderV2>(context, listen: false)
-                .updatePrayerAutoDelete();
+                .updatePrayerAutoDelete(true);
             await Provider.of<UserProviderV2>(context, listen: false)
                 .setCurrentUser();
             await setRouteDestination();
@@ -177,7 +176,7 @@ class _SplashScreenState extends State<SplashScreen>
       await _migrationService
           .migrateUserData(FirebaseAuth.instance.currentUser?.uid ?? '');
       await Provider.of<PrayerProviderV2>(context, listen: false)
-          .updatePrayerAutoDelete();
+          .updatePrayerAutoDelete(true);
       await Provider.of<UserProviderV2>(context, listen: false)
           .setCurrentUser();
 
