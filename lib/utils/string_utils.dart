@@ -82,9 +82,9 @@ class StringUtils {
       case ErrorType.wrongPassword:
         errorMessage = "Username / Password is incorrect";
         break;
-      case ErrorType.userNotFound:
-        errorMessage = "Username / Password is incorrect";
-        break;
+      // case ErrorType.userNotFound:
+      //   errorMessage = "Username / Password is incorrect";
+      //   break;
       case ErrorType.notAvailable:
         errorMessage = "This option is unavailable on this device.";
         break;

@@ -63,20 +63,23 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           AndroidInitializationSettings('@mipmap/ic_launcher');
 
       var initializationSettingsIOs = IOSInitializationSettings(
+          requestAlertPermission: false,
+          requestBadgePermission: false,
+          requestSoundPermission: false,
           onDidReceiveLocalNotification: (_, __, ___, ____) {
-        Provider.of<NotificationProviderV2>(context, listen: false)
-            .setLocalNotifications();
-        _flutterLocalNotificationsPlugin.show(
-          _,
-          __,
-          ___,
-          NotificationDetails(
-              android: androidNotificationAndroidSpecifics,
-              iOS: iOSPlatformChannelSpecifics),
-          payload: "{\"type\": \"fcm message\"}",
-        );
-        print('on message');
-      });
+            Provider.of<NotificationProviderV2>(context, listen: false)
+                .setLocalNotifications();
+            _flutterLocalNotificationsPlugin.show(
+              _,
+              __,
+              ___,
+              NotificationDetails(
+                  android: androidNotificationAndroidSpecifics,
+                  iOS: iOSPlatformChannelSpecifics),
+              payload: "{\"type\": \"fcm message\"}",
+            );
+            print('on message');
+          });
       var initSettings = InitializationSettings(
           android: initializationSettingsAndroid,
           iOS: initializationSettingsIOs);

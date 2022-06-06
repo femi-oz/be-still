@@ -214,11 +214,24 @@ class NotificationServiceV2 {
     }
   }
 
-  Future<void> cancelPushNotification(String notificationId) async {
+  Future<void> cancelPushNotification(
+      String notificationId, String? prayerId) async {
     try {
-      _notificationCollectionReference
-          .doc(notificationId)
-          .update({'status': Status.inactive});
+      if (prayerId != null) {
+        final prayers = await _notificationCollectionReference
+            .where("prayerId", isEqualTo: prayerId)
+            .where("receiverId",
+                isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+            .where("type", isEqualTo: NotificationType.prayer_updates)
+            .get();
+        prayers.docs.forEach((element) {
+          element.reference.update({'status': Status.inactive});
+        });
+      } else {
+        _notificationCollectionReference
+            .doc(notificationId)
+            .update({'status': Status.inactive});
+      }
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

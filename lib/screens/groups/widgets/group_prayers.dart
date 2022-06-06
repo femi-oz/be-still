@@ -45,8 +45,6 @@ class _GroupPrayersState extends State<GroupPrayers> {
     if (_isInit) {
       WidgetsBinding.instance?.addPostFrameCallback((_) async {
         try {
-          if (!Settings.hasCreatedGroupPrayer)
-            TutorialTargetGroup().showTutorial(context, widget.keyButton);
           final group =
               Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
           Provider.of<PrayerProviderV2>(context, listen: false)
@@ -80,6 +78,16 @@ class _GroupPrayersState extends State<GroupPrayers> {
       _isInit = false;
     }
     super.didChangeDependencies();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (!Settings.hasCreatedGroupPrayer)
+      Future.delayed(Duration(milliseconds: 300), () {
+        TutorialTargetGroup().showTutorial(context, widget.keyButton);
+      });
   }
 
   onDispose() {}
