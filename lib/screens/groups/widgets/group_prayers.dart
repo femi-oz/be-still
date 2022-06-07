@@ -84,10 +84,10 @@ class _GroupPrayersState extends State<GroupPrayers> {
   void initState() {
     super.initState();
 
-    if (!Settings.hasCreatedGroupPrayer)
-      Future.delayed(Duration(milliseconds: 300), () {
-        TutorialTargetGroup().showTutorial(context, widget.keyButton);
-      });
+    // if (!Settings.hasCreatedGroupPrayer)
+    //   Future.delayed(Duration(milliseconds: 300), () {
+    //     TutorialTargetGroup().showTutorial(context, widget.keyButton);
+    //   });
   }
 
   onDispose() {}

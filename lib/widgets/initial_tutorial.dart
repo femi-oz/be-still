@@ -1,10 +1,8 @@
-import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class TutorialTarget {
@@ -130,23 +128,23 @@ class TutorialTarget {
             StringUtils.groupTipList,
           ))
     ]));
-    // targets
-    //     .add(TargetFocus(identify: "groups", keyTarget: _keyButton6, contents: [
-    //   TargetContent(
-    //       align: ContentAlign.custom,
-    //       customPosition: CustomTargetContentPosition(
-    //         bottom: 100,
-    //       ),
-    //       child: _buildBody(
-    //         context,
-    //         'GROUPS',
-    //         3,
-    //         '',
-    //         "",
-    //         "",
-    //         StringUtils.groupTipList2,
-    //       ))
-    // ]));
+    targets
+        .add(TargetFocus(identify: "groups", keyTarget: _keyButton6, contents: [
+      TargetContent(
+          align: ContentAlign.custom,
+          customPosition: CustomTargetContentPosition(
+            bottom: 100,
+          ),
+          child: _buildBody(
+            context,
+            'GROUPS',
+            8,
+            '',
+            "",
+            "",
+            StringUtils.groupTipList2,
+          ))
+    ]));
     targets
         .add(TargetFocus(identify: "more", keyTarget: _keyButton4, contents: [
       TargetContent(
@@ -154,7 +152,7 @@ class TutorialTarget {
           customPosition: CustomTargetContentPosition(
             bottom: 100,
           ),
-          child: _buildBody(context, 'MORE', 8, '', ' More', 'Tap the',
+          child: _buildBody(context, 'MORE', 9, '', ' More', 'Tap the',
               StringUtils.quickTipMore))
     ]));
 
@@ -167,8 +165,7 @@ class TutorialTarget {
       paddingFocus: 10,
       opacityShadow: 0.8,
       onFinish: () async {
-        // print("finish");
-        // appController.setCurrentPage(1, true, 1);
+        print("finish");
         await analytics.logTutorialComplete();
       },
       onClickTarget: (target) {
@@ -183,18 +180,15 @@ class TutorialTarget {
     )..show();
   }
 
-  // AppController appController = Get.find();
   Widget _buildBody(BuildContext context, String title, int id, String image,
       String boldText, String suffix, String prefix) {
     return GestureDetector(
       onHorizontalDragUpdate: (details) {
-        int sensitivity = 7;
+        int sensitivity = 8;
         if (details.delta.dx > sensitivity) {
-          // if (id == 8) appController.setCurrentPage(3, true, 1);
           if (id > 1) tutorialCoachMark?.previous();
         } else if (details.delta.dx < -sensitivity) {
-          // if (id == 7) appController.setCurrentPage(3, true, 1);
-          if (id < 8) tutorialCoachMark?.next();
+          if (id < 9) tutorialCoachMark?.next();
         }
       },
       child: Container(
@@ -266,12 +260,9 @@ class TutorialTarget {
               Container(
                 width: double.infinity,
                 child: InkWell(
-                  onTap: () {
-                    // if (id == 7) appController.setCurrentPage(3, true, 1);
-                    id == 8
-                        ? tutorialCoachMark?.finish()
-                        : tutorialCoachMark?.next();
-                  },
+                  onTap: () => id == 9
+                      ? tutorialCoachMark?.finish()
+                      : tutorialCoachMark?.next(),
                   child: Container(
                     padding: EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
@@ -287,7 +278,7 @@ class TutorialTarget {
                     child: Column(
                       children: <Widget>[
                         Text(
-                          id == 8 ? 'LET\'S GO' : 'NEXT TIP',
+                          id == 9 ? 'LET\'S GO' : 'NEXT TIP',
                           style: AppTextStyles.boldText24
                               .copyWith(color: Colors.white),
                           textAlign: TextAlign.center,
@@ -300,7 +291,7 @@ class TutorialTarget {
               Padding(
                 padding: EdgeInsets.all(5.0),
                 child: Text(
-                  '$id/8',
+                  '$id/9',
                   style: AppTextStyles.regularText12.copyWith(
                       color: AppColors.darkBlue, height: 1, fontSize: 10),
                 ),

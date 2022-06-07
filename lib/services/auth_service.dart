@@ -10,6 +10,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 
+import '../enums/error_type.dart';
+
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final _localAuth = LocalAuthentication();
@@ -159,7 +161,15 @@ class AuthenticationService {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
     } on FirebaseException catch (e) {
-      final message = StringUtils.generateExceptionMessage(e.code);
+      var message = '';
+
+      if (e.code == ErrorType.userNotFound) {
+        message =
+            'If the email address you submitted is a valid Be Still account, '
+            ' you will receive an email with instructions for resetting the password.';
+      } else {
+        message = StringUtils.generateExceptionMessage(e.code);
+      }
       await locator<LogService>().createLog(
           message, email, 'AUTHENTICATION/service/sendPasswordResetEmail');
       throw HttpException(message);

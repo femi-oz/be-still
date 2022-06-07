@@ -1,3 +1,4 @@
+import 'package:be_still/enums/error_type.dart';
 import 'package:be_still/flavor_config.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -149,7 +150,14 @@ class AuthenticationServiceV2 {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
     } on FirebaseException catch (e) {
-      final message = StringUtils.generateExceptionMessage(e.code);
+      var message = '';
+      if (e.code == ErrorType.userNotFound) {
+        message =
+            'If the email address you submitted is a valid Be Still account, '
+            'you will receive an email with instructions for resetting the password.';
+      } else {
+        message = StringUtils.generateExceptionMessage(e.code);
+      }
       throw HttpException(message);
     } catch (e) {
       final message = StringUtils.getErrorMessage(e);
