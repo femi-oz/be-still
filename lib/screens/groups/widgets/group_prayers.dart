@@ -49,12 +49,8 @@ class _GroupPrayersState extends State<GroupPrayers> {
         try {
           final group =
               Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
-          userIsMember =
-              await Provider.of<GroupProviderV2>(context, listen: false)
-                  .userIsGroupMember(group.id);
           Provider.of<PrayerProviderV2>(context, listen: false)
               .setGroupPrayers();
-
           await Provider.of<MiscProviderV2>(context, listen: false)
               .setPageTitle((group.name ?? '').toUpperCase());
           AppController appController = Get.find();
@@ -140,7 +136,7 @@ class _GroupPrayersState extends State<GroupPrayers> {
             child: OutlinedButton(
               onPressed: () {
                 AppController appController = Get.find();
-                appController.setCurrentPage(0, true, 7);
+                appController.setCurrentPage(3, true, 8);
               },
               style: ButtonStyle(
                 side: MaterialStateProperty.all<BorderSide>(
@@ -164,10 +160,17 @@ class _GroupPrayersState extends State<GroupPrayers> {
     );
   }
 
+  isUserMember() async {
+    final group =
+        Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
+    userIsMember = await Provider.of<GroupProviderV2>(context, listen: false)
+        .userIsGroupMember(group.id);
+  }
+
   @override
   Widget build(BuildContext context) {
+    isUserMember();
     final data = Provider.of<PrayerProviderV2>(context).filteredGroupPrayers;
-
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
