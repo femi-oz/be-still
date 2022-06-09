@@ -109,6 +109,18 @@ class _PrayerDetailsState extends State<PrayerDetails> {
     return day.toString() + suffix;
   }
 
+  @override
+  void initState() {
+    super.initState();
+    getPrayer();
+  }
+
+  getPrayer() async {
+    final prayerId = Provider.of<PrayerProviderV2>(context).currentPrayerId;
+    await Provider.of<PrayerProviderV2>(context, listen: false)
+        .getPrayer(prayerId: prayerId);
+  }
+
   // BuildContext selectedContext;
   @override
   void didChangeDependencies() {
@@ -132,19 +144,14 @@ class _PrayerDetailsState extends State<PrayerDetails> {
 
   @override
   Widget build(BuildContext context) {
-    final prayerId = Provider.of<PrayerProviderV2>(context).currentPrayerId;
+    final prayerData = Provider.of<PrayerProviderV2>(context).prayer;
+
     return Scaffold(
-      appBar: CustomAppBar(
-        showPrayerActions: false,
-      ),
-      body: StreamBuilder<PrayerDataModel>(
-          stream: Provider.of<PrayerProviderV2>(context)
-              .getPrayer(prayerId: prayerId),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting)
-              return BeStilDialog.getLoading(context, false);
-            if (snapshot.hasData) {
-              return Container(
+        appBar: CustomAppBar(
+          showPrayerActions: false,
+        ),
+        body: prayerData.status != Status.deleted
+            ? Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
@@ -207,8 +214,8 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                                                 .withOpacity(0.7),
                                     isScrollControlled: true,
                                     builder: (BuildContext context) {
-                                      return _buildMenu(snapshot.data,
-                                          _reminder(snapshot.data));
+                                      return _buildMenu(
+                                          prayerData, _reminder(prayerData));
                                     },
                                   ),
                                 ),
@@ -218,7 +225,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                         ],
                       ),
                     ),
-                    if ((snapshot.data?.status == Status.snoozed))
+                    if ((prayerData.status == Status.snoozed))
                       Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -231,15 +238,14 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                             Container(
                               margin: EdgeInsets.only(left: 7),
                               child: Text(
-                                  'Snoozed until ${DateFormat('MMM').format(snapshot.data?.snoozeEndDate ?? DateTime.now())} ${getDayText(snapshot.data?.snoozeEndDate?.day)}, ${DateFormat('yyyy h:mm a').format(snapshot.data?.snoozeEndDate ?? DateTime.now())}',
+                                  'Snoozed until ${DateFormat('MMM').format(prayerData.snoozeEndDate ?? DateTime.now())} ${getDayText(prayerData.snoozeEndDate?.day)}, ${DateFormat('yyyy h:mm a').format(prayerData.snoozeEndDate ?? DateTime.now())}',
                                   style: AppTextStyles.regularText12),
                             ),
                           ],
                         ),
                         SizedBox(width: 20),
                       ]),
-                    hasReminder(snapshot.data) &&
-                            isReminderActive(snapshot.data)
+                    hasReminder(prayerData) && isReminderActive(prayerData)
                         ? Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
@@ -269,15 +275,14 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                                                 vertical: 30),
                                             child: ReminderPicker(
                                               isGroup: false,
-                                              entityId: snapshot.data?.id ?? '',
+                                              entityId: prayerData.id ?? '',
                                               type: NotificationType.reminder,
-                                              reminder:
-                                                  _reminder(snapshot.data),
+                                              reminder: _reminder(prayerData),
                                               hideActionuttons: false,
                                               popTwice: false,
                                               onCancel: () =>
                                                   Navigator.of(context).pop(),
-                                              prayerData: snapshot.data,
+                                              prayerData: prayerData,
                                             ),
                                           ),
                                         ],
@@ -295,7 +300,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                                     ),
                                     Container(
                                       margin: EdgeInsets.only(left: 7),
-                                      child: Text(reminderString(snapshot.data),
+                                      child: Text(reminderString(prayerData),
                                           style: AppTextStyles.regularText12),
                                     ),
                                   ],
@@ -306,7 +311,7 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                           )
                         : Container(),
                     SizedBox(height: 10),
-                    if (((snapshot.data?.id) ?? '').isNotEmpty)
+                    if (((prayerData.id) ?? '').isNotEmpty)
                       Expanded(
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 20),
@@ -319,9 +324,9 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                             ),
                             borderRadius: BorderRadius.circular(15),
                           ),
-                          child: (snapshot.data?.updates ?? []).length > 0
-                              ? UpdateView(snapshot.data)
-                              : NoUpdateView(snapshot.data),
+                          child: (prayerData.updates ?? []).length > 0
+                              ? UpdateView(prayerData)
+                              : NoUpdateView(prayerData),
                         ),
                       ),
                     SizedBox(
@@ -329,57 +334,54 @@ class _PrayerDetailsState extends State<PrayerDetails> {
                     )
                   ],
                 ),
-              );
-            }
-            return Container(
-              padding: EdgeInsets.symmetric(horizontal: 100, vertical: 60),
-              child: Column(
-                children: [
-                  Opacity(
-                    opacity: 0.3,
-                    child: Text(
-                      'This prayer is no longer available',
-                      style: AppTextStyles.demiboldText34,
-                      textAlign: TextAlign.center,
-                    ),
-                  ).marginOnly(bottom: 50),
-                  Container(
-                    height: 30,
-                    padding: EdgeInsets.symmetric(horizontal: 15.0),
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      border: Border.all(
-                        color: AppColors.lightBlue4,
-                        width: 1,
+              )
+            : Container(
+                padding: EdgeInsets.symmetric(horizontal: 100, vertical: 60),
+                child: Column(
+                  children: [
+                    Opacity(
+                      opacity: 0.3,
+                      child: Text(
+                        'This prayer is no longer available',
+                        style: AppTextStyles.demiboldText34,
+                        textAlign: TextAlign.center,
                       ),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: OutlinedButton(
-                      onPressed: () {
-                        AppController appController = Get.find();
-                        appController.setCurrentPage(0, true, 7);
-                      },
-                      style: ButtonStyle(
-                        side: MaterialStateProperty.all<BorderSide>(
-                            BorderSide(color: Colors.transparent)),
+                    ).marginOnly(bottom: 50),
+                    Container(
+                      height: 30,
+                      padding: EdgeInsets.symmetric(horizontal: 15.0),
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        border: Border.all(
+                          color: AppColors.lightBlue4,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
                       ),
-                      child: FittedBox(
-                        fit: BoxFit.contain,
-                        child: Text(
-                          'Go to my prayers',
-                          style: TextStyle(
-                            color: AppColors.lightBlue4,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ).paddingSymmetric(horizontal: 10, vertical: 5),
+                      child: OutlinedButton(
+                        onPressed: () {
+                          AppController appController = Get.find();
+                          appController.setCurrentPage(0, true, 7);
+                        },
+                        style: ButtonStyle(
+                          side: MaterialStateProperty.all<BorderSide>(
+                              BorderSide(color: Colors.transparent)),
+                        ),
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
+                            'Go to my prayers',
+                            style: TextStyle(
+                              color: AppColors.lightBlue4,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ).paddingSymmetric(horizontal: 10, vertical: 5),
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          }),
-    );
+                  ],
+                ),
+              ));
   }
 }

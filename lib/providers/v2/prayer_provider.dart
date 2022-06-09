@@ -66,6 +66,9 @@ class PrayerProviderV2 with ChangeNotifier {
   List<FollowedPrayer> _userPrayers = [];
   List<FollowedPrayer> get userPrayers => _userPrayers;
 
+  PrayerDataModel _prayer = PrayerDataModel();
+  PrayerDataModel get prayer => _prayer;
+
   String _filterOption = Status.active;
   String get filterOption => _filterOption;
 
@@ -275,9 +278,12 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
-  Stream<PrayerDataModel> getPrayer({required String prayerId}) {
+  Future<void> getPrayer({required String prayerId}) async {
     try {
-      return _prayerService.getPrayer(prayerId);
+      _prayerService.getPrayer(prayerId).asBroadcastStream().listen((prayer) {
+        _prayer = prayer;
+        notifyListeners();
+      });
     } catch (e) {
       rethrow;
     }

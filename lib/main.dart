@@ -23,6 +23,8 @@ bool userFirestoreEmulator = false;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await FirebaseFirestore.instance.terminate();
+  await FirebaseFirestore.instance.clearPersistence();
   await notificationRequest();
 
   setupLocator();
