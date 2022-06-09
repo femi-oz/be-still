@@ -4,6 +4,7 @@ import 'package:be_still/locator.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/services/v2/auth_service.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
 class AuthenticationProviderV2 with ChangeNotifier {
@@ -78,6 +79,8 @@ class AuthenticationProviderV2 with ChangeNotifier {
   Future<void> signOut() async {
     try {
       await _authenticationServicev2.signOut();
+      await FirebaseFirestore.instance.terminate();
+      await FirebaseFirestore.instance.clearPersistence();
     } catch (e) {
       rethrow;
     }
