@@ -445,6 +445,18 @@ class GroupProviderV2 with ChangeNotifier {
     }
   }
 
+  Future<bool> userIsGroupMember(groupId) async {
+    try {
+      final group = await _groupService.getGroup(groupId);
+      final groupMembers = group.users;
+      bool isMember = (groupMembers ?? []).any((element) =>
+          element.userId == FirebaseAuth.instance.currentUser?.uid);
+      return isMember;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future flush() async {
     _userGroups = [];
     _allGroups = [];

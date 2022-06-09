@@ -32,6 +32,8 @@ class GroupPrayers extends StatefulWidget {
 }
 
 class _GroupPrayersState extends State<GroupPrayers> {
+  bool userIsMember = true;
+
   Future<bool> _onWillPop() async {
     // return (Navigator.of(context).pushNamedAndRemoveUntil(
     //         EntryScreen.routeName, (Route<dynamic> route) => false)) ??
@@ -47,6 +49,9 @@ class _GroupPrayersState extends State<GroupPrayers> {
         try {
           final group =
               Provider.of<GroupProviderV2>(context, listen: false).currentGroup;
+          userIsMember =
+              await Provider.of<GroupProviderV2>(context, listen: false)
+                  .userIsGroupMember(group.id);
           Provider.of<PrayerProviderV2>(context, listen: false)
               .setGroupPrayers();
 
@@ -108,9 +113,60 @@ class _GroupPrayersState extends State<GroupPrayers> {
     }
   }
 
+  Widget accessDeniedContainer() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 100, vertical: 60),
+      child: Column(
+        children: [
+          Opacity(
+            opacity: 0.3,
+            child: Text(
+              'You are no longer a member of this group.',
+              style: AppTextStyles.demiboldText34,
+              textAlign: TextAlign.center,
+            ),
+          ).marginOnly(bottom: 50),
+          Container(
+            height: 30,
+            padding: EdgeInsets.symmetric(horizontal: 15.0),
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              border: Border.all(
+                color: AppColors.lightBlue4,
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: OutlinedButton(
+              onPressed: () {
+                AppController appController = Get.find();
+                appController.setCurrentPage(0, true, 7);
+              },
+              style: ButtonStyle(
+                side: MaterialStateProperty.all<BorderSide>(
+                    BorderSide(color: Colors.transparent)),
+              ),
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: Text(
+                  'Go to groups',
+                  style: TextStyle(
+                    color: AppColors.lightBlue4,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ).paddingSymmetric(horizontal: 10, vertical: 5),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    var data = Provider.of<PrayerProviderV2>(context).filteredGroupPrayers;
+    final data = Provider.of<PrayerProviderV2>(context).filteredGroupPrayers;
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -136,117 +192,127 @@ class _GroupPrayersState extends State<GroupPrayers> {
               fit: BoxFit.cover,
             ),
           ),
-          child: Container(
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  SizedBox(height: 20),
-                  data.length == 0
-                      ? Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 60, vertical: 60),
-                          child: Opacity(
-                            opacity: 0.3,
-                            child: Text(
-                              message,
-                              style: AppTextStyles.demiboldText34,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        )
-                      : Container(
+          child: userIsMember
+              ? Container(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(height: 20),
+                        data.length == 0
+                            ? Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 60, vertical: 60),
+                                child: Opacity(
+                                  opacity: 0.3,
+                                  child: Text(
+                                    message,
+                                    style: AppTextStyles.demiboldText34,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              )
+                            : Container(
+                                padding: EdgeInsets.only(left: 20),
+                                child: Column(
+                                  children: <Widget>[
+                                    ...data
+                                        .map((e) => GestureDetector(
+                                            onTap: () async {
+                                              try {
+                                                Provider.of<PrayerProviderV2>(
+                                                        context,
+                                                        listen: false)
+                                                    .setCurrentPrayerId(
+                                                        e.id ?? '');
+                                                AppController appController =
+                                                    Get.find();
+                                                appController.setCurrentPage(
+                                                    9, true, 8);
+                                              } on HttpException catch (e, s) {
+                                                final user =
+                                                    Provider.of<UserProviderV2>(
+                                                            context,
+                                                            listen: false)
+                                                        .currentUser;
+                                                BeStilDialog.showErrorDialog(
+                                                    context,
+                                                    StringUtils.getErrorMessage(
+                                                        e),
+                                                    user,
+                                                    s);
+                                              } catch (e, s) {
+                                                final user =
+                                                    Provider.of<UserProviderV2>(
+                                                            context,
+                                                            listen: false)
+                                                        .currentUser;
+                                                BeStilDialog.showErrorDialog(
+                                                    context,
+                                                    StringUtils.getErrorMessage(
+                                                        e),
+                                                    user,
+                                                    s);
+                                              }
+                                            },
+                                            child: GroupPrayerCard(
+                                                prayerData: e, timeago: '')))
+                                        .toList(),
+                                  ],
+                                ),
+                              ),
+                        // currentPrayerType == Status.archived ||
+                        //         currentPrayerType == Status.answered
+                        //     ? Container()
+                        //     :
+                        // groupUser.role == GroupUserRole.admin
+                        //     ?
+                        Container(
                           padding: EdgeInsets.only(left: 20),
-                          child: Column(
-                            children: <Widget>[
-                              ...data
-                                  .map((e) => GestureDetector(
-                                      onTap: () async {
-                                        try {
-                                          Provider.of<PrayerProviderV2>(context,
-                                                  listen: false)
-                                              .setCurrentPrayerId(e.id ?? '');
-                                          AppController appController =
-                                              Get.find();
-                                          appController.setCurrentPage(
-                                              9, true, 8);
-                                        } on HttpException catch (e, s) {
-                                          final user =
-                                              Provider.of<UserProviderV2>(
-                                                      context,
-                                                      listen: false)
-                                                  .currentUser;
-                                          BeStilDialog.showErrorDialog(
-                                              context,
-                                              StringUtils.getErrorMessage(e),
-                                              user,
-                                              s);
-                                        } catch (e, s) {
-                                          final user =
-                                              Provider.of<UserProviderV2>(
-                                                      context,
-                                                      listen: false)
-                                                  .currentUser;
-                                          BeStilDialog.showErrorDialog(
-                                              context,
-                                              StringUtils.getErrorMessage(e),
-                                              user,
-                                              s);
-                                        }
-                                      },
-                                      child: GroupPrayerCard(
-                                          prayerData: e, timeago: '')))
-                                  .toList(),
-                            ],
+                          child: LongButton(
+                            onPress: () {
+                              try {
+                                Provider.of<PrayerProviderV2>(context,
+                                        listen: false)
+                                    .setEditMode(false, true);
+
+                                AppController appController = Get.find();
+                                appController.setCurrentPage(1, true, 8);
+                              } on HttpException catch (e, s) {
+                                final user = Provider.of<UserProviderV2>(
+                                        context,
+                                        listen: false)
+                                    .currentUser;
+                                BeStilDialog.showErrorDialog(context,
+                                    StringUtils.getErrorMessage(e), user, s);
+                              } catch (e, s) {
+                                final user = Provider.of<UserProviderV2>(
+                                        context,
+                                        listen: false)
+                                    .currentUser;
+                                BeStilDialog.showErrorDialog(context,
+                                    StringUtils.getErrorMessage(e), user, s);
+                              }
+                            },
+                            text: 'Add New Prayer',
+                            backgroundColor:
+                                Provider.of<ThemeProviderV2>(context)
+                                        .isDarkModeEnabled
+                                    ? AppColors.backgroundColor[1]
+                                    : AppColors.lightBlue3,
+                            textColor: Provider.of<ThemeProviderV2>(context)
+                                    .isDarkModeEnabled
+                                ? AppColors.lightBlue3
+                                : Colors.white,
+                            icon: AppIcons.bestill_add,
                           ),
                         ),
-                  // currentPrayerType == Status.archived ||
-                  //         currentPrayerType == Status.answered
-                  //     ? Container()
-                  //     :
-                  // groupUser.role == GroupUserRole.admin
-                  //     ?
-                  Container(
-                    padding: EdgeInsets.only(left: 20),
-                    child: LongButton(
-                      onPress: () {
-                        try {
-                          Provider.of<PrayerProviderV2>(context, listen: false)
-                              .setEditMode(false, true);
-
-                          AppController appController = Get.find();
-                          appController.setCurrentPage(1, true, 8);
-                        } on HttpException catch (e, s) {
-                          final user = Provider.of<UserProviderV2>(context,
-                                  listen: false)
-                              .currentUser;
-                          BeStilDialog.showErrorDialog(
-                              context, StringUtils.getErrorMessage(e), user, s);
-                        } catch (e, s) {
-                          final user = Provider.of<UserProviderV2>(context,
-                                  listen: false)
-                              .currentUser;
-                          BeStilDialog.showErrorDialog(
-                              context, StringUtils.getErrorMessage(e), user, s);
-                        }
-                      },
-                      text: 'Add New Prayer',
-                      backgroundColor: Provider.of<ThemeProviderV2>(context)
-                              .isDarkModeEnabled
-                          ? AppColors.backgroundColor[1]
-                          : AppColors.lightBlue3,
-                      textColor: Provider.of<ThemeProviderV2>(context)
-                              .isDarkModeEnabled
-                          ? AppColors.lightBlue3
-                          : Colors.white,
-                      icon: AppIcons.bestill_add,
+                        // : Container(),
+                        SizedBox(height: 80),
+                      ],
                     ),
                   ),
-                  // : Container(),
-                  SizedBox(height: 80),
-                ],
-              ),
-            ),
-          ),
+                )
+              : accessDeniedContainer(),
         ),
       ),
     );
