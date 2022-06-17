@@ -69,6 +69,19 @@ class _CustomDrawerState extends State<CustomDrawer> {
     }
   }
 
+  _launchPrivacyURL() async {
+    try {
+      if (await canLaunch('https://www.second.org/privacy-policy/')) {
+        await launch('https://www.second.org/privacy-policy/');
+      } else {
+        throw 'Could not launch https://www.second.org/privacy-policy/';
+      }
+    } catch (e, s) {
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), null, s);
+    }
+  }
+
   _launchURL(url) async {
     try {
       if (Platform.isAndroid) {
@@ -378,17 +391,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 15),
                           child: InkWell(
-                            onTap: () => showDialog(
-                              context: context,
-                              builder: (context) {
-                                return Dialog(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(20)),
-                                    ),
-                                    child: TermsAndCondition());
-                              },
-                            ),
+                            onTap: () => _launchPrivacyURL(),
                             child: Container(
                               child: Text("TERMS AND CONDITION",
                                   style: AppTextStyles.drawerMenu.copyWith(

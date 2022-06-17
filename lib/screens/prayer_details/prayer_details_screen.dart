@@ -116,7 +116,8 @@ class _PrayerDetailsState extends State<PrayerDetails> {
   }
 
   getPrayer() async {
-    final prayerId = Provider.of<PrayerProviderV2>(context).currentPrayerId;
+    final prayerId =
+        Provider.of<PrayerProviderV2>(context, listen: false).currentPrayerId;
     await Provider.of<PrayerProviderV2>(context, listen: false)
         .getPrayer(prayerId: prayerId);
   }

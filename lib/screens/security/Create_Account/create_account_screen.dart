@@ -16,6 +16,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CreateAccountScreen extends StatefulWidget {
   static const routeName = '/create-account';
@@ -62,6 +63,19 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       _selectedDate = pickedDate;
       _dobController.text = DateFormat('MM/dd/yyyy').format(_selectedDate);
     });
+  }
+
+  _launchPrivacyURL() async {
+    try {
+      if (await canLaunch('https://www.second.org/privacy-policy/')) {
+        await launch('https://www.second.org/privacy-policy/');
+      } else {
+        throw 'Could not launch https://www.second.org/privacy-policy/';
+      }
+    } catch (e, s) {
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), null, s);
+    }
   }
 
   _agreeTerms(bool value) {
@@ -422,24 +436,14 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             Column(
               children: <Widget>[
                 InkWell(
-                  child: Container(
-                    width: double.infinity,
-                    child: Text(
-                      'Read the Terms of Use',
-                      style: AppTextStyles.regularText15,
+                    child: Container(
+                      width: double.infinity,
+                      child: Text(
+                        'Read the Terms of Use',
+                        style: AppTextStyles.regularText15,
+                      ),
                     ),
-                  ),
-                  onTap: () => showDialog(
-                    context: context,
-                    builder: (context) {
-                      return Dialog(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                          ),
-                          child: TermsAndCondition());
-                    },
-                  ),
-                ),
+                    onTap: () => _launchPrivacyURL()),
                 SizedBox(height: 10),
                 Row(
                   children: <Widget>[
