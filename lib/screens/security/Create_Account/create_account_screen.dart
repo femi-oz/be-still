@@ -67,10 +67,23 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   _launchPrivacyURL() async {
     try {
-      if (await canLaunch('https://www.second.org/privacy-policy/')) {
-        await launch('https://www.second.org/privacy-policy/');
+      if (await canLaunch('https://bestillapp.com/privacy-policy/')) {
+        await launch('https://bestillapp.com/privacy-policy/');
       } else {
-        throw 'Could not launch https://www.second.org/privacy-policy/';
+        throw 'Could not launch https://bestillapp.com/privacy-policy/';
+      }
+    } catch (e, s) {
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), null, s);
+    }
+  }
+
+  _launchTermsURL() async {
+    try {
+      if (await canLaunch('https://bestillapp.com/terms-of-use/')) {
+        await launch('https://bestillapp.com/terms-of-use/');
+      } else {
+        throw 'Could not launch https://bestillapp.com/terms-of-use/';
       }
     } catch (e, s) {
       BeStilDialog.showErrorDialog(
@@ -439,11 +452,21 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     child: Container(
                       width: double.infinity,
                       child: Text(
-                        'Read the Terms of Use',
+                        'Read the Privacy Policy',
                         style: AppTextStyles.regularText15,
                       ),
                     ),
                     onTap: () => _launchPrivacyURL()),
+                SizedBox(height: 15),
+                InkWell(
+                    child: Container(
+                      width: double.infinity,
+                      child: Text(
+                        'Read the Terms of Use',
+                        style: AppTextStyles.regularText15,
+                      ),
+                    ),
+                    onTap: () => _launchTermsURL()),
                 SizedBox(height: 10),
                 Row(
                   children: <Widget>[

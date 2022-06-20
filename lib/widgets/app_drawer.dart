@@ -71,10 +71,23 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   _launchPrivacyURL() async {
     try {
-      if (await canLaunch('https://www.second.org/privacy-policy/')) {
-        await launch('https://www.second.org/privacy-policy/');
+      if (await canLaunch('https://bestillapp.com/privacy-policy/')) {
+        await launch('https://bestillapp.com/privacy-policy/');
       } else {
-        throw 'Could not launch https://www.second.org/privacy-policy/';
+        throw 'Could not launch https://bestillapp.com/privacy-policy/';
+      }
+    } catch (e, s) {
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), null, s);
+    }
+  }
+
+  _launchTermsURL() async {
+    try {
+      if (await canLaunch('https://bestillapp.com/terms-of-use/')) {
+        await launch('https://bestillapp.com/terms-of-use/');
+      } else {
+        throw 'Could not launch https://bestillapp.com/terms-of-use/';
       }
     } catch (e, s) {
       BeStilDialog.showErrorDialog(
@@ -393,7 +406,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           child: InkWell(
                             onTap: () => _launchPrivacyURL(),
                             child: Container(
-                              child: Text("TERMS AND CONDITION",
+                              child: Text("PRIVACY POLICY",
+                                  style: AppTextStyles.drawerMenu.copyWith(
+                                      color: AppColors.drawerMenuColor)),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          child: InkWell(
+                            onTap: () => _launchTermsURL(),
+                            child: Container(
+                              child: Text("TERMS OF USE",
                                   style: AppTextStyles.drawerMenu.copyWith(
                                       color: AppColors.drawerMenuColor)),
                             ),
