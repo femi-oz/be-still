@@ -36,10 +36,12 @@ class GeneralSettings extends StatefulWidget {
   _GeneralSettingsState createState() => _GeneralSettingsState();
 }
 
-enum _ModalType { email, password }
+enum _ModalType { email, password, firstname, lastname }
 
 class _GeneralSettingsState extends State<GeneralSettings> {
   TextEditingController _newEmail = TextEditingController();
+  TextEditingController _newFirstName = TextEditingController();
+  TextEditingController _newLastName = TextEditingController();
   TextEditingController _newPassword = TextEditingController();
   TextEditingController _newConfirmPassword = TextEditingController();
   TextEditingController _currentPassword = TextEditingController();
@@ -275,6 +277,46 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     }
   }
 
+  void _updateFirstName() async {
+    try {
+      await Provider.of<UserProviderV2>(context, listen: false)
+          .updateUserSettings('firstName', _newFirstName.text);
+
+      BeStilDialog.showSuccessDialog(
+          context, 'Your first name has been updated successfully');
+      _newFirstName.clear();
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e.message ?? '', user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    }
+  }
+
+  void _updateLastName() async {
+    try {
+      await Provider.of<UserProviderV2>(context, listen: false)
+          .updateUserSettings('lastName', _newLastName.text);
+
+      BeStilDialog.showSuccessDialog(
+          context, 'Your last name has been updated successfully');
+      _newLastName.clear();
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(context, e.message ?? '', user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    }
+  }
+
   void _updatePassword() async {
     try {
       await Provider.of<UserProviderV2>(context, listen: false)
@@ -317,6 +359,12 @@ class _GeneralSettingsState extends State<GeneralSettings> {
       Future.delayed(Duration(milliseconds: 300), () async {
         if (type == _ModalType.email) {
           _updateEmail(_user);
+        }
+        if (type == _ModalType.firstname) {
+          _updateFirstName();
+        }
+        if (type == _ModalType.lastname) {
+          _updateLastName();
         }
 
         if (type == _ModalType.password) {
@@ -380,6 +428,24 @@ class _GeneralSettingsState extends State<GeneralSettings> {
               ],
             ),
             SizedBox(height: 30),
+            CustomEditField(
+              value: _currentUser.firstName ?? '',
+              onPressed: () {
+                _update(_ModalType.firstname, context);
+              },
+              showLabel: false,
+              label: 'First Name',
+            ),
+            SizedBox(height: 10),
+            CustomEditField(
+              value: _currentUser.lastName ?? '',
+              onPressed: () {
+                _update(_ModalType.lastname, context);
+              },
+              showLabel: false,
+              label: 'Last Name',
+            ),
+            SizedBox(height: 10),
             CustomEditField(
               value: _currentUser.email ?? '',
               onPressed: () {
@@ -451,6 +517,7 @@ class _GeneralSettingsState extends State<GeneralSettings> {
     final _formKey = GlobalKey<FormState>();
     bool _autoValidate = false;
     _newEmail.text = _user.email ?? '';
+    _newFirstName.text = _user.firstName ?? '';
     final alert = AlertDialog(
         insetPadding: EdgeInsets.all(10),
         backgroundColor: AppColors.backgroundColor[1],
@@ -466,6 +533,16 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                   else if (type == _ModalType.password)
                     Text(
                       'Update your Password',
+                      style: AppTextStyles.boldText20,
+                    )
+                  else if (type == _ModalType.firstname)
+                    Text(
+                      'Update your First Name',
+                      style: AppTextStyles.boldText20,
+                    )
+                  else if (type == _ModalType.lastname)
+                    Text(
+                      'Update your Last Name',
                       style: AppTextStyles.boldText20,
                     ),
                   SizedBox(height: 10.0),
@@ -485,6 +562,30 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                             isEmail: true,
                             label: 'New Email',
                             controller: _newEmail,
+                          ),
+                        SizedBox(
+                          height: 15.0,
+                        ),
+                        if (type == _ModalType.firstname)
+                          CustomInput(
+                            textkey: GlobalKey<FormFieldState>(),
+                            showSuffix: false,
+                            isRequired: true,
+                            isEmail: false,
+                            label: 'New First Name',
+                            controller: _newFirstName,
+                          ),
+                        SizedBox(
+                          height: 15.0,
+                        ),
+                        if (type == _ModalType.lastname)
+                          CustomInput(
+                            textkey: GlobalKey<FormFieldState>(),
+                            showSuffix: false,
+                            isRequired: true,
+                            isEmail: false,
+                            label: 'New Last Name',
+                            controller: _newLastName,
                           ),
                         SizedBox(
                           height: 15.0,

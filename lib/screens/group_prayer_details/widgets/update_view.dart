@@ -242,6 +242,12 @@ class _UpdateView extends State<UpdateView> {
         });
   }
 
+  String authorName(String id) {
+    final creatorName = Provider.of<UserProviderV2>(context, listen: false)
+        .getPrayerCreatorName(id);
+    return creatorName;
+  }
+
   Widget build(BuildContext context) {
     // final prayerData = Provider.of<GroupPrayerProvider>(context).currentPrayer;
     var updates = widget.prayerData?.updates ?? [];
@@ -260,7 +266,7 @@ class _UpdateView extends State<UpdateView> {
                   ? Container(
                       margin: EdgeInsets.only(bottom: 15),
                       child: Text(
-                        widget.prayerData?.creatorName ?? '',
+                        '${widget.prayerData?.creatorName ?? ''}',
                         style: AppTextStyles.regularText18b.copyWith(
                             color: AppColors.lightBlue4,
                             fontWeight: FontWeight.w500),
@@ -274,13 +280,15 @@ class _UpdateView extends State<UpdateView> {
                     updates[i].modifiedDate,
                     updates[i].description,
                     widget.prayerData?.tags ?? <TagModel>[],
-                    context),
+                    context,
+                    updates[i].createdBy),
               _buildDetail(
                   'Initial Prayer | ',
                   widget.prayerData?.createdDate ?? DateTime.now(),
                   widget.prayerData?.description,
                   widget.prayerData?.tags ?? <TagModel>[],
-                  context),
+                  context,
+                  ''),
             ],
           ),
         ),
@@ -289,11 +297,12 @@ class _UpdateView extends State<UpdateView> {
   }
 
   Widget _buildDetail(
-      time, modifiedOn, description, List<TagModel> tags, context) {
+      time, modifiedOn, description, List<TagModel> tags, context, creatorId) {
     final _currentUserId = FirebaseAuth.instance.currentUser?.uid;
 
     return Container(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -336,6 +345,13 @@ class _UpdateView extends State<UpdateView> {
               ),
             ],
           ),
+          creatorId != ''
+              ? Text(
+                  '${authorName(creatorId)}',
+                  style: AppTextStyles.regularText18b.copyWith(
+                      color: AppColors.prayerModeBorder, fontSize: 16),
+                )
+              : SizedBox.shrink(),
           Container(
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 20),
