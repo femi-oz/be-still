@@ -249,7 +249,7 @@ class _UpdateViewState extends State<UpdateView> {
         child: Container(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
+            // mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               widget.prayer.userId != FirebaseAuth.instance.currentUser?.uid
                   ? Container(
@@ -265,7 +265,7 @@ class _UpdateViewState extends State<UpdateView> {
               for (int i = 0; i < updates.length; i++)
                 Container(
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                    // mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -295,7 +295,7 @@ class _UpdateViewState extends State<UpdateView> {
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(
-                            vertical: 30.0, horizontal: 20),
+                            vertical: 10.0, horizontal: 20),
                         child: i == 0
                             ? Row(
                                 children: [
@@ -426,7 +426,7 @@ class _UpdateViewState extends State<UpdateView> {
                     ),
                     Padding(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       child: Row(
                         children: [
                           Flexible(

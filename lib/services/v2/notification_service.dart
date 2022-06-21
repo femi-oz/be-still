@@ -26,6 +26,8 @@ class NotificationServiceV2 {
   final CollectionReference<Map<String, dynamic>>
       _notificationCollectionReference =
       FirebaseFirestore.instance.collection("notifications");
+  final CollectionReference<Map<String, dynamic>> _prayerCollectionReference =
+      FirebaseFirestore.instance.collection("prayers");
   final CollectionReference<Map<String, dynamic>>
       _localNotificationCollectionReference =
       FirebaseFirestore.instance.collection("local_notifications");
@@ -253,11 +255,14 @@ class NotificationServiceV2 {
               element.prayerId == prayerId)
           .map((e) => e.id)
           .toList();
+      WriteBatch batch = FirebaseFirestore.instance.batch();
       for (final notificationId in notificationIds) {
-        _notificationCollectionReference
-            .doc(notificationId)
-            .update({'status': Status.inactive});
+        batch.update(_notificationCollectionReference.doc(notificationId),
+            {'status': Status.inactive});
       }
+      batch.update(
+          _prayerCollectionReference.doc(prayerId), {'isInappropriate': false});
+      batch.commit();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

@@ -523,6 +523,13 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
             GroupUserRole.member;
 
     bool isOwner = widget.prayerData?.createdBy == _currentUser.id;
+    bool isFlagged = widget.prayerData?.isInappropriate ?? false;
+    bool isDisabled = false;
+    if (isFlagged) {
+      isDisabled = true;
+    } else if (isOwner || !isMember) {
+      isDisabled = true;
+    }
 
     return Container(
       padding: EdgeInsets.only(top: 50),
@@ -837,7 +844,7 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                                 : AppColors.white,
                         icon: Icons.info,
                         text: 'Flag as inappropriate',
-                        isDisabled: isOwner || !isMember,
+                        isDisabled: isDisabled,
                         onPress: () => isOwner || !isMember
                             ? () {}
                             : _flagAsInappropriate(group)),
