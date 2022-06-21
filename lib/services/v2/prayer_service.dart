@@ -617,6 +617,18 @@ class PrayerServiceV2 {
     }
   }
 
+  Future<void> flagPrayerAsInappropriate({required String prayerId}) async {
+    try {
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
+      await _prayerDataCollectionReference
+          .doc(prayerId)
+          .update({'isInappropriate': true});
+    } catch (e) {
+      throw e;
+    }
+  }
+
   Future<void> markPrayerAsAnswered({
     required String prayerId,
     required List<FollowerModel> followers,

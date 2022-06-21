@@ -182,6 +182,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                 (user.firstName ?? '') + ' ' + (user.lastName ?? ''),
                 tokens,
                 group.name ?? '');
+        await Provider.of<PrayerProviderV2>(context, listen: false)
+            .flagPrayerAsInappropriate(widget.prayerData?.id ?? '');
       }
 
       clearSearch();

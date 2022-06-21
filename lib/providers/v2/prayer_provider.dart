@@ -146,6 +146,10 @@ class PrayerProviderV2 with ChangeNotifier {
     }
   }
 
+  Future<void> flagPrayerAsInappropriate(String prayerId) async {
+    await _prayerService.flagPrayerAsInappropriate(prayerId: prayerId);
+  }
+
   Future<void> setGroupPrayers() async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
@@ -157,7 +161,6 @@ class PrayerProviderV2 with ChangeNotifier {
           .getGroupPrayers(groupId)
           .asBroadcastStream()
           .listen((event) {
-        print(groupId);
         _groupPrayers = event;
         filterGroupPrayers();
         notifyListeners();
