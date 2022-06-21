@@ -248,6 +248,12 @@ class _UpdateView extends State<UpdateView> {
         });
   }
 
+  String authorName(String id) {
+    final creatorName = Provider.of<UserProviderV2>(context, listen: false)
+        .getPrayerCreatorName(id);
+    return creatorName;
+  }
+
   Widget build(BuildContext context) {
     // final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
     List<UpdateModel> updates = widget.prayerData?.updates ?? [];
@@ -282,13 +288,15 @@ class _UpdateView extends State<UpdateView> {
                     updates[i].modifiedDate,
                     updates[i].description,
                     widget.prayerData?.tags ?? <TagModel>[],
-                    context),
+                    context,
+                    updates[i].createdBy),
               _buildDetail(
                   'Initial Prayer | ',
                   widget.prayerData?.createdDate ?? DateTime.now(),
                   widget.prayerData?.description ?? '',
                   widget.prayerData?.tags,
-                  context),
+                  context,
+                  ''),
             ],
           ),
         ),
@@ -297,12 +305,13 @@ class _UpdateView extends State<UpdateView> {
   }
 
   Widget _buildDetail(
-      time, modifiedOn, description, List<TagModel>? tags, context) {
-    // final prayerData = Provider.of<PrayerProvider>(context).currentPrayer;
+      time, modifiedOn, description, List<TagModel>? tags, context, creatorId) {
     final userId = FirebaseAuth.instance.currentUser?.uid;
     bool isOwner = widget.prayerData?.createdBy == userId;
+    bool isGroupPrayer = widget.prayerData?.isGroup ?? false;
     return Container(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -345,6 +354,13 @@ class _UpdateView extends State<UpdateView> {
               ),
             ],
           ),
+          isGroupPrayer && creatorId != ''
+              ? Text(
+                  '${authorName(creatorId)}',
+                  style: AppTextStyles.regularText18b.copyWith(
+                      color: AppColors.prayerModeBorder, fontSize: 16),
+                )
+              : SizedBox.shrink(),
           Container(
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 20),
