@@ -67,6 +67,26 @@ class _AddPrayerState extends State<AddPrayer> {
   SaveOption? selected;
   final widgetKey = GlobalKey();
 
+  showContactConsentModal() {
+    BeStilDialog.showContactAccessDialog(context,
+        onConfirm: () => confirmContactConsent(),
+        onCancel: () => denyContactConsent(),
+        title: 'Contacts',
+        message:
+            'Bestill collects contact data in order to enable the tag feature. This allows Bestill to send email or text messages to your tagged contacts.',
+        confirmText: 'OK',
+        cancelText: 'Not Now');
+  }
+
+  confirmContactConsent() {
+    deniedTapped = false;
+    _getContactPermission();
+  }
+
+  denyContactConsent() {
+    deniedTapped = true;
+  }
+
   @override
   void didChangeDependencies() {
     if (_isInit) {
@@ -310,6 +330,10 @@ class _AddPrayerState extends State<AddPrayer> {
 
   @override
   void initState() {
+    super.initState();
+    final user =
+        Provider.of<UserProviderV2>(context, listen: false).currentUser;
+
     final isEdit = Provider.of<PrayerProviderV2>(context, listen: false).isEdit;
     _descriptionController.text = isEdit
         ? (Provider.of<PrayerProviderV2>(context, listen: false).prayerToEdit)
@@ -318,6 +342,13 @@ class _AddPrayerState extends State<AddPrayer> {
         : '';
 
     _backupDescription = _descriptionController.text;
+    if (!(user.consentViewed ?? false)) {
+      Future.delayed(Duration(seconds: 1), () {
+        showContactConsentModal();
+        Provider.of<UserProviderV2>(context, listen: false)
+            .updateUserSettings('consentViewed', true);
+      });
+    }
 
     if (isEdit) {
       showDropdown = false;
@@ -366,7 +397,6 @@ class _AddPrayerState extends State<AddPrayer> {
         }
       });
     }
-    super.initState();
   }
 
   Future<void> getContacts() async {
@@ -408,7 +438,7 @@ class _AddPrayerState extends State<AddPrayer> {
       if (tagText.length > 0 &&
           Settings.enabledContactPermission == false &&
           !deniedTapped) {
-        _getContactPermission();
+        showContactConsentModal();
       } else {
         if (getContactCalled == false &&
             Settings.enabledContactPermission == true) {

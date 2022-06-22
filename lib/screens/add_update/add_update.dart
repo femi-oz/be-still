@@ -1,3 +1,4 @@
+import 'dart:html';
 import 'dart:io';
 
 import 'package:be_still/controllers/app_controller.dart';
@@ -51,10 +52,20 @@ class _AddUpdateState extends State<AddUpdate> {
   String displayName = '';
   List<String> tagList = [];
   double numberOfLines = 5.0;
+  PermissionStatus status = PermissionStatus.denied;
 
   @override
   void initState() {
     super.initState();
+    final user =
+        Provider.of<UserProviderV2>(context, listen: false).currentUser;
+    if (!(user.consentViewed ?? false)) {
+      Future.delayed(Duration(seconds: 1), () {
+        showContactConsentModal();
+        Provider.of<UserProviderV2>(context, listen: false)
+            .updateUserSettings('consentViewed', true);
+      });
+    }
   }
 
   bool isInit = true;
@@ -90,6 +101,26 @@ class _AddUpdateState extends State<AddUpdate> {
     super.didChangeDependencies();
   }
 
+  showContactConsentModal() {
+    BeStilDialog.showContactAccessDialog(context,
+        onConfirm: () => confirmContactConsent(),
+        onCancel: () => denyContactConsent(),
+        title: 'Contacts',
+        message:
+            'Bestill collects contact data in order to enable the tag feature. This allows Bestill to send email or text messages to your tagged contacts.',
+        confirmText: 'OK',
+        cancelText: 'Not Now');
+  }
+
+  confirmContactConsent() async {
+    status = PermissionStatus.granted;
+    _getContactPermission();
+  }
+
+  denyContactConsent() {
+    status = PermissionStatus.denied;
+  }
+
   Future<void> getContacts() async {
     if (Settings.enabledContactPermission) {
       final _localContacts =
@@ -112,7 +143,6 @@ class _AddUpdateState extends State<AddUpdate> {
 
   Future<void> _onTextChange(String val) async {
     try {
-      final status = await Permission.contacts.status;
       final cursorPos = _descriptionController.selection.base.offset;
       var stringBeforeCursor = val.substring(0, cursorPos);
       tags = stringBeforeCursor.split(new RegExp(r"\s"));
@@ -121,7 +151,7 @@ class _AddUpdateState extends State<AddUpdate> {
       if (tagText.length > 1 &&
           Settings.enabledContactPermission == false &&
           status != PermissionStatus.denied) {
-        _getContactPermission();
+        showContactConsentModal();
       } else {
         if (getContactCalled == false &&
             Settings.enabledContactPermission == true) {
