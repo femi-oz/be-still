@@ -72,7 +72,7 @@ class _AddUpdateState extends State<AddUpdate> {
   @override
   void didChangeDependencies() {
     if (isInit) {
-      WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
         try {
           var userId = Provider.of<UserProviderV2>(context, listen: false)
               .currentUser

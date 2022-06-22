@@ -13,8 +13,6 @@ import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/utils/navigation.dart';
 import 'package:be_still/utils/string_utils.dart';
 import 'package:be_still/widgets/initial_tutorial.dart';
-import 'package:be_still/widgets/initial_tutorial_group.dart';
-import 'package:be_still/widgets/terms_and_condition.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';

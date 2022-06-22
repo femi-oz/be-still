@@ -61,7 +61,7 @@ class _EntryScreenState extends State<EntryScreen> {
     try {
       final miscProvider = Provider.of<MiscProviderV2>(context, listen: false);
 
-      WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
         final user = await Provider.of<UserProviderV2>(context, listen: false)
             .getUserDataById(FirebaseAuth.instance.currentUser?.uid ?? '');
 

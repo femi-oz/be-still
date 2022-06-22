@@ -3,7 +3,6 @@ import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/locator.dart';
 import 'package:be_still/models/http_exception.dart';
-import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/v2/auth_provider.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
@@ -21,7 +20,6 @@ import 'package:be_still/utils/string_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -56,7 +54,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      WidgetsBinding.instance?.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         startTime();
       });
       setState(() => _isInit = false);
@@ -69,24 +67,12 @@ class _SplashScreenState extends State<SplashScreen>
     return new Timer(duration, () => route());
   }
 
-  void _getPermissions() async {
-    try {
-      if (Settings.isAppInit) {
-        await Permission.contacts.request().then((p) =>
-            Settings.enabledContactPermission = p == PermissionStatus.granted);
-      }
-    } catch (e, s) {
-      BeStilDialog.showErrorDialog(
-          context, StringUtils.getErrorMessage(e), UserDataModel(), s);
-    }
-  }
-
   Future<void> setRouteDestination() async {
     try {
       final message =
           Provider.of<NotificationProviderV2>(context, listen: false).message;
       if ((message.entityId ?? '').isNotEmpty) {
-        WidgetsBinding.instance?.addPostFrameCallback((_) async {
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
           if (message.type == NotificationType.prayer_time) {
             AppController appController = Get.find();
             appController.setCurrentPage(2, false, 0);

@@ -43,7 +43,7 @@ class _GroupPrayerCardState extends State<GroupPrayerCard> {
 
   @override
   void initState() {
-    WidgetsBinding.instance?.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {} on HttpException catch (e, s) {
         final user =
             Provider.of<UserProviderV2>(context, listen: false).currentUser;
