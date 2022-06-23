@@ -112,6 +112,7 @@ class _SplashScreenState extends State<SplashScreen>
   route() async {
     try {
       final isLoggedIn = await _authenticationProvider.isUserLoggedIn();
+
       if (Settings.enableLocalAuth) {
         await closeAllStreams();
         Navigator.of(context).pushNamedAndRemoveUntil(

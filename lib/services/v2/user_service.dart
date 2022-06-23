@@ -66,6 +66,7 @@ class UserServiceV2 {
         enableSharingViaEmail: true,
         enableSharingViaText: true,
         enableNotificationsForAllGroups: true,
+        consentViewed: false,
         doNotDisturb: true,
         createdBy: uid,
         modifiedBy: uid,
