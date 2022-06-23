@@ -55,7 +55,7 @@ class ContactAccessDialog extends StatelessWidget {
                 width: MediaQuery.of(context).size.width * 0.7,
                 child: Text(
                   message,
-                  textAlign: TextAlign.justify,
+                  textAlign: TextAlign.left,
                   style: AppTextStyles.regularText16b
                       .copyWith(color: AppColors.lightBlue4),
                 ),
