@@ -96,12 +96,15 @@ class CustomAlertDialog extends StatelessWidget {
                     },
                   ),
                 ),
+                SizedBox(
+                  width: 5,
+                ),
                 if (showCancelButton)
                   Expanded(
                     child: TextButton(
                       style: ButtonStyle(
                         padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                            EdgeInsets.all(5.0)),
+                            EdgeInsets.all(2.0)),
                       ),
                       child: Text(cancelText),
                       onPressed: () {

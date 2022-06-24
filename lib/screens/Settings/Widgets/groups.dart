@@ -29,6 +29,39 @@ class _GroupsSettingsState extends State<GroupsSettings> {
   final f = new DateFormat('yyyy-MM-dd');
   late FirebaseMessaging messaging;
 
+  Future<void> _sendPromoteRequest(
+      String receiverId, GroupDataModel group) async {
+    try {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      final senderName = '${user.firstName} ${user.lastName}';
+      final message =
+          '$senderName has invited you to become the admin of ${group.name}';
+      final receiver = await Provider.of<UserProviderV2>(context, listen: false)
+          .getUserDataById(receiverId);
+      final receiverName = '${receiver.firstName} ${receiver.lastName}';
+      final successMessage =
+          'You will remain the admin of this grou until $receiverName accepts your request to become admin.';
+
+      final tokens =
+          (receiver.devices ?? []).map((e) => e.token ?? '').toList();
+      await Provider.of<NotificationProviderV2>(context, listen: false)
+          .sendPushNotification(
+              message, NotificationType.adminRequest, senderName, tokens);
+      BeStilDialog.showSuccessDialog(context, successMessage);
+    } on HttpException catch (e, s) {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    } catch (e, s) {
+      final user =
+          Provider.of<UserProviderV2>(context, listen: false).currentUser;
+      BeStilDialog.showErrorDialog(
+          context, StringUtils.getErrorMessage(e), user, s);
+    }
+  }
+
   Future<void> _changeMemberRole(GroupDataModel group, String userId) async {
     try {
       bool isCurrentUser =
@@ -319,7 +352,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      showRemoveControl
+                      !userIsAdmin
                           ? Container(
                               height: 30,
                               margin: EdgeInsets.only(top: 20, bottom: 0),
@@ -340,20 +373,18 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   ),
                                   child: Container(
                                     child: Text(
-                                      'REMOVE FROM GROUP',
+                                      'MAKE ADMIN',
                                       style: TextStyle(
                                           color: AppColors.red,
                                           fontSize: 20,
-                                          fontWeight: FontWeight.bold),
+                                          fontWeight: FontWeight.w500),
                                     ),
                                   ),
                                   onPressed: () {
-                                    const message =
-                                        'Are you sure you want to remove this user from your group?';
-                                    const method = 'REMOVE';
-                                    const title = 'Remove From Group';
-                                    _openRemoveConfirmation(context, title,
-                                        method, message, user, group);
+                                    _sendPromoteRequest(
+                                      user.id ?? '',
+                                      group,
+                                    );
                                   },
                                 ),
                               ),
@@ -391,6 +422,46 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                   ),
                                   onPressed: () {
                                     _changeMemberRole(group, user.id ?? '');
+                                  },
+                                ),
+                              ),
+                            )
+                          : Container(),
+                      showRemoveControl
+                          ? Container(
+                              height: 30,
+                              margin: EdgeInsets.only(top: 20, bottom: 0),
+                              width: MediaQuery.of(context).size.width * 0.4,
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                border: Border.all(
+                                  color: AppColors.red,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: FittedBox(
+                                child: OutlinedButton(
+                                  style: ButtonStyle(
+                                    side: MaterialStateProperty.all<BorderSide>(
+                                        BorderSide(color: Colors.transparent)),
+                                  ),
+                                  child: Container(
+                                    child: Text(
+                                      'REMOVE FROM GROUP',
+                                      style: TextStyle(
+                                          color: AppColors.red,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    const message =
+                                        'Are you sure you want to remove this user from your group?';
+                                    const method = 'REMOVE';
+                                    const title = 'Remove From Group';
+                                    _openRemoveConfirmation(context, title,
+                                        method, message, user, group);
                                   },
                                 ),
                               ),

@@ -1,5 +1,4 @@
 import 'package:be_still/controllers/app_controller.dart';
-import 'package:be_still/enums/notification_type.dart';
 import 'package:be_still/enums/save_options.dart';
 import 'package:be_still/enums/status.dart';
 import 'package:be_still/models/http_exception.dart';
@@ -9,7 +8,6 @@ import 'package:be_still/models/v2/update.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
 import 'package:be_still/providers/v2/misc_provider.dart';
-import 'package:be_still/providers/v2/notification_provider.dart';
 import 'package:be_still/providers/v2/prayer_provider.dart';
 import 'package:be_still/providers/v2/user_provider.dart';
 import 'package:be_still/utils/app_dialog.dart';
@@ -67,10 +65,30 @@ class _AddPrayerState extends State<AddPrayer> {
   SaveOption? selected;
   final widgetKey = GlobalKey();
 
+  showContactConsentModal() {
+    BeStilDialog.showContactAccessDialog(context,
+        onConfirm: () => confirmContactConsent(),
+        onCancel: () => denyContactConsent(),
+        title: 'Contacts',
+        message:
+            'Bestill collects contact data in order to enable the tag feature. This allows Bestill to send email or text messages to your tagged contacts.',
+        confirmText: 'OK',
+        cancelText: 'Not Now');
+  }
+
+  confirmContactConsent() {
+    deniedTapped = false;
+    _getContactPermission();
+  }
+
+  denyContactConsent() {
+    deniedTapped = true;
+  }
+
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
         try {
           var userId = FirebaseAuth.instance.currentUser?.uid;
           await Provider.of<MiscProviderV2>(context, listen: false)
@@ -310,6 +328,10 @@ class _AddPrayerState extends State<AddPrayer> {
 
   @override
   void initState() {
+    super.initState();
+    final user =
+        Provider.of<UserProviderV2>(context, listen: false).currentUser;
+
     final isEdit = Provider.of<PrayerProviderV2>(context, listen: false).isEdit;
     _descriptionController.text = isEdit
         ? (Provider.of<PrayerProviderV2>(context, listen: false).prayerToEdit)
@@ -318,6 +340,13 @@ class _AddPrayerState extends State<AddPrayer> {
         : '';
 
     _backupDescription = _descriptionController.text;
+    if (!(user.consentViewed ?? false)) {
+      Future.delayed(Duration(seconds: 1), () {
+        showContactConsentModal();
+        Provider.of<UserProviderV2>(context, listen: false)
+            .updateUserSettings('consentViewed', true);
+      });
+    }
 
     if (isEdit) {
       showDropdown = false;
@@ -366,7 +395,6 @@ class _AddPrayerState extends State<AddPrayer> {
         }
       });
     }
-    super.initState();
   }
 
   Future<void> getContacts() async {
@@ -397,7 +425,7 @@ class _AddPrayerState extends State<AddPrayer> {
             p == PermissionStatus.granted;
       });
       getContacts();
-    } catch (e, s) {
+    } catch (e) {
       // BeStilDialog.showErrorDialog(
       //     context, StringUtils.getErrorMessage(e), UserDataModel(), s);
     }
@@ -408,7 +436,7 @@ class _AddPrayerState extends State<AddPrayer> {
       if (tagText.length > 0 &&
           Settings.enabledContactPermission == false &&
           !deniedTapped) {
-        _getContactPermission();
+        showContactConsentModal();
       } else {
         if (getContactCalled == false &&
             Settings.enabledContactPermission == true) {

@@ -25,7 +25,7 @@ class DevotionPlans extends StatefulWidget {
 class _DevotionPlansState extends State<DevotionPlans> {
   @override
   void didChangeDependencies() {
-    WidgetsBinding.instance?.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
         var userId = FirebaseAuth.instance.currentUser?.uid;
         await Provider.of<MiscProviderV2>(context, listen: false)

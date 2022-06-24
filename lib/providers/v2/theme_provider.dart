@@ -18,7 +18,7 @@ class ThemeProviderV2 with ChangeNotifier {
   Future changeTheme(String theme) async {
     _currentTheme = theme;
     _isDarkMode = theme == BsThemeMode.auto
-        ? MediaQueryData.fromWindow(WidgetsBinding.instance!.window)
+        ? MediaQueryData.fromWindow(WidgetsBinding.instance.window)
                 .platformBrightness ==
             Brightness.dark
         : theme == BsThemeMode.dark;
@@ -38,7 +38,7 @@ class ThemeProviderV2 with ChangeNotifier {
   Future setDefaultTheme() async {
     _currentTheme = Settings.themeMode;
     _isDarkMode = _currentTheme == BsThemeMode.auto
-        ? MediaQueryData.fromWindow(WidgetsBinding.instance!.window)
+        ? MediaQueryData.fromWindow(WidgetsBinding.instance.window)
                 .platformBrightness ==
             Brightness.dark
         : _currentTheme == BsThemeMode.dark;

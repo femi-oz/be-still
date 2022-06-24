@@ -1,5 +1,6 @@
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/utils/string_utils.dart';
+import 'package:be_still/widgets/contact_access_dialog.dart';
 import 'package:be_still/widgets/custom_alert_dialog.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
@@ -91,16 +92,41 @@ class BeStilDialog {
   }
 
   static Future showConfirmDialog(BuildContext context,
-      {String? title, String? message, required Function onConfirm}) async {
+      {String? title,
+      String? message,
+      String? confirmText,
+      String? cancelText,
+      required Function onConfirm}) async {
     showDialog(
       context: context,
       builder: (BuildContext ctx) => CustomAlertDialog(
         title: title ?? 'Confirmation',
-        type: AlertType.warning,
+        type: AlertType.info,
         message: message ?? 'Are you sure want to proceed?',
         showCancelButton: true,
-        confirmText: 'Yes!',
+        cancelText: cancelText ?? 'Cancel',
+        confirmText: confirmText ?? 'Yes!',
         onConfirm: onConfirm,
+      ),
+    );
+  }
+
+  static Future showContactAccessDialog(BuildContext context,
+      {String? title,
+      String? message,
+      String? confirmText,
+      String? cancelText,
+      required Function onConfirm,
+      required Function onCancel}) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) => ContactAccessDialog(
+        title: title ?? 'Confirmation',
+        message: message ?? 'Are you sure want to proceed?',
+        cancelText: cancelText ?? 'Cancel',
+        confirmText: confirmText ?? 'Yes!',
+        onConfirm: onConfirm,
+        onCancel: onCancel,
       ),
     );
   }

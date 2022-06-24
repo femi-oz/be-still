@@ -12,7 +12,7 @@ class ForgetPasswordSucess extends StatefulWidget {
 class _ForgetPasswordSucessState extends State<ForgetPasswordSucess> {
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback(
+    WidgetsBinding.instance.addPostFrameCallback(
       (_) => Future.delayed(
         Duration(milliseconds: 10000),
         () => Navigator.of(context).pop(),

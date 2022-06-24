@@ -11,7 +11,6 @@ import 'package:be_still/providers/v2/theme_provider.dart';
 import 'package:be_still/screens/group_prayer_details/widgets/no_update_view.dart';
 import 'package:be_still/screens/group_prayer_details/widgets/prayer_menu.dart';
 import 'package:be_still/screens/group_prayer_details/widgets/update_view.dart';
-import 'package:be_still/utils/app_dialog.dart';
 import 'package:be_still/utils/app_icons.dart';
 import 'package:be_still/utils/essentials.dart';
 import 'package:be_still/widgets/app_bar.dart';
@@ -137,7 +136,7 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
         getPrayer();
 
         // getSettings();
@@ -205,7 +204,6 @@ class _GroupPrayerDetailsState extends State<GroupPrayerDetails> {
 
     var reminders =
         Provider.of<NotificationProviderV2>(context).localNotifications;
-    final prayerId = Provider.of<PrayerProviderV2>(context).currentPrayerId;
     final prayerData = Provider.of<PrayerProviderV2>(context).prayer;
     final _reminder = reminders.firstWhere(
         (reminder) => reminder.prayerId == prayerData.id,

@@ -62,7 +62,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   void _showAlert(String groupId, String message, String senderId,
-      String receiverId, String? groupName) {
+      String receiverId, String? groupName, String type) {
     FocusScope.of(context).unfocus();
     AlertDialog dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
@@ -90,7 +90,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               Container(
                 margin: EdgeInsets.only(bottom: 5.0),
                 child: Text(
-                  'GROUP REQUEST',
+                  type == NotificationType.adminRequest
+                      ? 'ADMIN REQUEST'
+                      : 'GROUP REQUEST',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: AppColors.lightBlue1,
@@ -153,8 +155,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () =>
-                                acceptRequest(groupId, senderId, receiverId),
+                            onTap: () => acceptRequest(
+                                groupId, senderId, receiverId, type),
                             child: Container(
                               height: 30,
                               width: MediaQuery.of(context).size.width * .25,
@@ -387,7 +389,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   Future<void> acceptRequest(
-      String groupId, String senderId, String receiverId) async {
+      String groupId, String senderId, String receiverId, String type) async {
     BeStilDialog.showLoading(context);
     try {
       await Provider.of<GroupProviderV2>(context, listen: false)
@@ -397,8 +399,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
       final groupRequest =
           (groupData.requests ?? []).firstWhere((e) => e.userId == receiverId);
-      await Provider.of<GroupProviderV2>(context, listen: false)
-          .acceptRequest(groupData, groupRequest, senderId);
+      if (type == NotificationType.adminRequest) {
+      } else {
+        await Provider.of<GroupProviderV2>(context, listen: false)
+            .acceptRequest(groupData, groupRequest, senderId);
+      }
+
       // deleteNotification(notificationId);
 
       BeStilDialog.hideLoading(context);
@@ -504,7 +510,145 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       notification.message ?? '',
                       notification.createdBy ?? '',
                       notification.createdBy ?? '',
-                      groupName(notification.groupId ?? '')),
+                      groupName(notification.groupId ?? ''),
+                      NotificationType.request),
+                  child: Container(
+                    margin: EdgeInsets.only(left: 20.0),
+                    decoration: BoxDecoration(
+                      color: AppColors.cardBorder,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(10),
+                        topLeft: Radius.circular(10),
+                      ),
+                    ),
+                    child: Container(
+                      margin: EdgeInsetsDirectional.only(
+                          start: 1, bottom: 1, top: 1),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: AppColors.prayerCardBgColor,
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(9),
+                          topLeft: Radius.circular(9),
+                        ),
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Column(
+                                  children: <Widget>[
+                                    Row(
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: Text(
+                                              (groupName(notification.groupId ??
+                                                      '') ??
+                                                  ''),
+                                              style: AppTextStyles
+                                                  .regularText15b
+                                                  .copyWith(
+                                                      fontSize: 14,
+                                                      color:
+                                                          AppColors.lightBlue4,
+                                                      overflow: TextOverflow
+                                                          .ellipsis)),
+                                        ),
+                                        SizedBox(width: 20),
+                                        Row(
+                                          children: <Widget>[
+                                            Text(
+                                              DateFormat('MM.dd.yyyy').format(
+                                                  notification.createdDate ??
+                                                      DateTime.now()),
+                                              style: AppTextStyles
+                                                  .regularText15b
+                                                  .copyWith(
+                                                      fontSize: 14,
+                                                      color:
+                                                          AppColors.lightBlue4),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          Divider(
+                            color: AppColors.divider,
+                            thickness: 0.5,
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.8,
+                                child: Text(
+                                  (notification.message ??
+                                          ''.capitalizeFirst ??
+                                          '')
+                                      .substring(0,
+                                          (notification.message ?? '').length),
+                                  style: AppTextStyles.regularText16b.copyWith(
+                                    color: AppColors.lightBlue4,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+              ],
+            );
+          }).toList(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAdminRequestPanel(List<NotificationModel> adminRequest) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 10.0),
+      child: custom.ExpansionTile(
+        iconColor: AppColors.lightBlue4,
+        headerBackgroundColorStart: AppColors.prayerMenu[0],
+        headerBackgroundColorEnd: AppColors.prayerMenu[1],
+        shadowColor: AppColors.dropShadow,
+        title: Container(
+          margin:
+              EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.1),
+          child: Text(
+            NotificationType.request,
+            textAlign: TextAlign.center,
+            style: AppTextStyles.boldText24.copyWith(
+              color: AppColors.white,
+            ),
+          ),
+        ),
+        initiallyExpanded: true,
+        children: <Widget>[
+          ...adminRequest.map((NotificationModel notification) {
+            return Column(
+              children: [
+                SizedBox(height: 10),
+                GestureDetector(
+                  onLongPressEnd: null,
+                  onTap: () => _showAlert(
+                      notification.groupId ?? '',
+                      notification.message ?? '',
+                      notification.createdBy ?? '',
+                      notification.createdBy ?? '',
+                      groupName(notification.groupId ?? ''),
+                      NotificationType.adminRequest),
                   child: Container(
                     margin: EdgeInsets.only(left: 20.0),
                     decoration: BoxDecoration(
@@ -2100,6 +2244,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   Widget _buildPanel() {
     final requests = Provider.of<NotificationProviderV2>(context).requests;
+    final adminRequests =
+        Provider.of<NotificationProviderV2>(context).adminRequests;
     final newPrayers = Provider.of<NotificationProviderV2>(context).newPrayers;
     final requestAccepted =
         Provider.of<NotificationProviderV2>(context).requestAccepted;
@@ -2139,6 +2285,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               : Container(),
 
           requests.length > 0 ? _buildRequestPanel(requests) : Container(),
+          adminRequests.length > 0
+              ? _buildAdminRequestPanel(adminRequests)
+              : Container(),
           newPrayers.length > 0
               ? _buildNewPrayersPanel(newPrayers)
               : Container(),

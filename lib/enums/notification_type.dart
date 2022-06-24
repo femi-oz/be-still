@@ -7,6 +7,7 @@ class NotificationType {
   static const prayer_time = 'Prayer Time';
 
   static const request = 'Requests';
+  static const adminRequest = 'Admin Requests';
   static const inappropriate_content = 'Inappropriate Content';
   static const leave_group = 'Member Left Group';
   static const join_group = 'Member Joined Group';

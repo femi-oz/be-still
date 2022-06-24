@@ -9,6 +9,7 @@ class Settings {
 
   static const String THEME_MODE_KEY = 'theme_mode';
   static const String REMEMBER_ME_KEY = 'remember_me_';
+  static const String FIRST_LAUNCH = 'first_launch_';
   static const String LAST_USER = 'last_user_info_';
   static const String USER_PASSWORD = 'user_password_';
   static const String SNOOZE_DURATION = 'snooze_duration';
@@ -34,7 +35,7 @@ class Settings {
 
   static bool isDarkMode =
       (sharedPrefs?.getString(THEME_MODE_KEY) == BsThemeMode.auto
-          ? MediaQueryData.fromWindow(WidgetsBinding.instance!.window)
+          ? MediaQueryData.fromWindow(WidgetsBinding.instance.window)
                   .platformBrightness ==
               Brightness.dark
           : sharedPrefs?.getString(THEME_MODE_KEY) == BsThemeMode.dark);
@@ -43,6 +44,11 @@ class Settings {
       sharedPrefs?.setBool(REMEMBER_ME_KEY, value);
 
   static bool get rememberMe => sharedPrefs?.getBool(REMEMBER_ME_KEY) ?? false;
+
+  static set firstLaunch(bool value) =>
+      sharedPrefs?.setBool(FIRST_LAUNCH, value);
+
+  static bool get firstLaunch => sharedPrefs?.getBool(FIRST_LAUNCH) ?? true;
 
   static set lastUser(String user) => sharedPrefs?.setString(LAST_USER, user);
 

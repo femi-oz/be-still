@@ -107,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_isInit) {
       setState(() => isFormValid = _usernameController.text.isNotEmpty &&
           _passwordController.text.isNotEmpty);
-      WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
         await _isBiometricAvailable();
         bool showBioAuth =
             (ModalRoute.of(context)?.settings.arguments ?? false) as bool;

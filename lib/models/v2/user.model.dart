@@ -28,6 +28,7 @@ class UserDataModel {
   bool? enablePushNotification;
   bool? enableNotificationsForAllGroups;
   bool? includeAnsweredPrayerAutoDelete;
+  bool? consentViewed;
   String? createdBy;
   String? modifiedBy;
   DateTime? createdDate;
@@ -61,6 +62,7 @@ class UserDataModel {
       this.enableSharingViaEmail,
       this.enableNotificationsForAllGroups,
       this.includeAnsweredPrayerAutoDelete,
+      this.consentViewed,
       this.createdBy,
       this.modifiedBy,
       this.createdDate,
@@ -110,6 +112,7 @@ class UserDataModel {
     enableSharingViaEmail = json['enableSharingViaEmail'];
     enableNotificationsForAllGroups = json['enableNotificationsForAllGroups'];
     includeAnsweredPrayerAutoDelete = json['includeAnsweredPrayerAutoDelete'];
+    consentViewed = json['consentViewed'];
     createdBy = json['createdBy'];
     modifiedBy = json['modifiedBy'];
     createdDate = json['createdDate']?.toDate();
@@ -153,6 +156,7 @@ class UserDataModel {
         this.enableNotificationsForAllGroups;
     data['includeAnsweredPrayerAutoDelete'] =
         this.includeAnsweredPrayerAutoDelete;
+    data['consentViewed'] = this.consentViewed;
     data['createdBy'] = this.createdBy;
     data['modifiedBy'] = this.modifiedBy;
     data['createdDate'] = this.createdDate;
