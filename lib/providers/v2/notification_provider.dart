@@ -40,6 +40,9 @@ class NotificationProviderV2 with ChangeNotifier {
   List<NotificationModel> _requests = [];
   List<NotificationModel> get requests => _requests;
 
+  List<NotificationModel> _adminRequests = [];
+  List<NotificationModel> get adminRequests => _adminRequests;
+
   List<NotificationModel> _inappropriateContent = [];
   List<NotificationModel> get inappropriateContent => _inappropriateContent;
 
@@ -94,6 +97,7 @@ class NotificationProviderV2 with ChangeNotifier {
     _inappropriateContent = [];
     _leftGroup = [];
     _requests = [];
+    _adminRequests = [];
     _prayerTimeNotifications = [];
     _message = NotificationMessageModel.defaultValue();
   }
@@ -160,6 +164,10 @@ class NotificationProviderV2 with ChangeNotifier {
             .where((e) => e.type == NotificationType.request)
             .toList();
 
+        _adminRequests = notifications
+            .where((e) => e.type == NotificationType.adminRequest)
+            .toList();
+
         _inappropriateContent = notifications
             .where((e) => e.type == NotificationType.inappropriate_content)
             .toList();
@@ -210,6 +218,7 @@ class NotificationProviderV2 with ChangeNotifier {
 
         _notifications = [
           ..._requests,
+          ..._adminRequests,
           ..._inappropriateContent,
           ..._leftGroup,
           ..._joinGroup,
@@ -233,6 +242,7 @@ class NotificationProviderV2 with ChangeNotifier {
     try {
       var notificationsToClear = _notifications.where((e) =>
           e.type != NotificationType.request &&
+          e.type != NotificationType.adminRequest &&
           e.type != NotificationType.inappropriate_content);
       await _notificationService.clearAllNotifications(
           ids: notificationsToClear.map((e) => e.id ?? '').toList());
