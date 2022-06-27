@@ -847,9 +847,8 @@ class _PrayerGroupMenuState extends State<PrayerGroupMenu> {
                         icon: Icons.info,
                         text: 'Flag as inappropriate',
                         isDisabled: isDisabled,
-                        onPress: () => isOwner || !isMember
-                            ? () {}
-                            : _flagAsInappropriate(group)),
+                        onPress: () =>
+                            isDisabled ? () {} : _flagAsInappropriate(group)),
                   ],
                 ),
               ),
