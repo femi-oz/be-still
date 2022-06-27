@@ -461,7 +461,8 @@ class GroupProviderV2 with ChangeNotifier {
       GroupUserDataModel currentAdminData,
       GroupUserDataModel prospectiveAdminData,
       String role,
-      String groupId) async {
+      String groupId,
+      String notificationId) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
@@ -469,7 +470,8 @@ class GroupProviderV2 with ChangeNotifier {
           userData: currentAdminData,
           userData2: prospectiveAdminData,
           role: role,
-          groupId: groupId);
+          groupId: groupId,
+          notificationId: notificationId);
     } catch (e) {
       rethrow;
     }

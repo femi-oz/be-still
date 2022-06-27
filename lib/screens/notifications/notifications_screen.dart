@@ -164,8 +164,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () => acceptRequest(
-                                groupId, senderId, receiverId, type),
+                            onTap: () => acceptRequest(groupId, senderId,
+                                receiverId, type, notificationId ?? ''),
                             child: Container(
                               height: 30,
                               width: MediaQuery.of(context).size.width * .25,
@@ -401,8 +401,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
-  Future<void> acceptRequest(
-      String groupId, String senderId, String receiverId, String type) async {
+  Future<void> acceptRequest(String groupId, String senderId, String receiverId,
+      String type, String notificationId) async {
     BeStilDialog.showLoading(context);
     try {
       await Provider.of<GroupProviderV2>(context, listen: false)
@@ -416,8 +416,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       final prospectiveAdmin = (groupData.users ?? []).firstWhere(
           (element) => element.userId == receiverId,
           orElse: () => GroupUserDataModel());
-      final groupRequest =
-          (groupData.requests ?? []).firstWhere((e) => e.userId == receiverId);
+
       if (type == NotificationType.adminRequest) {
         final currentUser =
             Provider.of<UserProviderV2>(context, listen: false).currentUser;
@@ -426,7 +425,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         final message2 = 'You are now a moderator of ${groupData.name}';
         await Provider.of<GroupProviderV2>(context, listen: false)
             .promoteToAdmin(currentAdmin, prospectiveAdmin,
-                GroupUserRole.moderator, groupId);
+                GroupUserRole.moderator, groupId, notificationId);
         await Provider.of<NotificationProviderV2>(context, listen: false)
             .sendPushNotification(
                 message1, NotificationType.accept_request, senderName, [],
@@ -436,12 +435,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 message2, NotificationType.accept_request, senderName, [],
                 receiverId: senderId, groupId: groupData.id);
       } else {
+        final groupRequest = (groupData.requests ?? [])
+            .firstWhere((e) => e.userId == receiverId);
         await Provider.of<GroupProviderV2>(context, listen: false)
             .acceptRequest(groupData, groupRequest, senderId);
       }
-
-      // deleteNotification(notificationId);
-
       BeStilDialog.hideLoading(context);
       Navigator.of(context).pop();
     } on HttpException catch (e, s) {

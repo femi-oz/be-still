@@ -219,7 +219,8 @@ class GroupServiceV2 {
       {required GroupUserDataModel userData,
       GroupUserDataModel? userData2,
       required String role,
-      required String groupId}) async {
+      required String groupId,
+      String? notificationId}) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
@@ -316,6 +317,8 @@ class GroupServiceV2 {
         batch.update(_groupDataCollectionReference.doc(groupId), {
           'users': FieldValue.arrayUnion([updatePayload2])
         });
+        batch.update(_notificationCollectionReference.doc(notificationId),
+            {'status': Status.inactive});
       }
       batch.commit();
       updateGroupUsers(groupId: group.id);
