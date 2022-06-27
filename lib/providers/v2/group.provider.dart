@@ -403,6 +403,18 @@ class GroupProviderV2 with ChangeNotifier {
     }
   }
 
+  Future<void> declineAdminRequest(
+      GroupDataModel group, String receiverId, String notificationId) async {
+    try {
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
+      return await _groupService.denyAdminRequest(
+          group: group, receiverId: receiverId, notificationId: notificationId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   void setEditMode(bool value) {
     try {
       _isEdit = value;
@@ -440,6 +452,24 @@ class GroupProviderV2 with ChangeNotifier {
         return Future.error(StringUtils.unathorized);
       await _groupService.editUserRole(
           userData: userData, role: role, groupId: groupId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> promoteToAdmin(
+      GroupUserDataModel currentAdminData,
+      GroupUserDataModel prospectiveAdminData,
+      String role,
+      String groupId) async {
+    try {
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
+      await _groupService.editUserRole(
+          userData: currentAdminData,
+          userData2: prospectiveAdminData,
+          role: role,
+          groupId: groupId);
     } catch (e) {
       rethrow;
     }

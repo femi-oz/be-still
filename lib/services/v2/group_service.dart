@@ -217,12 +217,12 @@ class GroupServiceV2 {
 
   Future<void> editUserRole(
       {required GroupUserDataModel userData,
+      GroupUserDataModel? userData2,
       required String role,
       required String groupId}) async {
     try {
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
-
       final updatePayload = GroupUserDataModel(
               id: userData.id,
               userId: userData.userId,
@@ -238,6 +238,23 @@ class GroupServiceV2 {
               modifiedBy: userData.modifiedBy,
               modifiedDate: userData.modifiedDate ?? DateTime.now(),
               status: userData.status)
+          .toJson();
+
+      final updatePayload2 = GroupUserDataModel(
+              id: userData2?.id,
+              userId: userData2?.userId,
+              role: GroupUserRole.admin,
+              enableNotificationForNewPrayers:
+                  userData2?.enableNotificationForNewPrayers,
+              enableNotificationForUpdates:
+                  userData2?.enableNotificationForUpdates,
+              notifyMeOfFlaggedPrayers: userData2?.notifyMeOfFlaggedPrayers,
+              notifyWhenNewMemberJoins: userData2?.notifyWhenNewMemberJoins,
+              createdBy: userData2?.createdBy,
+              createdDate: userData2?.createdDate ?? DateTime.now(),
+              modifiedBy: userData2?.modifiedBy,
+              modifiedDate: userData2?.modifiedDate ?? DateTime.now(),
+              status: userData2?.status)
           .toJson();
 
       final group = await _groupDataCollectionReference
@@ -272,8 +289,34 @@ class GroupServiceV2 {
       batch.update(_groupDataCollectionReference.doc(groupId), {
         'users': FieldValue.arrayUnion([updatePayload])
       });
-      // batch.update(_userDataCollectionReference.doc(userData.userId),
-      //     {'modifiedDate': DateTime.now()});
+      if (userData2 != null) {
+        batch.update(_groupDataCollectionReference.doc(groupId), {
+          'modifiedDate': DateTime.now(),
+          'users': FieldValue.arrayRemove([
+            {
+              'id': userData2.id,
+              'userId': userData2.userId,
+              'role': GroupUserRole.admin,
+              'enableNotificationForNewPrayers':
+                  userData2.enableNotificationForNewPrayers,
+              'enableNotificationForUpdates':
+                  userData2.enableNotificationForUpdates,
+              'notifyMeOfFlaggedPrayers': userData2.notifyMeOfFlaggedPrayers,
+              'notifyWhenNewMemberJoins': userData2.notifyWhenNewMemberJoins,
+              'createdBy': userData2.createdBy,
+              'createdDate':
+                  Timestamp.fromDate(userData2.createdDate ?? DateTime.now()),
+              'modifiedBy': userData2.modifiedBy,
+              'modifiedDate':
+                  Timestamp.fromDate(userData2.modifiedDate ?? DateTime.now()),
+              'status': userData2.status
+            }
+          ])
+        });
+        batch.update(_groupDataCollectionReference.doc(groupId), {
+          'users': FieldValue.arrayUnion([updatePayload2])
+        });
+      }
       batch.commit();
       updateGroupUsers(groupId: group.id);
     } catch (e) {
@@ -650,14 +693,48 @@ class GroupServiceV2 {
     }
   }
 
+  Future<void> denyAdminRequest(
+      {required String receiverId,
+      required GroupDataModel group,
+      required String notificationId}) async {
+    try {
+      final currentUser = await _userService
+          .getUserByIdFuture(FirebaseAuth.instance.currentUser?.uid ?? '');
+      final userName =
+          (currentUser.firstName ?? '') + ' ' + (currentUser.lastName ?? '');
+      final notifId = Uuid().v1();
+
+      final denyDoc = NotificationModel(
+        id: notifId,
+        message:
+            "$userName has declined to become the admin of group ${group.name}",
+        status: Status.active,
+        isSent: 0,
+        senderId: _firebaseAuth.currentUser?.uid,
+        tokens: [],
+        type: NotificationType.deny_request,
+        groupId: group.id,
+        prayerId: '',
+        receiverId: receiverId,
+        modifiedBy: _firebaseAuth.currentUser?.uid,
+        createdBy: _firebaseAuth.currentUser?.uid,
+        createdDate: DateTime.now(),
+        modifiedDate: DateTime.now(),
+      ).toJson();
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      batch.update(_notificationCollectionReference.doc(notificationId),
+          {'status': Status.inactive});
+      batch.set(_notificationCollectionReference.doc(notifId), denyDoc);
+    } catch (e) {
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
   Future<void> denyJoinRequest(
       {required GroupDataModel group,
       required RequestModel request,
       required String senderId}) async {
     try {
-      if (_firebaseAuth.currentUser == null)
-        return Future.error(StringUtils.unathorized);
-
       if (_firebaseAuth.currentUser == null)
         return Future.error(StringUtils.unathorized);
 

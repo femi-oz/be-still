@@ -41,13 +41,15 @@ class _GroupsSettingsState extends State<GroupsSettings> {
           .getUserDataById(receiverId);
       final receiverName = '${receiver.firstName} ${receiver.lastName}';
       final successMessage =
-          'You will remain the admin of this grou until $receiverName accepts your request to become admin.';
+          'You will remain the admin of this group until $receiverName accepts your request to become admin.';
 
       final tokens =
           (receiver.devices ?? []).map((e) => e.token ?? '').toList();
       await Provider.of<NotificationProviderV2>(context, listen: false)
           .sendPushNotification(
-              message, NotificationType.adminRequest, senderName, tokens);
+              message, NotificationType.adminRequest, senderName, tokens,
+              groupId: group.id, receiverId: receiverId);
+      Navigator.pop(context);
       BeStilDialog.showSuccessDialog(context, successMessage);
     } on HttpException catch (e, s) {
       final user =

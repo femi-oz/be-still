@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/enums/status.dart';
+import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/group.model.dart';
+import 'package:be_still/models/v2/group_user.model.dart';
 import 'package:be_still/models/v2/notification.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/v2/group.provider.dart';
@@ -61,8 +64,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
-  void _showAlert(String groupId, String message, String senderId,
-      String receiverId, String? groupName, String type) {
+  void _showAlert(
+      String groupId,
+      String message,
+      String senderId,
+      String receiverId,
+      String? groupName,
+      String type,
+      String? notificationId) {
     FocusScope.of(context).unfocus();
     AlertDialog dialog = AlertDialog(
       actionsPadding: EdgeInsets.all(0),
@@ -126,8 +135,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           GestureDetector(
-                            onTap: () =>
-                                denyRequest(groupId, receiverId, senderId),
+                            onTap: () => denyRequest(groupId, receiverId,
+                                senderId, type, notificationId ?? ''),
                             child: Container(
                               height: 30,
                               width: MediaQuery.of(context).size.width * .25,
@@ -352,8 +361,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
-  Future<void> denyRequest(
-      String groupId, String receiverId, String senderId) async {
+  Future<void> denyRequest(String groupId, String receiverId, String senderId,
+      String type, String notificationId) async {
     BeStilDialog.showLoading(context);
     try {
       await Provider.of<UserProviderV2>(context, listen: false)
@@ -365,11 +374,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           .currentGroup; //group
       final groupRequest =
           (groupData.requests ?? []).firstWhere((e) => e.userId == receiverId);
-      await Provider.of<GroupProviderV2>(context, listen: false)
-          .denyRequest(groupData, groupRequest, senderId);
-      // notificationIds.forEach((notificationId) {
-      //   deleteNotification(notificationId);
-      // });
+      if (type == NotificationType.adminRequest) {
+        await Provider.of<GroupProviderV2>(context, listen: false)
+            .declineAdminRequest(groupData, receiverId, notificationId);
+      } else {
+        await Provider.of<GroupProviderV2>(context, listen: false)
+            .denyRequest(groupData, groupRequest, senderId);
+      }
+
       BeStilDialog.hideLoading(context);
       Navigator.pop(context);
     } on HttpException catch (e, s) {
@@ -397,9 +409,31 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       final groupData = Provider.of<GroupProviderV2>(context, listen: false)
           .currentGroup; //group
 
+      final currentAdmin = (groupData.users ?? []).firstWhere(
+          (element) => element.role == GroupUserRole.admin,
+          orElse: () => GroupUserDataModel());
+      final prospectiveAdmin = (groupData.users ?? []).firstWhere(
+          (element) => element.userId == receiverId,
+          orElse: () => GroupUserDataModel());
       final groupRequest =
           (groupData.requests ?? []).firstWhere((e) => e.userId == receiverId);
       if (type == NotificationType.adminRequest) {
+        final currentUser =
+            Provider.of<UserProviderV2>(context, listen: false).currentUser;
+        final senderName = '${currentUser.firstName} ${currentUser.lastName}';
+        final message1 = 'You are now the admin of ${groupData.name}';
+        final message2 = 'You are now a moderator of ${groupData.name}';
+        await Provider.of<GroupProviderV2>(context, listen: false)
+            .promoteToAdmin(currentAdmin, prospectiveAdmin,
+                GroupUserRole.moderator, groupId);
+        await Provider.of<NotificationProviderV2>(context, listen: false)
+            .sendPushNotification(
+                message1, NotificationType.accept_request, senderName, [],
+                receiverId: receiverId, groupId: groupData.id);
+        await Provider.of<NotificationProviderV2>(context, listen: false)
+            .sendPushNotification(
+                message2, NotificationType.accept_request, senderName, [],
+                receiverId: senderId, groupId: groupData.id);
       } else {
         await Provider.of<GroupProviderV2>(context, listen: false)
             .acceptRequest(groupData, groupRequest, senderId);
@@ -511,7 +545,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       notification.createdBy ?? '',
                       notification.createdBy ?? '',
                       groupName(notification.groupId ?? ''),
-                      NotificationType.request),
+                      NotificationType.request,
+                      notification.id),
                   child: Container(
                     margin: EdgeInsets.only(left: 20.0),
                     decoration: BoxDecoration(
@@ -648,7 +683,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       notification.createdBy ?? '',
                       notification.createdBy ?? '',
                       groupName(notification.groupId ?? ''),
-                      NotificationType.adminRequest),
+                      NotificationType.adminRequest,
+                      notification.id),
                   child: Container(
                     margin: EdgeInsets.only(left: 20.0),
                     decoration: BoxDecoration(
