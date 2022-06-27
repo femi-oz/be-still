@@ -372,12 +372,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
       final groupData = Provider.of<GroupProviderV2>(context, listen: false)
           .currentGroup; //group
-      final groupRequest =
-          (groupData.requests ?? []).firstWhere((e) => e.userId == receiverId);
+
       if (type == NotificationType.adminRequest) {
         await Provider.of<GroupProviderV2>(context, listen: false)
             .declineAdminRequest(groupData, receiverId, notificationId);
       } else {
+        final groupRequest = (groupData.requests ?? [])
+            .firstWhere((e) => e.userId == receiverId);
         await Provider.of<GroupProviderV2>(context, listen: false)
             .denyRequest(groupData, groupRequest, senderId);
       }
