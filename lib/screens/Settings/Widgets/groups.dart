@@ -250,8 +250,10 @@ class _GroupsSettingsState extends State<GroupsSettings> {
         (element) => element.userId == userId,
         orElse: () => GroupUserDataModel());
     currentUserIsAdmin = (group.users ?? []).any((element) =>
-        element.userId == _currentUser.id &&
+        element.userId == FirebaseAuth.instance.currentUser?.uid &&
         element.role == GroupUserRole.admin);
+    final userModalIsAdmin = (group.users ?? []).any((element) =>
+        element.userId == userId && element.role == GroupUserRole.admin);
 
     currentUserIsModerator = (group.users ?? []).any((element) =>
         element.userId == _currentUser.id &&
@@ -354,7 +356,7 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      !userIsAdmin
+                      currentUserIsAdmin && !userModalIsAdmin
                           ? Container(
                               height: 30,
                               margin: EdgeInsets.only(top: 20, bottom: 0),
