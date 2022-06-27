@@ -297,7 +297,7 @@ class GroupServiceV2 {
             {
               'id': userData2.id,
               'userId': userData2.userId,
-              'role': GroupUserRole.admin,
+              'role': userData2.role,
               'enableNotificationForNewPrayers':
                   userData2.enableNotificationForNewPrayers,
               'enableNotificationForUpdates':
@@ -728,6 +728,7 @@ class GroupServiceV2 {
       batch.update(_notificationCollectionReference.doc(notificationId),
           {'status': Status.inactive});
       batch.set(_notificationCollectionReference.doc(notifId), denyDoc);
+      batch.commit();
     } catch (e) {
       throw HttpException(StringUtils.getErrorMessage(e));
     }

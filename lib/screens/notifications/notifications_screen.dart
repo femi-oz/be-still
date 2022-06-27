@@ -414,7 +414,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           (element) => element.role == GroupUserRole.admin,
           orElse: () => GroupUserDataModel());
       final prospectiveAdmin = (groupData.users ?? []).firstWhere(
-          (element) => element.userId == receiverId,
+          (element) => element.userId == FirebaseAuth.instance.currentUser?.uid,
           orElse: () => GroupUserDataModel());
 
       if (type == NotificationType.adminRequest) {
@@ -429,11 +429,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         await Provider.of<NotificationProviderV2>(context, listen: false)
             .sendPushNotification(
                 message1, NotificationType.accept_request, senderName, [],
-                receiverId: receiverId, groupId: groupData.id);
+                receiverId: prospectiveAdmin.userId, groupId: groupData.id);
         await Provider.of<NotificationProviderV2>(context, listen: false)
             .sendPushNotification(
                 message2, NotificationType.accept_request, senderName, [],
-                receiverId: senderId, groupId: groupData.id);
+                receiverId: currentAdmin.userId, groupId: groupData.id);
       } else {
         final groupRequest = (groupData.requests ?? [])
             .firstWhere((e) => e.userId == receiverId);
