@@ -37,6 +37,9 @@ class NotificationProviderV2 with ChangeNotifier {
   List<NotificationModel> _notifications = [];
   List<NotificationModel> get notifications => _notifications;
 
+  bool _canSendRequest = false;
+  bool get canSendRequest => _canSendRequest;
+
   List<NotificationModel> _requests = [];
   List<NotificationModel> get requests => _requests;
 
@@ -247,6 +250,17 @@ class NotificationProviderV2 with ChangeNotifier {
       await _notificationService.clearAllNotifications(
           ids: notificationsToClear.map((e) => e.id ?? '').toList());
       notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> getAdminRequestsNotifications() async {
+    try {
+      if (_firebaseAuth.currentUser == null) return null;
+      await _notificationService.getAdminRequestsAlert().then((notif) {
+        _canSendRequest = notif.length > 0;
+      });
     } catch (e) {
       rethrow;
     }

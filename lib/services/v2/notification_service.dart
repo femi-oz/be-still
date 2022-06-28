@@ -202,6 +202,22 @@ class NotificationServiceV2 {
     }
   }
 
+  Future<List<NotificationModel>> getAdminRequestsAlert() {
+    try {
+      if (_firebaseAuth.currentUser == null)
+        return Future.error(StringUtils.unathorized);
+      return _notificationCollectionReference
+          .where('type', isEqualTo: NotificationType.adminRequest)
+          .where('status', isEqualTo: Status.active)
+          .get()
+          .then((e) => e.docs
+              .map((doc) => NotificationModel.fromJson(doc.data()))
+              .toList());
+    } catch (e) {
+      throw HttpException(StringUtils.getErrorMessage(e));
+    }
+  }
+
   Stream<List<NotificationModel>> getUserPushNotifications() {
     try {
       return _notificationCollectionReference

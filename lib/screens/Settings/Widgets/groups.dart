@@ -364,7 +364,9 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                               decoration: BoxDecoration(
                                 color: Colors.transparent,
                                 border: Border.all(
-                                  color: AppColors.red,
+                                  color: canSendAdminRequest()
+                                      ? AppColors.red
+                                      : AppColors.red.withOpacity(0.5),
                                   width: 1,
                                 ),
                                 borderRadius: BorderRadius.circular(5),
@@ -379,17 +381,21 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                     child: Text(
                                       'MAKE ADMIN',
                                       style: TextStyle(
-                                          color: AppColors.red,
+                                          color: canSendAdminRequest()
+                                              ? AppColors.red
+                                              : AppColors.red.withOpacity(0.5),
                                           fontSize: 20,
                                           fontWeight: FontWeight.w500),
                                     ),
                                   ),
-                                  onPressed: () {
-                                    _sendPromoteRequest(
-                                      user.id ?? '',
-                                      group,
-                                    );
-                                  },
+                                  onPressed: canSendAdminRequest()
+                                      ? () {
+                                          _sendPromoteRequest(
+                                            user.id ?? '',
+                                            group,
+                                          );
+                                        }
+                                      : () {},
                                 ),
                               ),
                             )
@@ -742,6 +748,14 @@ class _GroupsSettingsState extends State<GroupsSettings> {
         builder: (BuildContext context) {
           return dialog;
         });
+  }
+
+  bool canSendAdminRequest() {
+    final allNotifications =
+        Provider.of<NotificationProviderV2>(context, listen: false)
+            .canSendRequest;
+
+    return allNotifications;
   }
 
   bool _isInit = true;

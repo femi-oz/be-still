@@ -122,11 +122,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         style: AppTextStyles.regularText16b.copyWith(
                             color: AppColors.lightBlue4,
                             fontWeight: FontWeight.w500)),
-                    Text((groupName ?? '').sentenceCase(),
-                        textAlign: TextAlign.center,
-                        style: AppTextStyles.regularText16b.copyWith(
-                            color: AppColors.lightBlue4,
-                            fontWeight: FontWeight.w500)),
+                    type == NotificationType.request
+                        ? Text((groupName ?? '').sentenceCase(),
+                            textAlign: TextAlign.center,
+                            style: AppTextStyles.regularText16b.copyWith(
+                                color: AppColors.lightBlue4,
+                                fontWeight: FontWeight.w500))
+                        : SizedBox.shrink(),
                     SizedBox(height: 20.0),
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 20),
