@@ -263,6 +263,7 @@ class NotificationProviderV2 with ChangeNotifier {
             element.senderId == FirebaseAuth.instance.currentUser?.uid);
         _canSendRequest = userNotifs.length == 0;
       });
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
