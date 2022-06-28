@@ -761,8 +761,6 @@ class _GroupsSettingsState extends State<GroupsSettings> {
   bool _isInit = true;
   @override
   void didChangeDependencies() async {
-    await Provider.of<NotificationProviderV2>(context, listen: false)
-        .getAdminRequestsNotifications();
     if (_isInit) {
       _isInit = false;
     }
@@ -1247,7 +1245,8 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                                               NotificationProviderV2>(
                                                           context,
                                                           listen: false)
-                                                      .getAdminRequestsNotifications();
+                                                      .getAdminRequestsNotifications(
+                                                          group.id ?? '');
                                                   _showMemberAlert(
                                                       groupUser.userId ?? '',
                                                       group,

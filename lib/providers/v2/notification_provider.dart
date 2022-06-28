@@ -255,12 +255,13 @@ class NotificationProviderV2 with ChangeNotifier {
     }
   }
 
-  Future<void> getAdminRequestsNotifications() async {
+  Future<void> getAdminRequestsNotifications(String groupId) async {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       await _notificationService.getAdminRequestsAlert().then((notif) {
         final userNotifs = notif.where((element) =>
-            element.senderId == FirebaseAuth.instance.currentUser?.uid);
+            element.senderId == FirebaseAuth.instance.currentUser?.uid &&
+            element.groupId == groupId);
         _canSendRequest = userNotifs.length == 0;
       });
       notifyListeners();
