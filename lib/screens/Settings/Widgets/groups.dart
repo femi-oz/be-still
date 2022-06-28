@@ -760,7 +760,9 @@ class _GroupsSettingsState extends State<GroupsSettings> {
 
   bool _isInit = true;
   @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
+    await Provider.of<NotificationProviderV2>(context, listen: false)
+        .getAdminRequestsNotifications();
     if (_isInit) {
       _isInit = false;
     }

@@ -259,7 +259,9 @@ class NotificationProviderV2 with ChangeNotifier {
     try {
       if (_firebaseAuth.currentUser == null) return null;
       await _notificationService.getAdminRequestsAlert().then((notif) {
-        _canSendRequest = notif.length > 0;
+        final userNotifs = notif.where((element) =>
+            element.senderId == FirebaseAuth.instance.currentUser?.uid);
+        _canSendRequest = userNotifs.length == 0;
       });
     } catch (e) {
       rethrow;
