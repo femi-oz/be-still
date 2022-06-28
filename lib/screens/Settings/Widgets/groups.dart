@@ -1243,6 +1243,11 @@ class _GroupsSettingsState extends State<GroupsSettings> {
                                             return GestureDetector(
                                               onTap: () async {
                                                 try {
+                                                  await Provider.of<
+                                                              NotificationProviderV2>(
+                                                          context,
+                                                          listen: false)
+                                                      .getAdminRequestsNotifications();
                                                   _showMemberAlert(
                                                       groupUser.userId ?? '',
                                                       group,
