@@ -1,5 +1,6 @@
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
+import 'package:be_still/enums/theme_mode.dart';
 import 'package:be_still/models/v2/notification_message.model.dart';
 import 'package:be_still/models/v2/user.model.dart';
 import 'package:be_still/providers/v2/auth_provider.dart';
@@ -41,6 +42,15 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       final List<int> list = <int>[];
       print(list[100]);
     });
+  }
+
+  @override
+  void didChangePlatformBrightness() {
+    print(WidgetsBinding.instance.window.platformBrightness);
+
+    Provider.of<ThemeProviderV2>(context, listen: false)
+        .changeTheme(BsThemeMode.auto);
+    super.didChangePlatformBrightness();
   }
 
   @override
