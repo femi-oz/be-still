@@ -424,17 +424,18 @@ class _AddPrayerState extends State<AddPrayer> {
 
   Future<void> _onTextChange(String val, {Backup? backup}) async {
     try {
-      var platform = Theme.of(context).platform;
+      // var platform = Theme.of(context).platform;
 
       if (tagText.length > 0 &&
           Settings.enabledContactPermission == false &&
           !deniedTapped &&
           !Provider.of<PrayerProviderV2>(context, listen: false).isEdit) {
-        if (platform == TargetPlatform.android) {
-          showContactConsentModal();
-        } else {
-          _getContactPermission();
-        }
+        showContactConsentModal();
+
+        // if (platform == TargetPlatform.android) {
+        // } else {
+        //   _getContactPermission();
+        // }
       } else {
         if (getContactCalled == false &&
             Settings.enabledContactPermission == true) {
