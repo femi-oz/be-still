@@ -56,15 +56,6 @@ class _AddUpdateState extends State<AddUpdate> {
   @override
   void initState() {
     super.initState();
-    final user =
-        Provider.of<UserProviderV2>(context, listen: false).currentUser;
-    if (!(user.consentViewed ?? false)) {
-      Future.delayed(Duration(seconds: 1), () {
-        showContactConsentModal();
-        Provider.of<UserProviderV2>(context, listen: false)
-            .updateUserSettings('consentViewed', true);
-      });
-    }
   }
 
   bool isInit = true;
@@ -147,39 +138,34 @@ class _AddUpdateState extends State<AddUpdate> {
       tags = stringBeforeCursor.split(new RegExp(r"\s"));
       tagText = tags.last.startsWith('@') ? tags.last : '';
       tagList.clear();
-      if (tagText.length > 1 &&
-          Settings.enabledContactPermission == false &&
-          status != PermissionStatus.denied) {
-        showContactConsentModal();
-      } else {
-        if (getContactCalled == false &&
-            Settings.enabledContactPermission == true) {
-          getContacts();
-        }
-        localContacts.forEach((s) {
-          var displayName = s.displayName == null ? '' : s.displayName;
-          var displayNameList =
-              (displayName ?? '').toLowerCase().split(new RegExp(r"\s"));
-          displayNameList.forEach((e) {
-            if (('@' + e).toLowerCase().contains(tagText.toLowerCase())) {
-              tagList.add(displayName ?? '');
-            }
-          });
-        });
 
-        painter = TextPainter(
-          textDirection: TextDirection.ltr,
-          text: TextSpan(
-            text: val,
-          ),
-        );
-
-        painter.layout();
-        var lines = painter.computeLineMetrics();
-        setState(() {
-          numberOfLines = lines.length.toDouble();
-        });
+      if (getContactCalled == false &&
+          Settings.enabledContactPermission == true) {
+        getContacts();
       }
+      localContacts.forEach((s) {
+        var displayName = s.displayName == null ? '' : s.displayName;
+        var displayNameList =
+            (displayName ?? '').toLowerCase().split(new RegExp(r"\s"));
+        displayNameList.forEach((e) {
+          if (('@' + e).toLowerCase().contains(tagText.toLowerCase())) {
+            tagList.add(displayName ?? '');
+          }
+        });
+      });
+
+      painter = TextPainter(
+        textDirection: TextDirection.ltr,
+        text: TextSpan(
+          text: val,
+        ),
+      );
+
+      painter.layout();
+      var lines = painter.computeLineMetrics();
+      setState(() {
+        numberOfLines = lines.length.toDouble();
+      });
     } catch (e, s) {
       final user =
           Provider.of<UserProviderV2>(context, listen: false).currentUser;

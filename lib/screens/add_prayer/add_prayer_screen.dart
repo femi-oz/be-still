@@ -71,7 +71,7 @@ class _AddPrayerState extends State<AddPrayer> {
         onCancel: () => denyContactConsent(),
         title: 'Contacts',
         message:
-            'Bestill collects contact data in order to enable the tag feature. This allows Bestill to send email or text messages to your tagged contacts.',
+            'With your permission, Be Still will access your contacts information so you can easily send emails and texts while reading the contents of prayers.  If you choose to use this feature, Be Still will ask for permission to access your contacts information the first time you use it.',
         confirmText: 'OK',
         cancelText: 'Not Now');
   }
@@ -329,8 +329,6 @@ class _AddPrayerState extends State<AddPrayer> {
   @override
   void initState() {
     super.initState();
-    final user =
-        Provider.of<UserProviderV2>(context, listen: false).currentUser;
 
     final isEdit = Provider.of<PrayerProviderV2>(context, listen: false).isEdit;
     _descriptionController.text = isEdit
@@ -340,13 +338,6 @@ class _AddPrayerState extends State<AddPrayer> {
         : '';
 
     _backupDescription = _descriptionController.text;
-    if (!(user.consentViewed ?? false)) {
-      Future.delayed(Duration(seconds: 1), () {
-        showContactConsentModal();
-        Provider.of<UserProviderV2>(context, listen: false)
-            .updateUserSettings('consentViewed', true);
-      });
-    }
 
     if (isEdit) {
       showDropdown = false;
@@ -435,7 +426,8 @@ class _AddPrayerState extends State<AddPrayer> {
     try {
       if (tagText.length > 0 &&
           Settings.enabledContactPermission == false &&
-          !deniedTapped) {
+          !deniedTapped &&
+          !Provider.of<PrayerProviderV2>(context, listen: false).isEdit) {
         showContactConsentModal();
       } else {
         if (getContactCalled == false &&
