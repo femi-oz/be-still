@@ -22,7 +22,6 @@ import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:contacts_service/contacts_service.dart';
-import 'package:flutter/foundation.dart' show TargetPlatform;
 
 class AddPrayer extends StatefulWidget {
   static const routeName = '/app-prayer';
@@ -434,7 +433,6 @@ class _AddPrayerState extends State<AddPrayer> {
         if (platform == TargetPlatform.android) {
           showContactConsentModal();
         } else {
-          deniedTapped = false;
           _getContactPermission();
         }
       } else {
