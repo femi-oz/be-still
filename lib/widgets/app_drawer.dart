@@ -54,8 +54,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   _launchHelpURL() async {
     try {
-      if (await canLaunch('https://www.bestillapp.com/help')) {
-        await launch('https://www.bestillapp.com/help');
+      if (await canLaunchUrl(Uri.parse('https://www.bestillapp.com/help'))) {
+        await launchUrl(Uri.parse('https://www.bestillapp.com/help'));
       } else {
         throw 'Could not launch https://www.bestillapp.com/help';
       }
@@ -69,8 +69,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   _launchPrivacyURL() async {
     try {
-      if (await canLaunch('https://bestillapp.com/privacy-policy/')) {
-        await launch('https://bestillapp.com/privacy-policy/');
+      if (await canLaunchUrl(
+          Uri.parse('https://bestillapp.com/privacy-policy/'))) {
+        await launchUrl(Uri.parse('https://bestillapp.com/privacy-policy/'));
       } else {
         throw 'Could not launch https://bestillapp.com/privacy-policy/';
       }
@@ -82,8 +83,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   _launchTermsURL() async {
     try {
-      if (await canLaunch('https://bestillapp.com/terms-of-use/')) {
-        await launch('https://bestillapp.com/terms-of-use/');
+      if (await canLaunchUrl(
+          Uri.parse('https://bestillapp.com/terms-of-use/'))) {
+        await launchUrl(Uri.parse('https://bestillapp.com/terms-of-use/'));
       } else {
         throw 'Could not launch https://bestillapp.com/terms-of-use/';
       }
@@ -106,8 +108,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
       AppAvailability.launchApp(_shareUri);
     } catch (_, __) {
       try {
-        if (await canLaunch('https://my.bible.com/bible')) {
-          await launch('https://my.bible.com/bible');
+        if (await canLaunchUrl(Uri.parse('https://my.bible.com/bible'))) {
+          await launchUrl(Uri.parse('https://my.bible.com/bible'));
         } else {
           throw 'Could not launch https://my.bible.com/bible';
         }

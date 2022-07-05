@@ -45,8 +45,8 @@ class _DevotionPlansState extends State<DevotionPlans> {
   }
 
   void _launchURL(url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
     } else {
       throw 'Could not launch $url';
     }

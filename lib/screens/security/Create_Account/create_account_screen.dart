@@ -66,8 +66,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   _launchPrivacyURL() async {
     try {
-      if (await canLaunch('https://bestillapp.com/privacy-policy/')) {
-        await launch('https://bestillapp.com/privacy-policy/');
+      if (await canLaunchUrl(
+          Uri.parse('https://bestillapp.com/privacy-policy/'))) {
+        await launchUrl(Uri.parse('https://bestillapp.com/privacy-policy/'));
       } else {
         throw 'Could not launch https://bestillapp.com/privacy-policy/';
       }
@@ -79,8 +80,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   _launchTermsURL() async {
     try {
-      if (await canLaunch('https://bestillapp.com/terms-of-use/')) {
-        await launch('https://bestillapp.com/terms-of-use/');
+      if (await canLaunchUrl(
+          Uri.parse('https://bestillapp.com/terms-of-use/'))) {
+        await launchUrl(Uri.parse('https://bestillapp.com/terms-of-use/'));
       } else {
         throw 'Could not launch https://bestillapp.com/terms-of-use/';
       }
