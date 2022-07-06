@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:be_still/controllers/app_controller.dart';
 import 'package:be_still/enums/notification_type.dart';
-import 'package:be_still/enums/status.dart';
 import 'package:be_still/enums/user_role.dart';
 import 'package:be_still/models/http_exception.dart';
 import 'package:be_still/models/v2/group.model.dart';
