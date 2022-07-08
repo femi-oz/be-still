@@ -1,0 +1,6 @@
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/bestill-logo.jpg"
+  adaptive_icon_background: "#191919"
+  adaptive_icon_foreground: "assets/images/bestill-logo.jpg"
