@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">#03396c</color>
+    <color name="splash">#03396c</color>
+    <color name="gradientstart">#011d3c</color>
+    <color name="gradientend">#053566</color>
+</resources>

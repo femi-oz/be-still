@@ -1,0 +1,135 @@
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+if (flutterRoot == null) {
+    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+def appCenterVersionCode = System.getenv('APPCENTER_BUILD_ID')
+if (appCenterVersionCode != null) {
+    flutterVersionCode = appCenterVersionCode
+} else if (flutterVersionCode != null) {
+    flutterVersionCode = flutterVersionCode
+} else {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
+android {
+    compileSdkVersion 31
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    lintOptions {
+        disable 'InvalidPackage'
+        checkReleaseBuilds false
+    }
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId "org.second.bestill"
+        minSdkVersion 23
+        targetSdkVersion 30
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+    }
+    signingConfigs {
+     
+        release {
+             if (System.getenv("APP_ENVIRONMENT") == null)
+             {
+                storeFile rootProject.file("app/android.jks");
+             }else
+             {
+                storeFile rootProject.file(System.getenv("APPCENTER_KEY_LOCATION"));
+             }
+            
+            storePassword System.getenv("APPCENTER_KEYSTORE_PASSWORD")
+            keyAlias System.getenv("APPCENTER_KEY_ALIAS")
+            keyPassword System.getenv("APPCENTER_KEY_PASSWORD")
+        }
+       
+    }
+
+    buildTypes {
+        release {
+            // TODO: Add your own signing config for the release build.
+            // Signing with the debug keys for now, so `flutter run --release` works.
+            if (System.getenv("APP_ENVIRONMENT") == null) {
+                signingConfig signingConfigs.debug
+            }else{
+                signingConfig signingConfigs.release
+            }
+
+            minifyEnabled true
+            useProguard true
+
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    flavorDimensions "app"
+
+    productFlavors {
+        local {
+            dimension "app"
+            resValue "string", "app_name", "Be Still Local"
+            versionNameSuffix "-local"
+            applicationId "org.second.bestill.local"
+        }
+        dev {
+            dimension "app"
+            resValue "string", "app_name", "Be Still Dev"
+            versionNameSuffix "-dev"
+            applicationId "org.second.bestill.dev"
+        }
+        staging {
+            dimension "app"
+            resValue "string", "app_name", "Be Still Test"
+            versionNameSuffix "-test"
+            applicationId "org.second.bestill.test"
+        }
+        prod {
+            dimension "app"
+            resValue "string", "app_name", "Be Still Prod"
+            versionNameSuffix "-prod"
+            applicationId "org.second.bestill.prod"
+        }
+        store {
+            dimension "app"
+            resValue "string", "app_name", "Be Still"
+            versionNameSuffix "-store"
+            applicationId "org.second.bestill"
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.android.support:multidex:1.0.3'
+    
+}
+
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
