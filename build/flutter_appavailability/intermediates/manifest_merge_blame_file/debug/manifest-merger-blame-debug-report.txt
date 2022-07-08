@@ -1,0 +1,8 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.pichillilorenzo.flutter_appavailability" >
+4
+5    <uses-sdk android:minSdkVersion="16" />
+5-->C:\flutter\.pub-cache\git\flutter_appavailability-9f0b189fc650275b84ea0a58ba6cc0f59952652d\android\src\main\AndroidManifest.xml
+6
+7</manifest>

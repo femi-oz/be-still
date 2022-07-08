@@ -21,7 +21,7 @@ export PATH=`pwd`/flutter/bin:$PATH
 
 flutter channel stable
 # flutter doctor
-flutter pub get
+# flutter pub get
 
 echo "Installed flutter to `pwd`/flutter"
 echo "APP_ENVIRONMENT : $APP_ENVIRONMENT"

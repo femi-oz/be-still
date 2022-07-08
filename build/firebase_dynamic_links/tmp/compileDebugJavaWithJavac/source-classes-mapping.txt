@@ -1,0 +1,11 @@
+io/flutter/plugins/firebasedynamiclinks/FirebaseDynamicLinksPlugin.java
+ io.flutter.plugins.firebasedynamiclinks.FirebaseDynamicLinksPlugin
+ io.flutter.plugins.firebasedynamiclinks.FirebaseDynamicLinksPlugin$1
+ io.flutter.plugins.firebasedynamiclinks.FirebaseDynamicLinksPlugin$2
+ io.flutter.plugins.firebasedynamiclinks.FirebaseDynamicLinksPlugin$3
+ io.flutter.plugins.firebasedynamiclinks.FirebaseDynamicLinksPlugin$4
+ io.flutter.plugins.firebasedynamiclinks.FirebaseDynamicLinksPlugin$5
+io/flutter/plugins/firebasedynamiclinks/BuildConfig.java
+ io.flutter.plugins.firebasedynamiclinks.BuildConfig
+io/flutter/plugins/firebasedynamiclinks/FlutterFirebaseAppRegistrar.java
+ io.flutter.plugins.firebasedynamiclinks.FlutterFirebaseAppRegistrar

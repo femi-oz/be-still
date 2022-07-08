@@ -1,0 +1,17 @@
+flutter/plugins/contactsservice/contactsservice/Contact.java
+ flutter.plugins.contactsservice.contactsservice.Contact
+flutter/plugins/contactsservice/contactsservice/ContactsServicePlugin.java
+ flutter.plugins.contactsservice.contactsservice.ContactsServicePlugin
+ flutter.plugins.contactsservice.contactsservice.ContactsServicePlugin$1
+ flutter.plugins.contactsservice.contactsservice.ContactsServicePlugin$BaseContactsServiceDelegate
+ flutter.plugins.contactsservice.contactsservice.ContactsServicePlugin$ContactServiceDelegate
+ flutter.plugins.contactsservice.contactsservice.ContactsServicePlugin$ContactServiceDelegateOld
+ flutter.plugins.contactsservice.contactsservice.ContactsServicePlugin$GetAvatarsTask
+ flutter.plugins.contactsservice.contactsservice.ContactsServicePlugin$GetContactsTask
+ flutter.plugins.contactsservice.contactsservice.ContactsServicePlugin$GetContactsTask$1
+flutter/plugins/contactsservice/contactsservice/PostalAddress.java
+ flutter.plugins.contactsservice.contactsservice.PostalAddress
+flutter/plugins/contactsservice/contactsservice/Item.java
+ flutter.plugins.contactsservice.contactsservice.Item
+flutter/plugins/contactsservice/contactsservice/BuildConfig.java
+ flutter.plugins.contactsservice.contactsservice.BuildConfig

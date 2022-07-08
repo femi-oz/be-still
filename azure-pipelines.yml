@@ -5,7 +5,7 @@ trigger:
 stages:
 - stage: __default
   jobs:
-  - job: Bestill_dev
+  - job: Mobile
     pool:
       vmImage: 'macOS-latest'
     steps:
@@ -18,8 +18,7 @@ stages:
       inputs:
         target: 'apk'
         projectDirectory: '.'
-        buildFlavour: 'dev'
-        entryPoint: 'lib/main_dev.dart'
+        entryPoint: "lib/main.dart"
         iosCodesign: false
     - task: AndroidSigning@3
       displayName: 'Signing and aligning APK file(s) **/*.apk'
@@ -27,9 +26,9 @@ stages:
         apkFiles: '**/*.apk'
         apksign: true
         apksignerKeystoreFile: "dev-android.jks"
-        apksignerKeystorePassword: "Pa$$w0rd1"
-        apksignerKeystoreAlias: "dev-bestill"
-        apksignerKeyPassword: "Pa$$w0rd1"
+        apksignerKeystorePassword: $(library.keypassword)
+        apksignerKeystoreAlias: $(library.keyalias)
+        apksignerKeyPassword: $(library.keypassword)
     - task: CopyFiles@2
       inputs:
         contents: '**/*.apk'
@@ -42,7 +41,7 @@ stages:
       displayName: "Install Apple p12 cert"
       inputs:
         certSecureFile: "second-distribution-cert.p12"
-        certPwd: $(library.passwordCert)
+        certPwd: "library.certpassword"
         keychain: "temp"
         deleteCert: true
     - task: InstallAppleProvisioningProfile@1
@@ -55,8 +54,8 @@ stages:
       displayName: "Code sign ipa for Distribution"
       inputs:
         actions: "build"
-        xcWorkspacePath: "Runner.xcworkspace"
-        scheme: "dev"
+        xcWorkspacePath: "**/Runner.xcworkspace"
+        scheme: "Runner"
         sdk: "iphoneos"
         configuration: "release"
         packageApp: true

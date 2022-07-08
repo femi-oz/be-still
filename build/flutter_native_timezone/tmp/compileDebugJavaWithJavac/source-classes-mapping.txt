@@ -1,0 +1,2 @@
+com/whelksoft/flutter_native_timezone/BuildConfig.java
+ com.whelksoft.flutter_native_timezone.BuildConfig

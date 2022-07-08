@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "org.second.bestill.dev",
+  "variantName": "devDebug",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "versionCode": 5,
+      "versionName": "1.4.1-dev",
+      "outputFile": "app-dev-debug.apk"
+    }
+  ]
+}

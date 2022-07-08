@@ -1,0 +1,78 @@
+[
+    {
+        "merged": "C:\\sandbox\\bestill\\build\\app\\intermediates\\res\\merged\\dev\\debug\\drawable-xhdpi_ic_launcher_foreground.png.flat",
+        "source": "C:\\sandbox\\bestill\\android\\app\\src\\dev\\res\\drawable-xhdpi\\ic_launcher_foreground.png"
+    },
+    {
+        "merged": "C:\\sandbox\\bestill\\build\\app\\intermediates\\res\\merged\\dev\\debug\\mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "C:\\sandbox\\bestill\\android\\app\\src\\dev\\res\\mipmap-anydpi-v26\\ic_launcher.xml"
+    },
+    {
+        "merged": "C:\\sandbox\\bestill\\build\\app\\intermediates\\res\\merged\\dev\\debug\\drawable-xxhdpi_ic_launcher_foreground.png.flat",
+        "source": "C:\\sandbox\\bestill\\android\\app\\src\\dev\\res\\drawable-xxhdpi\\ic_launcher_foreground.png"
+    },
+    {
+        "merged": "C:\\sandbox\\bestill\\build\\app\\intermediates\\res\\merged\\dev\\debug\\mipmap-anydpi-v26_wic_launcher.xml.flat",
+        "source": "C:\\sandbox\\bestill\\android\\app\\src\\main\\res\\mipmap-anydpi-v26\\wic_launcher.xml"
+    },
+    {
+        "merged": "C:\\sandbox\\bestill\\build\\app\\intermediates\\res\\merged\\dev\\debug\\drawable-mdpi_ic_launcher_foreground.png.flat",
+        "source": "C:\\sandbox\\bestill\\android\\app\\src\\dev\\res\\drawable-mdpi\\ic_launcher_foreground.png"
+    },
+    {
+        "merged": "C:\\sandbox\\bestill\\build\\app\\intermediates\\res\\merged\\dev\\debug\\drawable-mdpi_splash_icon.png.flat",
+        "source": "C:\\sandbox\\bestill\\android\\app\\src\\dev\\res\\drawable-mdpi\\splash_icon.png"
+    },
+    {
+        "merged": "C:\\sandbox\\bestill\\build\\app\\intermediates\\res\\merged\\dev\\debug\\drawable-xxxhdpi_ic_launcher_foreground.png.flat",
+        "source": "C:\\sandbox\\bestill\\android\\app\\src\\dev\\res\\drawable-xxxhdpi\\ic_launcher_foreground.png"
+    },
+    {
+        "merged": "C:\\sandbox\\bestill\\build\\app\\intermediates\\res\\merged\\dev\\debug\\drawable-hdpi_splash_icon.png.flat",
+        "source": "C:\\sandbox\\bestill\\android\\app\\src\\dev\\res\\drawable-hdpi\\splash_icon.png"
+    },
+    {
+        "merged": "C:\\sandbox\\bestill\\build\\app\\intermediates\\res\\merged\\dev\\debug\\mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "C:\\sandbox\\bestill\\android\\app\\src\\dev\\res\\mipmap-xxxhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "C:\\sandbox\\bestill\\build\\app\\intermediates\\res\\merged\\dev\\debug\\drawable-xxxhdpi_splash_icon.png.flat",
+        "source": "C:\\sandbox\\bestill\\android\\app\\src\\dev\\res\\drawable-xxxhdpi\\splash_icon.png"
+    },
+    {
+        "merged": "C:\\sandbox\\bestill\\build\\app\\intermediates\\res\\merged\\dev\\debug\\mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "C:\\sandbox\\bestill\\android\\app\\src\\dev\\res\\mipmap-xxhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "C:\\sandbox\\bestill\\build\\app\\intermediates\\res\\merged\\dev\\debug\\drawable-hdpi_ic_launcher_foreground.png.flat",
+        "source": "C:\\sandbox\\bestill\\android\\app\\src\\dev\\res\\drawable-hdpi\\ic_launcher_foreground.png"
+    },
+    {
+        "merged": "C:\\sandbox\\bestill\\build\\app\\intermediates\\res\\merged\\dev\\debug\\drawable-xxhdpi_splash_icon.png.flat",
+        "source": "C:\\sandbox\\bestill\\android\\app\\src\\dev\\res\\drawable-xxhdpi\\splash_icon.png"
+    },
+    {
+        "merged": "C:\\sandbox\\bestill\\build\\app\\intermediates\\res\\merged\\dev\\debug\\mipmap-mdpi_ic_launcher.png.flat",
+        "source": "C:\\sandbox\\bestill\\android\\app\\src\\dev\\res\\mipmap-mdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "C:\\sandbox\\bestill\\build\\app\\intermediates\\res\\merged\\dev\\debug\\drawable_launch_background.xml.flat",
+        "source": "C:\\sandbox\\bestill\\android\\app\\src\\dev\\res\\drawable\\launch_background.xml"
+    },
+    {
+        "merged": "C:\\sandbox\\bestill\\build\\app\\intermediates\\res\\merged\\dev\\debug\\drawable-xhdpi_splash_icon.png.flat",
+        "source": "C:\\sandbox\\bestill\\android\\app\\src\\dev\\res\\drawable-xhdpi\\splash_icon.png"
+    },
+    {
+        "merged": "C:\\sandbox\\bestill\\build\\app\\intermediates\\res\\merged\\dev\\debug\\drawable_gradient_background.xml.flat",
+        "source": "C:\\sandbox\\bestill\\android\\app\\src\\dev\\res\\drawable\\gradient_background.xml"
+    },
+    {
+        "merged": "C:\\sandbox\\bestill\\build\\app\\intermediates\\res\\merged\\dev\\debug\\mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "C:\\sandbox\\bestill\\android\\app\\src\\dev\\res\\mipmap-xhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "C:\\sandbox\\bestill\\build\\app\\intermediates\\res\\merged\\dev\\debug\\mipmap-hdpi_ic_launcher.png.flat",
+        "source": "C:\\sandbox\\bestill\\android\\app\\src\\dev\\res\\mipmap-hdpi\\ic_launcher.png"
+    }
+]

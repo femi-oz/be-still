@@ -1,0 +1,19 @@
+#Tue Jul 05 09:33:05 WAT 2022
+path.4=6/classes.dex
+path.3=1/classes.dex
+path.2=0/classes.dex
+path.1=0/classes.dex
+path.5=classes2.dex
+path.0=classes.dex
+base.4=C\:\\sandbox\\bestill\\build\\app\\intermediates\\dex\\devDebug\\mergeProjectDexDevDebug\\6\\classes.dex
+base.3=C\:\\sandbox\\bestill\\build\\app\\intermediates\\dex\\devDebug\\mergeProjectDexDevDebug\\1\\classes.dex
+base.2=C\:\\sandbox\\bestill\\build\\app\\intermediates\\dex\\devDebug\\mergeProjectDexDevDebug\\0\\classes.dex
+base.1=C\:\\sandbox\\bestill\\build\\app\\intermediates\\dex\\devDebug\\mergeLibDexDevDebug\\0\\classes.dex
+base.0=C\:\\sandbox\\bestill\\build\\app\\intermediates\\dex\\devDebug\\mergeExtDexDevDebug\\classes.dex
+renamed.3=classes4.dex
+renamed.2=classes3.dex
+renamed.1=classes2.dex
+renamed.0=classes.dex
+renamed.5=classes6.dex
+renamed.4=classes5.dex
+base.5=C\:\\sandbox\\bestill\\build\\app\\intermediates\\dex\\devDebug\\mergeExtDexDevDebug\\classes2.dex

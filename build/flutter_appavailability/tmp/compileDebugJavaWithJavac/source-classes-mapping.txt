@@ -1,0 +1,4 @@
+com/pichillilorenzo/flutter_appavailability/AppAvailability.java
+ com.pichillilorenzo.flutter_appavailability.AppAvailability
+com/pichillilorenzo/flutter_appavailability/BuildConfig.java
+ com.pichillilorenzo.flutter_appavailability.BuildConfig
