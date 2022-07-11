@@ -67,8 +67,9 @@ stages:
         flattenFolders: true
 
     - task: PublishBuildArtifacts@1
-      displayName: "Publish AAB file"
+      displayName: "Publish APK file"
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'AAB'
+        ArtifactName: 'APK'
         publishLocation: 'Container'
+        
