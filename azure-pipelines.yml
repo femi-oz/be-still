@@ -46,8 +46,11 @@ stages:
     - task: FlutterBuild@0
       displayName: "Build application"
       inputs:
-        target: 'aab'
+        target: 'apk'
+        buildFlavour: 'dev'
         projectDirectory: '$(Build.SourcesDirectory)'
+        entryPoint: 'lib/main_dev.dart'
+        iosCodesign: false
 
     - task: FlutterTest@0
       displayName: "Run unit tests"
