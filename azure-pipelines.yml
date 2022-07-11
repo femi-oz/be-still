@@ -87,14 +87,6 @@ stages:
         keychain: "temp"
         deleteCert: true
 
-
-            - task: InstallAppleCertificate@2
-      displayName: Install certificate
-      inputs:
-        certSecureFile: 'iosKey'
-        certPwd: 'yourPwd'
-        keychain: 'temp'
-
       - task: InstallAppleProvisioningProfile@1
       displayName: "Install Apple Mobile Provisioning Profile"
       inputs:
