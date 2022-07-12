@@ -57,6 +57,7 @@ stages:
       displayName: "Build application"
       inputs:
         target: 'apk'
+        entryPoint: 'lib/main_dev.dart'
         projectDirectory: '$(Build.SourcesDirectory)'
 
     - task: FlutterTest@0
