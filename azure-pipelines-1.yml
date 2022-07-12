@@ -1,85 +1,40 @@
 trigger:
-  - '*'
-
-pool:
-  vmImage: macOS-latest
-
+  branches:
+    include:
+    - dev
 stages:
-- stage: AndroidStage
-  dependsOn: []
-  displayName: Android
+- stage: __default
   jobs:
-
-  - job: AndroidJob
-    displayName: Android
+  - job: Bestill_dev
+    pool:
+      vmImage: 'ubuntu-latest'
     steps:
-
-    # replace "key.properties" with your secure file name
-    - task: DownloadSecureFile@1
-      name: keyprop
-      displayName: Download key properties file
-      inputs:
-        secureFile: 'key.properties'
-
-    # replace "key.jks" with your secure file name
-    - task: DownloadSecureFile@1
-      name: key
-      displayName: Download signing key
-      inputs:
-        secureFile: 'upload-keystore.jks'
-
-    - task: JavaToolInstaller@0
-      inputs:
-        versionSpec: '11'
-        jdkArchitectureOption: 'x64'
-        jdkSourceOption: 'PreInstalled'
-
-    # adjust paths and file names here
-    - task: Bash@3
-      displayName: Copy config files
-      inputs:
-        targetType: 'inline'
-        script: |
-          cp $(keyprop.secureFilePath) $(Build.SourcesDirectory)/android/key.properties
-          cp $(key.secureFilePath) $(Build.SourcesDirectory)/android/app/upload-keystore.jks
-
-          echo "key.properties copied to $(Build.SourcesDirectory)/android/key.properties"
-          echo "upload-keystore.jks copied to $(Build.SourcesDirectory)/android/app/upload-keystore.jks"
-
     - task: FlutterInstall@0
-      displayName: "Install Flutter SDK"
       inputs:
         mode: 'auto'
         channel: 'stable'
         version: 'latest'
-
     - task: FlutterBuild@0
-      displayName: "Build application"
       inputs:
         target: 'apk'
         projectDirectory: '.'
         buildFlavour: 'dev'
         entryPoint: 'lib/main_dev.dart'
         iosCodesign: false
-
-    - task: FlutterTest@0
-      displayName: "Run unit tests"
+    - task: AndroidSigning@3
+      displayName: 'Signing and aligning APK file(s) **/*.apk'
       inputs:
-        generateCodeCoverageReport: true
-        projectDirectory: '$(Build.SourcesDirectory)'
-
+        apkFiles: '**/*.apk'
+        apksign: true
+        apksignerKeystoreFile: "upload-keystore.jks"
+        apksignerKeystorePassword: "letsPlay"
+        apksignerKeystoreAlias: "upload"
+        apksignerKeyPassword: "letsPlay"
     - task: CopyFiles@2
-      displayName: "Copy app to staging directory"
       inputs:
-        sourceFolder: '$(Build.SourcesDirectory)'
         contents: '**/*.apk'
-        targetFolder: '$(Build.artifactStagingDirectory)'
-        flattenFolders: true
+        targetFolder: '$(build.artifactStagingDirectory)'
         OverWrite: true
-
     - task: PublishBuildArtifacts@1
-      displayName: "Publish APK file"
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'APK'
-        publishLocation: 'Container'
+        artifactName: 'drop'
